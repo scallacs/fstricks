@@ -11,7 +11,7 @@ module.config(function($routeProvider, $controllerProvider) {
 
             // route for the home page
             .when('/', {
-                templateUrl: HTML_FOLDER + 'VideoTags/explore.html',
+                templateUrl: HTML_FOLDER + 'Videos/view.html',
                 controller: 'ExploreController'
             })
             .when('/view/:id', {
@@ -472,10 +472,11 @@ module.controller('ViewVideoController', function($scope, VideoEntity, $routePar
     }
 });
 module.controller('ExploreController', function($scope, TagEntity, VideoTagEntity) {
-
     $scope.view = view;
-
     $scope.video = {
+        video_tags: []
+    };
+    $scope.playerInfo = {
         id: null,
         url: false,
         begin: 0,
@@ -492,12 +493,12 @@ module.controller('ExploreController', function($scope, TagEntity, VideoTagEntit
     function view(data) {
         //alert('view' + data);
         console.log(data);
-        $scope.video = data;
+        $scope.playerInfo = data;
     }
 
     function loadVideoTags() {
         VideoTagEntity.best({}, function(response) {
-            $scope.videoTags = response;
+            $scope.video.video_tags = response;
         });
     }
 });

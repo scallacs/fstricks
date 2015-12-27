@@ -237,6 +237,12 @@ commonModule.filter('percentage', function() {
     };
 });
 
+commonModule.filter('imageUrl', function(){
+    return function(input){
+        return WEBROOT_FULL + '/img/sports/' + input+ '.png';
+    };
+});
+
 commonModule.filter('timestamp', function() {
     return function(timestamp) {
         var date = new Date(timestamp * 1000);

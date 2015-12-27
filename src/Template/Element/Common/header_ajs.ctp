@@ -21,7 +21,46 @@
         </div>
         <div class="collapse navbar-collapse" role="navigation" id="navbarCollapse">
             <ul class="nav navbar-nav navbar-right">
-                <!--<li><input type="text" class="form-control" placeholder="Search tricks"/></li>-->
+                <li>
+                <ui-select 
+                    ng-model="videoTag.tag" 
+                    theme="bootstrap"
+                    reset-search-input="false">
+                    <ui-select-match placeholder="Trick name">
+                        {{$select.selected.name}} 
+                    </ui-select-match>
+                    <ui-select-choices
+                        repeat="tag in suggestedTags"
+                        refresh="refreshSuggestedTags($select.search)"
+                        refresh-delay="500">
+                        <div class="clearfix" ng-if="!tag.is_new">
+                            <div class="col-xs-2">
+                                <span class="">{{tag.sport_name}}</span> <br/>
+                                <span class="">{{tag.category_name}}</span>
+                            </div>
+                            <div class="col-xs-8">
+                                <span class="">{{tag.name}}</span>
+                            </div>
+                            <div class="col-xs-2">
+                                <span>{{tag.count_ref}}</span>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"  ng-if="tag.is_new">
+                            <div class="col-xs-2">
+                                <span class="">{{tag.sport_name}}</span> <br/>
+                                <span class="">{{tag.category_name}}</span>
+                            </div>
+                            <div class="col-xs-8">
+                                <span class="">{{tag.name}}</span>
+                            </div>
+                            <div class="col-xs-2">
+                                <span>(New!)</span>
+                            </div>
+                        </div>
+                    </ui-select-choices>
+                </ui-select>
+                </li>
                 <li><a href="#/"><span class="glyphicon glyphicon-map-marker"></span> Best of</a></li>
                 <li><a href="#/video/add"><span class="glyphicon glyphicon-plus-sign"></span> Create </a></li>
                 <li ng-if="!isAuthed"><a href="#/users/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
