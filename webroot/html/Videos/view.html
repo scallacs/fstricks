@@ -1,0 +1,11 @@
+<div class="col-md-8">
+    <youtube   
+        player-video="playerInfo"
+        height="player.height" 
+        width="player.height" ></youtube> 
+</div>
+<div class="col-md-4">
+    <div ng-repeat="videoTag in video.video_tags">
+        <div ng-include="'html/VideoTags/item.html'"></div>
+    </div>
+</div>

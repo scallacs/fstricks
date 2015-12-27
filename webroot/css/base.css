@@ -1,0 +1,169 @@
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+body{
+	background: #000;
+        width: 100%;
+        height: 100%; 
+}
+.section-separator{
+	background: #6BB6C8;
+	color: white;
+	padding: 10px 15px;
+	margin: 0px 0px 15px 0px;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+.section-separator h1,h2,h3,h4{
+	font-size: 2em;
+	margin: 0px;
+	font-weight: bold;
+}
+.padding-sm{
+    padding: 10px;
+}
+label.hide-radio{
+	padding-left: 0px;
+}
+.hide-radio input{
+	background: #333;
+	left: -10000px;
+}
+.bg-light{
+    background: #fff;
+}
+#container{
+    padding: 0px;
+    /* padding-bottom: 10px; */
+}
+.navbar-fixed-top{
+	/* padding: 0px 10px; */
+}
+header .navbar-toggle{
+}
+header .navbar-header ul{
+	margin-bottom: 0px;
+}
+header .header-title{
+	/* color: white; */
+	font-size: 2em;
+	padding-right: 10px;
+	font-weight: bold;
+	text-transform: uppercase;
+	font-family: Helvetica;
+	padding-top: 5px;
+	padding-left: 10px;
+}
+
+.max-height{
+    height: 500px; 
+    overflow: auto; 
+}
+
+.navbar{
+    margin-bottom: 0px;
+}
+
+header .navbar-header{
+	/* height: 50px; */
+}
+
+
+
+.message{
+    background: green;
+    color: white;
+    padding: 5px;
+    
+}
+.message.success{}
+
+
+/* ------------------------------------------------------------ */
+/* ITEM  */
+/* ------------------------------------------------------------ */
+.item{
+    position: relative;
+    margin-bottom: 4px;
+}
+.item.active{
+    background: #333;
+}
+.item-heading{
+	padding: 8px 5px;
+	text-align: center;
+}
+.item-title{
+    font-size: 1.5em;
+}
+.item-body{
+	padding: 10px 5px;
+	background: whitesmoke;
+}
+.item-info{
+	font-size: 0.9em;
+	color: #999;
+}
+.item .item-heading a{
+	color: white;
+	font-weight: bold;
+	font-size: 1.3em;
+}
+.item .item-heading a:hover{
+	text-decoration:none;
+	color: #eee;
+}
+.item-points{
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 10px;
+}
+.item-sport span{
+    background: white;
+    border-radius: 40px;
+    padding: 10px;
+    
+}
+.item-category{
+    text-transform: capitalize;
+    font-size: 1.3em;
+    text-align: center;
+}
+.btn-play{
+	width: 90%;
+	height: 100%;
+	margin: auto;
+	font-size: 1.5em;
+}
+
+
+.margin-top{
+	margin-top: 10px;
+}
+
+.user-profile-tag{
+	font-size: 1.5em;
+}
+
+
+.btn.btn-full-size{
+	width: 100%;
+	margin: 0px;
+	border-radius: 0px;
+	padding: 10px 20px;
+}
+
+
+.section{
+	padding: 10px;
+}
+
+.bg-colored{
+	background: #F3C212;
+	color: white;
+}
+.text-big{
+	font-size: 1.5em;
+}
+.text-bold{
+	font-weight: bold;
+}

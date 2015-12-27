@@ -1,0 +1,69 @@
+<div>
+    <div class="clearfix section bg-colored container-fluid">
+        <h2> {{data.user.username}} </h2>
+        <p class="text-color-light">
+            <span class="number text-big">{{data.user.count_posts}}</span> posts
+        </p>
+    </div>
+    <div class="clearfix padding-sm">
+        <ul class="nav nav-pills">
+            <li ng-repeat="tag in tags | filter:{edition_status: '!remove'}" class="">
+                <a class="user-profile-tag">
+                    #{{tag.name}} 
+                    <span  ng-if="editionMode" class="glyphicon glyphicon-remove" ng-click="removeTag(tag)"></span>
+                </a> 
+            </li>
+        </ul>
+        <form class="form-inline" ng-if="editionMode">
+            <div class="row">
+                <div class="form-group col-md-4 col-md-offset-4" >
+                    <div class="input-group">
+                        <input type="text" 
+                               ng-model="new_tag" 
+                               class="form-control" 
+                               placeholder="Add a tag"
+                               />
+                        <div class="input-group-btn ">
+                            <button type="submit" class="btn btn-primary" ng-click="addTag(new_tag)">
+                                <span class="glyphicon glyphicon-plus-sign"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p ng-if="isSaved()" class="text-center text-muted">
+                {{message}}
+            </p>
+            <p ng-if="!isSaved()" class="text-center text-muted">
+                {{message}}
+            </p>
+        </form>
+        <div class="text-center" ng-if="isCurrentUserProfile">
+            <button type="button" class="btn btn-default btn-sm" 
+                    ng-click="startEditionMode()"
+                    ng-if="!editionMode">
+                <span class="glyphicon glyphicon-edit"></span> Edit
+            </button>
+            <button type="button" class="btn btn-default btn-sm" 
+                    ng-click="cancelEditionMode()"
+                    ng-if="editionMode" >
+                <span class="glyphicon glyphicon-remove-circle"></span> Cancel
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" 
+                    ng-click="save()"
+                    ng-if="editionMode" >
+                <span class="glyphicon glyphicon-save"></span> Save
+            </button>
+        </div>
+    </div>
+
+    <div class="section-separator">
+        <h3 class="">Last post</h3>
+    </div>
+    <div class="clearfix">
+        <div ng-repeat="post in data.user.spots">
+            <div ng-click="$location.path('/posts/view/' + post.id)" ng-include="'html/Spots/item.html'"></div>
+        </div>       
+    </div>
+
+</div>
