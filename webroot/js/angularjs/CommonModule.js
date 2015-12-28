@@ -86,7 +86,7 @@ commonModule.directive('youtube', function($window, YT_event) {
                         showinfo: 1,
                         controls: 1
                     },
-                    height: element.parent().width() * 9/16,
+                    height: element.parent().width() * 9 / 16,
                     width: scope.playerVideo.width,
                     videoId: scope.playerVideo.video_url,
                     events: {
@@ -237,9 +237,9 @@ commonModule.filter('percentage', function() {
     };
 });
 
-commonModule.filter('imageUrl', function(){
-    return function(input){
-        return WEBROOT_FULL + '/img/sports/' + input+ '.png';
+commonModule.filter('imageUrl', function() {
+    return function(input) {
+        return WEBROOT_FULL + '/img/sports/' + input + '.png';
     };
 });
 
@@ -329,8 +329,10 @@ commonModule.filter('timeago', function() {
         return jQuery.timeago(timestamp * 1000);
     };
 });
-commonModule.factory('SharedData', function(){
-    var data = {};
+commonModule.factory('SharedData', function() {
+    var data = {
+        loadingState: 1
+    };
     return data;
 });
 commonModule.factory('ViewFeedback', function() {
@@ -612,6 +614,26 @@ commonModule.factory('VideoProviderEntity', function() {
         }
     };
 });
+
+commonModule.directive('loading', function($http, SharedData){
+    return {
+        restrict: 'A',
+        link: function(scope, elm, attrs) {
+            scope.isLoading = function() {
+                return SharedData.loadingState > 0 || scope.isViewLoading;
+            };
+
+            scope.$watch(scope.isLoading, function(v) {
+                if (v) {
+                    elm.show();
+                } else {
+                    elm.hide();
+                }
+            });
+        }
+    };
+
+});
 commonModule.factory('SportEntity', function($resource) {
     var url = WEBROOT_FULL + '/Sports/:action/:id.json';
     //var url = '/sys/MediaTagTricks/:action/:id';
@@ -620,9 +642,14 @@ commonModule.factory('SportEntity', function($resource) {
             method: 'GET',
             params: {action: 'index'},
             isArray: true
+        },
+        view: {
+            method: 'GET',
+            params: {action: 'view'},
+            isArray: true
         }
     });
-    
+
 });
 commonModule.factory('CategoryEntity', function($filter) {
     var url = WEBROOT_FULL + '/Categories/:action/:id.json';
@@ -634,13 +661,13 @@ commonModule.factory('CategoryEntity', function($filter) {
             isArray: true
         }
     });
-    
+
 });
 
 commonModule.factory('TagEntity', function($resource) {
-    var url = WEBROOT_FULL + '/Tags/:action/:id.json';
+    var url = WEBROOT_FULL + '/Tags/:action/:id/:sport/:category/:trick.json';
     //var url = '/sys/MediaTagTricks/:action/:id';
-    return $resource(url, {id: '@id', action: '@action'}, {
+    return $resource(url, {id: '@id', action: '@action', sport: '@sport', category: '@category', trick: '@trick'}, {
         suggest: {
             method: 'GET',
             params: {action: 'suggest'},
@@ -649,6 +676,11 @@ commonModule.factory('TagEntity', function($resource) {
         suggestCategory: {
             method: 'GET',
             params: {action: 'suggestCategory', id: null},
+            isArray: true
+        },
+        view: {
+            method: 'GET',
+            params: {action: 'view'},
             isArray: true
         }
     });

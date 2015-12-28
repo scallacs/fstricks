@@ -1,11 +1,11 @@
 
 <div class="item bg-primary" ng-class="video.id === videoTag.id ? 'active' : ''">
     <div class="item-heading">
-        <div class="row">
+        <div class="row clickable" ng-click="view(videoTag)">
             <div class="col-xs-3">
                 <div class="item-sport">
                     <span>
-                        <img ng-src="{{videoTag.sport_name | imageUrl}}" 
+                        <img ng-src="{{videoTag.sport_name| imageUrl}}" 
                              title="{{videoTag.sport_name}}"
                              alt="{{videoTag.sport_name}}"/>
                     </span>
@@ -16,16 +16,8 @@
                     {{videoTag.tag_name}}
                 </span>
             </div>
-            <div class="col-xs-2"  ng-click="view(videoTag)">
-                
-                <span ng-if="videoTag.removable" 
-                      ng-click="removeVideoTag($index)"
-                      class="glyphicon glyphicon-remove"></span>
-                
-                <button class="btn btn-primary btn-play" ng-click="play(videoTag)">
-                    <span class="glyphicon glyphicon-play-circle">
-                    </span>
-                </button>
+            <div class="col-xs-2">
+
             </div>
         </div>
         <div class="row">
@@ -44,6 +36,22 @@
                 <button type="button" class="btn btn-primary" ng-click="up(videoTag)">
                     <span class="glyphicon glyphicon-arrow-up"></span>
                 </button>
+            </div>
+            <div class="col-xs-2 dropdown">
+                <button class="btn btn-primary" data-toggle="dropdown">
+                    <b class="caret"></b>
+                </button>
+                <ul class="dropdown-menu nav-stacked nav-pills">
+                    <li><a href="#">Report error</a></li>
+                    <li><a ng-href="#/Videos/view/{{videoTag.video_id}}">View full video</a></li>
+                    <li ng-if="videoTag.removable">
+                        <a href="" ng-click="removeVideoTag($index)">
+                            <span class="glyphicon glyphicon-remove"></span> 
+                            remove
+                        </a>
+                    </li>
+
+                </ul>
             </div>
         </div>
     </div>

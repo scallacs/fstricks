@@ -29,7 +29,8 @@ class VideosController extends AppController {
         $video = $this->Videos->get($id, [
             'contain' => [
                 'VideoTags' => function($q){
-                    return $q->where(['VideoTags.status' => 'validated'])
+                    return $q
+                            ->where(['VideoTags.status' => 'validated'])
                             ->contain(['Tags' => function($q){
                             return $q
                                     ->select([

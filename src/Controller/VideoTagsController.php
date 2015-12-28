@@ -82,31 +82,7 @@ class VideoTagsController extends AppController {
      * @return void Redirects on successful add, renders view otherwise.
      */
     public function best() {
-        $videoTag = $this->VideoTags->find('all')
-                ->select([
-                    'tag_name' => 'Tags.name',
-                    'count_points' => 'VideoTags.count_points',
-                    'id' => 'VideoTags.id',
-                    'provider_id' => 'Videos.provider_id', 
-                    'video_url' => 'Videos.video_url', 
-                    'begin' => 'VideoTags.begin', 
-                    'end' => 'VideoTags.end'
-                ])
-                ->where([
-                    'status' => 'validated',
-                ])
-                ->contain([
-                    'Videos', 
-                    'Tags' => function($q){
-                        return $q
-                            ->select([
-                                'category_name' => 'Categories.name',
-                                'sport_name' => 'Sports.name',
-                                'tag_name' => 'Tags.name',
-                            ])
-                            ->contain(['Sports', 'Categories']);
-                    }
-                ])
+        $videoTag = $this->VideoTags->findAndJoin()
                 ->order(['VideoTags.created DESC'])
                 ->limit(200);
         ResultMessage::overwriteData($videoTag);

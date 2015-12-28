@@ -57,4 +57,35 @@ class SportsTable extends Table
         return $validator;
     }
     
+    public function findAllCached(){
+        return $this
+                ->find('all')
+                ->contain(['Categories'])
+                ->cache('sports', 'veryLongCache');
+    }
+    
+    public function findFromNameCached($name){
+        $data = $this->findAllCached();
+        foreach ($data as $d){
+            if ($d['name'] === strtolower($name)){
+                return $d;
+            }
+        }
+        return null;
+    }
+    public function findFromCategoryCached($sportName, $categoryName){
+        $categoryName = strtolower($categoryName);
+        $sportName = strtolower($sportName);
+        $data = $this->findAllCached();
+        foreach ($data as $d){
+            if ($d['name'] === $sportName){
+                foreach ($d['categories'] as $category){
+                    if ($category['name'] === $categoryName){
+                        return $category;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }

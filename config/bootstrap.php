@@ -227,3 +227,8 @@ Configure::write('videoProviders', [
 //        'name' => 'vimeo',
 //    ]
 ]);
+
+Cache::config('veryLongCache', [
+    'className' => 'File',
+    'duration' => '+999 days',
+]);

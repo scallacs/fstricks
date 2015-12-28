@@ -1,3 +1,6 @@
+<div class="section bg-colored">
+    <h2>Adding tags</h2>
+</div>
 <div class="container">
     <div class="panel panel-default">
         <div class="panel-body">
@@ -139,7 +142,7 @@
                     </div>
                 </div>
                 
-                <div class="bg-info padding-sm">
+                <div class="bg-info padding-sm form-group">
                     <h4>Be sure to...</h4>
                     <p class="text-info">
                         Check that your tag is valid before submiting it. 
@@ -153,7 +156,6 @@
                     <button type="button" class="btn btn-primary" ng-click="addVideoTag(videoTag, videoTag.range)">Add</button>
                 </div>
 
-                {{videoTag}}
             </form>
 
 
@@ -168,7 +170,10 @@
     </div>
 
 
-    {{playerInfo}}
+    PlayerInfo:  {{playerInfo}}
 
-    {{video}}
+    Video: {{video}}
+    
+    
+    VideoTag: {videoTag}}
 </div>
