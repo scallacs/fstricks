@@ -61,7 +61,7 @@ module.config(function($routeProvider, $controllerProvider) {
 });
 
 module.controller('MainController', function($scope, AuthenticationService,
-        $location, ViewFeedback, SportEntity, SharedData, TagEntity) {
+        $location, ViewFeedback, SportEntity, SharedData, TagEntity, $uibModal) {
     // create a message to display in our view
     $scope.isAuthed = AuthenticationService.isAuthed();
     $scope.searchTags = [];
@@ -73,6 +73,29 @@ module.controller('MainController', function($scope, AuthenticationService,
     $scope.login = login;
     $scope.logout = logout;
     $scope.setCurrentSport = setCurrentSport;
+
+    $scope.player = {
+        width: '100%',
+        height: null,
+        provider: 'youtube'
+    };
+    $scope.playerInfo = {
+        begin: 0,
+        end: 0,
+        video_url: null,
+        duration: 0,
+        currentTime: 0,
+        width: '100%',
+        height: '100%',
+        id: null
+    };
+    $scope.video = {
+        video_tags: []
+    };
+    $scope.showVideoPlayer = false;
+
+    $scope.view = view;
+    $scope.openReportErrorModal = openReportErrorModal;
 
     init();
 
@@ -87,7 +110,7 @@ module.controller('MainController', function($scope, AuthenticationService,
         $scope.$on('$routeChangeError', function() {
             $scope.isViewLoading = false;
         });
-        
+
         // loading sports 
         SportEntity.index({}, function(response) {
             SharedData.sports = response;
@@ -153,11 +176,56 @@ module.controller('MainController', function($scope, AuthenticationService,
         $scope.currentSport = sport;
         SharedData.currentSport = sport;
     }
+
+
+    function view(data) {
+        $scope.playerInfo.id = data.id;
+        if (data.video_url != null) {
+            $scope.playerInfo.video_url = data.video_url;
+        }
+        $scope.playerInfo.begin = data.begin;
+        $scope.playerInfo.end = data.end;
+
+        //$scope.$emit(YT_event.LOAD, $scope.playerInfo);
+    }
+
+    function openReportErrorModal(videoTag) {
+        var modal = $uibModal.open({
+            templateUrl: HTML_FOLDER + '/ReportErrors/form.html',
+            controller: 'ModalReportErrorController',
+            size: 'lg',
+            resolve: {
+                videoTag: function() {
+                    return videoTag;
+                }
+            }
+        });
+    }
+});
+
+
+module.controller('ModalReportErrorController', function ($scope, $uibModalInstance, videoTag, ErrorReportEntity) {
+    $scope.videoTag = videoTag;
+
+    $scope.ok = function () {
+      $uibModalInstance.close($scope.videoTag);
+    };
+
+    $scope.cancel = function () {
+      $uibModalInstance.dismiss('cancel');
+    };
+    
+    $scope.addReportError = function(errorReport){
+        ErrorReportEntity.post(errorReport, function(response){
+            console.log(response);
+            alert('ok');
+        });
+    }
 });
 
 module.controller('UserController',
-        function($filter, $scope, $location, UserEntity, $routeParams, 
-        ViewFeedback, AuthenticationService, SharedData) {
+        function($filter, $scope, $location, UserEntity, $routeParams,
+                ViewFeedback, AuthenticationService, SharedData) {
 
 
             // =========================================================================
@@ -203,6 +271,8 @@ module.controller('UserController',
                 };
             }
             function init() {
+                $scope.$parent.showVideoPlayer = false;
+
                 initData();
                 var username = null;
                 if ($routeParams.username) {
@@ -271,10 +341,15 @@ module.controller('UserController',
 
         });
 
-module.controller('UserLoginController', function($scope, $location, AuthenticationService, ViewFeedback) {
+module.controller('UserLoginController', function($scope, $auth, SharedData) {
     // create a message to display in our view
 
+    $scope.authenticate = function(provider) {
+      $auth.authenticate(provider);
+    };
+    
     function init() {
+        SharedData.loadingState = 0;
     }
     init();
 
@@ -282,24 +357,20 @@ module.controller('UserLoginController', function($scope, $location, Authenticat
 module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $location,
         VideoEntity, VideoTagEntity, PlayerProviders, ViewFeedback, SharedData) {
 
-    $scope.player = {
-        width: '500px',
-        height: null
-    };
     $scope.data = {provider_id: PlayerProviders.list()[0].name, video_url: null};
     $scope.playerProviders = PlayerProviders.list();
     $scope.add = add;
-    $scope.previewVideo = {};
 
     init();
 
     function init() {
+        $scope.$parent.showVideoPlayer = false;
         SharedData.loadingState = 0;
-        
+
         loadRecentlyTagged();
 
         $scope.$on('videoIdValidated', function(event, data) {
-            $scope.previewVideo.video_url = data.video_url;
+            $scope.$parent.playerInfo.video_url = data.video_url;
         });
     }
 
@@ -347,9 +418,9 @@ module.filter('searchCategory', function() {
 });
 module.filter('getSportByName', function() {
     return function(sports, name) {
-        for (var i = 0; i < sports.length; i++){
+        for (var i = 0; i < sports.length; i++) {
             var item = sports[i];
-            if (item.name == name ){
+            if (item.name == name) {
                 return item;
             }
         }
@@ -378,20 +449,6 @@ module.controller('VideoTagPointsController', function($scope, VideoTagPointEnti
 });
 module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $filter,
         $routeParams, SportEntity, VideoEntity, VideoTagEntity, ViewFeedback, TagEntity, SharedData) {
-    $scope.player = {
-        width: '500px',
-        height: null,
-        provider: 'youtube'
-    };
-    $scope.playerInfo = {
-        begin: 0,
-        end: 0,
-        video_url: null,
-        duration: 0,
-        currentTime: 0,
-        width: '100%',
-        height: '100%'
-    };
     $scope.slider = {
         step: 0.5
     };
@@ -412,17 +469,19 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     init();
 
     function init() {
+        $scope.$parent.showVideoPlayer = false;
 
         VideoEntity.view({id: $routeParams.id}, function(response) {
-            $scope.video = response;
-            $scope.playerInfo.video_url = response.video_url;
+            $scope.$parent.video = response;
+            $scope.$parent.playerInfo.video_url = response.video_url;
 
-            YoutubeVideoInfo.duration($scope.playerInfo.video_url, function(duration) {
-                $scope.playerInfo.duration = duration;
-                $scope.videoTag.range = [0, duration];
+            YoutubeVideoInfo.duration($scope.$parent.playerInfo.video_url, function(duration) {
+                $scope.$parent.playerInfo.duration = duration;
+                $scope.$parent.videoTag.range = [0, duration];
             });
-            
+
             SharedData.loadingState = 0;
+            $scope.$parent.showVideoPlayer = true;
         });
 
         $scope.$watch('videoTag.range', function(newValue, oldValue) {
@@ -498,7 +557,7 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
 
         VideoTagEntity.add(postData, function(response) {
             if (response.success) {
-                $scope.video.video_tags.push(videoTag);
+                $scope.$parent.video.video_tags.push(videoTag);
             }
             else {
                 ViewFeedback.failure(response);
@@ -508,7 +567,7 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     ;
 
     function removeVideoTag(index) {
-        $scope.video.video_tags.splice(index, 1);
+        $scope.$parent.video.video_tags.splice(index, 1);
     }
 
     function playRange(range) {
@@ -525,45 +584,27 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
 });
 module.controller('ViewSportController', function($scope, $filter, SportEntity, $routeParams, SharedData) {
 
-    $scope.view = view;
-    $scope.video = {
-        video_tags: []
-    };
-
-    $scope.playerInfo = {
-        begin: 0,
-        end: 0,
-        video_url: null,
-        duration: 0,
-        currentTime: 0,
-        width: '100%',
-        height: '100%'
-    };
 
     init();
 
     function init() {
+
+
         SportEntity.view({
             id: $routeParams.sport
         }, function(response) {
-            $scope.video.video_tags = response;            
+            $scope.$parent.video.video_tags = response;
             SharedData.loadingState = 0;
             SharedData.currentSport = $filter('getSportByName')(SharedData.sports, $routeParams.sport);
             $scope.$parent.currentSport = SharedData.currentSport;
+            $scope.$parent.showVideoPlayer = true;
         });
-    }
-    function view(data) {
-        $scope.playerInfo.video_url = $scope.video.video_url;
-        $scope.playerInfo.begin = data.begin;
-        $scope.playerInfo.end = data.end;
     }
 
 
 });
 module.controller('ViewTagController', function($scope, TagEntity, $routeParams, SharedData) {
-    $scope.video = {
-        video_tags: []
-    };
+
     init();
 
     function init() {
@@ -572,65 +613,37 @@ module.controller('ViewTagController', function($scope, TagEntity, $routeParams,
             category: $routeParams.category,
             trick: $routeParams.trick
         }, function(response) {
-            $scope.video.video_tags = response;
+            $scope.$parent.video.video_tags = response;
             SharedData.loadingState = 0;
+
+            $scope.$parent.showVideoPlayer = true;
         });
     }
 });
 module.controller('ViewVideoController', function($scope, VideoEntity, $routeParams, SharedData) {
-    $scope.video = {};
-    $scope.playerInfo = {
-        video_url: null,
-        width: '100%',
-        height: '100%'
-    };
-    $scope.view = view;
 
     init();
 
-    function view(data) {
-        console.log(data);
-        $scope.playerInfo.video_url = $scope.video.video_url;
-        $scope.playerInfo.begin = data.begin;
-        $scope.playerInfo.end = data.end;
-    }
-
     function init() {
         VideoEntity.view({id: $routeParams.id}, function(video) {
-            $scope.video = video;
+            $scope.$parent.video = video;
             $scope.playerInfo.video_url = video.video_url;
             SharedData.loadingState = 0;
         });
     }
 });
 module.controller('ExploreController', function($scope, TagEntity, VideoTagEntity, SharedData) {
-    $scope.view = view;
-    $scope.video = {
-        video_tags: []
-    };
-    $scope.playerInfo = {
-        id: null,
-        url: false,
-        begin: 0,
-        width: '100%',
-        height: '100%'
-    };
 
     init();
 
     function init() {
+        $scope.$parent.showVideoPlayer = true;
         loadVideoTags();
-    }
-
-    function view(data) {
-        //alert('view' + data);
-        console.log(data);
-        $scope.playerInfo = data;
     }
 
     function loadVideoTags() {
         VideoTagEntity.best({}, function(response) {
-            $scope.video.video_tags = response;
+            $scope.$parent.video.video_tags = response;
             SharedData.loadingState = 0;
         });
     }

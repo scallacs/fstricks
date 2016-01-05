@@ -6,8 +6,12 @@ var commonModule = angular.module('CommonModule', [
     'ui.bootstrap',
     'ui.slider',
     'ui.select',
-    'uiGmapgoogle-maps',
-    'ngRoute'], function($routeProvider, $locationProvider, $httpProvider) {
+    'djds4rce.angular-socialshare',
+    'ngRoute',
+    'satellizer'], function($routeProvider, $locationProvider, $httpProvider) {
+
+    //$locationProvider.html5Mode(true).hashPrefix('!');
+
     var interceptor = ['$location', '$rootScope', '$q', function($location, scope, $q) {
 
             function requestError(rejection) {
@@ -53,6 +57,20 @@ var commonModule = angular.module('CommonModule', [
     $httpProvider.interceptors.push(interceptor);
 });
 
+commonModule.config(function($authProvider) {
+
+    $authProvider.facebook({
+        clientId: 'Facebook App ID'
+    });
+
+    $authProvider.google({
+        clientId: 'Google Client ID'
+    });
+//    $authProvider.instagram({
+//        clientId: 'Instagram Client ID'
+//    });
+});
+
 commonModule.constant('YT_event', {
     STOP: 0,
     PLAY: 1,
@@ -66,11 +84,16 @@ commonModule.directive('youtube', function($window, YT_event) {
         scope: {playerVideo: '='},
         template: '<div></div>',
         link: function(scope, element, attrs, $rootScope) {
-            var tag = document.createElement('script');
-            tag.src = "https://www.youtube.com/iframe_api";
-            var firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
+            if ($('#YoutubeIFrameScript').length === 0) {
+                var tag = $('<script/>').attr({
+                    id: 'YoutubeIFrameScript',
+                    src: "https://www.youtube.com/iframe_api"
+                });
+                $('head').prepend(tag);
+            }
+            else {
+                $window.onYouTubeIframeAPIReady();
+            }
             var player;
 
             $window.onYouTubeIframeAPIReady = function() {
@@ -102,18 +125,21 @@ commonModule.directive('youtube', function($window, YT_event) {
                                 player.setSize(scope.width, scope.height);
 
                             });
-                            scope.$watch('playerVideo.video_url', function(newValue, oldValue) {
-
-                                if (newValue == oldValue) {
-                                    return;
+                            scope.$watch('playerVideo.video_url + playerVideo.begin + playerVideo.end', function(newValue, oldValue) {
+                                if (scope.playerVideo.video_url) {
+                                    var info = {
+                                        videoId: scope.playerVideo.video_url,
+                                        startSeconds: scope.playerVideo.begin,
+                                        endSeconds: scope.playerVideo.end
+                                    };
+                                    console.log(info);
+                                    player.loadVideoById(info);
+                                    player.playVideo();
                                 }
-
-                                player.cueVideoById({
-                                    videoId: scope.playerVideo.video_url,
-                                    startSeconds: scope.playerVideo.begin,
-                                    endSeconds: scope.playerVideo.end
-                                });
-
+                                else {
+                                    console.log(scope.playerVideo.begin);
+                                    player.seekTo(scope.playerVideo.begin);
+                                }
                             });
 
                             scope.$on(YT_event.STOP, function() {
@@ -128,21 +154,9 @@ commonModule.directive('youtube', function($window, YT_event) {
                             scope.$on(YT_event.PAUSE, function() {
                                 player.pauseVideo();
                             });
-
                             scope.$watch('playerVideo.currentTime', function(newVal) {
                                 player.seekTo(newVal);
                             });
-                            scope.$watch('playerVideo.begin + playerVideo.end', function(newValue, oldValue) {
-                                player.cueVideoById({
-                                    videoId: scope.playerVideo.video_url,
-                                    startSeconds: scope.playerVideo.begin,
-                                    endSeconds: scope.playerVideo.end
-                                });
-                                player.playVideo();
-                            });
-//                            scope.$watch('playerVideo.begin', function(newValue, oldValue) {
-//                                player.seekTo(scope.playerVideo.begin);
-//                            });
                         },
                         onStateChange: function(event) {
 
@@ -410,6 +424,16 @@ commonModule.factory('UserEntity', function($resource) {
         }
     });
 });
+commonModule.factory('ErrorReportEntity', function($resource) {
+    var url = WEBROOT_FULL + '/Users/:action/:id.json';
+    return $resource(url, {id: '@id', action: '@action'}, {
+        post: {
+            method: 'PORT',
+            params: {action: 'add'},
+            isArray: false
+        }
+    });
+});
 commonModule.factory('VideoEntity', function($resource) {
     var url = WEBROOT_FULL + '/Videos/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
@@ -615,7 +639,7 @@ commonModule.factory('VideoProviderEntity', function() {
     };
 });
 
-commonModule.directive('loading', function($http, SharedData){
+commonModule.directive('loading', function($http, SharedData) {
     return {
         restrict: 'A',
         link: function(scope, elm, attrs) {

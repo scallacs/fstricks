@@ -82,8 +82,15 @@ class VideoTagsController extends AppController {
      * @return void Redirects on successful add, renders view otherwise.
      */
     public function best() {
+        $dayNumber = 10;
         $videoTag = $this->VideoTags->findAndJoin()
-                ->order(['VideoTags.created DESC'])
+                ->order([
+                    'VideoTags.count_points DESC',
+                    'VideoTags.created DESC'
+                ])
+                ->where([
+                    'VideoTags.created > timestampadd(day, -'.$dayNumber.' , now())'
+                ])
                 ->limit(200);
         ResultMessage::overwriteData($videoTag);
         ResultMessage::setWrapper(false);

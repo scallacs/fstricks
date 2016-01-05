@@ -3891,7 +3891,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav > li > a:hover,
 .nav > li > a:focus {
   text-decoration: none;
-  background-color: #eeeeee;
+  background-color: #333;
 }
 .nav > li.disabled > a {
   color: #777777;
@@ -3906,7 +3906,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav .open > a,
 .nav .open > a:hover,
 .nav .open > a:focus {
-  background-color: #eeeeee;
+  background-color: #222;
   border-color: #388EA2;
 }
 .nav .nav-divider {
@@ -4402,7 +4402,7 @@ header > .navbar-default {
   padding: 0px;
 }
 header .navbar-collapse{
-  background-color: whitesmoke;
+  /* background-color: whitesmoke; */
   z-index: 9999;
 }
 .navbar-default .navbar-brand {

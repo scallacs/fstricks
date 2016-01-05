@@ -1,0 +1,42 @@
+
+<div class="modal-header">
+    <h2 class="modal-title">Report an error for this tag</h2>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" name="formReportError" novalidate>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Error type</label>
+            <div class="col-sm-9">
+                <select ng-model="errorReport.error_type_id" 
+                        class="form-control"
+                        ng-options="errorType.id as errorType.name for errorType in errorTypes"
+                        required
+                        >
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Leave a comment</label>
+            <div class="col-sm-9">
+                <textarea
+                    ng-model="errorReport.comment"
+                    class="form-control"
+                    optional>
+                </textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox"> I accept the term and conditions
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group clearfix text-center">
+            <input type="submit" class="btn btn-primary" value="Send" ng-click="addReportError(errorReport)"/>
+        </div>
+    </form>
+</div>

@@ -5,13 +5,7 @@
     <div class="panel panel-default">
         <div class="panel-body">
 
-            <form class="form" ng-if="playerInfo.video_url">
-
-                <youtube   
-                    player-video="playerInfo"
-                    height="player.height" 
-                    width="player.height" ></youtube> 
-
+            <form class="form">
                 <div class="form-group">
                     <div
                         ng-model="videoTag.range"
@@ -164,11 +158,6 @@
         </div>
 
     </div>
-
-    <div ng-repeat="videoTag in video.video_tags">
-        <div ng-include="'html/VideoTags/item.html'"></div>
-    </div>
-
 
     PlayerInfo:  {{playerInfo}}
 

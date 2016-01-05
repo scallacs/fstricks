@@ -1,5 +1,12 @@
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
+
+.navbar-form .input-group span.ui-select-toggle.form-control {
+	width: 100% !important;
+}
+.navbar-form .input-group input.ui-select-search.form-control{
+	width: 100% !important;	
+}
 #overlay {
     position: absolute;
     left: 0;
@@ -70,7 +77,7 @@ header .navbar-header ul{
 	margin-bottom: 0px;
 }
 header .header-title{
-	/* color: white; */
+	color: white;
 	font-size: 2em;
 	padding-right: 10px;
 	font-weight: bold;
@@ -87,8 +94,9 @@ header .header-title{
 
 .navbar{
     margin-bottom: 0px;
+	background: #080808;
+	border-bottom: 1px solid #222;
 }
-
 header .navbar-header{
 	/* height: 50px; */
 }
@@ -109,17 +117,18 @@ header .navbar-header{
 /* ------------------------------------------------------------ */
 .item{
     position: relative;
-    margin-bottom: 4px;
+    background: #111;
+    border-bottom: 1px solid #333;
 }
 .item.active{
-    background: #333;
+    background: #000;
 }
 .item-heading{
 	padding: 8px 5px;
 	text-align: center;
 }
 .item-title{
-    font-size: 1.5em;
+    font-size: 1.15em;
 }
 .item-body{
 	padding: 10px 5px;
@@ -129,12 +138,12 @@ header .navbar-header{
 	font-size: 0.9em;
 	color: #999;
 }
-.item .item-heading a{
+.item .item-heading > a{
 	color: white;
 	font-weight: bold;
 	font-size: 1.3em;
 }
-.item .item-heading a:hover{
+.item .item-heading > a:hover{
 	text-decoration:none;
 	color: #eee;
 }
@@ -142,17 +151,23 @@ header .navbar-header{
     font-size: 1.5em;
     font-weight: bold;
     padding: 10px;
+    color : #ddd;
+}
+.item .btn{
+	background: #080808;
+	border: none;
 }
 .item-sport span{
-    background: white;
     border-radius: 40px;
     padding: 10px;
     
 }
 .item-category{
     text-transform: capitalize;
-    font-size: 1.3em;
+    font-size: 0.9em;
     text-align: center;
+    color: #777;
+    padding-top: 10px;
 }
 .btn-play{
 	width: 90%;
@@ -186,6 +201,13 @@ header .navbar-header{
 .bg-colored{
 	background: #F3C212;
 	color: white;
+}
+.bg-secondary{
+    background: #5cb85c;
+    border-color: #4cae4c;
+}
+.text-secondary{
+    color: #5cb85c;
 }
 .text-big{
 	font-size: 1.5em;

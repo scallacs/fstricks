@@ -50,34 +50,39 @@
             </ul>
             <div class="col-sm-4 pull-left">
                 <form class="navbar-form" role="search">
-                    <div class="input-group">
+                    <div  class="input-group">
                         <ui-select 
+                            id="SearchBar"
                             ng-model="search.tag" 
                             theme="bootstrap"
-                            reset-search-input="false">
-                            <ui-select-match placeholder="Trick name">
-                                {{$select.selected.sport_name}},{{$select.selected.category_name}}: {{$select.selected.name}} 
+                            reset-search-input="false"
+                            style="min-width:300px;">
+                            <ui-select-match placeholder="Trick name" style="text-transform: capitalize;" >
+                                <span class="text-bold">{{$select.selected.name}} </span>
+                                <span class="text-muted">
+                                    ({{$select.selected.sport_name}} - {{$select.selected.category_name}})
+                                </span>
                             </ui-select-match>
                             <ui-select-choices
                                 repeat="tag in searchTags"
                                 refresh="refreshSearchedTags($select.search)"
                                 refresh-delay="500">
                                 <div class="clearfix">
-                                    <div class="col-xs-2">
-                                        <span class="">{{tag.sport_name}}</span> <br/>
-                                        <span class="">{{tag.category_name}}</span>
+                                    <div class="col-xs-10" style="text-transform: capitalize;"  >
+                                        <span class="text-bold">{{tag.name}}</span> <br/>
+                                        <span class="text-muted">{{tag.sport_name}}</span> - 
+                                        <span class="text-muted">{{tag.category_name}}</span>
                                     </div>
-                                    <div class="col-xs-8">
-                                        <span class="">{{tag.name}}</span>
-                                    </div>
-                                    <div class="col-xs-2">
-                                        <span>{{tag.count_ref}}</span>
+                                    <div class="col-xs-2" style="overflow: hidden;" >
+                                        <span class="text-big">{{tag.count_ref}}</span>
                                     </div>
                                 </div>
                             </ui-select-choices>
                         </ui-select>
-                        <div class="input-group-btn">
-                            <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                        <div class="input-group-btn" style="width:1%">
+                            <button class="btn btn-default" type="submit">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
                         </div>
                     </div>
                 </form>
