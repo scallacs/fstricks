@@ -13,7 +13,7 @@
         "friendsofcake/crud": "~4.0",
         "admad/cakephp-jwt-auth": "~2.0",
         "willdurand/geocoder" : "~3.0",
-		"holt59/cakephp3-bootstrap-helpers" : "dev-master"
+		"holt59/cakephp3-bootstrap-helpers" : "^3.0"
     },
     "require-dev": {
         "psy/psysh": "@stable",

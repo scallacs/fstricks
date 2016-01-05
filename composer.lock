@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "59d50d9d172bda82631dd62008eb2999",
-    "content-hash": "4537866f3451c0fcf41bb551337eee77",
+    "hash": "ac5b6d87eeed79b4779b32eb126bd7fc",
+    "content-hash": "9e253f1fa46be6725f8301f73cd415e8",
     "packages": [
         {
             "name": "admad/cakephp-jwt-auth",
@@ -17,7 +17,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ADmad/cakephp-jwt-auth/zipball/69243d55c59d1fc7a43be0b88aa620a3efb7a1c1",
+                "url": "https://api.github.com/repos/ADmad/cakephp-jwt-auth/zipball/e7411e7b12eb269d395fea0db9d92d91e757b0f0",
                 "reference": "69243d55c59d1fc7a43be0b88aa620a3efb7a1c1",
                 "shasum": ""
             },
@@ -532,16 +532,16 @@
         },
         {
             "name": "holt59/cakephp3-bootstrap-helpers",
-            "version": "dev-master",
+            "version": "v3.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Holt59/cakephp3-bootstrap-helpers.git",
-                "reference": "c1efda00bdd750cdc5b30db0a527d9b71bc7bdbc"
+                "reference": "a1bae2506c7feee9c9c5d5081b20898c99502399"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Holt59/cakephp3-bootstrap-helpers/zipball/c1efda00bdd750cdc5b30db0a527d9b71bc7bdbc",
-                "reference": "c1efda00bdd750cdc5b30db0a527d9b71bc7bdbc",
+                "url": "https://api.github.com/repos/Holt59/cakephp3-bootstrap-helpers/zipball/a1bae2506c7feee9c9c5d5081b20898c99502399",
+                "reference": "a1bae2506c7feee9c9c5d5081b20898c99502399",
                 "shasum": ""
             },
             "require": {
@@ -565,7 +565,7 @@
                 "bootstrap",
                 "cakephp"
             ],
-            "time": "2015-11-11 20:19:16"
+            "time": "2015-09-09 20:02:16"
         },
         {
             "name": "igorw/get-in",
@@ -2643,7 +2643,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "holt59/cakephp3-bootstrap-helpers": 20,
         "psy/psysh": 0
     },
     "prefer-stable": true,
