@@ -76,17 +76,91 @@ class VideoTagsControllerTest extends IntegrationTestCase
         
         $this->logUser();
         $data = [
-            'video_url' => $video->id,
+            'video_id' => $video->id,
             'tag_id' => 1,
             'begin' => 2,
-            'end' => 3
+            'end' => 10
         ];
         $this->post('/VideoTags/add.json', $data);
         
         $this->assertResponseOk();
         $result = json_decode($this->_response->body());
-        debug($result);
         $this->assertTrue($result->success);
+    }
+
+    /**
+     * Test add invalid time range
+     *
+     * @return void
+     */
+    public function testAddInvalidTimeRange() {
+        // Add a video:
+        $videoTable = \Cake\ORM\TableRegistry::get('Videos');
+        $data = [
+            'provider_id' => 'youtube',
+            'video_url' => 'xb5LHuZGXi0',
+        ];
+        $videoTable->deleteAll($data);
+        $video = $videoTable->newEntity($data);
+        $video->user_id = 1;
+        if (!$videoTable->save($video)){
+            debug($video);
+            $this->assertTrue(false);
+        }
+        
+        $this->logUser();
+        
+        $data = [
+            'video_id' => $video->id,
+            'tag_id' => 1,
+            'begin' => 2,
+            'end' => 2 + (\App\Model\Table\VideoTagsTable::MIN_TAG_DURATION - 1)
+        ];
+        $this->post('/VideoTags/add.json', $data);
+        
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body());
+//       debug($result);
+        $this->assertFalse($result->success);
+        $this->assertNotEmpty($result->validationErrors->VideoTags->end);
+        
+        
+        $data = [
+            'video_id' => $video->id,
+            'tag_id' => 1,
+            'begin' => 2,
+            'end' => 2 + \App\Model\Table\VideoTagsTable::MAX_TAG_DURATION + 1
+        ];
+        $this->post('/VideoTags/add.json', $data);
+        $result = json_decode($this->_response->body());
+//        debug($result);
+        $this->assertFalse($result->success);
+        $this->assertNotEmpty($result->validationErrors->VideoTags->end);
+        
+    }
+    
+    
+    /**
+     * Test adding a similar tag 
+     *
+     * @return void
+     */
+    public function testAddSimilarTag() {
+        // Add a video:
+        $videoTable = \Cake\ORM\TableRegistry::get('Videos');
+        $data = [
+            'provider_id' => 'youtube',
+            'video_url' => 'xb5LHuZGXi0',
+        ];
+        $videoTable->deleteAll($data);
+        $video = $videoTable->newEntity($data);
+        $video->user_id = 1;
+        if (!$videoTable->save($video)){
+            debug($video);
+            $this->assertTrue(false);
+        }
+        
+        $this->logUser();
     }
 
 }

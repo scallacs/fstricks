@@ -24,10 +24,10 @@ class VideoTagsController extends AppController {
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
     public function view($id = null){
-        $videoTag = $this->VideoTags->get($id, [
-            'contain' => ['Videos'],
-            'conditions' => ['status' => 'validated']
-        ]);
+        $videoTag = $this->VideoTags->findAndJoin()
+                ->where(['VideoTags.id' => $id])
+                ->limit(1)
+                ->first();
         ResultMessage::overwriteData($videoTag);
         ResultMessage::setWrapper(false);
     }

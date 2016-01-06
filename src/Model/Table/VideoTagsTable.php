@@ -18,18 +18,16 @@ use Cake\Validation\Validator;
  */
 class VideoTagsTable extends Table {
 
-    static $selectFieldsView = [
-        'tag_slug' => 'Tags.slug',
-        'tag_name' => 'Tags.name',
-        'count_points' => 'VideoTags.count_points',
-        'id' => 'VideoTags.id',
-        'video_id' => 'VideoTags.video_id',
-        'provider_id' => 'Videos.provider_id',
-        'video_url' => 'Videos.video_url',
-        'begin' => 'VideoTags.begin',
-        'end' => 'VideoTags.end'
-    ];
+    const MIN_TAG_DURATION = 3;
+    const MAX_TAG_DURATION = 30;
     
+    /**
+     * Find data for tags and do joins 
+     * 
+     * @param query | null $queryVideo 
+     * @param query | null $queryTags
+     * @return query
+     */
     public function findAndJoin($queryVideo = null, $queryTags = null){
         if ($queryVideo === null){
             $queryVideo = function($q){
@@ -112,6 +110,18 @@ class VideoTagsTable extends Table {
                 ->notEmpty('begin');
 
         $validator
+                ->add('end', 'custom', [
+                    'rule' => function ($value, $context) {
+                        if (isset($context['data']['begin'])){
+                            $duration = $value - $context['data']['begin'];
+                            return $duration >= self::MIN_TAG_DURATION &&
+                                    $duration <= self::MAX_TAG_DURATION;
+                        }
+                        return true;
+                    },
+                    'message' => 'The trick duration must be between '. self::MIN_TAG_DURATION . ' and '. 
+                            self::MAX_TAG_DURATION.' seconds.'
+                ])
                 ->add('end', 'valid', ['rule' => 'decimal'])
                 ->requirePresence('end', 'create')
                 ->notEmpty('end');

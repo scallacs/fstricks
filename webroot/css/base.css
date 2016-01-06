@@ -1,3 +1,7 @@
+body{
+    overflow-x: hidden;
+}
+
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
 
@@ -6,6 +10,9 @@
 }
 .navbar-form .input-group input.ui-select-search.form-control{
 	width: 100% !important;	
+}
+.nopadding{
+    padding: 0px;
 }
 #overlay {
     position: absolute;
@@ -37,6 +44,9 @@ body{
 	background: #000;
         width: 100%;
         height: 100%; 
+}
+.section-separator{
+    text-align: center;
 }
 .section-separator{
 	background: #6BB6C8;
@@ -205,6 +215,7 @@ header .navbar-header{
 .bg-secondary{
     background: #5cb85c;
     border-color: #4cae4c;
+    color: white;
 }
 .text-secondary{
     color: #5cb85c;
@@ -214,4 +225,33 @@ header .navbar-header{
 }
 .text-bold{
 	font-weight: bold;
+}
+
+
+
+
+
+.player-container{
+  margin: 0 auto;
+}
+
+.iframe-wrapper{
+  width: 100%;
+  position: relative;
+}
+
+.res-4by3{
+  padding-bottom: 75%;
+}
+
+.res-16by9{
+  padding-bottom: 56.25%;
+}
+
+.iframe-wrapper iframe{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }

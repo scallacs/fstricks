@@ -31,6 +31,7 @@ class VideosController extends AppController {
                 'VideoTags' => function($q){
                     return $q
                             ->where(['VideoTags.status' => 'validated'])
+                            ->order(['VideoTags.begin ASC'])
                             ->contain(['Tags' => function($q){
                             return $q
                                     ->select([

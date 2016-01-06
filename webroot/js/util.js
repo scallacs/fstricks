@@ -80,27 +80,6 @@ function isScrolledIntoView(elem) {
     return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
 }
 
-function loadAjax(url, selector, successCallback) {
-    $.EasyAjaxAction({
-        url: url,
-        dataType: 'html',
-        target: selector,
-        loader: selector,
-        onSuccess: successCallback
-    });
-}
-function loadJsonBackground(url, actionSuccess) {
-    $.EasyAjaxAction({
-        url: url,
-        dataType: 'json',
-        onSuccess: function(serverData, element) {
-            actionSuccess(serverData, element);
-        },
-        autoFeedback: false,
-        loader: false
-    });
-}
-
 function convertToSlug(Text) {
     return Text
             .toLowerCase()
@@ -145,6 +124,7 @@ String.prototype.toHHMMSS = function() {
 
 var youtubePlayerId = null;
 var youtubePlayer = null;
+
 function loadYoutubeIframeAPI(){
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
@@ -161,4 +141,8 @@ function generateUUID() {
         return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
     return uuid;
+}
+
+function isdefined(x) {
+    return typeof (x) != 'undefined' && x != null;
 }

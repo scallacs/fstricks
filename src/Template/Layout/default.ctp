@@ -21,15 +21,12 @@
             <div id="content" class="">
                 <div class="row"  ng-show="showVideoPlayer" >
 
-                    <div class="col-md-8 nopadding">
-                        <div>
-                            <youtube   
-                                player-video="playerInfo"
-                                height="player.height" 
-                                width="player.height" ></youtube> 
+                    <div class="col-md-8 nopadding player-container">
+                        <div class="iframe-wrapper res-16by9">   
+                            <youtube player-video="playerInfo" frameborder="0"></youtube> 
                         </div>
                     </div>
-                    <div class="col-md-4 nopadding" >
+                    <div class="col-md-4 nopadding" ng-if="showVideoPlayer">
                         <div ng-repeat="videoTag in video.video_tags">
                             <div ng-include="'html/VideoTags/item.html'"></div>
                         </div>

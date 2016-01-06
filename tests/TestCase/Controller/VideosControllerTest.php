@@ -148,7 +148,6 @@ class VideosControllerTest extends IntegrationTestCase {
         $this->post("/Videos/addOrGet.json", $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body());
-        debug($result->message);
         $this->assertTrue($result->success);
     }
     
@@ -158,7 +157,7 @@ class VideosControllerTest extends IntegrationTestCase {
         $this->assertResponseOk();
         
         $result = json_decode($this->_response->body());
-        debug($result);
+//        debug($result);
         
         $this->assertTrue(isset($result->id));
     }
@@ -169,7 +168,7 @@ class VideosControllerTest extends IntegrationTestCase {
         $this->assertResponseOk();
         
         $result = json_decode($this->_response->body());
-        debug($result);
+//        debug($result);
         
         $this->assertTrue(isset($result->id));
     }

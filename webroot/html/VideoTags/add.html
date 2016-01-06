@@ -1,12 +1,15 @@
-<div class="section bg-colored">
-    <h2>Adding tags</h2>
+<div class="section bg-secondary">
+    <h3 class="container">Create new video tags</h3>
 </div>
 <div class="container">
-    <div class="panel panel-default">
-        <div class="panel-body">
-
-            <form class="form">
+    <div class="bg-light padding-sm">
+            <form class="form" name="formAddVideoTag">
                 <div class="form-group">
+                    <div class="player-container">
+                        <div class="iframe-wrapper res-16by9">   
+                            <youtube player-video="playerInfo" frameborder="0"></youtube> 
+                        </div>
+                    </div>
                     <div
                         ng-model="videoTag.range"
                         ui-slider="{range: true}" 
@@ -16,32 +19,53 @@
                         use-decimals
                         >
                     </div>
-                    <div class="text-center padding-sm">
-                        <button class="btn btn-default" ng-click="videoTag.range[0] = getCurrentPlayerTime()">
-                            [ start now
-                        </button>
-                        <button class="btn btn-default" ng-click="playRange(videoTag.range)">
-                            <span class="glyphicon glyphicon-play"></span> Preview
-                        </button>
-                        <button class="btn btn-default" ng-click="videoTag.range[1] = getCurrentPlayerTime()">
-                            end now ] 
-                        </button>
-                        
-                        <button class="btn btn-default" ng-click="addStartRange(-slider.step)">
-                            <span class="glyphicon glyphicon-arrow-left"></span>
-                        </button>
-                        <span class="" >{{videoTag.range[0]| secondsToHours}}</span> 
-                        <button class="btn btn-default" ng-click="addStartRange(slider.step)">
-                            <span class="glyphicon glyphicon-arrow-right"></span>
-                        </button>
-                        to 
-                        <button class="btn btn-default"  ng-click="addEndRange(-slider.step)">
-                            <span class="glyphicon glyphicon-arrow-left"></span>
-                        </button>
-                        <span class="">{{videoTag.range[1]| secondsToHours}}</span>
-                        <button class="btn btn-default" ng-click="addEndRange(slider.step)">
-                            <span class="glyphicon glyphicon-arrow-right"></span>
-                        </button>
+
+                    <div class="form-group clearfix margin-top">
+                        <div class="col-sm-5">
+
+                            <label class="control-label">Start time</label>
+                            <div>
+                                <div class="btn-group">
+                                    <button class="btn btn-default" ng-click="addStartRange(-slider.step)">
+                                        <span class="glyphicon glyphicon-minus"></span>
+                                    </button>
+                                    <span class="btn btn-default disabled" >{{videoTag.range[0]| secondsToHours}}</span> 
+                                    <button class="btn btn-default" ng-click="addStartRange(slider.step)">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </button>
+                                </div>
+                                <button class="btn btn-default" ng-click="setStartRangeNow()">
+                                    Start Now
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-5">
+                            <label class="control-label">End time</label>
+                            <div>
+                                <div class="btn-group">
+                                    <button class="btn btn-default"  ng-click="addEndRange(-slider.step)">
+                                        <span class="glyphicon glyphicon-minus"></span>
+                                    </button>
+                                    <span class="btn btn-default disabled">{{videoTag.range[1]| secondsToHours}}</span>
+                                    <button class="btn btn-default" ng-click="addEndRange(slider.step)">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </button>
+                                </div>
+                                <button class="btn btn-default" ng-click="setEndRangeNow()">
+                                    End Now  
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <label class="control-label">Duration</label>
+                            <div>
+                                <span class="text-info btn btn-info disabled">
+                                    {{videoTag.range[1] - videoTag.range[0]| number:1}} seconds
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -69,13 +93,14 @@
                     </div>
                     -->
                     <div class="clearfix">
-                        <div class="col-xs-5">
-
+                        <div class="col-sm-5 form-group">
+                            <label class="control-label">Sport and category</label>
                             <ui-select 
                                 ng-model="videoTag.category" 
                                 theme="bootstrap"
                                 ng-disabled="disabled"
-                                reset-search-input="false">
+                                reset-search-input="false"
+                                required>
                                 <ui-select-match placeholder="Sport and category">{{$select.selected.sport_name}} {{$select.selected.category_name}} </ui-select-match>
                                 <ui-select-choices
                                     repeat="category in suggestedCategories"
@@ -92,12 +117,14 @@
                                 </ui-select-choices>
                             </ui-select>
                         </div>
-                        <div class="col-xs-7">
+                        <div class="col-sm-7 form-group ">
+                            <label class="control-label">Trick</label>
                             <ui-select 
                                 ng-model="videoTag.tag" 
                                 theme="bootstrap"
                                 ng-disabled="!videoTag.category"
-                                reset-search-input="false">
+                                reset-search-input="false"
+                                required>
                                 <ui-select-match placeholder="Trick name">
                                     {{$select.selected.name}} 
                                 </ui-select-match>
@@ -135,34 +162,42 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="bg-info padding-sm form-group">
-                    <h4>Be sure to...</h4>
-                    <p class="text-info">
-                        Check that your tag is valid before submiting it. 
-                        It must be from the begining to the end of the trick. <br/>
-                        Do not add useless foutage, be consise. <br/>
-                        Be sure to add a valid trick name too. 
-                    </p>
-                </div>
 
                 <div class="text-center form-group">
-                    <button type="button" class="btn btn-primary" ng-click="addVideoTag(videoTag, videoTag.range)">Add</button>
+                    <button class="btn btn-success" ng-click="playRange(videoTag.range)">
+                        <span class="glyphicon glyphicon-play"></span> Preview
+                    </button>
+                    <button type="button"
+                            ng-attr="{ 'disabled': !formAddVideoTag.$valid }"
+                            class="btn btn-primary" 
+                            ng-click="addVideoTag(videoTag, videoTag.range)">
+                        <span class="glyphicon glyphicon-plus-sign"></span> 
+                        Post
+                    </button>
                 </div>
 
             </form>
 
+            <div class="bg-info padding-sm form-group">                    
+                <p class="text-info">
+                    <span class="text-big">Be sure to </span> check that your tag is valid before submiting it. 
+                    It must be from the begining to the end of the trick. <br/>
+                    Do not add useless foutage, be consise. <br/>
+                    Be sure to add a valid trick name too. 
+                </p>
+            </div>
 
+            <div ng-repeat="videoTag in video.video_tags">
+                <div ng-include="'html/VideoTags/item.html'"></div>
+            </div>
 
-
-        </div>
 
     </div>
 
     PlayerInfo:  {{playerInfo}}
 
     Video: {{video}}
-    
-    
+
+
     VideoTag: {videoTag}}
 </div>

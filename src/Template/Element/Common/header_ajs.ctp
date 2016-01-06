@@ -24,7 +24,10 @@
             <ul class="nav navbar-nav ">
                 <li class="dropdown">
                     <a data-toggle="dropdown" ng-if="currentSport">{{currentSport.name}} <b class="caret"></b></a>
-                    <a data-toggle="dropdown" ng-if="!currentSport">All sports <b class="caret"></b></a>
+                    <a data-toggle="dropdown" ng-if="!currentSport">
+                        <span class="glyphicon glyphicon-list"></span> 
+                         Sports <!--<b class="caret"></b>-->
+                    </a>
                     <ul class="dropdown-menu">
                         <li><a href="#/" ng-click="setCurrentSport(null)">All sports</a></li>
                         <li ng-repeat="sport in sports">
@@ -39,10 +42,10 @@
                 <li ng-if="!isAuthed"><a href="#/users/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
                 <li ng-if="isAuthed" class="dropdown">
                     <a class="" data-toggle="dropdown" >
-                        <span class="glyphicon glyphicon-cog"></span>
+                        <span class="glyphicon glyphicon-cog"></span> Settings
                     </a>
                     <ul class="dropdown-menu">
-                        <li> <a href="#/users/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                        <!--<li> <a href="#/users/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>-->
                         <li> <a href="#/users/settings"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
                         <li ng-click="logout()"><a href="#/users/login"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                     </ul>

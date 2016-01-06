@@ -51,8 +51,7 @@
                 <div class="padding-sm">
                     <ul class="list-unstyled">
                         <li ng-repeat="video in recentVideos">
-                            <span class="text-bold">{{video.provider_id}}</span>:
-                            <a ng-href="#/tag/add/{{video.id}}">{{video.video_url}}</a>
+                            <div ng-include="'html/Videos/item.html'"></div>
                         </li>
                     </ul>
                 </div>

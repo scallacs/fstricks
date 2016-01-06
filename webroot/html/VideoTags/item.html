@@ -1,7 +1,7 @@
 
 <div class="item bg-primary" ng-class="$parent.playerInfo.id === videoTag.id ? 'active' : ''" style="text-transform: capitalize;">
     <div class="item-heading">
-        <div class="row clickable" ng-click="view(videoTag)">
+        <div class="row clickable">
             <div class="col-xs-3">
                 <div class="item-sport">
                     <span>
@@ -11,23 +11,30 @@
                     </span>
                 </div>
             </div>
-            <div class="col-xs-7">
-                <span class="item-title">
+            <div class="col-xs-7"  ng-click="view(videoTag)">
+                <p class="item-title">
                     {{videoTag.tag_name}}
-                </span>
+                </p>
+                
+                <p class="text-muted">
+                    {{videoTag.end - videoTag.begin | number:1 }} seconds from {{videoTag.begin | secondsToHours}}
+                </p>
             </div>
             <div class="col-xs-2">
                 <div class="dropdown">
                     <button class="btn btn-primary" ng-click="share(videoTag)" title="Share" data-toggle="dropdown">
                         <span class="glyphicon glyphicon-share"></span> 
                     </button>
-                    <ul class="dropdown-menu nav-stacked nav-pills dropdown-menu-right">
+                    <ul class="dropdown-menu dropdown-menu-right">
                         <li>
-                            <a facebook 
-                               class="facebookShare" 
-                               data-url='http://google.com'>
-                            </a>
+                            <div facebook class="facebookShare" 
+                                 data-title='{{title}}'
+                                 data-picture-url='http://i.imgur.com/WACv9Cl.jpg' 
+                                 ng-url="{{WEBROOT_FULL}}/view/{{videoTag.slug}}"
+                                 data-shares='shares'>{{ shares}}
+                            </div>
                         </li>
+                        <!--
                         <li>
                             <a twitter 
                                data-count='horizontal' 
@@ -35,6 +42,7 @@
                                data-size="medium" 
                                data-text='{{text}}' >Twitter</a>
                         </li>
+                        -->
                     </ul>
                 </div>
             </div>

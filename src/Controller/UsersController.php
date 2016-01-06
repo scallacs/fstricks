@@ -84,7 +84,9 @@ class UsersController extends AppController {
             $userId = $this->Auth->user('id');
         }
         ResultMessage::setData('id', $userId);
-        ResultMessage::setData('username', $this->Auth->user('username'));
+        ResultMessage::setData('username', $this->Auth->user('email'));
+        ResultMessage::setData('email', $this->Auth->user('email'));
+        ResultMessage::setData('created', $this->Auth->user('created'));
         ResultMessage::setData('token', \Firebase\JWT\JWT::encode([
                     'id' => $userId,
                     'sub' => $userId,

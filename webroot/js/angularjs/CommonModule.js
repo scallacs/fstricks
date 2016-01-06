@@ -57,36 +57,41 @@ var commonModule = angular.module('CommonModule', [
     $httpProvider.interceptors.push(interceptor);
 });
 
-commonModule.config(function($authProvider) {
-
+commonModule.config(function($authProvider, API_KEYS) {
     $authProvider.facebook({
-        clientId: 'Facebook App ID'
+        clientId: API_KEYS.facebook
     });
-
-    $authProvider.google({
-        clientId: 'Google Client ID'
-    });
+//    $authProvider.google({
+//        clientId: 'Google Client ID'
+//    });
 //    $authProvider.instagram({
 //        clientId: 'Instagram Client ID'
 //    });
 });
-
-commonModule.constant('YT_event', {
-    STOP: 0,
-    PLAY: 1,
-    PAUSE: 2,
-    STATUS_CHANGE: 3
+commonModule.run(function($FB, API_KEYS, $rootScope) {
+    $FB.init(API_KEYS.facebook);
+    $rootScope.WEBROOT_FULL = WEBROOT_FULL;
 });
-
+commonModule.constant('YT_event', {
+    PAUSED: 0,
+    PLAYING: 1,
+    STOPED: 2,
+    UNSARTED: 3,
+    STATUS_CHANGE: 4,
+});
+commonModule.constant('API_KEYS', {
+    facebook: '1536208040040285'
+});
 commonModule.directive('youtube', function($window, YT_event) {
+    var myTimer;
+    
     return {
         restrict: "E",
         scope: {playerVideo: '='},
         template: '<div></div>',
         link: function(scope, element, attrs, $rootScope) {
-            if ($('#YoutubeIFrameScript').length === 0) {
+            if (typeof YT === 'undefined') {
                 var tag = $('<script/>').attr({
-                    id: 'YoutubeIFrameScript',
                     src: "https://www.youtube.com/iframe_api"
                 });
                 $('head').prepend(tag);
@@ -107,23 +112,24 @@ commonModule.directive('youtube', function($window, YT_event) {
                         color: "white",
                         iv_load_policy: 3,
                         showinfo: 1,
-                        controls: 1
+                        controls: 1,
+                        rel: 0,
+                        loop: 1
                     },
-                    height: element.parent().width() * 9 / 16,
-                    width: scope.playerVideo.width,
+                    height: scope.playerVideo.height,
+                    width: scope.playerVideo.width, //scope.playerVideo.width,
                     videoId: scope.playerVideo.video_url,
                     events: {
                         onReady: function() {
 
                             scope.$emit('onYouTubePlayerReady', player);
 
-                            scope.$watch('height + width', function(newValue, oldValue) {
+                            scope.$watch('playerVideo.width', function(newValue, oldValue) {
                                 if (newValue == oldValue) {
                                     return;
                                 }
-
-                                player.setSize(scope.width, scope.height);
-
+                                //alert('new width'); 
+                                //player.setSize(scope.playerVideo.width, element.parent().parent().width() * 9 / 16);
                             });
                             scope.$watch('playerVideo.video_url + playerVideo.begin + playerVideo.end', function(newValue, oldValue) {
                                 if (scope.playerVideo.video_url) {
@@ -142,44 +148,66 @@ commonModule.directive('youtube', function($window, YT_event) {
                                 }
                             });
 
-                            scope.$on(YT_event.STOP, function() {
+                            scope.$on(YT_event.STOPED, function() {
                                 player.seekTo(0);
                                 player.stopVideo();
                             });
 
-                            scope.$on(YT_event.PLAY, function() {
+                            scope.$on(YT_event.PLAYING, function() {
                                 player.playVideo();
                             });
 
-                            scope.$on(YT_event.PAUSE, function() {
+                            scope.$on(YT_event.PAUSED, function() {
                                 player.pauseVideo();
                             });
-                            scope.$watch('playerVideo.currentTime', function(newVal) {
+
+                            scope.$on(YT_event.STATUS_CHANGE, function(event, youtubeEvent) {
+
+                                switch (youtubeEvent) {
+                                    case YT.PlayerState.ENDED:
+                                        player.seekTo(scope.playerVideo.begin);
+                                        break;
+                                }
+                            });
+
+                            scope.$watch('playerVideo.goToTime', function(newVal, oldVal) {
                                 player.seekTo(newVal);
+                                //scope.playerVideo.goToTime = null;
                             });
                         },
                         onStateChange: function(event) {
 
                             var message = {
                                 event: YT_event.STATUS_CHANGE,
-                                data: ""
+                                data: event.data
                             };
+//
+//                            switch (event.data) {
+//                                case YT.PlayerState.PLAYING:
+//                                    message.event = YT_event.PLAYING;
+//                                    break;
+//                                case YT.PlayerState.STOPED:
+//                                    message.event = YT_event.ENDED;
+//                                    break;
+//                                case YT.PlayerState.UNSTARTED:
+//                                    message.event = YT_event.UNSTARTED;
+//                                    break;
+//                                case YT.PlayerState.PAUSED:
+//                                    message.event = YT_event.PAUSED;
+//                                    break;
+//                            }
 
-                            switch (event.data) {
-                                case YT.PlayerState.PLAYING:
-                                    message.data = "PLAYING";
-                                    break;
-                                case YT.PlayerState.ENDED:
-                                    message.data = "ENDED";
-                                    break;
-                                case YT.PlayerState.UNSTARTED:
-                                    message.data = "NOT PLAYING";
-                                    break;
-                                case YT.PlayerState.PAUSED:
-                                    message.data = "PAUSED";
-                                    break;
+                            if (event.data === YT.PlayerState.PLAYING) { // playing
+                                myTimer = setInterval(function() {
+                                    scope.$apply(function() {
+                                        scope.playerVideo.currentTime = player.getCurrentTime();
+                                    });
+                                }, 100); // 100 means repeat in 100 ms
                             }
-
+                            else { // not playing
+                                clearInterval(myTimer);
+                            }
+                            
                             scope.$apply(function() {
                                 scope.$emit(message.event, message.data);
                             });
@@ -333,14 +361,14 @@ commonModule.filter('secondsToHours', function() {
         var seconds = seconds % 3600 % 60;
         var decades = parseInt((seconds - parseInt(seconds)) * 10);
         seconds = parseInt(seconds);
-        return (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds
+        return (hours > 0 ? (hours < 10 ? '0' : '') + hours + ':' : '')+ (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds
                 + '.' + decades;
     }
 });
 
 commonModule.filter('timeago', function() {
     return function(timestamp) {
-        return jQuery.timeago(timestamp * 1000);
+        return jQuery.timeago(timestamp);
     };
 });
 commonModule.factory('SharedData', function() {
@@ -497,11 +525,7 @@ commonModule.factory('AuthenticationService', function($http, $cookies, $rootSco
 
     function setCredentials(data) {
         $rootScope.globals = {
-            currentUser: {
-                username: data.email,
-                token: data.token,
-                id: data.id
-            }
+            currentUser: data
         };
 
         $http.defaults.headers.common['Authorization'] = 'Bearer ' + data.token; // jshint ignore:line

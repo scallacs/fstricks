@@ -34,6 +34,10 @@ module.config(function($routeProvider, $controllerProvider) {
                 templateUrl: HTML_FOLDER + 'VideoTags/add.html',
                 controller: 'AddVideoTagController'
             })
+            .when('/trick/:id', {
+                templateUrl: HTML_FOLDER + 'Videos/view.html',
+                controller: 'ViewVideoTagController'
+            })
             .when('/video/add', {
                 templateUrl: HTML_FOLDER + 'Videos/add.html',
                 controller: 'AddVideoController'
@@ -42,9 +46,13 @@ module.config(function($routeProvider, $controllerProvider) {
                 templateUrl: HTML_FOLDER + 'VideoTags/add.html',
                 controller: 'AddVideoTagController'
             })
-            .when('/users/profile', {
-                templateUrl: HTML_FOLDER + 'Users/profile.html',
-                controller: 'UserController'
+//            .when('/users/profile', {
+//                templateUrl: HTML_FOLDER + 'Users/profile.html',
+//                controller: 'UserController'
+//            })
+            .when('/users/settings', {
+                templateUrl: HTML_FOLDER + 'Users/settings.html',
+                controller: 'SettingsController'
             })
             .when('/users/login', {
                 templateUrl: HTML_FOLDER + 'Users/login.html',
@@ -75,8 +83,6 @@ module.controller('MainController', function($scope, AuthenticationService,
     $scope.setCurrentSport = setCurrentSport;
 
     $scope.player = {
-        width: '100%',
-        height: null,
         provider: 'youtube'
     };
     $scope.playerInfo = {
@@ -85,6 +91,7 @@ module.controller('MainController', function($scope, AuthenticationService,
         video_url: null,
         duration: 0,
         currentTime: 0,
+        goToTime: null,
         width: '100%',
         height: '100%',
         id: null
@@ -97,7 +104,12 @@ module.controller('MainController', function($scope, AuthenticationService,
     $scope.view = view;
     $scope.openReportErrorModal = openReportErrorModal;
 
+    $scope.getCurrentPlayerTime = function() {
+        return 0;
+    };
+
     init();
+
 
     function init() {
 
@@ -111,6 +123,11 @@ module.controller('MainController', function($scope, AuthenticationService,
             $scope.isViewLoading = false;
         });
 
+        $scope.$on('onYouTubePlayerReady', function(event, player) {
+            $scope.getCurrentPlayerTime = function() {
+                return player.getCurrentTime();
+            };
+        });
         // loading sports 
         SportEntity.index({}, function(response) {
             SharedData.sports = response;
@@ -148,7 +165,7 @@ module.controller('MainController', function($scope, AuthenticationService,
             $scope.feedback = ViewFeedback.auto(response);
             $scope.isAuthed = isLogin;
             if (isLogin) {
-                $location.path("/users/profile");
+                $location.path("/users/settings");
                 return;
             }
         });
@@ -204,22 +221,36 @@ module.controller('MainController', function($scope, AuthenticationService,
 });
 
 
-module.controller('ModalReportErrorController', function ($scope, $uibModalInstance, videoTag, ErrorReportEntity) {
+module.controller('ModalReportErrorController', function($scope, $uibModalInstance, videoTag, ErrorReportEntity) {
     $scope.videoTag = videoTag;
 
-    $scope.ok = function () {
-      $uibModalInstance.close($scope.videoTag);
+    $scope.ok = function() {
+        $uibModalInstance.close($scope.videoTag);
     };
 
-    $scope.cancel = function () {
-      $uibModalInstance.dismiss('cancel');
+    $scope.cancel = function() {
+        $uibModalInstance.dismiss('cancel');
     };
-    
-    $scope.addReportError = function(errorReport){
-        ErrorReportEntity.post(errorReport, function(response){
+
+    $scope.addReportError = function(errorReport) {
+        ErrorReportEntity.post(errorReport, function(response) {
             console.log(response);
             alert('ok');
         });
+    }
+});
+
+
+module.controller('SettingsController', function($scope, SharedData, AuthenticationService) {
+    $scope.data = {};
+
+    init();
+
+    function init() {
+        $scope.$parent.showVideoPlayer = false;
+        SharedData.loadingState = 0;
+        $scope.data.user = AuthenticationService.getCurrentUser();
+        console.log($scope.data);
     }
 });
 
@@ -345,9 +376,9 @@ module.controller('UserLoginController', function($scope, $auth, SharedData) {
     // create a message to display in our view
 
     $scope.authenticate = function(provider) {
-      $auth.authenticate(provider);
+        $auth.authenticate(provider);
     };
-    
+
     function init() {
         SharedData.loadingState = 0;
     }
@@ -447,15 +478,37 @@ module.controller('VideoTagPointsController', function($scope, VideoTagPointEnti
         });
     }
 });
+module.controller('ViewVideoTagController', function($scope, VideoTagEntity, $routeParams, SharedData) {
+
+    init();
+
+    function init() {
+        VideoTagEntity.view({id: $routeParams.id}, function(tag) {
+            $scope.$parent.video.video_url = tag.video_url;
+            $scope.$parent.video.video_tags = [tag];
+            $scope.$parent.playerInfo = tag;
+            SharedData.loadingState = 0;
+            $scope.$parent.showVideoPlayer = true;
+        });
+    }
+});
 module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $filter,
         $routeParams, SportEntity, VideoEntity, VideoTagEntity, ViewFeedback, TagEntity, SharedData) {
+
+    var MIN_TAG_DURATION = 3;
+    var MAX_TAG_DURATION = 30;
+
     $scope.slider = {
         step: 0.5
+    };
+    $scope.videoTag = {
+        begin: 0,
+        end: 0,
+        range: [0, MIN_TAG_DURATION]
     };
     $scope.addVideoTag = addVideoTag;
     $scope.removeVideoTag = removeVideoTag;
     $scope.sports = SharedData.sports;
-    $scope.videoTag = {};
     $scope.suggestedTags = [];
     $scope.suggestedCategories = [];
     $scope.refreshSuggestedTags = refreshSuggestedTags;
@@ -463,25 +516,25 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     $scope.playRange = playRange;
     $scope.addStartRange = addStartRange;
     $scope.addEndRange = addEndRange;
-    $scope.getCurrentPlayerTime = function() {
-        return 0;
-    };
+    $scope.setStartRangeNow = setStartRangeNow;
+    $scope.setEndRangeNow = setEndRangeNow;
+    $scope.video = {video_tags: []};
+    $scope.playerInfo = {begin: 0, end: 0};
     init();
 
     function init() {
         $scope.$parent.showVideoPlayer = false;
 
         VideoEntity.view({id: $routeParams.id}, function(response) {
-            $scope.$parent.video = response;
-            $scope.$parent.playerInfo.video_url = response.video_url;
+            $scope.video = response;
+            $scope.playerInfo.video_url = response.video_url;
 
-            YoutubeVideoInfo.duration($scope.$parent.playerInfo.video_url, function(duration) {
-                $scope.$parent.playerInfo.duration = duration;
-                $scope.$parent.videoTag.range = [0, duration];
+            YoutubeVideoInfo.duration($scope.playerInfo.video_url, function(duration) {
+                $scope.playerInfo.duration = duration;
+                $scope.videoTag.range = [0, duration];
             });
 
             SharedData.loadingState = 0;
-            $scope.$parent.showVideoPlayer = true;
         });
 
         $scope.$watch('videoTag.range', function(newValue, oldValue) {
@@ -489,16 +542,13 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
                 return;
             }
             if (oldValue == undefined || newValue[0] !== oldValue[0]) {
-                $scope.playerInfo.currentTime = newValue[0];
+                $scope.playerInfo.goToTime = newValue[0];
+                adaptRange(newValue[0], newValue, 0);
             }
             else if (newValue[1] !== oldValue[1]) {
-                $scope.playerInfo.currentTime = newValue[1];
+                $scope.playerInfo.goToTime = newValue[1];
+                adaptRange(newValue[1], newValue, 1);
             }
-        });
-        $scope.$on('onYouTubePlayerReady', function(event, player) {
-            $scope.getCurrentPlayerTime = function() {
-                return player.getCurrentTime();
-            };
         });
 
     }
@@ -531,18 +581,9 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
             });
         }
     }
-    ;
+
     function addVideoTag(data) {
-        console.log(data);
-        var videoTag = {
-            name: data.tag.name,
-            begin: data.range[0],
-            end: data.range[1],
-            category: data.category_id,
-            sport: data.sport_id,
-            removable: true,
-            count_points: 0
-        };
+
         var postData = {
             video_id: $routeParams.id,
             begin: data.range[0],
@@ -557,7 +598,16 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
 
         VideoTagEntity.add(postData, function(response) {
             if (response.success) {
-                $scope.$parent.video.video_tags.push(videoTag);
+
+                var videoTag = angular.extend({
+                    tag_name: data.tag.name,
+                    begin: data.range[0],
+                    end: data.range[1],
+                    removable: true,
+                    count_points: 0
+                }, data.category);
+
+                $scope.video.video_tags.push(videoTag);
             }
             else {
                 ViewFeedback.failure(response);
@@ -567,7 +617,7 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     ;
 
     function removeVideoTag(index) {
-        $scope.$parent.video.video_tags.splice(index, 1);
+        $scope.video.video_tags.splice(index, 1);
     }
 
     function playRange(range) {
@@ -580,6 +630,33 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     }
     function addEndRange(value) {
         $scope.videoTag.range = [$scope.videoTag.range[0], $scope.videoTag.range[1] + value];
+    }
+    function setStartRangeNow() {
+        adaptRange($scope.$parent.getCurrentPlayerTime(), $scope.videoTag.range, 0);
+    }
+    function setEndRangeNow() {
+        adaptRange($scope.$parent.getCurrentPlayerTime(), $scope.videoTag.range, 1);
+    }
+
+    function adaptRange(newValue, data, i) {
+
+        if (i === 1 && newValue <= MIN_TAG_DURATION) {
+            $scope.videoTag.range[1] = MIN_TAG_DURATION;
+            $scope.videoTag.range[0] = 0;
+            return;
+        }
+        else if (i === 0 && ($scope.playerInfo.duration - newValue) <= MIN_TAG_DURATION) {
+            $scope.videoTag.range[0] = $scope.playerInfo.duration - MIN_TAG_DURATION;
+            $scope.videoTag.range[1] = $scope.playerInfo.duration;
+            return;
+        }
+
+        $scope.videoTag.range[i] = newValue;
+        if (Math.abs($scope.videoTag.range[i] - $scope.videoTag.range[1 - i]) < MIN_TAG_DURATION) {
+            $scope.videoTag.range[1 - i] = $scope.videoTag.range[i] + (i === 1 ? -MIN_TAG_DURATION : MIN_TAG_DURATION);
+        } else if (Math.abs($scope.videoTag.range[i] - $scope.videoTag.range[1 - i]) >= MAX_TAG_DURATION) {
+            $scope.videoTag.range[1 - i] = $scope.videoTag.range[i] + (i === 1 ? -MAX_TAG_DURATION : MAX_TAG_DURATION);
+        }
     }
 });
 module.controller('ViewSportController', function($scope, $filter, SportEntity, $routeParams, SharedData) {
@@ -625,10 +702,12 @@ module.controller('ViewVideoController', function($scope, VideoEntity, $routePar
     init();
 
     function init() {
+        $scope.$parent.showVideoPlayer = false;
         VideoEntity.view({id: $routeParams.id}, function(video) {
             $scope.$parent.video = video;
             $scope.playerInfo.video_url = video.video_url;
             SharedData.loadingState = 0;
+            $scope.$parent.showVideoPlayer = true;
         });
     }
 });

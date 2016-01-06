@@ -1,0 +1,23 @@
+
+<div class="section bg-secondary">
+    <h2 class="container"> {{data.user.username}} </h2>
+</div>
+<div class="container">
+
+    <div class="bg-light padding-sm">
+        <p class="padding-sm">
+            Account created {{data.user.created | timeago}}.
+        </p>
+        
+        <hr/>
+        
+        <button class="btn btn-warning">
+            <span class="glyphicon glyphicon-warning-sign"></span> 
+            Delete my account
+        </button>
+        <p class="text-info padding-sm">
+            Be carefull, this action cannot be undone! 
+        </p>
+    </div>
+
+</div>
