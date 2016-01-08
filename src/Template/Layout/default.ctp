@@ -18,7 +18,7 @@
                     <img id="loading" src="http://bit.ly/pMtW1K" />
                 </div>
             </div>
-            <div id="content" class="container-fluid">
+            <div id="content">
                 <div ng-if="showVideoPlayer" >
 
                     <div class="col-sm-8 nopadding player-container"  style="position:fixed">

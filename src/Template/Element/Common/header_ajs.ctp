@@ -41,7 +41,8 @@
                     </li>
                     <!--<li><a href="#/"><span class="glyphicon glyphicon-map-marker"></span> Best of</a></li>-->
                     <li><a href="#/video/add"><span class="glyphicon glyphicon-plus-sign"></span> Create </a></li>
-                    <li ng-if="!isAuthed"><a href="#/users/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                    <li ng-if="!isAuthed"><a href="#/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                    <li ng-if="!isAuthed"><a href="#/signup">Sign up</a></li>
                     <li ng-if="isAuthed" class="dropdown">
                         <a class="" data-toggle="dropdown" >
                             <span class="glyphicon glyphicon-cog"></span> Settings

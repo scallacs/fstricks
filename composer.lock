@@ -4,9 +4,47 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ac5b6d87eeed79b4779b32eb126bd7fc",
-    "content-hash": "9e253f1fa46be6725f8301f73cd415e8",
+    "hash": "3fb8b3046966ea35d0b10c215e6fd21b",
+    "content-hash": "3ffec1c4e2dfb1447d1b2f23da740dcc",
     "packages": [
+        {
+            "name": "admad/cakephp-hybridauth",
+            "version": "3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ADmad/CakePHP-HybridAuth.git",
+                "reference": "a5b2790887a690db87cf9bae850d66d2e95c76de"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ADmad/CakePHP-HybridAuth/zipball/a5b2790887a690db87cf9bae850d66d2e95c76de",
+                "reference": "a5b2790887a690db87cf9bae850d66d2e95c76de",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/cakephp": "~3.0",
+                "hybridauth/hybridauth": "2.4.*"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "ADmad\\HybridAuth\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A CakePHP plugin for using the HybridAuth social sign on library",
+            "homepage": "http://github.com/ADmad/CakePHP-HybridAuth",
+            "keywords": [
+                "cakephp",
+                "hybridauth",
+                "multi provider",
+                "social signon"
+            ],
+            "time": "2015-08-02 17:16:50"
+        },
         {
             "name": "admad/cakephp-jwt-auth",
             "version": "dev-master",
@@ -566,6 +604,58 @@
                 "cakephp"
             ],
             "time": "2015-09-09 20:02:16"
+        },
+        {
+            "name": "hybridauth/hybridauth",
+            "version": "v2.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hybridauth/hybridauth.git",
+                "reference": "89e4dc3da3a55cf3ffb00a428c247ff2166dc7ca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hybridauth/hybridauth/zipball/89e4dc3da3a55cf3ffb00a428c247ff2166dc7ca",
+                "reference": "89e4dc3da3a55cf3ffb00a428c247ff2166dc7ca",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Hybrid": "hybridauth/"
+                },
+                "classmap": [
+                    "hybridauth/Hybrid"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "(MIT or GPL-3.0+)"
+            ],
+            "authors": [
+                {
+                    "name": "Miled",
+                    "email": "hybridauth@gmail.com"
+                }
+            ],
+            "description": "Open source social sign on PHP library.",
+            "homepage": "http://hybridauth.sourceforge.net",
+            "keywords": [
+                "OpenId",
+                "facebook",
+                "google",
+                "hybridauth",
+                "login",
+                "oauth",
+                "social",
+                "twitter",
+                "yahoo"
+            ],
+            "time": "2015-04-12 01:39:53"
         },
         {
             "name": "igorw/get-in",

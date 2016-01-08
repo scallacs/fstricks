@@ -58,7 +58,8 @@ class VideoTagsTable extends Table {
                     'end' => 'VideoTags.end'
                     ])
                 ->where([
-                    'status' => 'validated',
+                    'VideoTags.status' => 'validated',
+                    'VideoTags.count_points >=' => 'VideoTags.count_report_errors'
                 ])
                 ->contain([
                     'Videos' => $queryVideo, 

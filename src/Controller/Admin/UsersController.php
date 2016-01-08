@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Controller\AppController;
 use App\Lib\ResultMessage;
 use Cake\Utility\Security;
+use Cake\Network\Http\Client;
 
 /**
  * Users Controller
@@ -20,6 +21,7 @@ class UsersController extends AppController {
     /* ========================================================================
      * VIEWS
      */
+
     /**
      * Index method
      *
@@ -31,9 +33,10 @@ class UsersController extends AppController {
     }
 
     // ??
-    public function history(){
+    public function history() {
         
     }
+
     /**
      * View method
      *
@@ -48,8 +51,7 @@ class UsersController extends AppController {
         $this->set('user', $user);
         $this->set('_serialize', ['user']);
     }
-    
-    
+
     /* ========================================================================
      * API
      */
@@ -57,33 +59,31 @@ class UsersController extends AppController {
     /**
      * Save user tags
      */
-    
-    public function profile($id = null){
-        if ($id === null){
+    public function profile($id = null) {
+        if ($id === null) {
             $id = $this->Auth->user('username');
         }
-        
-        if (!$this->request->is('json')){
+
+        if (!$this->request->is('json')) {
             $this->set('profileId', $id);
-        }
-        else{            
+        } else {
             $data = $this->Users->find('all')
                     ->where(['Users.username' => $id])
-                    ->contain(['Spots' => function($q){
-                        return $q   ->limit(1)
-                                    ->where(['Spots.anonymous' => 0])
-                                    ->contain(['Tags'])
-                                    ->order(['Spots.created DESC']);
-                    }]);
+                    ->contain(['Spots' => function($q) {
+            return $q->limit(1)
+                    ->where(['Spots.anonymous' => 0])
+                    ->contain(['Tags'])
+                    ->order(['Spots.created DESC']);
+        }]);
             ResultMessage::overwriteData($data->first());
             ResultMessage::setWrapper(false);
         }
     }
-    
-    
+
     /* ========================================================================
      * OTHERS
      */
+
     // For JSON LOGIN
     protected function setToken($userId = null) {
         if ($userId === null) {
@@ -96,17 +96,16 @@ class UsersController extends AppController {
                     'sub' => $userId,
                     'exp' => time() + 604800,
                     'iat' => time()
-                    ], Security::salt())
+                        ], Security::salt())
         );
     }
-
 
     /**
      * Add method
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
-    public function add() {
+    public function signup() {
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->data);
@@ -130,7 +129,7 @@ class UsersController extends AppController {
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
     public function edit() {
-        if (!$this->request->is('post')){
+        if (!$this->request->is('post')) {
             return;
         }
         $id = $this->Auth->user('id');
@@ -180,7 +179,6 @@ class UsersController extends AppController {
             ResultMessage::setMessage('Cannot get your data.', false);
         }
     }
-    
 
     public function logout() {
         ResultMessage::setMessage('You are now logged out.', true);
@@ -190,9 +188,69 @@ class UsersController extends AppController {
     /**
      * If the user can access, it means that he has the right token
      */
-    public function check_token(){
+    public function check_token() {
         ResultMessage::setSuccess();
     }
-    
-    
+
 }
+
+
+
+
+    /**
+     * TODO
+     * Login with Facebook.
+    public function facebook() {
+        $client = new Client();
+        $data = $this->request->data;
+        $params = [
+            'code' => $data['code'],
+            'client_id' => $data['clientId'],
+            'redirect_uri' => $data['redirectUri'],
+            'client_secret' => Configure::read('Facebook.key')
+        ];
+        // Step 1. Exchange authorization code for access token.
+        $accessTokenResponse = $client->get('https://graph.facebook.com/v2.5/oauth/access_token', [
+            'q' => $params
+        ]);
+        $accessToken = json_decode($accessTokenResponse->getBody(), true);
+        // Step 2. Retrieve profile information about the current user.
+        $profileResponse = $client->get('https://graph.facebook.com/v2.5/me', [
+            'q' => $accessToken
+        ]);
+        $profile = json_decode($profileResponse->getBody(), true);
+        // Step 3a. If user is already signed in then link accounts.
+        if ($request->header('Authorization')) {
+            $socialsAccounts = \Cake\ORM\TableRegistry::get('SocialAccounts');
+            $user = $socialsAccounts->find('all')
+                    ->where([
+                        'SocialAccounts.provider_id', 'facebook', 
+                        'SocialAccounts.id' => $profile['id']]);
+            
+            if ($user->first()) {
+                ResultMessage::setMessage('There is already a Facebook account that belongs to you', false);
+                return;
+            }
+            $token = explode(' ', $request->header('Authorization'))[1];
+            // TODO 
+            $payload = (array) \Firebase\JWT\JWT::decode($token, Config::get('app.token_secret'), array('HS256'));
+            $user = User::find($payload['sub']);
+            $user->facebook = $profile['id'];
+            $user->displayName = $user->displayName ? : $profile['name'];
+            $user->save();
+            return response()->json(['token' => $this->createToken($user)]);
+        }
+        // Step 3b. Create a new user account or return an existing one.
+        else {
+            $user = User::where('facebook', '=', $profile['id']);
+            if ($user->first()) {
+                return response()->json(['token' => $this->createToken($user->first())]);
+            }
+            $user = new User;
+            $user->facebook = $profile['id'];
+            $user->displayName = $profile['name'];
+            $user->save();
+            return response()->json(['token' => $this->createToken($user)]);
+        }
+    }
+     */

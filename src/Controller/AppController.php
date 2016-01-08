@@ -62,7 +62,8 @@ class AppController extends Controller {
                     'fields' => [
                         'id' => 'id'
                     ]
-                ]
+                ],
+                'ADmad/HybridAuth.HybridAuth' => []
             ],
             'loginAction' => [
                 'controller' => 'Users',

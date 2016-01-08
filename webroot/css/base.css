@@ -3,7 +3,7 @@ body{
     padding-top: 50px; 
 }
 
-h3{
+h3, h2, h1{
     padding: 10px 10px;
 }
 .ajax-loader img{
@@ -276,3 +276,18 @@ header .navbar-header{
 .media-heading{
     font-size: 1.2em;
 }
+
+
+
+.btn-facebook {
+  color: #fff;
+  background-color: #3b5998;
+  border: 1px solid #335190;
+}
+
+.btn-facebook:hover,
+.btn-facebook:focus {
+  color: #fff;
+  background-color: #294786;
+}
+

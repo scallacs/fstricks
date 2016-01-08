@@ -1,4 +1,4 @@
-<div class="container" style="max-width: 500px">
+<!--<div class="container" style="max-width: 500px">
     <div class="panel panel-default margin-top">
         <div class="panel-heading">
             <h2 class="panel-title">Login</h2>
@@ -30,27 +30,73 @@
                     </div>
                 </div>
 
-                <div ng-include="'html/Elements/feedback.html'"></div>
+                <div ng-if="subscribe">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Confirm password</label>
+                        <div class="col-sm-9">
+                            <input type="password" 
+                                   class="form-control" 
+                                   ng-model="user.passwordConfirm">
+                        </div>
+                    </div>
+                </div>
 
                 <div class="padding-sm text-center">
                     <input type="submit" 
-                           class="btn btn-primary btn-full-size" 
+                           class="btn btn-primary" 
                            value="Log in"
                            />
+
+                    <button class="btn btn-success" type="button" ng-click="subscribe = true">subscribe</button>
                 </div>
             </form>  
 
             <hr/>
             <ul class="list-unstyled text-center">
                 <li>
-                    <button class="btn btn-primary" ng-click="authenticate('facebook')">Sign in with Facebook</button>
-                </li>
-                <!--<button class="btn btn-primary"  ng-click="authenticate('google')">Sign in with Google</button>
-                <button class="btn btn-primary"  ng-click="authenticate('instagram')">Sign in with Instagram</button>
-                <button class="btn btn-primary"  ng-click="authenticate('twitter')">Sign in with Twitter</button>-->
+                    <button class="btn btn-primary btn-lg" ng-click="authenticate('facebook')">Sign in with Facebook</button>
+                </li>s
             </ul>
         </div>
 
     </div>
 
+</div>
+
+<div class="section bg-secondary">
+    <div class="container">
+        <h3 class="text-center">Log in</h3>
+    </div>
+</div>
+-->
+<div class="container margin-top">
+    <div class="row">
+        <div class="center-form panel"  style="max-width: 500px;margin: auto;">
+            <div class="panel-body" >
+                <form method="post" ng-submit="login(user)" name="loginForm">
+                    <div class="form-group has-feedback">
+                        <input class="form-control input-lg" type="text" name="email" ng-model="user.email" placeholder="Email" required autofocus>
+                        <span class="ion-at form-control-feedback"></span>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <input class="form-control input-lg" type="password" name="password" ng-model="user.password" placeholder="Password" required>
+                        <span class="ion-key form-control-feedback"></span>
+                    </div>
+                    
+                    <div mc-messages></div>
+                    
+                    <button type="submit" ng-disabled="loginForm.$invalid" class="btn btn-lg  btn-block btn-success">Log in</button>
+                    <br/>
+                    <p class="text-center text-muted">
+                        <small>Don't have an account yet? <a href="#/signup">Sign up</a></small>
+                    </p>
+                </form>
+
+                <hr/>
+                <button class="btn btn-block btn-facebook btn-lg" ng-click="authenticate('facebook')">
+                    <i class="ion-social-facebook"></i> Sign in with Facebook
+                </button>
+            </div>
+        </div>
+    </div>
 </div>

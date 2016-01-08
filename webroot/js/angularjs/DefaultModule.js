@@ -62,6 +62,10 @@ module.config(function($routeProvider, $controllerProvider) {
                 templateUrl: HTML_FOLDER + 'Users/login.html',
                 controller: 'UserLoginController'
             })
+            .when('/signup', {
+                templateUrl: HTML_FOLDER + 'Users/signup.html',
+                controller: 'SignupController'
+            })
             .when('/users/profile/:username', {
                 templateUrl: HTML_FOLDER + 'Users/profile.html',
                 controller: 'UserController'
@@ -131,9 +135,9 @@ module.controller('MainController', function($scope, AuthenticationService,
                 return player.getCurrentTime();
             };
         });
-        
-        $scope.$on('showVideoPlayer', function (newVal){
-            if (newVal === false){
+
+        $scope.$on('showVideoPlayer', function(newVal) {
+            if (newVal === false) {
                 resetVideo();
             }
         });
@@ -197,6 +201,8 @@ module.controller('MainController', function($scope, AuthenticationService,
         $location.path("/users/login");
         $scope.isAuthed = AuthenticationService.isAuthed();
     }
+
+
 
     function refreshSearchedTags(trick) {
         if (trick.length >= 2) {
@@ -413,18 +419,48 @@ module.controller('UserController',
 
         });
 
-module.controller('UserLoginController', function($scope, $auth, SharedData) {
+module.controller('UserLoginController', function($scope, $auth, SharedData, messageCenterService, $location) {
     // create a message to display in our view
     $scope.$parent.showVideoPlayer = false;
-    $scope.authenticate = function(provider) {
-        $auth.authenticate(provider);
-    };
+    $scope.authenticate = authenticate;
 
     function init() {
         SharedData.loadingState = 0;
     }
     init();
 
+
+    // NOT IN USE
+//    function login() {
+//        $auth.login($scope.user)
+//                .then(function() {
+//                    toastr.success('You have successfully signed in!');
+//                    $location.path('/');
+//                })
+//                .catch(function(error) {
+//                    toastr.error(error.data.message, error.status);
+//                });
+//    }
+    function authenticate(provider) {
+        messageCenterService.removeShown();
+        $auth.authenticate(provider)
+                .then(function() {
+                    messageCenterService.add('success', 'You have successfully signed in with ' + provider + '!');
+                    $location.path('/');
+                })
+                .catch(function(error) {
+                    if (error.error) {
+                        // Popup error - invalid redirect_uri, pressed cancel button, etc.
+                        messageCenterService.add('danger', error.error);
+                    } else if (error.data) {
+                        // HTTP response error from server
+                        messageCenterService.add('danger', error.message);
+                    } else {
+                        messageCenterService.add('danger', error);
+                    }
+                });
+    }
+    ;
 });
 module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $location,
         VideoEntity, VideoTagEntity, PlayerProviders, ViewFeedback, SharedData) {
@@ -448,6 +484,9 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
     }
 
     function add(data) {
+        if (YoutubeVideoInfo.extractVideoIdFromUrl(data.video_url)) {
+            data.video_url = YoutubeVideoInfo.extractVideoIdFromUrl(data.video_url);
+        }
         VideoEntity.addOrGet(data, function(response) {
             if (response.success) {
                 $location.path('/tag/add/' + response.data.id);
@@ -849,15 +888,13 @@ module.controller('SearchTagController', function($scope, TagEntity) {
     function onRemoveTag($item, $model) {
         $scope.$emit('onSelectedTagUpdated', $scope.selected);
     }
-    ;
+
 
     function loadSuggestedTags(term) {
         TagEntity.suggest({id: term}, function(results) {
             $scope.suggested = results;
         });
     }
-    ;
-
     function tagTransform(term) {
         return {
             isTag: true,
@@ -867,9 +904,72 @@ module.controller('SearchTagController', function($scope, TagEntity) {
         };
 
     }
-    ;
 
-})
-        ;
+});
 
 
+
+
+//toastr
+module.controller('SignupController', function($scope, $location, $auth, SharedData, messageCenterService) {
+
+    SharedData.loadingState = 0;
+
+    $scope.signup = function() {
+        $auth.signup($scope.user)
+                .then(function(response) {
+                    $auth.setToken(response);
+                    $location.path('/');
+
+                    messageCenterService.add('success', response.message);
+                    //toastr.info(response.message);
+                })
+                .catch(function(response) {
+                    //toastr.error(response.message);
+                    messageCenterService.add('danger', response.message);
+                });
+    };
+});
+
+module.controller('ProfileController', function($scope, $auth, toastr, Account) {
+    $scope.getProfile = function() {
+        Account.getProfile()
+                .then(function(response) {
+                    $scope.user = response.data;
+                })
+                .catch(function(response) {
+                    toastr.error(response.data.message, response.status);
+                });
+    };
+    $scope.updateProfile = function() {
+        Account.updateProfile($scope.user)
+                .then(function() {
+                    toastr.success('Profile has been updated');
+                })
+                .catch(function(response) {
+                    toastr.error(response.data.message, response.status);
+                });
+    };
+    $scope.link = function(provider) {
+        $auth.link(provider)
+                .then(function() {
+                    toastr.success('You have successfully linked a ' + provider + ' account');
+                    $scope.getProfile();
+                })
+                .catch(function(response) {
+                    toastr.error(response.data.message, response.status);
+                });
+    };
+    $scope.unlink = function(provider) {
+        $auth.unlink(provider)
+                .then(function() {
+                    toastr.info('You have unlinked a ' + provider + ' account');
+                    $scope.getProfile();
+                })
+                .catch(function(response) {
+                    toastr.error(response.data ? response.data.message : 'Could not unlink ' + provider + ' account', response.status);
+                });
+    };
+
+    $scope.getProfile();
+});

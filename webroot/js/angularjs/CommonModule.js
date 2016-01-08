@@ -259,6 +259,10 @@ commonModule.directive('ruleYoutubeVideoId', function($q, YoutubeVideoInfo) {
                 }
 
                 var def = $q.defer();
+                
+                if (YoutubeVideoInfo.extractVideoIdFromUrl(videoId)){
+                    videoId = YoutubeVideoInfo.extractVideoIdFromUrl(videoId);
+                }
 
                 YoutubeVideoInfo.exists(videoId, function(exists) {
                     // Mock a delayed response
@@ -560,8 +564,15 @@ commonModule.factory('YoutubeVideoInfo', function() {
         duration: duration,
         info: contentDetails,
         exists: exists,
-        data: data
+        data: data,
+        extractVideoIdFromUrl: extractVideoIdFromUrl
     };
+    
+    function extractVideoIdFromUrl(url){
+        var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+        var match = url.match(regExp);
+        return (match&&match[7].length==11)? match[7] : false;
+    }
 
     function getUrl(videoUrl) {
         return "https://www.googleapis.com/youtube/v3/videos?id=" + videoUrl +
@@ -842,4 +853,4 @@ commonModule.factory('PlayerProviders', function() {
             return data;
         }
     };
-})
+});
