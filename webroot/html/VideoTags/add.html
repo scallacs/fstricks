@@ -3,7 +3,9 @@
 </div>
 <div class="container">
     <div class="bg-light padding-sm">
-            <form class="form" name="formAddVideoTag">
+
+        <form class="form" name="formAddVideoTag">
+            <fieldset ng-disabled="isFormLoading">
                 <div class="form-group">
                     <div class="player-container">
                         <div class="iframe-wrapper res-16by9">   
@@ -81,7 +83,7 @@
                                 ng-required>
                         </select>
                     </div>
-
+    
                     <div class="col-xs-6">
                         <label for="FormSport">Category</label>
                         <select ng-model="videoTag.category_id" 
@@ -126,35 +128,34 @@
                                 reset-search-input="false"
                                 required>
                                 <ui-select-match placeholder="Trick name">
-                                    {{$select.selected.name}} 
+                                    <span class="text-bold">{{$select.selected.name}} </span>
+                                    <span class="text-muted" ng-if="$select.selected.sport_name">
+                                        ({{$select.selected.sport_name}} - {{$select.selected.category_name}})
+                                    </span>
                                 </ui-select-match>
                                 <ui-select-choices
                                     repeat="tag in suggestedTags"
                                     refresh="refreshSuggestedTags($select.search)"
                                     refresh-delay="500">
                                     <div class="clearfix" ng-if="!tag.is_new">
-                                        <div class="col-xs-2">
-                                            <span class="">{{tag.sport_name}}</span> <br/>
-                                            <span class="">{{tag.category_name}}</span>
+                                        <div class="col-xs-10" style="text-transform: capitalize;"  >
+                                            <span class="text-bold">{{tag.name}}</span> <br/>
+                                            <span class="text-muted">{{tag.sport_name}}</span> - 
+                                            <span class="text-muted">{{tag.category_name}}</span>
                                         </div>
-                                        <div class="col-xs-8">
-                                            <span class="">{{tag.name}}</span>
-                                        </div>
-                                        <div class="col-xs-2">
-                                            <span>{{tag.count_ref}}</span>
+                                        <div class="col-xs-2" style="overflow: hidden;" >
+                                            <span class="text-big">{{tag.count_ref}}</span>
                                         </div>
                                     </div>
 
                                     <div class="clearfix"  ng-if="tag.is_new">
-                                        <div class="col-xs-2">
-                                            <span class="">{{tag.sport_name}}</span> <br/>
-                                            <span class="">{{tag.category_name}}</span>
+                                        <div class="col-xs-10" style="text-transform: capitalize;"  >
+                                            <span class="text-bold">{{tag.name}}</span> <br/>
+                                            <span class="text-muted">{{tag.sport_name}}</span> - 
+                                            <span class="text-muted">{{tag.category_name}}</span>
                                         </div>
-                                        <div class="col-xs-8">
-                                            <span class="">{{tag.name}}</span>
-                                        </div>
-                                        <div class="col-xs-2">
-                                            <span>(New!)</span>
+                                        <div class="col-xs-2" style="overflow: hidden;" >
+                                            <span class="text-big text-warning">New!</span>
                                         </div>
                                     </div>
                                 </ui-select-choices>
@@ -163,33 +164,58 @@
                     </div>
                 </div>
 
+                <div ng-if="similarTags.length > 0" class=" form-group">
+                    <div class="alert alert-danger"> 
+                        <p class="">
+                            <span class="glyphicon glyphicon-warning-sign"></span> 
+                            You cannot create this tag, their a similar one that already exists. 
+                        </p>
+                    </div>
+                    <div ng-repeat="videoTag in similarTags">
+                        <div ng-include="'html/VideoTags/item.html'"></div>
+                    </div>
+
+                </div>
+                <div mc-messages></div>
                 <div class="text-center form-group">
-                    <button class="btn btn-success" ng-click="playRange(videoTag.range)">
+                    <button class="btn btn-success" ng-click="playRange(videoTag)">
                         <span class="glyphicon glyphicon-play"></span> Preview
                     </button>
                     <button type="button"
                             ng-attr="{ 'disabled': !formAddVideoTag.$valid }"
                             class="btn btn-primary" 
-                            ng-click="addVideoTag(videoTag, videoTag.range)">
+                            ng-click="addVideoTag(videoTag, videoTag.range)"
+                            ng-disabled="similarTags.length > 0"
+                            >
                         <span class="glyphicon glyphicon-plus-sign"></span> 
                         Post
+
+                        <div ng-loading-icon is-loading="isFormLoading"></div>
                     </button>
                 </div>
+            </fieldset>
 
-            </form>
+        </form>
 
-            <div class="bg-info padding-sm form-group">                    
-                <p class="text-info">
-                    <span class="text-big">Be sure to </span> check that your tag is valid before submiting it. 
-                    It must be from the begining to the end of the trick. <br/>
-                    Do not add useless foutage, be consise. <br/>
-                    Be sure to add a valid trick name too. 
-                </p>
-            </div>
+        <div class="alert alert-info">                    
+            <p class="text-info">
+                <span class="text-big">
+                    <span class="glyphicon glyphicon-info-sign"></span> 
+                    Be sure to 
+                </span> check that your tag is valid before submiting it. 
+                It must be from the begining to the end of the trick. <br/>
+                Do not add useless foutage, be consise. <br/>
+                Be sure to add a valid trick name too. 
+            </p>
+        </div>
 
+        <div class="" ng-if="video.video_tags.length > 0">
+            <hr/>
+            <h3> Existing tags </h3>
             <div ng-repeat="videoTag in video.video_tags">
                 <div ng-include="'html/VideoTags/item.html'"></div>
             </div>
+        </div>
 
 
     </div>

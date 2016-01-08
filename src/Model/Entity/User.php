@@ -26,10 +26,12 @@ class User extends Entity
         'email' => true
     ];
     
-    
-    protected function _setPassword($value){
+    public static function hashPassword($value){
         $hasher = new DefaultPasswordHasher();
-        return $hasher->hash($value);
+        return $hasher->hash($value);        
+    }
+    protected function _setPassword($value){
+        return self::hashPassword($value);
     }
     
     protected function _getAvatarUrl(){

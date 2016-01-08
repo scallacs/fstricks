@@ -69,7 +69,7 @@ module.config(function($routeProvider, $controllerProvider) {
 });
 
 module.controller('MainController', function($scope, AuthenticationService,
-        $location, ViewFeedback, SportEntity, SharedData, TagEntity, $uibModal) {
+        $location, ViewFeedback, SportEntity, SharedData, TagEntity, $uibModal, PlayerProviders, YT_event) {
     // create a message to display in our view
     $scope.isAuthed = AuthenticationService.isAuthed();
     $scope.searchTags = [];
@@ -81,10 +81,8 @@ module.controller('MainController', function($scope, AuthenticationService,
     $scope.login = login;
     $scope.logout = logout;
     $scope.setCurrentSport = setCurrentSport;
+    $scope.resetVideo = resetVideo;
 
-    $scope.player = {
-        provider: 'youtube'
-    };
     $scope.playerInfo = {
         begin: 0,
         end: 0,
@@ -96,9 +94,14 @@ module.controller('MainController', function($scope, AuthenticationService,
         height: '100%',
         id: null
     };
+
     $scope.video = {
         video_tags: []
     };
+    $scope.player = {
+        provider: PlayerProviders.list()[0].name
+    };
+
     $scope.showVideoPlayer = false;
 
     $scope.view = view;
@@ -128,6 +131,14 @@ module.controller('MainController', function($scope, AuthenticationService,
                 return player.getCurrentTime();
             };
         });
+        
+        $scope.$on('showVideoPlayer', function (newVal){
+            if (newVal === false){
+                resetVideo();
+            }
+        });
+
+        resetVideo();
         // loading sports 
         SportEntity.index({}, function(response) {
             SharedData.sports = response;
@@ -157,6 +168,16 @@ module.controller('MainController', function($scope, AuthenticationService,
                 $location.path('/view/' + newVal.sport_name + '/' + newVal.category_name + '/' + newVal.slug);
             });
         });
+    }
+
+    function resetVideo() {
+        $scope.$parent.$broadcast(YT_event.STOPED, {});
+
+        $scope.playerInfo.video_url = null;
+        $scope.playerInfo.id = 0;
+        $scope.playerInfo.begin = 0;
+        $scope.playerInfo.end = 0;
+        $scope.video.video_tags = [];
     }
 
     function login(data) {
@@ -202,8 +223,6 @@ module.controller('MainController', function($scope, AuthenticationService,
         }
         $scope.playerInfo.begin = data.begin;
         $scope.playerInfo.end = data.end;
-
-        //$scope.$emit(YT_event.LOAD, $scope.playerInfo);
     }
 
     function openReportErrorModal(videoTag) {
@@ -221,8 +240,9 @@ module.controller('MainController', function($scope, AuthenticationService,
 });
 
 
-module.controller('ModalReportErrorController', function($scope, $uibModalInstance, videoTag, ErrorReportEntity) {
+module.controller('ModalReportErrorController', function($scope, $uibModalInstance, ErrorReportEntity, ViewFeedback, videoTag) {
     $scope.videoTag = videoTag;
+    $scope.feedback = null;
 
     $scope.ok = function() {
         $uibModalInstance.close($scope.videoTag);
@@ -232,17 +252,25 @@ module.controller('ModalReportErrorController', function($scope, $uibModalInstan
         $uibModalInstance.dismiss('cancel');
     };
 
-    $scope.addReportError = function(errorReport) {
+    $scope.sendReport = function(errorReport) {
+        errorReport.video_tag_id = videoTag.id;
         ErrorReportEntity.post(errorReport, function(response) {
             console.log(response);
-            alert('ok');
+            if (response.success) {
+                $uibModalInstance.close($scope.videoTag);
+            }
+            else {
+                $scope.feedback = ViewFeedback.auto(response);
+            }
         });
-    }
+    };
 });
 
 
-module.controller('SettingsController', function($scope, SharedData, AuthenticationService) {
+module.controller('SettingsController', function($scope, SharedData, messageCenterService, AuthenticationService, UserEntity) {
     $scope.data = {};
+    $scope.password = '';
+    $scope.removeAccount = removeAccount;
 
     init();
 
@@ -251,6 +279,19 @@ module.controller('SettingsController', function($scope, SharedData, Authenticat
         SharedData.loadingState = 0;
         $scope.data.user = AuthenticationService.getCurrentUser();
         console.log($scope.data);
+    }
+
+    function removeAccount(password) {
+        messageCenterService.removeShown();
+        UserEntity.removeAccount({password: password}, function(response) {
+            if (response.success) {
+                messageCenterService.add('success', response.message, {status: messageCenterService.status.next});
+                $scope.$parent.logout();
+            }
+            else {
+                messageCenterService.add('warning', response.message, {status: messageCenterService.status.shown});
+            }
+        });
     }
 });
 
@@ -374,7 +415,7 @@ module.controller('UserController',
 
 module.controller('UserLoginController', function($scope, $auth, SharedData) {
     // create a message to display in our view
-
+    $scope.$parent.showVideoPlayer = false;
     $scope.authenticate = function(provider) {
         $auth.authenticate(provider);
     };
@@ -395,6 +436,7 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
     init();
 
     function init() {
+        $scope.feedback = null;
         $scope.$parent.showVideoPlayer = false;
         SharedData.loadingState = 0;
 
@@ -418,7 +460,19 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
 
     function loadRecentlyTagged() {
         VideoTagEntity.recentlyTagged({}, function(response) {
+            angular.forEach(response, function(video) {
+                YoutubeVideoInfo.data(video.video_url, function(data) {
+                    if (data.items.length > 0) {
+                        video.provider_data = data.items[0];
+                    }
+                    else {
+                        video.provider_data = null;
+                    }
+                });
+            });
+            console.log(response);
             $scope.recentVideos = response;
+
         });
     }
 
@@ -493,7 +547,8 @@ module.controller('ViewVideoTagController', function($scope, VideoTagEntity, $ro
     }
 });
 module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $filter,
-        $routeParams, SportEntity, VideoEntity, VideoTagEntity, ViewFeedback, TagEntity, SharedData) {
+        $routeParams, SportEntity, VideoEntity, VideoTagEntity, ViewFeedback, TagEntity, SharedData,
+        messageCenterService) {
 
     var MIN_TAG_DURATION = 3;
     var MAX_TAG_DURATION = 30;
@@ -504,8 +559,14 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     $scope.videoTag = {
         begin: 0,
         end: 0,
-        range: [0, MIN_TAG_DURATION]
+        range: [0, MIN_TAG_DURATION],
+        tag: {}
     };
+    $scope.video = {video_tags: []};
+    $scope.playerInfo = {begin: 0, end: 0};
+    $scope.similarTags = [];
+    $scope.isFormLoading = false;
+
     $scope.addVideoTag = addVideoTag;
     $scope.removeVideoTag = removeVideoTag;
     $scope.sports = SharedData.sports;
@@ -518,8 +579,7 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     $scope.addEndRange = addEndRange;
     $scope.setStartRangeNow = setStartRangeNow;
     $scope.setEndRangeNow = setEndRangeNow;
-    $scope.video = {video_tags: []};
-    $scope.playerInfo = {begin: 0, end: 0};
+    $scope.view = view;
     init();
 
     function init() {
@@ -531,7 +591,6 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
 
             YoutubeVideoInfo.duration($scope.playerInfo.video_url, function(duration) {
                 $scope.playerInfo.duration = duration;
-                $scope.videoTag.range = [0, duration];
             });
 
             SharedData.loadingState = 0;
@@ -549,6 +608,7 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
                 $scope.playerInfo.goToTime = newValue[1];
                 adaptRange(newValue[1], newValue, 1);
             }
+            $scope.similarTags = findSimilarTags($scope.videoTag.range);
         });
 
     }
@@ -584,6 +644,8 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
 
     function addVideoTag(data) {
 
+        $scope.isFormLoading = true;
+
         var postData = {
             video_id: $routeParams.id,
             begin: data.range[0],
@@ -597,7 +659,9 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
         }
 
         VideoTagEntity.add(postData, function(response) {
+            $scope.isFormLoading = false;
             if (response.success) {
+                messageCenterService.add('success', response.message);
 
                 var videoTag = angular.extend({
                     tag_name: data.tag.name,
@@ -610,7 +674,7 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
                 $scope.video.video_tags.push(videoTag);
             }
             else {
-                ViewFeedback.failure(response);
+                messageCenterService.add('warning', response.message, {status: messageCenterService.status.shown});
             }
         });
     }
@@ -620,9 +684,9 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
         $scope.video.video_tags.splice(index, 1);
     }
 
-    function playRange(range) {
-        $scope.playerInfo.begin = range[0];
-        $scope.playerInfo.end = range[1];
+    function playRange(videoTag) {
+        $scope.playerInfo.begin = videoTag.range[0];
+        $scope.playerInfo.end = videoTag.range[1];
     }
 
     function addStartRange(value) {
@@ -658,6 +722,34 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
             $scope.videoTag.range[1 - i] = $scope.videoTag.range[i] + (i === 1 ? -MAX_TAG_DURATION : MAX_TAG_DURATION);
         }
     }
+    function findSimilarTags(range) {
+        var limit = 0.6;                // TODO global variable
+        var similarTags = [];
+        angular.forEach($scope.video.video_tags, function(tag) {
+            // Contain
+            var commonSeconds = Math.min(tag.end, range[1]) - Math.max(tag.begin, range[0]);
+            // Check percentage in common with other tag
+            if (commonSeconds > 0) {
+                var commonPercents = commonSeconds / (range[1] - range[0]);
+                console.log("Similar at " + (commonPercents * 100) + "%");
+                if (commonPercents >= limit) { // More than 60% in common
+                    similarTags.push(tag);
+                }
+            }
+        });
+        console.log('Similar count: ' + similarTags.length);
+        return similarTags;
+    }
+
+// TODO remove duplicate with main controller
+    function view(data) {
+        $scope.playerInfo.id = data.id;
+        if (data.video_url != null) {
+            $scope.playerInfo.video_url = data.video_url;
+        }
+        $scope.playerInfo.begin = data.begin;
+        $scope.playerInfo.end = data.end;
+    }
 });
 module.controller('ViewSportController', function($scope, $filter, SportEntity, $routeParams, SharedData) {
 
@@ -665,7 +757,7 @@ module.controller('ViewSportController', function($scope, $filter, SportEntity, 
     init();
 
     function init() {
-
+        $scope.$parent.resetVideo();
 
         SportEntity.view({
             id: $routeParams.sport

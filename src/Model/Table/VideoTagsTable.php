@@ -110,7 +110,7 @@ class VideoTagsTable extends Table {
                 ->notEmpty('begin');
 
         $validator
-                ->add('end', 'custom', [
+                ->add('end', 'trick_duration', [
                     'rule' => function ($value, $context) {
                         if (isset($context['data']['begin'])){
                             $duration = $value - $context['data']['begin'];
@@ -122,6 +122,15 @@ class VideoTagsTable extends Table {
                     'message' => 'The trick duration must be between '. self::MIN_TAG_DURATION . ' and '. 
                             self::MAX_TAG_DURATION.' seconds.'
                 ])
+//                ->add('end', 'similar_tags', [
+//                    'rule' => function ($value, $context) {
+//                        // Check if there are similar tag for the same video
+//                        if (isset($context['data']['video_id'])){
+//
+//                        }
+//                    },
+//                    'message' => 'There is already a tag for this trick.'
+//                ])
                 ->add('end', 'valid', ['rule' => 'decimal'])
                 ->requirePresence('end', 'create')
                 ->notEmpty('end');
@@ -142,6 +151,28 @@ class VideoTagsTable extends Table {
         return $validator;
     }
 
+    
+    const SIMILARITY_PRECISION_SECONDS = 2;
+    function findSimilarTags($videoId, $begin, $end){
+        $beginMin = $begin + self::SIMILARITY_PRECISION_SECONDS;
+        $endMin = $begin - self::SIMILARITY_PRECISION_SECONDS;
+        $beginMax = $begin - self::SIMILARITY_PRECISION_SECONDS;
+        $endMax = $end + self::SIMILARITY_PRECISION_SECONDS;
+        return $this->find('all')
+                ->where([
+                    'video_id' => $videoId,
+                    'OR' => [
+//                        // Similar start or end
+//                        ['VideoTags.begin >=' => $beginMin, 'VideoTags.begin <= ' => $beginMax], 
+//                        ['VideoTags.end >=' => $endMin, 'VideoTags.begin <= ' => $endMax],
+                        // Include inside bigger tag
+                        ['VideoTags.begin <= ' => $beginMin, 'VideoTags.end >= ' => $endMin],
+                        // Contain bigger tag
+                        ['VideoTags.begin >= ' => $beginMax, 'VideoTags.end <= ' => $endMax]
+                    ]
+                ]);
+    }
+    
     /**
      * Returns a rules checker object that will be used for validating
      * application integrity.

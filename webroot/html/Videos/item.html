@@ -1,14 +1,17 @@
-<div data-videoid="Ofc9hh0NWe8" class="media" >
+<div class="media">
     <span class="pull-left">
-        <img class="thumbnail" ng-src="http://i.ytimg.com/vi/{{video.video_url}}/default.jpg">
+        <img class="thumbnail" ng-src="{{thumbnail}}">
     </span>
     <div class="media-body">
         <h4 class="media-heading">
-            <a ng-href="#/tag/add/{{video.id}}">{{video.video_url}}</a>
+            <a ng-href="#/tag/add/{{id}}">{{title}}</a>
         </h4> 
-        <h5><span class="label label-info">{{video.provider_id}}</span> {{video.info.publishedAt  * 1000 | timeago}}</h5>
         <p>
-            {{video.info.description}}
+            <span class="label label-info">{{provider_name}}</span> - 
+            <span  class="text-muted"> published {{published | timeago}}</span>
         </p>
+        <!--<p class="text-muted">
+            {{description}}
+        </p>-->
     </div> 
 </div>

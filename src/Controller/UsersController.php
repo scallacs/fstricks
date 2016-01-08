@@ -165,6 +165,23 @@ class UsersController extends AppController {
         ResultMessage::setMessage('You are now logged out.', true);
         return $this->redirect($this->Auth->logout());
     }
+    
+    public function remove_account(){
+        
+        ResultMessage::setWrapper(true);
+        ResultMessage::setMessage("Wrong password", false);
+        if ($this->request->is('post') && !empty($this->request->data['password'])) {
+            $success = $this->Users->deleteAll([
+                'Users.id' => $this->Auth->user('id'),
+                'Users.password' => \App\Model\Entity\User::hashPassword($this->request->data['password'])
+            ]);
+            if ($success){
+                ResultMessage::setMessage("Your account has been deleted. We hope to see you back soon", true);
+                $this->logout();
+            }
+        }
+        
+    }
 
     /**
      * If the user can access, it means that he has the right token

@@ -6,18 +6,54 @@
 
     <div class="bg-light padding-sm">
         <p class="padding-sm">
-            Account created {{data.user.created | timeago}}.
+            Account created {{data.user.created| timeago}}.
         </p>
-        
-        <hr/>
-        
-        <button class="btn btn-warning">
-            <span class="glyphicon glyphicon-warning-sign"></span> 
-            Delete my account
-        </button>
-        <p class="text-info padding-sm">
-            Be carefull, this action cannot be undone! 
-        </p>
-    </div>
 
+        <hr/>
+
+        <div class="text-center">
+
+            <button class="btn btn-warning" 
+                    ng-show="!showConfirmPassword"
+                    ng-click="showConfirmPassword = !showConfirmPassword" 
+                    ng-init="showConfirmPassword = false;">
+                <span class="glyphicon glyphicon-warning-sign"></span> 
+                Delete my account
+            </button>
+
+            <div class="" ng-show="showConfirmPassword">
+                <form class="form" name="formConfirmPassword">
+                    <fieldset ng-disabled="false">
+                        <div class="alert alert-danger">
+                            <span class="glyphicon glyphicon-warning-sign"></span> 
+                            Be carefull, this action cannot be undone! 
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Password</label>
+                            <input class="form-control" 
+                                   ng-model="password" 
+                                   type="password" 
+                                   placeholder="Your password"/>
+                        </div>
+                        <div mc-messages></div>
+                        <div class="form-group">
+                            <button class="btn btn-warning" 
+                                    ng-disabled="false"
+                                    ng-click="removeAccount(password)">
+                                <span class="glyphicon glyphicon-remove-circle"></span> 
+                                Delete my account
+                            </button>
+                            <button class="btn btn-default" ng-click="showConfirmPassword = false">
+                                <span class="glyphicon glyphicon-arrow-left"></span> 
+                                Cancel
+                            </button>
+                        </div>
+                        </div>
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
 </div>

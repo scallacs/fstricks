@@ -1,8 +1,8 @@
-<div class="container padding-sm">
+<div class="section bg-secondary">
+    <h3 class="container section-tile">Select your video</h3>
+</div>
+<div class="container">
     <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">Select the video</h3>
-        </div>
         <div class="panel-body">
 
 
@@ -23,7 +23,7 @@
                                class="form-control"
                                ng-model="data.video_url"
                                name="video_url"
-                               placeholder="Video id"
+                               placeholder="paste here the video id or video url"
                                rule-youtube-video-id
                                required/>
                         <p class="bg-info padding-sm" ng-show="form.video_url.$pending.youtubeVideoId">Checking the video id</p>
@@ -41,17 +41,20 @@
 
                 <div ng-include="'html/Elements/feedback.html'"></div>
 
-                <div class="text-center form-group" ng-show="form.$valid">
-                    <button type="button" ng-click="add(data)" class="btn btn-primary">Next</button>
+                <div class="text-center form-group">
+                    <button type="button" 
+                            ng-click="add(data)" 
+                            class="btn btn-primary"
+                            ng-disabled="!form.$valid">Next</button>
                 </div>
             </form>
 
             <div ng-if="recentVideos.length > 0">
-                <h3>Last video tagged</h3>
+                <h3>History</h3>
                 <div class="padding-sm">
                     <ul class="list-unstyled">
                         <li ng-repeat="video in recentVideos">
-                            <div ng-include="'html/Videos/item.html'"></div>
+                            <youtube-item data-info="video.provider_data" data-id="video.id" ng-if="video.provider_data"></youtube-item>
                         </li>
                     </ul>
                 </div>

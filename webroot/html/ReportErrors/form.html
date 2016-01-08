@@ -1,9 +1,18 @@
 
 <div class="modal-header">
-    <h2 class="modal-title">Report an error for this tag</h2>
+    <h2 class="modal-title">Report An Error</h2>
 </div>
 <div class="modal-body">
-    <form class="form-horizontal" name="formReportError" novalidate>
+    <p class="padding-sm bg-info">
+        <span class="glyphicon glyphicon-info-sign"></span> This form allow you to report an invalid trick on a video. 
+        You can leave a comment to explains the problem (usefull if it's not obvious). <br/>
+
+        <span class="text-muted">
+            Any abuse of service will be punished by removing your account without any type of notice. 
+        </span>
+    </p>
+    <form class="" name="formReportError" novalidate>
+        <!--
         <div class="form-group">
             <label class="col-sm-3 control-label">Error type</label>
             <div class="col-sm-9">
@@ -15,9 +24,10 @@
                 </select>
             </div>
         </div>
-        <div class="form-group">
-            <label class="col-sm-3 control-label">Leave a comment</label>
-            <div class="col-sm-9">
+        -->
+        <div class="form-group col-xs-12">
+            <label class="control-label">Leave a comment</label>
+            <div class="">
                 <textarea
                     ng-model="errorReport.comment"
                     class="form-control"
@@ -26,6 +36,7 @@
             </div>
         </div>
 
+        <!--
         <div class="form-group">
             <div class="col-sm-offset-3 col-sm-9">
                 <div class="checkbox">
@@ -35,8 +46,11 @@
                 </div>
             </div>
         </div>
+        -->
+        <div ng-include="'html/Elements/feedback.html'"></div>
+
         <div class="form-group clearfix text-center">
-            <input type="submit" class="btn btn-primary" value="Send" ng-click="addReportError(errorReport)"/>
+            <input type="submit" class="btn btn-primary" value="Send" ng-click="sendReport(errorReport)"/>
         </div>
     </form>
 </div>

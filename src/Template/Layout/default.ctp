@@ -18,15 +18,31 @@
                     <img id="loading" src="http://bit.ly/pMtW1K" />
                 </div>
             </div>
-            <div id="content" class="">
-                <div class="row"  ng-show="showVideoPlayer" >
+            <div id="content" class="container-fluid">
+                <div ng-if="showVideoPlayer" >
 
-                    <div class="col-md-8 nopadding player-container">
+                    <div class="col-sm-8 nopadding player-container"  style="position:fixed">
                         <div class="iframe-wrapper res-16by9">   
-                            <youtube player-video="playerInfo" frameborder="0"></youtube> 
+                            <youtube ng-show="playerInfo.video_url" 
+                                     player-video="playerInfo" frameborder="0"></youtube> 
+
+                            <div ng-show="!playerInfo.video_url && video.video_tags.length > 0">
+                                <p class="pick-video-message" >
+                                    Pick a trick to play<br/>
+                                    <span class="text-muted"><a href="#/video/add"> or create new ones</a></span>
+                                </p>
+                            </div>
+                            <div ng-show="!playerInfo.video_url && video.video_tags.length === 0" class="pick-video-message">
+                                <p>
+                                    Oups, there is nothing to show for this sport... 
+                                <p/>
+                                <p class="text-center">
+                                    <a href="#/video/add"> Add tricks now</a>
+                                </p>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4 nopadding" ng-if="showVideoPlayer">
+                    <div class="col-sm-offset-8 col-sm-4 nopadding" ng-if="showVideoPlayer">
                         <div ng-repeat="videoTag in video.video_tags">
                             <div ng-include="'html/VideoTags/item.html'"></div>
                         </div>

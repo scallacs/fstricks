@@ -218,7 +218,7 @@ Plugin::load('Bootstrap') ; // instead of Plugin::load('Bootstrap3') ;
 
 
 Configure::write('Youtube.key', 'AIzaSyC851NBlFCigGum0qdk04GHGVYF_tqd-M4');
-Configure::write('Company.name','Trickers');
+Configure::write('Company.name','Freestyle Tricks');
 Configure::write('videoProviders', [
     [
         'name' => 'youtube',
