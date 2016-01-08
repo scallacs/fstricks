@@ -14,6 +14,10 @@ module.config(function($routeProvider, $controllerProvider) {
                 templateUrl: HTML_FOLDER + 'Videos/view.html',
                 controller: 'ExploreController'
             })
+            .when('/index', {
+                templateUrl: HTML_FOLDER + 'Videos/view.html',
+                controller: 'ExploreController'
+            })
             .when('/view/:id', {
                 templateUrl: HTML_FOLDER + 'Videos/view.html',
                 controller: 'ViewVideoController'
@@ -69,7 +73,9 @@ module.config(function($routeProvider, $controllerProvider) {
             .when('/users/profile/:username', {
                 templateUrl: HTML_FOLDER + 'Users/profile.html',
                 controller: 'UserController'
-            });
+            })
+            .otherwise({redirectTo: '/'});
+    
 });
 
 module.controller('MainController', function($scope, AuthenticationService,
@@ -449,14 +455,15 @@ module.controller('UserLoginController', function($scope, $auth, SharedData, mes
                     $location.path('/');
                 })
                 .catch(function(error) {
+                    console.log(error);
                     if (error.error) {
                         // Popup error - invalid redirect_uri, pressed cancel button, etc.
-                        messageCenterService.add('danger', error.error);
+                        messageCenterService.add('danger', error.error,  {status: messageCenterService.status.shown});
                     } else if (error.data) {
                         // HTTP response error from server
-                        messageCenterService.add('danger', error.message);
+                        messageCenterService.add('danger', error.statusText,  {status: messageCenterService.status.shown});
                     } else {
-                        messageCenterService.add('danger', error);
+                        messageCenterService.add('danger', "Sorry but this service is not available for now. Try again later.",  {status: messageCenterService.status.shown});
                     }
                 });
     }

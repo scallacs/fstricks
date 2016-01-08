@@ -11,7 +11,7 @@ var commonModule = angular.module('CommonModule', [
     'satellizer',
     'MessageCenterModule'], function($routeProvider, $locationProvider, $httpProvider) {
 
-    //$locationProvider.html5Mode(true).hashPrefix('!');
+    $locationProvider.html5Mode(true).hashPrefix('!');
 
     var interceptor = ['$location', '$rootScope', '$q', function($location, scope, $q) {
 
@@ -62,6 +62,19 @@ commonModule.config(function($authProvider, API_KEYS) {
     $authProvider.facebook({
         clientId: API_KEYS.facebook
     });
+
+    $authProvider.withCredentials = true;
+    $authProvider.tokenRoot = null;
+    $authProvider.cordova = false;
+    $authProvider.baseUrl = '/';
+    $authProvider.loginUrl = '/auth/login';
+    $authProvider.signupUrl = '/auth/signup';
+    $authProvider.unlinkUrl = '/auth/unlink/';
+    $authProvider.tokenName = 'token';
+    $authProvider.tokenPrefix = 'satellizer';
+    $authProvider.authHeader = 'Authorization';
+    $authProvider.authToken = 'Bearer';
+    $authProvider.storageType = 'localStorage';
 //    $authProvider.google({
 //        clientId: 'Google Client ID'
 //    });
@@ -259,8 +272,8 @@ commonModule.directive('ruleYoutubeVideoId', function($q, YoutubeVideoInfo) {
                 }
 
                 var def = $q.defer();
-                
-                if (YoutubeVideoInfo.extractVideoIdFromUrl(videoId)){
+
+                if (YoutubeVideoInfo.extractVideoIdFromUrl(videoId)) {
                     videoId = YoutubeVideoInfo.extractVideoIdFromUrl(videoId);
                 }
 
@@ -567,11 +580,11 @@ commonModule.factory('YoutubeVideoInfo', function() {
         data: data,
         extractVideoIdFromUrl: extractVideoIdFromUrl
     };
-    
-    function extractVideoIdFromUrl(url){
+
+    function extractVideoIdFromUrl(url) {
         var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
         var match = url.match(regExp);
-        return (match&&match[7].length==11)? match[7] : false;
+        return (match && match[7].length == 11) ? match[7] : false;
     }
 
     function getUrl(videoUrl) {
@@ -729,8 +742,8 @@ commonModule.directive('youtubeItem', function() {
 
 });
 
-commonModule.directive('ngLoadingIcon', function(){
-    
+commonModule.directive('ngLoadingIcon', function() {
+
     return {
         restrict: "EA",
         replace: true,
@@ -738,7 +751,7 @@ commonModule.directive('ngLoadingIcon', function(){
             isLoading: '='
         },
         template: '<span class="ajax-loader" >\n\
-                        <img src="'+WEBROOT_FULL+'/img/ajax_loader.gif" alt="Loading, please wait..."/>\n\
+                        <img src="' + WEBROOT_FULL + '/img/ajax_loader.gif" alt="Loading, please wait..."/>\n\
                     </span>',
         link: function(scope, element, attrs) {
             scope.$watch('isLoading', function(v) {

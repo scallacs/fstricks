@@ -106,6 +106,7 @@ class UsersController extends AppController {
      * @return void Redirects on successful add, renders view otherwise.
      */
     public function signup() {
+        ResultMessage::setMessage("Please send back the form", false);
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->data);
@@ -113,12 +114,12 @@ class UsersController extends AppController {
                 ResultMessage::setMessage('The user has been saved.', true);
                 $this->setToken($user['id']);
                 ResultMessage::setRedirectUrl(['action' => 'index']);
+                ResultMessage::setData('user', $user);
             } else {
-                ResultMessage::setMessage('The user could not be saved. Please, try again.', false);
+                ResultMessage::setMessage('Your account cannot be created. Please check your inputs.', false);
                 ResultMessage::addValidationErrorsModel($user);
             }
         }
-        ResultMessage::setData('user', $user);
     }
 
     /**
