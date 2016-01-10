@@ -1,11 +1,15 @@
  <?php
-if (\Cake\Core\Configure::read('Hybridauth') !== null){
-    foreach (\Cake\Core\Configure::read('Hybridauth') as $name => $option){
+if (\Cake\Core\Configure::read('HybridAuth') !== null){
+    foreach (\Cake\Core\Configure::read('HybridAuth.providers') as $name => $option){
         if ($option['enabled']){
-            echo '<p class="text-center">'.$this->Html->image('social_login/login_'.strtolower($name).'.png', array(
-                "alt" => "Signin with $name",
-                'url' => array('controller' => 'Users', 'action'=>'social_login', $name)
-            )).'</p>';
+            echo '<p class="text-center">' . $this->Html->link($name, [
+                    'controller' => 'Users',
+                    'action'=> 'login',
+                    strtolower($name)
+                ], [
+                    'class' => 'btn btn-block btn-facebook'
+                ]
+            ).'</p>';
         }
     }
 ?>

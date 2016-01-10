@@ -2,11 +2,12 @@
 
 use Cake\Core\Configure;
 
+
 $config['HybridAuth'] = [
     'providers' => [
-        'OpenID' => [
-            'enabled' => false
-        ],
+//        'OpenID' => [
+//            'enabled' => false
+//        ],
         // facebook
         "Facebook" => [ 
             "enabled" => true,
@@ -17,3 +18,6 @@ $config['HybridAuth'] = [
     'debug_mode' => Configure::read('debug'),
     'debug_file' => LOGS . 'hybridauth.log',
 ];
+
+
+Configure::write('HybridAuth', $config['HybridAuth']);

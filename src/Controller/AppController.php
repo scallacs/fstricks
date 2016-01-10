@@ -49,6 +49,7 @@ class AppController extends Controller {
 
         $this->loadComponent('Auth', [
             'authenticate' => [
+                'ADmad/HybridAuth.HybridAuth',
                 'Form' => [
                     'fields' => [
                         'username' => 'email',
@@ -63,7 +64,6 @@ class AppController extends Controller {
                         'id' => 'id'
                     ]
                 ],
-                'ADmad/HybridAuth.HybridAuth' => []
             ],
             'loginAction' => [
                 'controller' => 'Users',

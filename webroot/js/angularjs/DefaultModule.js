@@ -75,7 +75,7 @@ module.config(function($routeProvider, $controllerProvider) {
                 controller: 'UserController'
             })
             .otherwise({redirectTo: '/'});
-    
+
 });
 
 module.controller('MainController', function($scope, AuthenticationService,
@@ -201,6 +201,8 @@ module.controller('MainController', function($scope, AuthenticationService,
             }
         });
     }
+
+
 
     function logout() {
         AuthenticationService.logout();
@@ -425,52 +427,62 @@ module.controller('UserController',
 
         });
 
-module.controller('UserLoginController', function($scope, $auth, SharedData, messageCenterService, $location) {
+module.controller('UserLoginController', function($scope, $auth, SharedData, messageCenterService, $location, AuthenticationService) {
     // create a message to display in our view
     $scope.$parent.showVideoPlayer = false;
     $scope.authenticate = authenticate;
 
     function init() {
+        messageCenterService.removeShown();
         SharedData.loadingState = 0;
     }
     init();
 
-
-    // NOT IN USE
-//    function login() {
-//        $auth.login($scope.user)
-//                .then(function() {
-//                    toastr.success('You have successfully signed in!');
-//                    $location.path('/');
-//                })
-//                .catch(function(error) {
-//                    toastr.error(error.data.message, error.status);
-//                });
-//    }
     function authenticate(provider) {
         messageCenterService.removeShown();
-        $auth.authenticate(provider)
-                .then(function() {
-                    messageCenterService.add('success', 'You have successfully signed in with ' + provider + '!');
-                    $location.path('/');
-                })
-                .catch(function(error) {
-                    console.log(error);
-                    if (error.error) {
-                        // Popup error - invalid redirect_uri, pressed cancel button, etc.
-                        messageCenterService.add('danger', error.error,  {status: messageCenterService.status.shown});
-                    } else if (error.data) {
-                        // HTTP response error from server
-                        messageCenterService.add('danger', error.statusText,  {status: messageCenterService.status.shown});
-                    } else {
-                        messageCenterService.add('danger', "Sorry but this service is not available for now. Try again later.",  {status: messageCenterService.status.shown});
-                    }
-                });
+        console.log("Start authenticate with provider=" + provider);
+        AuthenticationService.socialLogin(provider, function(isLogin, response) {
+            //var res = $auth.authenticate(provider);
+
+            $scope.$parent.isAuthed = isLogin;
+            if (isLogin) {
+                messageCenterService.add('success', response.message, {status: messageCenterService.status.next});
+                $location.path("users/settings");
+                return;
+            }
+            else {
+                messageCenterService.add('danger', response.message, {status: messageCenterService.status.shown});
+            }
+        });
     }
-    ;
+//        $auth.authenticate(provider)
+//                .then(function(response) {
+//                    if (response.data.success) {
+//                        messageCenterService.add('success', 'You have successfully signed in with ' + provider + '!');
+//                        $location.path('/');
+//                    }
+//                    else {
+//                        console.log(response);
+//                        messageCenterService.add('danger', response.data.message, {status: messageCenterService.status.shown});
+//                    }
+//                })
+//                .catch(function(error) {
+//                    console.log(error);
+//                    if (error.error) {
+//                        // Popup error - invalid redirect_uri, pressed cancel button, etc.
+//                        messageCenterService.add('danger', error.error, {status: messageCenterService.status.shown});
+//                    } else if (error.data) {
+//                        // HTTP response error from server
+//                        messageCenterService.add('danger', error.statusText, {status: messageCenterService.status.shown});
+//                    } else {
+//                        messageCenterService.add('danger', "Sorry but this service is not available for now. Try again later.", {status: messageCenterService.status.shown});
+//                    }
+//                });
+//    }
+
 });
 module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $location,
-        VideoEntity, VideoTagEntity, PlayerProviders, ViewFeedback, SharedData) {
+        VideoEntity, VideoTagEntity, PlayerProviders, messageCenterService, SharedData) {
 
     $scope.data = {provider_id: PlayerProviders.list()[0].name, video_url: null};
     $scope.playerProviders = PlayerProviders.list();
@@ -499,7 +511,7 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
                 $location.path('/tag/add/' + response.data.id);
             }
             else {
-                $scope.feedback = ViewFeedback.failure(response);
+                messageCenterService.add('warning', response.message);
             }
         });
     }
@@ -596,8 +608,8 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
         $routeParams, SportEntity, VideoEntity, VideoTagEntity, ViewFeedback, TagEntity, SharedData,
         messageCenterService) {
 
-    var MIN_TAG_DURATION = 3;
-    var MAX_TAG_DURATION = 30;
+    var MIN_TAG_DURATION = 2;
+    var MAX_TAG_DURATION = 40;
 
     $scope.slider = {
         step: 0.5
@@ -918,24 +930,29 @@ module.controller('SearchTagController', function($scope, TagEntity) {
 
 
 //toastr
-module.controller('SignupController', function($scope, $location, $auth, SharedData, messageCenterService) {
+module.controller('SignupController', function($scope, $location, UserEntity, SharedData, messageCenterService) {
 
     SharedData.loadingState = 0;
+    messageCenterService.removeShown();
+    $scope.$parent.showVideoPlayer = false;
+    $scope.signup = signup;
 
-    $scope.signup = function() {
-        $auth.signup($scope.user)
-                .then(function(response) {
-                    $auth.setToken(response);
-                    $location.path('/');
+    function signup(data) {
+        messageCenterService.removeShown();
 
-                    messageCenterService.add('success', response.message);
-                    //toastr.info(response.message);
-                })
-                .catch(function(response) {
-                    //toastr.error(response.message);
-                    messageCenterService.add('danger', response.message);
-                });
-    };
+        UserEntity.signup(data, function(response) {
+            if (response.success) {
+                $scope.$parent.isAuthed = true;
+                messageCenterService.add('success', response.message, {status: messageCenterService.status.shown});
+                $location.path('/');
+            }
+            else {
+                messageCenterService.add('danger', response.message, {status: messageCenterService.status.shown});
+            }
+        });
+
+    }
+    ;
 });
 
 module.controller('ProfileController', function($scope, $auth, toastr, Account) {

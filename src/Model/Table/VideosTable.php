@@ -51,6 +51,9 @@ class VideosTable extends Table
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id'
         ]);
+        $this->belongsTo('VideoProviders', [
+            'foreignKey' => 'provider_id'
+        ]);
         $this->hasMany('VideoTags', [
             'foreignKey' => 'video_id'
         ]);
@@ -72,10 +75,10 @@ class VideosTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->add('provider_id', 'providerValid', [
-                'rule' => ['inList', array_column(\Cake\Core\Configure::read('videoProviders'), 'name')],
-                'message' => 'Invalid provider. Please choose available provider from the list'
-            ])
+//            ->add('provider_id', 'providerValid', [
+//                'rule' => ['inList', array_column(\Cake\Core\Configure::read('videoProviders'), 'name')],
+//                'message' => 'Invalid provider. Please choose available provider from the list'
+//            ])
             ->requirePresence('provider_id', 'create')
             ->notEmpty('provider_id');
 
@@ -123,6 +126,7 @@ class VideosTable extends Table
     {
 //        $rules->add($rules->existsIn(['provider_id'], 'VideoProviders'));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
+        $rules->add($rules->existsIn(['provider_id'], 'VideoProviders'));
         $rules->add($rules->isUnique(['video_url', 'provider_id'], 'This video is already in the database'));
         return $rules;
     }

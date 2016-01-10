@@ -18,8 +18,8 @@ use Cake\Validation\Validator;
  */
 class VideoTagsTable extends Table {
 
-    const MIN_TAG_DURATION = 3;
-    const MAX_TAG_DURATION = 30;
+    const MIN_TAG_DURATION = 2;
+    const MAX_TAG_DURATION = 40;
     
     /**
      * Find data for tags and do joins 

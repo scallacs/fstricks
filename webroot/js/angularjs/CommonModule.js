@@ -3,6 +3,7 @@
  */
 var commonModule = angular.module('CommonModule', [
     'ngResource',
+    'ngMessages',
     'ui.bootstrap',
     'ui.slider',
     'ui.select',
@@ -58,20 +59,23 @@ var commonModule = angular.module('CommonModule', [
     $httpProvider.interceptors.push(interceptor);
 });
 
+
 commonModule.config(function($authProvider, API_KEYS) {
     $authProvider.facebook({
-        clientId: API_KEYS.facebook
+        clientId: API_KEYS.facebook,
+        url: WEBROOT_FULL + '/users/login_facebook.json',
+        redirectUri: WEBROOT_FULL
     });
 
     $authProvider.withCredentials = true;
     $authProvider.tokenRoot = null;
     $authProvider.cordova = false;
     $authProvider.baseUrl = '/';
-    $authProvider.loginUrl = '/auth/login';
-    $authProvider.signupUrl = '/auth/signup';
-    $authProvider.unlinkUrl = '/auth/unlink/';
+    $authProvider.loginUrl = WEBROOT_FULL + 'users/login';
+    $authProvider.signupUrl = WEBROOT_FULL + 'users/signup';
+    $authProvider.unlinkUrl = WEBROOT_FULL + 'users/unlink';
     $authProvider.tokenName = 'token';
-    $authProvider.tokenPrefix = 'satellizer';
+    $authProvider.tokenPrefix = '';//'satellizer';
     $authProvider.authHeader = 'Authorization';
     $authProvider.authToken = 'Bearer';
     $authProvider.storageType = 'localStorage';
@@ -82,8 +86,9 @@ commonModule.config(function($authProvider, API_KEYS) {
 //        clientId: 'Instagram Client ID'
 //    });
 });
+
 commonModule.run(function($FB, API_KEYS, $rootScope) {
-    $FB.init(API_KEYS.facebook);
+    //  $FB.init(API_KEYS.facebook);
     $rootScope.WEBROOT_FULL = WEBROOT_FULL;
 });
 commonModule.constant('YT_event', {
@@ -468,7 +473,12 @@ commonModule.factory('UserEntity', function($resource) {
         },
         login: {
             method: 'POST',
-            params: {action: 'login', id: null},
+            params: {action: 'login'},
+            isArray: false
+        },
+        signup: {
+            method: 'POST',
+            params: {action: 'signup'},
             isArray: false
         },
         logout: {
@@ -519,6 +529,7 @@ commonModule.factory('AuthenticationService', function($http, $cookies, $rootSco
     service.clearCredentials = clearCredentials;
     service.getCurrentUser = getCurrentUser;
     service.isAuthed = getIsAuthed;
+    service.socialLogin = socialLogin;
     return service;
 
     function getCurrentUser() {
@@ -540,7 +551,18 @@ commonModule.factory('AuthenticationService', function($http, $cookies, $rootSco
 
     function login(username, password, callback) {
 
-        UserEntity.login({email: username, password: password}, function(response) {
+        UserEntity.login({email: username, password: password, id: null}, function(response) {
+            console.log(response);
+            if (response.success) {
+                setCredentials(response.data);
+            }
+            callback(response.success, response);
+        });
+    }
+
+    function socialLogin(provider, callback) {
+
+        UserEntity.login({id: null, provider: provider}, function(response) {
             console.log(response);
             if (response.success) {
                 setCredentials(response.data);
@@ -857,6 +879,181 @@ commonModule.factory('VideoTagEntity', function($resource) {
             isArray: true
         }
     });
+});
+commonModule.directive('passwordMatch', function() {
+    return {
+        require: 'ngModel',
+        scope: {
+            otherModelValue: '=passwordMatch'
+        },
+        link: function(scope, element, attributes, ngModel) {
+            ngModel.$validators.compareTo = function(modelValue) {
+                return modelValue === scope.otherModelValue;
+            };
+            scope.$watch('otherModelValue', function() {
+                ngModel.$validate();
+            });
+        }
+    };
+});
+
+'username_exists'
+
+
+commonModule.factory('DataExistsService', function ($resource) {
+        var url = WEBROOT_FULL + '/:controller/:action/:value.json';
+
+        return $resource(url, {controller: '@controller', action: '@action', value: '@value'}, {
+            check: {
+                method: 'GET',
+                params: {action: 'view'},
+                isArray: false
+            }
+        });
+});
+commonModule.directive('ftUnique', function (DataExistsService) {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, element, attrs, ngModel) {
+            element.bind('blur', function (e) {
+                if (!ngModel || !element.val()) return;
+                var keyProperty = scope.$eval(attrs.ftUnique);
+                var currentValue = element.val();
+                DataExistsService.check({
+                    controller: keyProperty.key,
+                    action : keyProperty.property,
+                    value: currentValue
+                }, function (response){
+                    console.log("Check exists response: " + response.exists);
+                    if (currentValue == element.val()) { 
+                        //Ensure value that being checked hasn't changed
+                        //since the Ajax call was made
+                        ngModel.$setValidity('unique', response.exists);
+                    }
+                    else{
+                        ngModel.$setValidity('unique', true);
+                    }
+                });
+            });
+        }
+    }
+});
+
+commonModule.directive('passwordStrength', function() {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, element, attrs, ngModel) {
+            var indicator = element.children();
+            var dots = Array.prototype.slice.call(indicator.children());
+            var weakest = dots.slice(-1)[0];
+            var weak = dots.slice(-2);
+            var strong = dots.slice(-3);
+            var strongest = dots.slice(-4);
+
+            element.after(indicator);
+
+            element.bind('keyup', function() {
+                var matches = {
+                    positive: {},
+                    negative: {}
+                },
+                counts = {
+                    positive: {},
+                    negative: {}
+                },
+                tmp,
+                        strength = 0,
+                        letters = 'abcdefghijklmnopqrstuvwxyz',
+                        numbers = '01234567890',
+                        symbols = '\\!@#$%&/()=?¿',
+                        strValue;
+
+                angular.forEach(dots, function(el) {
+                    el.style.backgroundColor = '#ebeef1';
+                });
+
+                if (ngModel.$viewValue) {
+                    // Increase strength level
+                    matches.positive.lower = ngModel.$viewValue.match(/[a-z]/g);
+                    matches.positive.upper = ngModel.$viewValue.match(/[A-Z]/g);
+                    matches.positive.numbers = ngModel.$viewValue.match(/\d/g);
+                    matches.positive.symbols = ngModel.$viewValue.match(/[$-/:-?{-~!^_`\[\]]/g);
+                    matches.positive.middleNumber = ngModel.$viewValue.slice(1, -1).match(/\d/g);
+                    matches.positive.middleSymbol = ngModel.$viewValue.slice(1, -1).match(/[$-/:-?{-~!^_`\[\]]/g);
+
+                    counts.positive.lower = matches.positive.lower ? matches.positive.lower.length : 0;
+                    counts.positive.upper = matches.positive.upper ? matches.positive.upper.length : 0;
+                    counts.positive.numbers = matches.positive.numbers ? matches.positive.numbers.length : 0;
+                    counts.positive.symbols = matches.positive.symbols ? matches.positive.symbols.length : 0;
+
+                    counts.positive.numChars = ngModel.$viewValue.length;
+                    tmp += (counts.positive.numChars >= 8) ? 1 : 0;
+
+                    counts.positive.requirements = (tmp >= 3) ? tmp : 0;
+                    counts.positive.middleNumber = matches.positive.middleNumber ? matches.positive.middleNumber.length : 0;
+                    counts.positive.middleSymbol = matches.positive.middleSymbol ? matches.positive.middleSymbol.length : 0;
+
+                    // Decrease strength level
+                    matches.negative.consecLower = ngModel.$viewValue.match(/(?=([a-z]{2}))/g);
+                    matches.negative.consecUpper = ngModel.$viewValue.match(/(?=([A-Z]{2}))/g);
+                    matches.negative.consecNumbers = ngModel.$viewValue.match(/(?=(\d{2}))/g);
+                    matches.negative.onlyNumbers = ngModel.$viewValue.match(/^[0-9]*$/g);
+                    matches.negative.onlyLetters = ngModel.$viewValue.match(/^([a-z]|[A-Z])*$/g);
+
+                    counts.negative.consecLower = matches.negative.consecLower ? matches.negative.consecLower.length : 0;
+                    counts.negative.consecUpper = matches.negative.consecUpper ? matches.negative.consecUpper.length : 0;
+                    counts.negative.consecNumbers = matches.negative.consecNumbers ? matches.negative.consecNumbers.length : 0;
+
+                    // Calculations
+                    strength += counts.positive.numChars * 4;
+                    if (counts.positive.upper) {
+                        strength += (counts.positive.numChars - counts.positive.upper) * 2;
+                    }
+                    if (counts.positive.lower) {
+                        strength += (counts.positive.numChars - counts.positive.lower) * 2;
+                    }
+                    if (counts.positive.upper || counts.positive.lower) {
+                        strength += counts.positive.numbers * 4;
+                    }
+                    strength += counts.positive.symbols * 6;
+                    strength += (counts.positive.middleSymbol + counts.positive.middleNumber) * 2;
+                    strength += counts.positive.requirements * 2;
+
+                    strength -= counts.negative.consecLower * 2;
+                    strength -= counts.negative.consecUpper * 2;
+                    strength -= counts.negative.consecNumbers * 2;
+
+                    if (matches.negative.onlyNumbers) {
+                        strength -= counts.positive.numChars;
+                    }
+                    if (matches.negative.onlyLetters) {
+                        strength -= counts.positive.numChars;
+                    }
+
+                    strength = Math.max(0, Math.min(100, Math.round(strength)));
+
+                    if (strength > 85) {
+                        angular.forEach(strongest, function(el) {
+                            el.style.backgroundColor = '#008cdd';
+                        });
+                    } else if (strength > 65) {
+                        angular.forEach(strong, function(el) {
+                            el.style.backgroundColor = '#6ead09';
+                        });
+                    } else if (strength > 30) {
+                        angular.forEach(weak, function(el) {
+                            el.style.backgroundColor = '#e09115';
+                        });
+                    } else {
+                        weakest.style.backgroundColor = '#e01414';
+                    }
+                }
+            });
+        },
+        template: '<span class="password-strength-indicator"><span></span><span></span><span></span><span></span></span>'
+    };
 });
 
 commonModule.factory('PlayerProviders', function() {

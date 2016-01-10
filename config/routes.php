@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Routes configuration
  *
@@ -17,7 +18,6 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 use Cake\Core\Plugin;
 use Cake\Routing\Router;
 
@@ -61,6 +61,7 @@ Router::scope('/', function ($routes) {
      * to use (in this case, src/Template/Pages/home.ctp)...
      */
     $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
+    $routes->connect('/signup', ['controller' => 'users', 'action' => 'signup']);
 
     /**
      * ...and connect the rest of 'Pages' controller's URLs.
@@ -84,8 +85,8 @@ Router::scope('/', function ($routes) {
      * routes you want in your application.
      */
     $routes->fallbacks('InflectedRoute');
-    
-    
+
+
     $routes->resources('Spots');
 });
 

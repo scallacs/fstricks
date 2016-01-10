@@ -32,6 +32,7 @@
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-animate.min.js"); ?>
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.min.js"); ?>
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-cookies.min.js"); ?>
+<?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-messages.min.js"); ?>
 <?= $this->Html->script("angularjs/angular-simple-logger.min.js"); ?>
 
 <?php // $this->Html->script("angularjs/ui-bootstrap-custom-0.14.3.min.js"); ?>

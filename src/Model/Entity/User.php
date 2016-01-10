@@ -9,6 +9,9 @@ use Cake\ORM\Entity;
  */
 class User extends Entity
 {
+    
+    const STATUS_ACTIVATED = 'activated';
+    
     protected $_virtual = ['avatar_url'];
 
     /**
