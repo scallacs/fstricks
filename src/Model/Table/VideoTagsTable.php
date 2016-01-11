@@ -20,6 +20,7 @@ class VideoTagsTable extends Table {
 
     const MIN_TAG_DURATION = 2;
     const MAX_TAG_DURATION = 40;
+    const SIMILARITY_RATIO_THRESHOLD = 0.6;
     
     /**
      * Find data for tags and do joins 
@@ -185,6 +186,18 @@ class VideoTagsTable extends Table {
         $rules->add($rules->existsIn(['video_id'], 'Videos'));
         $rules->add($rules->existsIn(['tag_id'], 'Tags'));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
+        
+        // Checking similar tags
+        $rules->add(function($entity, $scope){
+            if (isset($entity->video_id) && isset($entity->end) && isset($entity->begin) && $entity->end > $entity->begin){
+                return !$this->exists([ 
+                            'VideoTags.video_id' => $entity->video_id,
+                            'VideoTags.status' => VideoTag::STATUS_VALIDATED,
+                            '(LEAST('.$entity->end.', end) - GREATEST('.$entity->begin.', begin))/(end - begin) > '.self::SIMILARITY_RATIO_THRESHOLD,
+                        ]);
+            }
+            return true;
+        });
         return $rules;
     }
 

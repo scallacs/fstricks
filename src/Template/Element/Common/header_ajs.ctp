@@ -33,26 +33,26 @@
                             All sports
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="index" ng-click="setCurrentSport(null)">All sports</a></li>
+                            <li><a href="#/#/" ng-click="setCurrentSport(null)">All sports</a></li>
                             <li ng-repeat="sport in sports">
-                                <a ng-href="sports/{{sport.name}}" ng-click="setCurrentSport(sport)">
+                                <a ng-href="#/sports/{{sport.name}}" ng-click="setCurrentSport(sport)">
                                     {{sport.name}}
                                 </a>
                             </li>
                         </ul>
                     </li>
                     <!--<li><a href=""><span class="glyphicon glyphicon-map-marker"></span> Best of</a></li>-->
-                    <li><a href="video/add"><span class="glyphicon glyphicon-plus-sign"></span> Create </a></li>
-                    <li ng-if="!isAuthed"><a href="login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                    <li ng-if="!isAuthed"><a href="signup">Sign up</a></li>
+                    <li><a href="#/video/add"><span class="glyphicon glyphicon-plus-sign"></span> Create </a></li>
+                    <li ng-if="!isAuthed"><a href="#/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                    <li ng-if="!isAuthed"><a href="#/signup">Sign up</a></li>
                     <li ng-if="isAuthed" class="dropdown">
                         <a class="" data-toggle="dropdown" >
                             <span class="glyphicon glyphicon-cog"></span> Settings
                         </a>
                         <ul class="dropdown-menu">
-                            <!--<li> <a href="users/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>-->
-                            <li> <a href="users/settings"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
-                            <li ng-click="logout()"><a href="users/login"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                            <!--<li> <a href="#/users/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>-->
+                            <li> <a href="#/users/settings"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
+                            <li ng-click="logout()"><a href="#/users/login"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                         </ul>
                     </li>
                 </ul>

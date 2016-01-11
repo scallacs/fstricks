@@ -48,12 +48,18 @@ class UsersTable extends TableWithTags {
                 ->add('email', 'valid', ['rule' => 'email'])
                 ->requirePresence('email', 'create')
                 ->notEmpty('email')
-                ->add('email', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+                ->add('email', 'unique', [
+                    'rule' => 'validateUnique', 
+                    'provider' => 'table',
+                    'message' => 'There is already an account with this email.']);
 
         $validator
                 ->requirePresence('username', 'create')
                 ->notEmpty('username')
-                ->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+                ->add('username', 'unique', [
+                    'rule' => 'validateUnique', 
+                    'provider' => 'table', 
+                    'message' => 'This user name is not available. Please choose another one.']);
 
         return $validator;
     }
@@ -66,8 +72,8 @@ class UsersTable extends TableWithTags {
      * @return \Cake\ORM\RulesChecker
      */
     public function buildRules(RulesChecker $rules) {
-        $rules->add($rules->isUnique(['email']));
-        $rules->add($rules->isUnique(['username']));
+//        $rules->add($rules->isUnique(['email'], 'There is already an account with this email.'));
+//        $rules->add($rules->isUnique(['username'], 'This user name is not available. Please choose another one.'));
         return $rules;
     }
 

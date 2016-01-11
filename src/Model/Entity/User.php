@@ -33,6 +33,10 @@ class User extends Entity
         $hasher = new DefaultPasswordHasher();
         return $hasher->hash($value);        
     }
+    public static function checkPassword($one, $two){
+        $hasher = new DefaultPasswordHasher();
+        return $hasher->check($one, $two);        
+    }
     protected function _setPassword($value){
         return self::hashPassword($value);
     }

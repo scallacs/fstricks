@@ -340,7 +340,8 @@ class UsersController extends AppController {
 
     public function logout() {
         ResultMessage::setMessage('You are now logged out.', true);
-        return $this->redirect($this->Auth->logout());
+        $this->Auth->logout();
+        return;
     }
 
     public function remove_account() {
@@ -348,14 +349,26 @@ class UsersController extends AppController {
         ResultMessage::setWrapper(true);
         ResultMessage::setMessage("Wrong password", false);
         if ($this->request->is('post') && !empty($this->request->data['password'])) {
+            $query = $this->Users->find()
+                    ->select(['Users.password'])
+                    ->where([
+                        'id' => $this->Auth->user('id'),
+                        'provider_uid IS NULL'
+                    ]);
+            $data = $query->first();
+            
+            if (empty($data) || !\App\Model\Entity\User::checkPassword($this->request->data['password'], $data->password)){
+                return;
+            }
+                    
             $success = $this->Users->deleteAll([
                 'Users.id' => $this->Auth->user('id'),
-                'Users.password' => \App\Model\Entity\User::hashPassword($this->request->data['password'])
             ]);
             if ($success) {
-                ResultMessage::setMessage("Your account has been deleted. We hope to see you back soon", true);
-                $this->logout();
+                ResultMessage::setMessage("Your account has been deleted. We hope to see you back soon!", true);
+                $this->Auth->logout();
             }
+            
         }
     }
 
@@ -369,11 +382,19 @@ class UsersController extends AppController {
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->data);
-            if ($this->Users->save($user)) {
+            if ($this->Users->save($user)) {      
+                $userArray = [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                    'username' => $user->username,
+                    'created' => $user->created
+                ];
+                $this->Auth->setUser($userArray);
+                $this->setToken();
+                assert($this->Auth->user('id'));
                 ResultMessage::setMessage('The user has been saved.', true);
-                $this->setToken($user['id']);
                 ResultMessage::setRedirectUrl(['action' => 'index']);
-                ResultMessage::setData('user', $user);
+                ResultMessage::setData('user', $userArray);
             } else {
                 ResultMessage::setMessage('Your account cannot be created. Please check your inputs.', false);
                 ResultMessage::addValidationErrorsModel($user);

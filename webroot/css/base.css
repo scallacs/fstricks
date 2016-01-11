@@ -2,22 +2,26 @@ body{
     overflow-x: hidden;
     padding-top: 50px; 
 }
-
+.footer{
+    background: #080808;
+    padding: 20px;
+    height:80px;   /* Height of the footer */
+}
 h3, h2, h1{
     padding: 10px 10px;
 }
 .ajax-loader img{
-	width: 1.2em;
-	height: 0.6em;
+    width: 1.2em;
+    height: 0.6em;
 }
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
 
 .navbar-form .input-group span.ui-select-toggle.form-control {
-	width: 100% !important;
+    width: 100% !important;
 }
 .navbar-form .input-group input.ui-select-search.form-control{
-	width: 100% !important;	
+    width: 100% !important;	
 }
 .nopadding{
     padding: 0px;
@@ -49,35 +53,35 @@ h3, h2, h1{
 
 
 body{
-	background: #000;
-        width: 100%;
-        height: 100%; 
+    background: #000;
+    width: 100%;
+    height: 100%; 
 }
 .section-separator{
     text-align: center;
 }
 .section-separator{
-	background: #6BB6C8;
-	color: white;
-	padding: 10px 15px;
-	margin: 0px 0px 15px 0px;
-	text-transform: uppercase;
-	letter-spacing: 1px;
+    background: #6BB6C8;
+    color: white;
+    padding: 10px 15px;
+    margin: 0px 0px 15px 0px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 .section-separator h1,h2,h3,h4{
-	font-size: 2em;
-	margin: 0px;
-	font-weight: bold;
+    font-size: 2em;
+    margin: 0px;
+    font-weight: bold;
 }
 .padding-sm{
     padding: 10px;
 }
 label.hide-radio{
-	padding-left: 0px;
+    padding-left: 0px;
 }
 .hide-radio input{
-	background: #333;
-	left: -10000px;
+    background: #333;
+    left: -10000px;
 }
 .bg-light{
     background: #fff;
@@ -87,22 +91,22 @@ label.hide-radio{
     /* padding-bottom: 10px; */
 }
 .navbar-fixed-top{
-	/* padding: 0px 10px; */
+    /* padding: 0px 10px; */
 }
 header .navbar-toggle{
 }
 header .navbar-header ul{
-	margin-bottom: 0px;
+    margin-bottom: 0px;
 }
 header .header-title{
-	color: white;
-	font-size: 2em;
-	padding-right: 10px;
-	font-weight: bold;
-	text-transform: capitalize;
-	font-family: Helvetica;
-	padding-top: 5px;
-	padding-left: 10px;
+    color: white;
+    font-size: 2em;
+    padding-right: 10px;
+    font-weight: bold;
+    text-transform: capitalize;
+    font-family: Helvetica;
+    padding-top: 5px;
+    padding-left: 10px;
 }
 
 .max-height{
@@ -112,11 +116,11 @@ header .header-title{
 
 .navbar{
     margin-bottom: 0px;
-	background: #080808;
-	border-bottom: 1px solid #222;
+    background: #080808;
+    border-bottom: 1px solid #222;
 }
 header .navbar-header{
-	/* height: 50px; */
+    /* height: 50px; */
 }
 
 
@@ -125,7 +129,7 @@ header .navbar-header{
     background: green;
     color: white;
     padding: 5px;
-    
+
 }
 .message.success{}
 
@@ -142,28 +146,28 @@ header .navbar-header{
     background: #000;
 }
 .item-heading{
-	padding: 8px 5px;
-	text-align: center;
+    padding: 8px 5px;
+    text-align: center;
 }
 .item-title{
     font-size: 1.15em;
 }
 .item-body{
-	padding: 10px 5px;
-	background: whitesmoke;
+    padding: 10px 5px;
+    background: whitesmoke;
 }
 .item-info{
-	font-size: 0.9em;
-	color: #999;
+    font-size: 0.9em;
+    color: #999;
 }
 .item .item-heading > a{
-	color: white;
-	font-weight: bold;
-	font-size: 1.3em;
+    color: white;
+    font-weight: bold;
+    font-size: 1.3em;
 }
 .item .item-heading > a:hover{
-	text-decoration:none;
-	color: #eee;
+    text-decoration:none;
+    color: #eee;
 }
 .item-points{
     font-size: 1.5em;
@@ -172,13 +176,13 @@ header .navbar-header{
     color : #ddd;
 }
 .item .btn{
-	background: #080808;
-	border: none;
+    background: #080808;
+    border: none;
 }
 .item-sport span{
     border-radius: 40px;
     padding: 10px;
-    
+
 }
 .item-category{
     text-transform: capitalize;
@@ -188,37 +192,37 @@ header .navbar-header{
     padding-top: 10px;
 }
 .btn-play{
-	width: 90%;
-	height: 100%;
-	margin: auto;
-	font-size: 1.5em;
+    width: 90%;
+    height: 100%;
+    margin: auto;
+    font-size: 1.5em;
 }
 
 
 .margin-top{
-	margin-top: 10px;
+    margin-top: 10px;
 }
 
 .user-profile-tag{
-	font-size: 1.5em;
+    font-size: 1.5em;
 }
 
 
 .btn.btn-full-size{
-	width: 100%;
-	margin: 0px;
-	border-radius: 0px;
-	padding: 10px 20px;
+    width: 100%;
+    margin: 0px;
+    border-radius: 0px;
+    padding: 10px 20px;
 }
 
 
 .section{
-	padding: 10px;
+    padding: 10px;
 }
 
 .bg-colored{
-	background: #F3C212;
-	color: white;
+    background: #F3C212;
+    color: white;
 }
 .bg-secondary{
     background: #5cb85c;
@@ -229,42 +233,40 @@ header .navbar-header{
     color: #5cb85c;
 }
 .text-big{
-	font-size: 1.5em;
+    font-size: 1.5em;
 }
 .text-bold{
-	font-weight: bold;
+    font-weight: bold;
 }
-
-
-
 
 
 .player-container{
-  margin: 0 auto;
+    position: fixed;
+    margin: 0 auto;
 }
 
 .iframe-wrapper{
-  width: 100%;
-  position: relative;
+    width: 100%;
+    position: relative;
 }
 
 .res-4by3{
-  padding-bottom: 75%;
+    padding-bottom: 75%;
 }
 
 .res-16by9{
-  padding-bottom: 56.25%;
+    padding-bottom: 56.25%;
 }
 
 .iframe-wrapper iframe{
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
-.iframe-wrapper .pick-video-message{
+.pick-video-message{
     font-size: 3em;
     color: #eee;
     text-align: center;
@@ -280,14 +282,14 @@ header .navbar-header{
 
 
 .btn-facebook {
-  color: #fff;
-  background-color: #3b5998;
-  border: 1px solid #335190;
+    color: #fff;
+    background-color: #3b5998;
+    border: 1px solid #335190;
 }
 
 .btn-facebook:hover,
 .btn-facebook:focus {
-  color: #fff;
-  background-color: #294786;
+    color: #fff;
+    background-color: #294786;
 }
 

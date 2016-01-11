@@ -9,9 +9,10 @@
             Account created {{data.user.created| timeago}}.
         </p>
 
-        <hr/>
 
-        <div class="text-center">
+        <div class="text-center" ng-if="!isSociaLogin()">
+            
+            <hr/>
 
             <button class="btn btn-warning" 
                     ng-show="!showConfirmPassword"
@@ -23,7 +24,7 @@
 
             <div class="" ng-show="showConfirmPassword">
                 <form class="form" name="formConfirmPassword">
-                    <fieldset ng-disabled="false">
+                    <fieldset ng-disabled="isFormDeleteAccountLoading">
                         <div class="alert alert-danger">
                             <span class="glyphicon glyphicon-warning-sign"></span> 
                             Be carefull, this action cannot be undone! 
@@ -41,7 +42,8 @@
                                     ng-disabled="false"
                                     ng-click="removeAccount(password)">
                                 <span class="glyphicon glyphicon-remove-circle"></span> 
-                                Delete my account
+                                Delete my account 
+                                <div ng-loading-icon is-loading="isFormDeleteAccountLoading"></div>
                             </button>
                             <button class="btn btn-default" ng-click="showConfirmPassword = false">
                                 <span class="glyphicon glyphicon-arrow-left"></span> 

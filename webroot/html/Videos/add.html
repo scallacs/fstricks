@@ -7,7 +7,7 @@
 
 
             <form class="form" name="form" novalidate>
-                <fieldset>
+                <fieldset ng-disabled="isFormLoading">
                     <div class="form-group clearfix">
                         <div class="col-xs-4">
                             <select ng-model="data.provider_id" 
@@ -47,7 +47,11 @@
                         <button type="button" 
                                 ng-click="add(data)" 
                                 class="btn btn-primary"
-                                ng-disabled="!form.$valid">Next</button>
+                                ng-disabled="!form.$valid">Next 
+
+                            <div ng-loading-icon is-loading="isFormLoading"></div>
+
+                        </button>
                     </div>
                 </fieldset>
             </form>

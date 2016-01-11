@@ -5,14 +5,15 @@
     <div class="bg-light padding-sm">
 
         <form class="form" name="formAddVideoTag">
+            <div class="">
+                <div class="iframe-wrapper res-16by9">   
+                    <youtube player-video="playerInfo" frameborder="0"></youtube> 
+                </div>
+            </div>
             <fieldset ng-disabled="isFormLoading">
                 <div class="form-group">
-                    <div class="player-container">
-                        <div class="iframe-wrapper res-16by9">   
-                            <youtube player-video="playerInfo" frameborder="0"></youtube> 
-                        </div>
-                    </div>
                     <div
+                        class="margin-top"
                         ng-model="videoTag.range"
                         ui-slider="{range: true}" 
                         min="0" 
@@ -70,30 +71,7 @@
                         </div>
                     </div>
                 </div>
-
-
-
                 <div class="form-group">
-                    <!--
-                    <div class="col-xs-6">
-                        <label for="FormSport">Sport</label>
-                        <select ng-model="videoTag.sport_id" 
-                                ng-options="sport.id as sport.name for sport in sports"
-                                class="form-control"
-                                ng-required>
-                        </select>
-                    </div>
-    
-                    <div class="col-xs-6">
-                        <label for="FormSport">Category</label>
-                        <select ng-model="videoTag.category_id" 
-                                ng-options="category.id as category.name for category in categories"
-                                class="form-control"
-                                ng-required>
-                            <option value="snowboard">Snowboard</option>
-                        </select>
-                    </div>
-                    -->
                     <div class="clearfix">
                         <div class="col-sm-5 form-group">
                             <label class="control-label">Sport and category</label>
@@ -137,25 +115,15 @@
                                     repeat="tag in suggestedTags"
                                     refresh="refreshSuggestedTags($select.search)"
                                     refresh-delay="500">
-                                    <div class="clearfix" ng-if="!tag.is_new">
+                                    <div class="clearfix">
                                         <div class="col-xs-10" style="text-transform: capitalize;"  >
                                             <span class="text-bold">{{tag.name}}</span> <br/>
                                             <span class="text-muted">{{tag.sport_name}}</span> - 
                                             <span class="text-muted">{{tag.category_name}}</span>
                                         </div>
                                         <div class="col-xs-2" style="overflow: hidden;" >
-                                            <span class="text-big">{{tag.count_ref}}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="clearfix"  ng-if="tag.is_new">
-                                        <div class="col-xs-10" style="text-transform: capitalize;"  >
-                                            <span class="text-bold">{{tag.name}}</span> <br/>
-                                            <span class="text-muted">{{tag.sport_name}}</span> - 
-                                            <span class="text-muted">{{tag.category_name}}</span>
-                                        </div>
-                                        <div class="col-xs-2" style="overflow: hidden;" >
-                                            <span class="text-big text-warning">New!</span>
+                                            <span class="text-big" ng-if="!tag.is_new">{{tag.count_ref}}</span>
+                                            <span class="text-big text-warning" ng-if="tag.is_new">New!</span>
                                         </div>
                                     </div>
                                 </ui-select-choices>
@@ -168,13 +136,12 @@
                     <div class="alert alert-danger"> 
                         <p class="">
                             <span class="glyphicon glyphicon-warning-sign"></span> 
-                            You cannot create this tag, their a similar one that already exists. 
+                            You cannot create this tag, their is a similar one that already exists. 
                         </p>
                     </div>
                     <div ng-repeat="videoTag in similarTags">
                         <div ng-include="'html/VideoTags/item.html'"></div>
                     </div>
-
                 </div>
                 <div mc-messages></div>
                 <div class="text-center form-group">
@@ -211,7 +178,7 @@
 
         <div class="" ng-if="video.video_tags.length > 0">
             <hr/>
-            <h3> Existing tags </h3>
+            <h3> Existing tricks </h3>
             <div ng-repeat="videoTag in video.video_tags">
                 <div ng-include="'html/VideoTags/item.html'"></div>
             </div>

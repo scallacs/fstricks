@@ -40,4 +40,6 @@ class VideoTag extends Entity
         'count_points' => false,
         'status' => false
     ];
+    
+    const STATUS_VALIDATED = 'validated';
 }

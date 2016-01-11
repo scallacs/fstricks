@@ -46,6 +46,14 @@ module.config(function($routeProvider, $controllerProvider) {
                 templateUrl: HTML_FOLDER + 'Videos/add.html',
                 controller: 'AddVideoController'
             })
+            .when('/faq', {
+                templateUrl: HTML_FOLDER + '/Pages/faq.html',
+                controller: 'PagesController'
+            })
+            .when('/contact', {
+                templateUrl: HTML_FOLDER + '/Pages/contact.html',
+                controller: 'PagesController'
+            })
             .when('/add/:provider/:videoId', {
                 templateUrl: HTML_FOLDER + 'VideoTags/add.html',
                 controller: 'AddVideoTagController'
@@ -88,7 +96,7 @@ module.controller('MainController', function($scope, AuthenticationService,
     $scope.isViewLoading = true;
 
     $scope.refreshSearchedTags = refreshSearchedTags;
-    $scope.login = login;
+
     $scope.logout = logout;
     $scope.setCurrentSport = setCurrentSport;
     $scope.resetVideo = resetVideo;
@@ -190,19 +198,6 @@ module.controller('MainController', function($scope, AuthenticationService,
         $scope.video.video_tags = [];
     }
 
-    function login(data) {
-        $scope.feedback = ViewFeedback.loading();
-        AuthenticationService.login(data.email, data.password, function(isLogin, response) {
-            $scope.feedback = ViewFeedback.auto(response);
-            $scope.isAuthed = isLogin;
-            if (isLogin) {
-                $location.path("/users/settings");
-                return;
-            }
-        });
-    }
-
-
 
     function logout() {
         AuthenticationService.logout();
@@ -225,6 +220,7 @@ module.controller('MainController', function($scope, AuthenticationService,
     }
 
     function setCurrentSport(sport) {
+        SharedData.loadingState = SharedData.loadingState + 1;
         $scope.currentSport = sport;
         SharedData.currentSport = sport;
     }
@@ -254,9 +250,16 @@ module.controller('MainController', function($scope, AuthenticationService,
 });
 
 
-module.controller('ModalReportErrorController', function($scope, $uibModalInstance, ErrorReportEntity, ViewFeedback, videoTag) {
+module.controller('ModalReportErrorController', function($scope, $uibModalInstance, ErrorReportEntity,
+        ViewFeedback, videoTag, AuthenticationService) {
+    if (!AuthenticationService.isAuthed()) {
+        AuthenticationService.requireLogin();
+        return;
+    }
+
     $scope.videoTag = videoTag;
     $scope.feedback = null;
+    $scope.isFormLoading = false;
 
     $scope.ok = function() {
         $uibModalInstance.close($scope.videoTag);
@@ -267,6 +270,7 @@ module.controller('ModalReportErrorController', function($scope, $uibModalInstan
     };
 
     $scope.sendReport = function(errorReport) {
+        $scope.isFormLoading = true;
         errorReport.video_tag_id = videoTag.id;
         ErrorReportEntity.post(errorReport, function(response) {
             console.log(response);
@@ -276,15 +280,24 @@ module.controller('ModalReportErrorController', function($scope, $uibModalInstan
             else {
                 $scope.feedback = ViewFeedback.auto(response);
             }
+
+            $scope.isFormLoading = false;
+        }, function() {
+            $scope.isFormLoading = false;
         });
     };
 });
 
 
 module.controller('SettingsController', function($scope, SharedData, messageCenterService, AuthenticationService, UserEntity) {
+
+    AuthenticationService.requireLogin();
+
     $scope.data = {};
     $scope.password = '';
     $scope.removeAccount = removeAccount;
+    $scope.isFormDeleteAccountLoading = false;
+    $scope.isSociaLogin = function(){return AuthenticationService.getCurrentUser().provider !== null;};
 
     init();
 
@@ -296,6 +309,7 @@ module.controller('SettingsController', function($scope, SharedData, messageCent
     }
 
     function removeAccount(password) {
+        $scope.isFormDeleteAccountLoading = true;
         messageCenterService.removeShown();
         UserEntity.removeAccount({password: password}, function(response) {
             if (response.success) {
@@ -303,8 +317,12 @@ module.controller('SettingsController', function($scope, SharedData, messageCent
                 $scope.$parent.logout();
             }
             else {
-                messageCenterService.add('warning', response.message, {status: messageCenterService.status.shown});
+                messageCenterService.add('danger', response.message, {status: messageCenterService.status.shown});
             }
+            $scope.isFormDeleteAccountLoading = false;
+        }, function() {
+
+            $scope.isFormDeleteAccountLoading = false;
         });
     }
 });
@@ -431,6 +449,8 @@ module.controller('UserLoginController', function($scope, $auth, SharedData, mes
     // create a message to display in our view
     $scope.$parent.showVideoPlayer = false;
     $scope.authenticate = authenticate;
+    $scope.isFormLoading = false;
+    $scope.login = login;
 
     function init() {
         messageCenterService.removeShown();
@@ -439,6 +459,7 @@ module.controller('UserLoginController', function($scope, $auth, SharedData, mes
     init();
 
     function authenticate(provider) {
+        $scope.isFormLoading = true;
         messageCenterService.removeShown();
         console.log("Start authenticate with provider=" + provider);
         AuthenticationService.socialLogin(provider, function(isLogin, response) {
@@ -451,10 +472,34 @@ module.controller('UserLoginController', function($scope, $auth, SharedData, mes
                 return;
             }
             else {
+                $scope.isFormLoading = false;
                 messageCenterService.add('danger', response.message, {status: messageCenterService.status.shown});
             }
+        }, function() {
+            $scope.isFormLoading = false;
         });
     }
+
+
+    function login(data) {
+        $scope.isFormLoading = true;
+        messageCenterService.removeShown();
+        AuthenticationService.login(data.email, data.password, function(isLogin, response) {
+            $scope.$parent.isAuthed = isLogin;
+            if (isLogin) {
+                messageCenterService.add('success', response.message, {status: messageCenterService.status.shown});
+                $location.path("/users/settings");
+                return;
+            }
+            else {
+                messageCenterService.add('danger', response.message, {status: messageCenterService.status.shown});
+            }
+            $scope.isFormLoading = false;
+        }, function() {
+            $scope.isFormLoading = false;
+        });
+    }
+
 //        $auth.authenticate(provider)
 //                .then(function(response) {
 //                    if (response.data.success) {
@@ -482,11 +527,14 @@ module.controller('UserLoginController', function($scope, $auth, SharedData, mes
 
 });
 module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $location,
-        VideoEntity, VideoTagEntity, PlayerProviders, messageCenterService, SharedData) {
+        VideoEntity, VideoTagEntity, PlayerProviders, messageCenterService, SharedData, AuthenticationService) {
+
+    AuthenticationService.requireLogin();
 
     $scope.data = {provider_id: PlayerProviders.list()[0].name, video_url: null};
     $scope.playerProviders = PlayerProviders.list();
     $scope.add = add;
+    $scope.isFormLoading = false;
 
     init();
 
@@ -503,6 +551,7 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
     }
 
     function add(data) {
+        $scope.isFormLoading = true;
         if (YoutubeVideoInfo.extractVideoIdFromUrl(data.video_url)) {
             data.video_url = YoutubeVideoInfo.extractVideoIdFromUrl(data.video_url);
         }
@@ -513,6 +562,9 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
             else {
                 messageCenterService.add('warning', response.message);
             }
+            $scope.isFormLoading = false;
+        }, function() {
+            $scope.isFormLoading = false;
         });
     }
 
@@ -606,7 +658,10 @@ module.controller('ViewVideoTagController', function($scope, VideoTagEntity, $ro
 });
 module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $filter,
         $routeParams, SportEntity, VideoEntity, VideoTagEntity, ViewFeedback, TagEntity, SharedData,
-        messageCenterService) {
+        messageCenterService, AuthenticationService) {
+
+    AuthenticationService.requireLogin();
+
 
     var MIN_TAG_DURATION = 2;
     var MAX_TAG_DURATION = 40;
@@ -683,18 +738,16 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
                 category_id: category.category_id,
                 sport_id: category.sport_id
             }, function(results) {
-                if (results.length === 0) {
-                    $scope.suggestedTags = [{
-                            is_new: true,
-                            name: trick,
-                            sport_name: category.sport_name,
-                            category_name: category.category_name,
-                            sport_id: category.sport_id,
-                            category_id: category.category_id
-                        }];
-                }
-                else {
-                    $scope.suggestedTags = results;
+                $scope.suggestedTags = [{
+                        is_new: true,
+                        name: trick,
+                        sport_name: category.sport_name,
+                        category_name: category.category_name,
+                        sport_id: category.sport_id,
+                        category_id: category.category_id
+                    }];
+                for (var i = 0; i < results.length; i++) {
+                    $scope.suggestedTags.push(results[i]);
                 }
             });
         }
@@ -888,27 +941,18 @@ module.controller('SearchTagController', function($scope, TagEntity) {
     $scope.tagTransform = tagTransform;
 
     function init() {
-        loadSuggestedTags('');
     }
 
-    function loadSuggestedTags(term) {
-        TagEntity.suggest({id: term}, function(results) {
-            $scope.suggested = results;
-        });
-    }
-    ;
+
     init();
 
     function onSelectTag($item, $model) {
         $scope.$emit('onSelectedTagUpdated', $scope.selected);
     }
-    ;
 
     function onRemoveTag($item, $model) {
         $scope.$emit('onSelectedTagUpdated', $scope.selected);
     }
-
-
     function loadSuggestedTags(term) {
         TagEntity.suggest({id: term}, function(results) {
             $scope.suggested = results;
@@ -930,7 +974,8 @@ module.controller('SearchTagController', function($scope, TagEntity) {
 
 
 //toastr
-module.controller('SignupController', function($scope, $location, UserEntity, SharedData, messageCenterService) {
+module.controller('SignupController', function($scope, $location, UserEntity, SharedData,
+        messageCenterService, AuthenticationService) {
 
     SharedData.loadingState = 0;
     messageCenterService.removeShown();
@@ -940,19 +985,40 @@ module.controller('SignupController', function($scope, $location, UserEntity, Sh
     function signup(data) {
         messageCenterService.removeShown();
 
-        UserEntity.signup(data, function(response) {
-            if (response.success) {
+        $scope.isFormLoading = true;
+
+        AuthenticationService.signup(data, function(success, response) {
+            if (success) {
                 $scope.$parent.isAuthed = true;
                 messageCenterService.add('success', response.message, {status: messageCenterService.status.shown});
                 $location.path('/');
             }
             else {
                 messageCenterService.add('danger', response.message, {status: messageCenterService.status.shown});
+                angular.forEach(response.validationErrors.Users, function(errors, field) {
+                    var errorString = Object.keys(errors).map(function(k) {
+                        return errors[k];
+                    }).join(', ');
+                    console.log("Setting error '" + errorString + "' for field " + field);
+                    $scope.signupForm[field].$setValidity('server', false);
+                    $scope.signupForm[field].$error.server = errorString;
+//                    angular.forEach(errors, function(error) {
+//                       // keep the error messages from the server
+//
+//                    });
+                });
             }
+            $scope.isFormLoading = false;
+        }, function() {
+            $scope.isFormLoading = false;
         });
 
     }
-    ;
+});
+
+module.controller('PagesController', function($scope, SharedData) {
+    $scope.$parent.showVideoPlayer = false;
+    SharedData.loadingState = 0;
 });
 
 module.controller('ProfileController', function($scope, $auth, toastr, Account) {

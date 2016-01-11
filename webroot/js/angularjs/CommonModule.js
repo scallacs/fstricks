@@ -12,7 +12,7 @@ var commonModule = angular.module('CommonModule', [
     'satellizer',
     'MessageCenterModule'], function($routeProvider, $locationProvider, $httpProvider) {
 
-    $locationProvider.html5Mode(true).hashPrefix('!');
+    //$locationProvider.html5Mode(true).hashPrefix('!');
 
     var interceptor = ['$location', '$rootScope', '$q', function($location, scope, $q) {
 
@@ -518,40 +518,54 @@ commonModule.factory('VideoEntity', function($resource) {
         }
     });
 });
-commonModule.factory('AuthenticationService', function($http, $cookies, $rootScope, UserEntity) {
+commonModule.factory('AuthenticationService', function($http, $cookies, $rootScope, UserEntity, $location) {
     var service = {};
 
-    var isAuthed = null;
+    var currentUser = null
 
     service.login = login;
     service.logout = logout;
     service.setCredentials = setCredentials;
     service.clearCredentials = clearCredentials;
     service.getCurrentUser = getCurrentUser;
-    service.isAuthed = getIsAuthed;
+    service.isAuthed = isAuthed;
     service.socialLogin = socialLogin;
+    service.signup = signup;
+    service.requireLogin = requireLogin;
+
     return service;
 
     function getCurrentUser() {
-        return $cookies.getObject('globals').currentUser;
-    }
-    function getIsAuthed() {
-        try {
-            if (isAuthed === null) {
-                var globals = $cookies.getObject('globals');
-                console.log(globals);
-                isAuthed = (globals && globals.currentUser && globals.currentUser.token);
-            }
-            return isAuthed;
-        } catch (ex) {
-            isAuthed = false;
-            clearCredentials();
+        if (currentUser !== null){
+            return currentUser;
         }
+        
+        var globals = $cookies.getObject('globals');
+        if (!globals){
+            return null;
+        }
+        var user = globals.currentUser;
+        console.log("Getting current user: " + user.email);
+        return user;
+    }
+    function isAuthed() {
+        return getCurrentUser() !== null;
     }
 
     function login(username, password, callback) {
 
         UserEntity.login({email: username, password: password, id: null}, function(response) {
+            console.log(response);
+            if (response.success) {
+                response.data.provider = null;
+                setCredentials(response.data);
+            }
+            callback(response.success, response);
+        });
+    }
+
+    function signup(data, callback) {
+        UserEntity.signup(data, function(response) {
             console.log(response);
             if (response.success) {
                 setCredentials(response.data);
@@ -565,6 +579,7 @@ commonModule.factory('AuthenticationService', function($http, $cookies, $rootSco
         UserEntity.login({id: null, provider: provider}, function(response) {
             console.log(response);
             if (response.success) {
+                response.data.provider = provider;
                 setCredentials(response.data);
             }
             callback(response.success, response);
@@ -572,27 +587,35 @@ commonModule.factory('AuthenticationService', function($http, $cookies, $rootSco
     }
 
     function setCredentials(data) {
-        $rootScope.globals = {
-            currentUser: data
-        };
-
-        $http.defaults.headers.common['Authorization'] = 'Bearer ' + data.token; // jshint ignore:line
+        currentUser = data;
+        $rootScope.globals = {currentUser: currentUser};
+        $http.defaults.headers.common['Authorization'] = 'Bearer ' + data.token; 
+        $cookies.remove('globals');
         $cookies.putObject('globals', $rootScope.globals);
-        isAuthed = true;
+       
+        console.log("Setting credential for user: " + data.email + " - stored: " + getCurrentUser().email);
     }
 
     function logout() {
-        isAuthed = false;
         clearCredentials();
     }
 
     function clearCredentials() {
+        currentUser = null;
         $rootScope.globals = {};
         $cookies.remove('globals');
         $http.defaults.headers.common.Authorization = 'Basic';
+        console.log("Clearing credential");
+    }
+    
+    function requireLogin(){
+        if (!isAuthed()){
+            console.log("User needs to be logged in to access this content");
+            $location.path('/login');
+        }
     }
 
-})
+});
 commonModule.factory('YoutubeVideoInfo', function() {
 
     return {
@@ -897,41 +920,40 @@ commonModule.directive('passwordMatch', function() {
     };
 });
 
-'username_exists'
 
+commonModule.factory('DataExistsService', function($resource) {
+    var url = WEBROOT_FULL + '/:controller/:action/:value.json';
 
-commonModule.factory('DataExistsService', function ($resource) {
-        var url = WEBROOT_FULL + '/:controller/:action/:value.json';
-
-        return $resource(url, {controller: '@controller', action: '@action', value: '@value'}, {
-            check: {
-                method: 'GET',
-                params: {action: 'view'},
-                isArray: false
-            }
-        });
+    return $resource(url, {controller: '@controller', action: '@action', value: '@value'}, {
+        check: {
+            method: 'GET',
+            params: {action: 'view'},
+            isArray: false
+        }
+    });
 });
-commonModule.directive('ftUnique', function (DataExistsService) {
+commonModule.directive('ftUnique', function(DataExistsService) {
     return {
         restrict: 'A',
         require: 'ngModel',
-        link: function (scope, element, attrs, ngModel) {
-            element.bind('blur', function (e) {
-                if (!ngModel || !element.val()) return;
+        link: function(scope, element, attrs, ngModel) {
+            element.bind('blur', function(e) {
+                if (!ngModel || !element.val())
+                    return;
                 var keyProperty = scope.$eval(attrs.ftUnique);
                 var currentValue = element.val();
                 DataExistsService.check({
-                    controller: keyProperty.key,
-                    action : keyProperty.property,
+                    controller: keyProperty.controller,
+                    action: keyProperty.action,
                     value: currentValue
-                }, function (response){
+                }, function(response) {
                     console.log("Check exists response: " + response.exists);
-                    if (currentValue == element.val()) { 
+                    if (currentValue == element.val()) {
                         //Ensure value that being checked hasn't changed
                         //since the Ajax call was made
-                        ngModel.$setValidity('unique', response.exists);
+                        ngModel.$setValidity('unique', !response.exists);
                     }
-                    else{
+                    else {
                         ngModel.$setValidity('unique', true);
                     }
                 });
@@ -1054,6 +1076,20 @@ commonModule.directive('passwordStrength', function() {
         },
         template: '<span class="password-strength-indicator"><span></span><span></span><span></span><span></span></span>'
     };
+});
+
+commonModule.directive('servererror', function() {
+    return {
+        restrict: 'A',
+        require: '?ngModel',
+        link: function(scope, element, attrs, ctrl) {
+            element.on('change', function() {
+                scope.$apply(function() {
+                    ctrl.$setValidity('server', true);
+                });
+            });
+        }
+    }
 });
 
 commonModule.factory('PlayerProviders', function() {
