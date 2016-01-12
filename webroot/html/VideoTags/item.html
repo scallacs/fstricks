@@ -22,15 +22,16 @@
             </div>
             <div class="col-xs-2">
                 <div class="dropdown">
-                    <button class="btn btn-primary" ng-click="share(videoTag)" title="Share" data-toggle="dropdown">
+                    <button class="btn btn-primary" title="Share" data-toggle="dropdown">
                         <span class="glyphicon glyphicon-share"></span> 
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li>
-                            <div facebook class="facebookShare" 
-                                 data-title='{{title}}'
+                            <div facebook 
+                                 class="btn-facebook-share" 
+                                 data-title='Share this trick'
                                  data-picture-url='http://i.imgur.com/WACv9Cl.jpg' 
-                                 ng-url="{{WEBROOT_FULL}}/view/{{videoTag.slug}}"
+                                 ng-url="{{WEBROOT_FULL}}/view/{{videoTag.id}}"
                                  data-shares='shares'>{{ shares}}
                             </div>
                         </li>
@@ -54,13 +55,17 @@
                 </p>
             </div>
             <div class="col-xs-7" ng-controller="VideoTagPointsController">
-                <button type="button" class="btn btn-primary"  ng-click="down(videoTag)">
+                <button type="button" class="btn btn-primary"  ng-click="down(videoTag)" 
+                        ng-disabled="videoTag.user_rate === 'loading'"
+                        ng-class="videoTag.user_rate === 'down' ? 'active' : ''">
                     <span class="glyphicon glyphicon-arrow-down"></span>
                 </button>
                 <span class="item-points">
                     {{videoTag.count_points}}
                 </span>
-                <button type="button" class="btn btn-primary" ng-click="up(videoTag)">
+                <button type="button" class="btn btn-primary" ng-click="up(videoTag)" 
+                        ng-disabled="videoTag.user_rate === 'loading'"
+                        ng-class="videoTag.user_rate === 'up' ? 'active' : ''">
                     <span class="glyphicon glyphicon-arrow-up"></span>
                 </button>
             </div>
@@ -76,6 +81,12 @@
                                 View full video
                             </a>
                         </li>           
+                        <li>
+                            <a ng-href="#/view/{{videoTag.sport_name}}/{{videoTag.category_name}}/{{videoTag.tag_slug}}">
+                                <span class="glyphicon glyphicon-eye-open"></span>  
+                                View this trick
+                            </a>
+                        </li>           
                         <li class="divider"></li>
                         <li>
                             <a href="" ng-click="openReportErrorModal(videoTag)">
@@ -83,12 +94,13 @@
                                 Report error
                             </a>
                         </li>
+                        <!--
                         <li ng-if="videoTag.removable">
                             <a href="" ng-click="removeVideoTag($index)">
                                 <span class="glyphicon glyphicon-remove"></span> 
                                 remove
                             </a>
-                        </li>
+                        </li>-->
 
                     </ul>
                 </div>

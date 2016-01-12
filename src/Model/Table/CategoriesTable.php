@@ -70,4 +70,6 @@ class CategoriesTable extends Table
         $rules->add($rules->existsIn(['sport_id'], 'Sports'));
         return $rules;
     }
+    
+    
 }

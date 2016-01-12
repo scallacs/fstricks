@@ -8,6 +8,7 @@ var commonModule = angular.module('CommonModule', [
     'ui.slider',
     'ui.select',
     'djds4rce.angular-socialshare',
+    'angularUtils.directives.dirPagination',
     'ngRoute',
     'satellizer',
     'MessageCenterModule'], function($routeProvider, $locationProvider, $httpProvider) {
@@ -17,7 +18,6 @@ var commonModule = angular.module('CommonModule', [
     var interceptor = ['$location', '$rootScope', '$q', function($location, scope, $q) {
 
             function requestError(rejection) {
-                alert('requestError');
                 console.log(rejection);
 //            var status = rejection.status;
 ////
@@ -87,9 +87,13 @@ commonModule.config(function($authProvider, API_KEYS) {
 //    });
 });
 
-commonModule.run(function($FB, API_KEYS, $rootScope) {
-    //  $FB.init(API_KEYS.facebook);
+commonModule.run(function($FB, API_KEYS, $rootScope, $location) {
+    $FB.init(API_KEYS.facebook);
     $rootScope.WEBROOT_FULL = WEBROOT_FULL;
+    
+    $rootScope.$on('$locationChangeStart', function() {
+        $rootScope.previousPage = location.pathname;
+    });
 });
 commonModule.constant('YT_event', {
     PAUSED: 0,
@@ -819,11 +823,6 @@ commonModule.factory('SportEntity', function($resource) {
             method: 'GET',
             params: {action: 'index'},
             isArray: true
-        },
-        view: {
-            method: 'GET',
-            params: {action: 'view'},
-            isArray: true
         }
     });
 
@@ -842,7 +841,7 @@ commonModule.factory('CategoryEntity', function($filter) {
 });
 
 commonModule.factory('TagEntity', function($resource) {
-    var url = WEBROOT_FULL + '/Tags/:action/:id/:sport/:category/:trick.json';
+    var url = WEBROOT_FULL + '/Tags/:action/:id.json';
     //var url = '/sys/MediaTagTricks/:action/:id';
     return $resource(url, {id: '@id', action: '@action', sport: '@sport', category: '@category', trick: '@trick'}, {
         suggest: {
@@ -853,11 +852,6 @@ commonModule.factory('TagEntity', function($resource) {
         suggestCategory: {
             method: 'GET',
             params: {action: 'suggestCategory', id: null},
-            isArray: true
-        },
-        view: {
-            method: 'GET',
-            params: {action: 'view'},
             isArray: true
         }
     });
@@ -891,9 +885,9 @@ commonModule.factory('VideoTagEntity', function($resource) {
             params: {action: 'add'},
             isArray: false
         },
-        best: {
+        search: {
             method: 'GET',
-            params: {action: 'best'},
+            params: {action: 'search'},
             isArray: true
         },
         recentlyTagged: {

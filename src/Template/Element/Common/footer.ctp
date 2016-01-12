@@ -1,5 +1,5 @@
 <footer>
-    <div class="footer clearfix margin-top">
+    <div class="footer clearfix">
         <div class="col-xs-8">
             <ul class="list-inline">
                 <li ng-repeat="sport in sports">

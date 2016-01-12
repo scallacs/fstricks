@@ -44,8 +44,8 @@
 <?= $this->Html->script('angularjs/CommonModule'); ?>
 <?= $this->Html->script('angularjs/DefaultModule'); ?>
 
-<?= $this->Html->css("../js/angular-socialshare/angular-socialshare.min.css"); ?>
 <?= $this->Html->script("angular-socialshare/angular-socialshare.min.js"); ?>
 <?= $this->Html->script("satellizer/satellizer.min.js"); ?>
 <?= $this->Html->script("message-center/message-center.js"); ?>
+<?= $this->Html->script("angularUtils-pagination/dirPagination.js"); ?>
 <script src="http://platform.twitter.com/widgets.js"></script>

@@ -27,20 +27,4 @@ class SportsController extends AppController
     }
     
     
-    public function view($sportName = null){
-        ResultMessage::setWrapper(false);
-        
-        $sport = $this->Sports->findFromNameCached($sportName); 
-        if ($sport === null){
-            return;
-        }
-        
-        $videoTagsTable = \Cake\ORM\TableRegistry::get('VideoTags');
-        $data = $videoTagsTable->findAndJoin()
-                ->where([
-                    'Tags.sport_id' => $sport['id']
-                ]);
-        ResultMessage::overwriteData($data->all());
-    }
-
 }

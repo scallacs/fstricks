@@ -9,7 +9,7 @@
 
     </head>
     <body ng-app="DefaultModule" ng-controller="MainController">
-    <basehref="#//Tricker/"/>
+    <!--<base href="#/Tricker/"/>-->
 
         <?= $this->Element('Common/header_ajs'); ?>
 
@@ -45,10 +45,10 @@
                         </div>
                     </div>
                     <div class="col-sm-offset-8 col-sm-4 nopadding" ng-if="showVideoPlayer">
+                        
                         <div ng-repeat="videoTag in video.video_tags">
                             <div ng-include="'html/VideoTags/item.html'"></div>
                         </div>
-                        <div class="" ng-if="!playerInfo.video_url && video.video_tags.length === 0" ></div>
                     </div>
                 </div>
                 <?= $this->fetch('content') ?>
