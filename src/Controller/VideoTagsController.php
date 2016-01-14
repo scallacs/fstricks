@@ -12,9 +12,14 @@ use App\Lib\ResultMessage;
  */
 class VideoTagsController extends AppController {
 
+    public function initialize() {
+        parent::initialize();
+        $this->loadComponent('Paginator');
+    }
+
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['view', 'best']);
+        $this->Auth->allow(['view', 'search']);
     }
 
     /**
@@ -85,125 +90,117 @@ class VideoTagsController extends AppController {
      *  - page: page number
      */
     public function search() {
-        $limit = !empty($this->request->query['quantity']) && (int) $this->request->query['quantity'] < 20 ? $this->request->query['quantity'] : 10;
-        $offset = ((!empty($this->request->query['page']) ? (int) $this->request->query['page'] : 1) - 1) * $limit;
+        $paginateOptions = [
+            'limit' => 20,
+            'maxLimit' => 20
+        ];
+        $this->Paginator->config($paginateOptions);
+        ResultMessage::setWrapper(false);
 
-        $query = $this->VideoTags->findAndJoin()
-                ->offset($offset)
-                ->limit($limit);
+        try {
+//        $limit = !empty($this->request->query['quantity']) && (int) $this->request->query['quantity'] < 20 ? $this->request->query['quantity'] : 10;
+//        $offset = ((!empty($this->request->query['page']) ? (int) $this->request->query['page'] : 1) - 1) * $limit;
 
-        if (!empty($this->request->query['order'])) {
-            switch ($this->request->query['order']) {
-                case 'begin_time':
-                    $query->order([
-                        'VideoTags.begin ASC',
-                    ]);
-                    break;
-                case 'best':
-                default:
-                    $query->order([
-                        'VideoTags.count_points DESC',
-                        'VideoTags.created DESC'
-                    ]);
-            }
-        }
+            $query = $this->VideoTags->findAndJoin();
 
-        if (!empty($this->request->query['sport_id'])) {
-            $query->where(['Tags.sport_id' => $this->request->query['sport_id']]);
-        } else if (!empty($this->request->query['sport_name'])) {
-            // Get id from name
-            $sports = \Cake\ORM\TableRegistry::get('Sports');
-            $sportName = strtolower($this->request->query['sport_name']);
-            $sport = $sports->findFromNameCached($sportName);
-            if (!empty($sport)) {
-                $query->where(['Tags.sport_id' => $sport['id']]);
+            if (!empty($this->request->query['order'])) {
+                switch ($this->request->query['order']) {
+                    case 'begin_time':
+                        $query->order([
+                            'VideoTags.begin ASC',
+                        ]);
+                        break;
+                    case 'best':
+                    default:
+                        $query->order([
+                            'VideoTags.count_points DESC',
+                            'VideoTags.created DESC'
+                        ]);
+                }
             }
-        }
-        if (!empty($this->request->query['category_id'])) {
-            $query->where(['Tags.category_id' => $this->request->query['category_id']]);
-        }
-        else if (!empty($this->request->query['category_name']) && isset($sportName)) {
-            $categoryName = strtolower($this->request->query['category_name']);
-            $sports = \Cake\ORM\TableRegistry::get('Sports');
-            $category = $sports->findFromCategoryCached($sportName, $categoryName);
-            if (!empty($category)){
-                $query->where(['Tags.category_id' => $category['id']]);
+
+            if (!empty($this->request->query['sport_id'])) {
+                $query->where(['Tags.sport_id' => $this->request->query['sport_id']]);
+            } else if (!empty($this->request->query['sport_name'])) {
+                // Get id from name
+                $sports = \Cake\ORM\TableRegistry::get('Sports');
+                $sportName = strtolower($this->request->query['sport_name']);
+                $sport = $sports->findFromNameCached($sportName);
+                if (!empty($sport)) {
+                    $query->where(['Tags.sport_id' => $sport['id']]);
+                }
             }
-        }
-        
-        if (!empty($this->request->query['tag_id'])) {
-            $query->where(['VideoTags.tag_id' => $this->request->query['tag_id']]);
-        }
-        if (!empty($this->request->query['trick_name'])) {
-            $query->where(['Tags.slug' => $this->request->query['trick_name']]);
-        }
-        if (!empty($this->request->query['video_id'])) {
-            $query->where(['VideoTags.video_id' => (int)$this->request->query['video_id']]);
-        }
+            if (!empty($this->request->query['category_id'])) {
+                $query->where(['Tags.category_id' => $this->request->query['category_id']]);
+            } else if (!empty($this->request->query['category_name']) && isset($sportName)) {
+                $categoryName = strtolower($this->request->query['category_name']);
+                $sports = \Cake\ORM\TableRegistry::get('Sports');
+                $category = $sports->findFromCategoryCached($sportName, $categoryName);
+                if (!empty($category)) {
+                    $query->where(['Tags.category_id' => $category['id']]);
+                }
+            }
+
+            if (!empty($this->request->query['tag_id'])) {
+                $query->where(['VideoTags.tag_id' => $this->request->query['tag_id']]);
+            }
+            if (!empty($this->request->query['trick_name'])) {
+                $query->where(['Tags.slug' => $this->request->query['trick_name']]);
+            }
+            if (!empty($this->request->query['video_id'])) {
+                $query->where(['VideoTags.video_id' => (int) $this->request->query['video_id']]);
+            }
 //        if (!empty($this->request->query['with_total'])){
 //            $data = [
 //                
 //            ]
 //        }
-        ResultMessage::overwriteData($query->all());
-        ResultMessage::setWrapper(false);
-    }
-
-    /**
-     * Find best tags
-     *
-     * @return void Redirects on successful add, renders view otherwise.
-     */
-    public function best() {
-        $limit = 10; // TODO match with client side
-        $offset = ((!empty($this->request->query['page']) ? (int) $this->request->query['page'] : 1) - 1) * $limit;
-
-        //$dayNumber = 10;
-        $videoTag = $this->VideoTags->findAndJoin()
-                ->order([
-                    'VideoTags.count_points DESC',
-                    'VideoTags.created DESC'
-                ])
-                ->offset($offset)
-                ->limit($limit);
-        $count = null;
-        if ($offset === 0) {
-            $count = $this->VideoTags->find('all')->where([
-                        'VideoTags.status' => \App\Model\Entity\VideoTag::STATUS_VALIDATED,
-                        'VideoTags.count_points >=' => 'VideoTags.count_report_errors'
-                    ])->count();
+            ResultMessage::overwriteData($this->paginate($query, $paginateOptions));
+        } catch (NotFoundException $e) {
+            ResultMessage::overwriteData([]);
         }
-        ResultMessage::overwriteData([
-            'data' => $videoTag,
-            'size' => $count
-        ]);
-
-        ResultMessage::setWrapper(false);
     }
 
     /**
      * Return recently tagged video by user
+     * UPDATE tags T SET count_ref = (SELECT count(*) FROM video_tags WHERE tag_id = T.id)
      */
     public function recentlyTagged() {
-        $limit = 5;
-        $offset = ((!empty($this->request->query['page']) ? (int) $this->request->query['page'] : 1) - 1) * $limit;
-        $data = $this->VideoTags->find('all')
-                ->select([
-                    'provider_id' => 'Videos.provider_id',
-                    'video_url' => 'Videos.video_url',
-                    'id' => 'Videos.id'
-                ])
-                ->limit($limit)
-                ->offset($offset)
-                ->where(['VideoTags.user_id' => $this->Auth->user('id')])
-                ->order(['VideoTags.created DESC'])
-                ->contain(['Videos'])
-                ->distinct(['Videos.id']);
-        if (!empty($this->request->query['total_number'])){
-            // TODO 
-        }
-        ResultMessage::overwriteData($data->all());
         ResultMessage::setWrapper(false);
+        $data = [
+            'data' => null,
+            'total' => null
+        ];
+        $paginateOptions = [
+            'limit' => 5,
+            'maxLimit' => 5
+        ];
+        $this->Paginator->config($paginateOptions);
+        try {
+            $query = $this->VideoTags->find('all')
+                    ->select([
+                        'provider_id' => 'Videos.provider_id',
+                        'video_url' => 'Videos.video_url',
+                        'id' => 'Videos.id'
+                    ])
+                    ->where(['VideoTags.user_id' => $this->Auth->user('id')])
+                    ->order(['VideoTags.created DESC'])
+                    ->contain(['Videos'])
+                    ->distinct(['Videos.id']);
+
+            $data['data'] = $this->paginate($query);
+            if (!empty($this->request->query['total_number'])) {
+                if (count($data['data']) < $paginateOptions['limit']) {
+                    $data['total'] = count($data['data']);
+                } else {
+                    $data['total'] = $query->count();
+                }
+            }
+
+            ResultMessage::overwriteData($data);
+        } catch (NotFoundException $e) {
+            ResultMessage::overwriteData($data);
+        }
     }
 
 }

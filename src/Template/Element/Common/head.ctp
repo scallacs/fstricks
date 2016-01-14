@@ -48,4 +48,5 @@
 <?= $this->Html->script("satellizer/satellizer.min.js"); ?>
 <?= $this->Html->script("message-center/message-center.js"); ?>
 <?= $this->Html->script("angularUtils-pagination/dirPagination.js"); ?>
+<?= $this->Html->script("ngInfiniteScroll/build/ng-infinite-scroll.min"); ?>
 <script src="http://platform.twitter.com/widgets.js"></script>

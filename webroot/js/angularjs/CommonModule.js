@@ -4,12 +4,13 @@
 var commonModule = angular.module('CommonModule', [
     'ngResource',
     'ngMessages',
+    'ngRoute',
     'ui.bootstrap',
     'ui.slider',
     'ui.select',
     'djds4rce.angular-socialshare',
     'angularUtils.directives.dirPagination',
-    'ngRoute',
+    'infinite-scroll',
     'satellizer',
     'MessageCenterModule'], function($routeProvider, $locationProvider, $httpProvider) {
 
@@ -90,7 +91,7 @@ commonModule.config(function($authProvider, API_KEYS) {
 commonModule.run(function($FB, API_KEYS, $rootScope, $location) {
     $FB.init(API_KEYS.facebook);
     $rootScope.WEBROOT_FULL = WEBROOT_FULL;
-    
+
     $rootScope.$on('$locationChangeStart', function() {
         $rootScope.previousPage = location.pathname;
     });
@@ -407,49 +408,59 @@ commonModule.factory('SharedData', function() {
     };
     return data;
 });
-commonModule.factory('ViewFeedback', function() {
-    var success = function(message) {
-        return {
-            message: message,
-            icon: 'glyphicon-info-sign',
-            class: 'bg-success'
-        };
-    };
-    var failure = function(message) {
-        return {
-            message: message,
-            icon: 'glyphicon-warning-sign',
-            class: 'bg-danger'
-        };
-    };
+commonModule.factory('VideoTagData', function(VideoTagEntity, SharedData) {
+    var filters = {};
 
     return {
-        success: success,
-        failure: failure,
-        loading: function() {
-            return {
-                message: "Loading",
-                icon: 'glyphicon-info-sign',
-                class: 'bg-info'
-            };
+        data: [],
+        disabled: true,
+        loading: false,
+        currentPage: 1,
+        callbackSuccess: null,
+        callbackError: null,
+        reset: function() {
+            this.currentPage = 1;
+            this.data = [];
+            filters = {};
         },
-        auto: function(response) {
-            if (response.success) {
-                return success(response.message);
-            }
-            else {
-                return failure(response.message);
-            }
+        setFilter: function(name, value) {
+            this.reset();                  // We reset the results that are in cache if we change the filter
+            filters[name] = value;
         },
-        error: function(error) {
-            console.log(error);
-            return {
-                message: "Server error, please try agian later",
-                icon: 'glyphicon-error-sign',
-                class: 'bg-danger'
-            };
+        setFilters: function(value) {
+            this.reset();                  // We reset the results that are in cache if we change the filter
+            filters = value;
+        },
+        loadNextPage: function() {
+            //alert(this.currentPage);
+            this.loading = true;
+            this.disabled = false;
+            var that = this;
+            filters.page = this.currentPage;
+            SharedData.loadingState = this.data.length > 0 ? 0 : 1;
+            VideoTagEntity.search(filters, function(tags) {
+                console.log('Loading page ' + that.currentPage + ': ' + tags.length + ' tag(s)');
+                if (tags.length < this.limit) {
+                    that.disabled = true;
+                }
+                for (var i = 0; i < tags.length; i++) {
+                    that.data.push(tags[i]);
+                }
+                that.loading = false;
+                that.currentPage += 1;
+                SharedData.loadingState = 0;
+                if (that.callbackSuccess !== null)
+                    that.callbackSuccess(tags);
+
+            }, function() {
+                that.loading = false;
+                that.disabled = true;
+                SharedData.loadingState = 0;
+                if (that.callbackError !== null)
+                    that.callbackError();
+            });
         }
-    }
+    };
 });
 commonModule.factory('SharedScope', function() {
     var myService = {
@@ -540,12 +551,12 @@ commonModule.factory('AuthenticationService', function($http, $cookies, $rootSco
     return service;
 
     function getCurrentUser() {
-        if (currentUser !== null){
+        if (currentUser !== null) {
             return currentUser;
         }
-        
+
         var globals = $cookies.getObject('globals');
-        if (!globals){
+        if (!globals) {
             return null;
         }
         var user = globals.currentUser;
@@ -593,10 +604,10 @@ commonModule.factory('AuthenticationService', function($http, $cookies, $rootSco
     function setCredentials(data) {
         currentUser = data;
         $rootScope.globals = {currentUser: currentUser};
-        $http.defaults.headers.common['Authorization'] = 'Bearer ' + data.token; 
+        $http.defaults.headers.common['Authorization'] = 'Bearer ' + data.token;
         $cookies.remove('globals');
         $cookies.putObject('globals', $rootScope.globals);
-       
+
         console.log("Setting credential for user: " + data.email + " - stored: " + getCurrentUser().email);
     }
 
@@ -611,9 +622,9 @@ commonModule.factory('AuthenticationService', function($http, $cookies, $rootSco
         $http.defaults.headers.common.Authorization = 'Basic';
         console.log("Clearing credential");
     }
-    
-    function requireLogin(){
-        if (!isAuthed()){
+
+    function requireLogin() {
+        if (!isAuthed()) {
             console.log("User needs to be logged in to access this content");
             $location.path('/login');
         }
@@ -893,7 +904,7 @@ commonModule.factory('VideoTagEntity', function($resource) {
         recentlyTagged: {
             method: 'GET',
             params: {action: 'recentlyTagged', id: null},
-            isArray: true
+            isArray: false
         }
     });
 });

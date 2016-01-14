@@ -4,9 +4,8 @@ body{
 }
 .footer{
     background: #080808;
-    padding: 20px;
-    height:80px;/* Height of the footer */
-    margin-top: 100px;
+    padding: 20px;/* Height of the footer */
+    margin-top: 35px;
 }
 h3, h2, h1{
     padding: 10px 10px;

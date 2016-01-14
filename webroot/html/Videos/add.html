@@ -58,7 +58,7 @@
                 <h3>History</h3>
                 <div class="padding-sm">
                     <ul class="list-unstyled">
-                        <li dir-paginate="video in recentVideos | itemsPerPage: videoTagsPerPage"
+                        <li dir-paginate="video in recentVideos | itemsPerPage: videoPerPage"
                             total-items="totalVideos"
                             >
                         <youtube-item data-info="video.provider_data" data-id="video.id" ng-if="video.provider_data">

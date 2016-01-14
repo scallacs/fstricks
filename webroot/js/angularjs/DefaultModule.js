@@ -18,11 +18,12 @@ module.config(function($routeProvider, $controllerProvider) {
                 templateUrl: HTML_FOLDER + 'Videos/view.html',
                 controller: 'ExploreController'
             })
+            /* --------------------------------------------------------------- */
             .when('/view/:id', {
                 templateUrl: HTML_FOLDER + 'Videos/view.html',
                 controller: 'ViewVideoController'
             })
-            .when('/Videos/view/:id', {
+            .when('/video/view/:id', {
                 templateUrl: HTML_FOLDER + 'Videos/view.html',
                 controller: 'ViewVideoController'
             })
@@ -34,13 +35,15 @@ module.config(function($routeProvider, $controllerProvider) {
                 templateUrl: HTML_FOLDER + 'Videos/view.html',
                 controller: 'ViewTagController'
             })
-            .when('/tag/add/:id', {
-                templateUrl: HTML_FOLDER + 'VideoTags/add.html',
-                controller: 'AddVideoTagController'
-            })
+            /* --------------------------------------------------------------- */
             .when('/trick/:id', {
                 templateUrl: HTML_FOLDER + 'Videos/view.html',
                 controller: 'ViewVideoTagController'
+            })
+            /* --------------------------------------------------------------- */
+            .when('/tag/add/:id', {
+                templateUrl: HTML_FOLDER + 'VideoTags/add.html',
+                controller: 'AddVideoTagController'
             })
             .when('/video/add', {
                 templateUrl: HTML_FOLDER + 'Videos/add.html',
@@ -58,10 +61,7 @@ module.config(function($routeProvider, $controllerProvider) {
                 templateUrl: HTML_FOLDER + 'VideoTags/add.html',
                 controller: 'AddVideoTagController'
             })
-//            .when('/users/profile', {
-//                templateUrl: HTML_FOLDER + 'Users/profile.html',
-//                controller: 'UserController'
-//            })
+            /* --------------------------------------------------------------- */
             .when('/users/settings', {
                 templateUrl: HTML_FOLDER + 'Users/settings.html',
                 controller: 'SettingsController'
@@ -78,16 +78,20 @@ module.config(function($routeProvider, $controllerProvider) {
                 templateUrl: HTML_FOLDER + 'Users/signup.html',
                 controller: 'SignupController'
             })
-            .when('/users/profile/:username', {
-                templateUrl: HTML_FOLDER + 'Users/profile.html',
-                controller: 'UserController'
-            })
+//            .when('/users/profile/:username', {
+//                templateUrl: HTML_FOLDER + 'Users/profile.html',
+//                controller: 'UserController'
+//            })
+//            .when('/users/profile', {
+//                templateUrl: HTML_FOLDER + 'Users/profile.html',
+//                controller: 'UserController'
+//            })
             .otherwise({redirectTo: '/'});
 
 });
 
 module.controller('MainController', function($scope, AuthenticationService,
-        $location, SportEntity, SharedData, TagEntity, $uibModal, PlayerProviders, YT_event) {
+        $location, SportEntity, SharedData, TagEntity, $uibModal, PlayerProviders, YT_event, VideoTagData) {
     // create a message to display in our view
     $scope.isAuthed = AuthenticationService.isAuthed();
     $scope.searchTags = [];
@@ -130,17 +134,7 @@ module.controller('MainController', function($scope, AuthenticationService,
 
     // -------------------------------------------------------------------------
     // Paginate
-
-    $scope.totalVideoTags = 0;
-    $scope.videoTagsPerPage = 10; // this should match however many results your API puts on one page
-
-    $scope.pagination = {
-        current: 1
-    };
-
-    $scope.pageChanged = function(newPage) {
-    };
-
+    $scope.videoTagData = VideoTagData;
 
     // -------------------------------------------------------------------------
 
@@ -253,7 +247,6 @@ module.controller('MainController', function($scope, AuthenticationService,
     }
 
     function setCurrentSport(sport) {
-        SharedData.loadingState = SharedData.loadingState + 1;
         $scope.currentSport = sport;
         SharedData.currentSport = sport;
     }
@@ -560,15 +553,15 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
         VideoEntity, VideoTagEntity, PlayerProviders, messageCenterService, SharedData, AuthenticationService) {
 
     AuthenticationService.requireLogin();
-
+    var videosInCache = {};
     $scope.data = {provider_id: PlayerProviders.list()[0].name, video_url: null};
     $scope.playerProviders = PlayerProviders.list();
     $scope.add = add;
     $scope.isFormLoading = false;
-    
+
     $scope.videoPerPage = 5;
-    $scope.totalVideos = 100; // todo
-    
+    $scope.totalVideos = 0; // todo
+
     $scope.pageChanged = function(newPage) {
         loadRecentlyTagged(newPage);
     };
@@ -580,7 +573,7 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
         $scope.$parent.showVideoPlayer = false;
         SharedData.loadingState = 0;
 
-        loadRecentlyTagged();
+        loadRecentlyTagged(1);
 
         $scope.$on('videoIdValidated', function(event, data) {
             $scope.$parent.playerInfo.video_url = data.video_url;
@@ -605,9 +598,18 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
         });
     }
 
+
     function loadRecentlyTagged(page) {
-        VideoTagEntity.recentlyTagged({page: page}, function(response) {
-            angular.forEach(response, function(video) {
+        if (videosInCache[page]){
+            $scope.recentVideos = videosInCache[page];
+            return;
+        }
+        VideoTagEntity.recentlyTagged({page: page, total_number: (page <= 1 ? 1 : null)}, function(response) {
+            if (response.total != null) {
+                $scope.totalVideos = response.total;
+            }
+            var items = response.data;
+            angular.forEach(items, function(video) {
                 YoutubeVideoInfo.data(video.video_url, function(data) {
                     if (data && data.items.length > 0) {
                         video.provider_data = data.items[0];
@@ -618,8 +620,8 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
                 });
             });
             console.log(response);
-            $scope.recentVideos = response;
-
+            $scope.recentVideos = items;
+            videosInCache[page] = items;
         });
     }
 
@@ -915,91 +917,59 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
         $scope.playerInfo.end = data.end;
     }
 });
-module.controller('ViewSportController', function($scope, $filter, VideoTagEntity, $routeParams, SharedData) {
-
+module.controller('ViewSportController', function($scope, VideoTagData, $routeParams, SharedData) {
 
     init();
-
-//    function init() {
-//        $scope.$parent.resetVideo();
-//        
-//        console.log(SharedData.sports);
-//
-//        SportEntity.view({
-//            id: $routeParams.sport
-//        }, function(response) {
-//            $scope.$parent.video.video_tags = response;
-//            SharedData.loadingState = 0;
-//            SharedData.currentSport = $filter('getSportByName')(SharedData.sports, $routeParams.sport);
-//            $scope.$parent.currentSport = SharedData.currentSport;
-//            $scope.$parent.showVideoPlayer = true;
-//        });
-//    }
 
     function init() {
         $scope.$parent.resetVideo();
-        VideoTagEntity.search({
-            sport_name: $routeParams.sport
-        }, function(response) {
-            $scope.$parent.video.video_tags = response;
-            SharedData.loadingState = 0;
-            SharedData.currentSport = $filter('getSportByName')(SharedData.sports, $routeParams.sport);
-            $scope.$parent.currentSport = SharedData.currentSport;
-            $scope.$parent.showVideoPlayer = true;
-        });
+        VideoTagData.setFilter('sport_name', $routeParams.sport);
+        $scope.$parent.showVideoPlayer = true;
+        VideoTagData.loadNextPage();
     }
 
 });
-module.controller('ViewTagController', function($scope, VideoTagEntity, $routeParams, SharedData) {
+module.controller('ViewTagController', function($scope, VideoTagData, $routeParams, SharedData) {
 
     init();
 
     function init() {
-        VideoTagEntity.search({
+        $scope.$parent.resetVideo();
+        VideoTagData.setFilters({
             sport_name: $routeParams.sport,
             category_name: $routeParams.category,
             trick_name: $routeParams.trick
-        }, function(response) {
-            $scope.$parent.video.video_tags = response;
-            SharedData.loadingState = 0;
-
-            $scope.$parent.showVideoPlayer = true;
         });
-    }
-});
-module.controller('ViewVideoController', function($scope, VideoTagEntity, $routeParams, SharedData) {
 
-    init();
-
-    function init() {
-        $scope.$parent.showVideoPlayer = false;
-        VideoTagEntity.search({video_id: $routeParams.id, order: 'begin_time'}, function(tags) {
-            if (tags.length > 0) {
-                $scope.$parent.video = tags[0];
-                $scope.$parent.video.video_tags = tags;
-                $scope.$parent.playerInfo.video_url = tags[0].video_url;
-            }
-            SharedData.loadingState = 0;
-            $scope.$parent.showVideoPlayer = true;
-        });
-    }
-});
-module.controller('ExploreController', function($scope, VideoTagEntity, SharedData) {
-
-    init();
-
-
-    function init() {
         $scope.$parent.showVideoPlayer = true;
-        loadVideoTags(1);
+        VideoTagData.loadNextPage();
+    }
+});
+module.controller('ViewVideoController', function($scope, VideoTagData, $routeParams, SharedData) {
+
+    init();
+
+    function init() {
+        $scope.$parent.resetVideo();
+        VideoTagData.setFilters({video_id: $routeParams.id, order: 'begin_time'});
+
+        $scope.$parent.showVideoPlayer = true;
+        VideoTagData.loadNextPage();
+    }
+});
+module.controller('ExploreController', function($scope, VideoTagData, SharedData) {
+
+    init();
+
+
+    function init() {
+        $scope.$parent.resetVideo();
+        VideoTagData.setFilters({order: 'best'});
+
+        $scope.$parent.showVideoPlayer = true;
+        VideoTagData.loadNextPage();
     }
 
-    function loadVideoTags(page) {
-        VideoTagEntity.search({page: page, order: 'best'}, function(tags) {
-            $scope.$parent.video.video_tags = tags;
-            SharedData.loadingState = 0;
-        });
-    }
 });
 
 module.controller('SearchTagController', function($scope, TagEntity) {
