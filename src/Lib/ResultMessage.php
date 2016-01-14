@@ -15,33 +15,43 @@ namespace App\Lib;
  */
 class ResultMessage {
     //put your code here
-    
+
     /**
      * True if the Json message is sent insinde a wrapper with meta data
      * @var bool 
      */
     public static $wrapper = true;
+
     /**
      * Feedback message displayed. If null, ?
      * @var string 
      */
     public static $message = null;
+
     /**
      * True if the query succeeded, false otherwise
      * @var boolean 
      */
     public static $success = false;
-    
+
+    /**
+     * For OAuth
+     * @var type 
+     */
+    public static $token = false;
+
     /**
      * Json data
      * @var array 
      */
     public static $data = array();
+
     /**
      * Return code
      * @var int 
      */
-    public static $returnCode = 0;    
+    public static $returnCode = 0;
+
     /**
      * Use setter setStepSuccess() and setStepError()
      * Exemple: 
@@ -64,109 +74,120 @@ class ResultMessage {
      * 
      * @var array 
      */
-    public static $details = array();    
+    public static $details = array();
+
     /**
      * Add trace (only seen for developers not on release)
      * @var array 
      */
     public static $trace = array();
+
     /**
      * Use for cakephp Form
      * @var array 
      */
-    public static $validationErrors = array();    
+    public static $validationErrors = array();
+
     /**
      * Redirect URL
      * @var array or string 
      */
     public static $redirectUrl = false;
-    
-    
-    public static function setReturnCode($nb){
+
+    public static function setReturnCode($nb) {
         self::$returnCode = $nb;
     }
 
-    public static function setValidationErrors($errors){
+    public static function setValidationErrors($errors) {
         self::$validationErrors += $errors;
     }
-    public static function redirectToLastPage(){
+
+    public static function redirectToLastPage() {
         self::$redirectUrl = null;
     }
-    public static function noRedirect(){
+
+    public static function noRedirect() {
         self::$redirectUrl = false;
     }
-    
-    public static function addValidationErrorsModel(\Cake\ORM\Entity $entity){
+
+    public static function addValidationErrorsModel(\Cake\ORM\Entity $entity) {
         self::$validationErrors[$entity->source()] = $entity->errors();
     }
-    
-    public static function setRedirectUrl($url){
+
+    public static function setRedirectUrl($url) {
         self::$redirectUrl = $url;
     }
-    
-    public static function setSuccess($value = true){
+
+    public static function setSuccess($value = true) {
         self::$success = $value;
     }
-    public static function getSuccess(){
+
+    public static function getSuccess() {
         return self::$success;
     }
-    public static function getRedirectUrl(){
+
+    public static function getRedirectUrl() {
         return self::$redirectUrl;
     }
 
-
-    public static function setMessage($msg, $success = null){
+    public static function setMessage($msg, $success = null) {
         self::$message = $msg;
-        if ($success !== null){
+        if ($success !== null) {
             self::setSuccess($success);
         }
     }
-    public static function addMessage($msg){
+
+    public static function addMessage($msg) {
         self::$message .= $msg;
     }
-    
-    public static function setData($key, $value){
+
+    public static function setData($key, $value) {
         self::$data[$key] = $value;
     }
-    public static function overwriteData($value){
+
+    public static function setToken($value) {
+        self::$data['token'] = $value;
+        self::$token = $value;
+    }
+
+    public static function overwriteData($value) {
         self::$data = $value;
     }
-    
-    public static function addStepError($msg){
+
+    public static function addStepError($msg) {
         self::$details[] = array(
             'type' => 'error',
             'message' => $msg
         );
     }
-    
-    public static function addStepsError($errors){
+
+    public static function addStepsError($errors) {
         foreach ($errors as $msg) {
             self::addStepError($msg);
         }
     }
-    
-    public static function addStepSuccess($msg){
+
+    public static function addStepSuccess($msg) {
         self::$details[] = array(
             'type' => 'success',
             'message' => $msg
         );
     }
-    
-    public static function addStepsSuccess($msgs){
+
+    public static function addStepsSuccess($msgs) {
         foreach ($msgs as $msg)
-            self::$addStepSuccess ($msg);
+            self::$addStepSuccess($msg);
     }
-    
-    public static function addTrace($msg){
-        if (is_array($msg)){
+
+    public static function addTrace($msg) {
+        if (is_array($msg)) {
             foreach ($msg as $m)
                 self::$trace[] = $m;
-        }
-        else
+        } else
             self::$trace[] = $msg;
     }
-    
-    public static function reset(){
+
+    public static function reset() {
         self::$success = false;
         self::$returnCode = 0;
         self::$message = 'No message defined';
@@ -175,10 +196,11 @@ class ResultMessage {
         self::$data = array();
         self::$redirectUrl = array();
         self::$validationErrors = array();
+        self::$token = false;
     }
-    
-    public static function toArray(){
-        return array(
+
+    public static function toArray() {
+        $data = array(
             'success' => self::$success,
             'returnCode' => self::$returnCode,
             'message' => self::$message,
@@ -189,22 +211,26 @@ class ResultMessage {
             'redirectUrl' => self::$redirectUrl,
             'validationErrors' => self::$validationErrors
         );
+        if (self::$token) {
+            $data['token'] = self::$token;
+        }
+        return $data;
     }
-    
-    public static function setWrapper($val){
+
+    public static function setWrapper($val) {
         self::$wrapper = $val;
     }
 
-    public static function hasWrapper(){
+    public static function hasWrapper() {
         return self::$wrapper;
     }
 
-    private static function generateErrorMsg(){
+    private static function generateErrorMsg() {
         if (self::$success) {
             return null;
         }
         $res = self::$message;
-        if (!empty(self::$details)){
+        if (!empty(self::$details)) {
             //$res += ' - ';
             foreach (self::$details as $msg) {
                 $res .= ' - ' . $msg['message'];
@@ -212,4 +238,5 @@ class ResultMessage {
         }
         return $res;
     }
+
 }

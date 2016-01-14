@@ -64,7 +64,7 @@ var commonModule = angular.module('CommonModule', [
 commonModule.config(function($authProvider, API_KEYS) {
     $authProvider.facebook({
         clientId: API_KEYS.facebook,
-        url: WEBROOT_FULL + '/users/login_facebook.json',
+        url: WEBROOT_FULL + '/users/facebook_login.json',
         redirectUri: WEBROOT_FULL
     });
 
@@ -72,9 +72,9 @@ commonModule.config(function($authProvider, API_KEYS) {
     $authProvider.tokenRoot = null;
     $authProvider.cordova = false;
     $authProvider.baseUrl = '/';
-    $authProvider.loginUrl = WEBROOT_FULL + 'users/login';
-    $authProvider.signupUrl = WEBROOT_FULL + 'users/signup';
-    $authProvider.unlinkUrl = WEBROOT_FULL + 'users/unlink';
+//    $authProvider.loginUrl = WEBROOT_FULL + 'users/login';
+//    $authProvider.signupUrl = WEBROOT_FULL + 'users/signup';
+//    $authProvider.unlinkUrl = WEBROOT_FULL + 'users/unlink';
     $authProvider.tokenName = 'token';
     $authProvider.tokenPrefix = '';//'satellizer';
     $authProvider.authHeader = 'Authorization';
@@ -536,7 +536,7 @@ commonModule.factory('VideoEntity', function($resource) {
 commonModule.factory('AuthenticationService', function($http, $cookies, $rootScope, UserEntity, $location) {
     var service = {};
 
-    var currentUser = null
+    var currentUser = null;
 
     service.login = login;
     service.logout = logout;
@@ -551,6 +551,9 @@ commonModule.factory('AuthenticationService', function($http, $cookies, $rootSco
     return service;
 
     function getCurrentUser() {
+        if (currentUser === false) {
+            return null;
+        }
         if (currentUser !== null) {
             return currentUser;
         }
@@ -616,7 +619,7 @@ commonModule.factory('AuthenticationService', function($http, $cookies, $rootSco
     }
 
     function clearCredentials() {
-        currentUser = null;
+        currentUser = false;
         $rootScope.globals = {};
         $cookies.remove('globals');
         $http.defaults.headers.common.Authorization = 'Basic';

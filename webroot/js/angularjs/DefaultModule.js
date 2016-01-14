@@ -485,22 +485,41 @@ module.controller('UserLoginController', function($scope, $rootScope, $auth, Sha
         $scope.isFormLoading = true;
         messageCenterService.removeShown();
         console.log("Start authenticate with provider=" + provider);
-        AuthenticationService.socialLogin(provider, function(isLogin, response) {
-            //var res = $auth.authenticate(provider);
 
-            $scope.$parent.isAuthed = isLogin;
-            if (isLogin) {
+//        AuthenticationService.socialLogin(provider, function(isLogin, response){
+//            console.log(response);
+//            $scope.$parent.isAuthed = isLogin;
+//            if (isLogin) {
+//                messageCenterService.add('success', response.message, {status: messageCenterService.status.next});
+//                $location.path($rootScope.previousPage);
+//            }
+//            else {
+//                $scope.isFormLoading = false;
+//                messageCenterService.add('danger', response.message, {status: messageCenterService.status.shown});
+//            }
+//        });
+        $auth.authenticate(provider, {provider: provider}).then(function(response) {
+            response = response.data;
+            console.log(response);
+            $scope.$parent.isAuthed = response.success;
+            
+            if (response.success) {
+                response.data.provider = provider;
+                AuthenticationService.setCredentials(response.data);
                 messageCenterService.add('success', response.message, {status: messageCenterService.status.next});
-                $location.path("users/settings");
-                return;
+                $location.path($rootScope.previousPage);
             }
             else {
                 $scope.isFormLoading = false;
                 messageCenterService.add('danger', response.message, {status: messageCenterService.status.shown});
             }
-        }, function() {
-            $scope.isFormLoading = false;
+            
         });
+//                .then(function(error) {
+//            console.log(error);
+//            $scope.isFormLoading = false;
+//            messageCenterService.add('danger', "Facebook login is not available right now. Sorry!", {status: messageCenterService.status.shown});
+//        });
     }
 
 
@@ -600,7 +619,7 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
 
 
     function loadRecentlyTagged(page) {
-        if (videosInCache[page]){
+        if (videosInCache[page]) {
             $scope.recentVideos = videosInCache[page];
             return;
         }

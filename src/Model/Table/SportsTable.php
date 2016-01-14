@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Model\Table;
 
 use App\Model\Entity\Sport;
@@ -13,8 +14,10 @@ use Cake\Validation\Validator;
  * @property \Cake\ORM\Association\HasMany $Categories
  * @property \Cake\ORM\Association\HasMany $Tags
  */
-class SportsTable extends Table
-{
+class SportsTable extends Table {
+
+    const STATUS_PUBLIC = 'public';
+    const STATUS_PRIVATE = 'private';
 
     /**
      * Initialize method
@@ -22,8 +25,7 @@ class SportsTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config)
-    {
+    public function initialize(array $config) {
         parent::initialize($config);
 
         $this->table('sports');
@@ -44,43 +46,47 @@ class SportsTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
-    {
+    public function validationDefault(Validator $validator) {
         $validator
-            ->add('id', 'valid', ['rule' => 'numeric'])
-            ->allowEmpty('id', 'create');
+                ->add('id', 'valid', ['rule' => 'numeric'])
+                ->allowEmpty('id', 'create');
 
         $validator
-            ->requirePresence('name', 'create')
-            ->notEmpty('name');
+                ->requirePresence('name', 'create')
+                ->notEmpty('name');
 
         return $validator;
     }
-    
-    public function findAllCached(){
+
+    public function findAllCached() {
+//        debug(\Cake\Cache\Cache::clearGroup('sports', 'veryLongCache'));
+//        debug(\Cake\Cache\Cache::delete('sports', 'veryLongCache'));
+        
         return $this
-                ->find('all')
-                ->contain(['Categories'])
-                ->cache('sports', 'veryLongCache');
+                        ->find('all')
+                        ->where(['status' => SportsTable::STATUS_PUBLIC])
+                        ->contain(['Categories'])
+                        ->cache('sports', 'veryLongCache');
     }
-    
-    public function findFromNameCached($name){
+
+    public function findFromNameCached($name) {
         $data = $this->findAllCached();
-        foreach ($data as $d){
-            if ($d['name'] === strtolower($name)){
+        foreach ($data as $d) {
+            if ($d['name'] === strtolower($name)) {
                 return $d;
             }
         }
         return null;
     }
-    public function findFromCategoryCached($sportName, $categoryName){
+
+    public function findFromCategoryCached($sportName, $categoryName) {
         $categoryName = strtolower($categoryName);
         $sportName = strtolower($sportName);
         $data = $this->findAllCached();
-        foreach ($data as $d){
-            if ($d['name'] === $sportName){
-                foreach ($d['categories'] as $category){
-                    if ($category['name'] === $categoryName){
+        foreach ($data as $d) {
+            if ($d['name'] === $sportName) {
+                foreach ($d['categories'] as $category) {
+                    if ($category['name'] === $categoryName) {
                         return $category;
                     }
                 }
@@ -88,4 +94,5 @@ class SportsTable extends Table
         }
         return null;
     }
+
 }

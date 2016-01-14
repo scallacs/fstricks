@@ -107,12 +107,12 @@ class AppController extends Controller {
      */
     public function beforeRender(\Cake\Event\Event $event) {
         $this->set('isUserConnected', $this->Auth->user('id') != null);
-        $this->set('currentUser', $this->Auth->user('id') != null ?  ['User' => $this->Auth->user()] : null);
+        $this->set('currentUser', $this->Auth->user('id') != null ? ['User' => $this->Auth->user()] : null);
 
         if (//$this->Rest->isActive() || 
                 $this->request->is('json')) {
             if (ResultMessage::hasWrapper()) {
-                $serialize = ['message', 'data', 'success', 'returnCode', 'details', 'validationErrors', 'debug'];
+                $serialize = ['message', 'data', 'success', 'returnCode', 'details', 'validationErrors', 'debug', 'token'];
 
                 $this->set('message', ResultMessage::$message);
                 $this->set('data', ResultMessage::$data);
@@ -123,6 +123,9 @@ class AppController extends Controller {
                 $this->set('debug', array(
                     'request' => $this->request
                 ));
+                if (ResultMessage::$token) {
+                    $this->set('token', ResultMessage::$token);
+                }
 
                 if (isset($this->request->params['paging'])) {
                     $this->set('paginate', current($this->request->params['paging']));

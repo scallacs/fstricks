@@ -14,7 +14,7 @@ use Cake\Utility\Security;
 class UsersController extends AppController {
 
     public function beforeFilter(\Cake\Event\Event $event) {
-        $this->Auth->allow(['add', 'token', 'profile', 'login', 'signup', 'username_exists']);
+        $this->Auth->allow(['add', 'token', 'profile', 'login', 'signup', 'username_exists', 'facebook_login']);
     }
 
     /* ========================================================================
@@ -82,17 +82,18 @@ class UsersController extends AppController {
         if ($userId === null) {
             $userId = $this->Auth->user('id');
         }
-        ResultMessage::setData('id', $userId);
-        ResultMessage::setData('username', $this->Auth->user('username'));
-        ResultMessage::setData('email', $this->Auth->user('email'));
-        ResultMessage::setData('created', $this->Auth->user('created'));
-        ResultMessage::setData('token', \Firebase\JWT\JWT::encode([
+        $token = \Firebase\JWT\JWT::encode([
                     'id' => $userId,
                     'sub' => $userId,
                     'exp' => time() + 604800,
                     'iat' => time()
-                        ], Security::salt())
-        );
+                        ], Security::salt());
+        
+        ResultMessage::setData('id', $userId);
+        ResultMessage::setData('username', $this->Auth->user('username'));
+        ResultMessage::setData('email', $this->Auth->user('email'));
+        ResultMessage::setData('created', $this->Auth->user('created'));
+        ResultMessage::setToken($token);
     }
 
     /**
@@ -141,15 +142,9 @@ class UsersController extends AppController {
 
     public function login() {
         if ($this->request->is('post')) {
+
             $user = $this->Auth->identify();
             if ($user) {
-                // Create social profile
-                if (!empty($provider) && !empty($user['identifier'])) {
-                    if (!$user = $this->Users->createSocialAccount($provider, $user)) {
-                        ResultMessage::setMessage('We cannot log you in with ' . $provider, false);
-                        return;
-                    }
-                }
                 $this->Auth->setUser($user);
                 $this->setToken();
                 ResultMessage::setRedirectUrl($this->Auth->redirectUrl());
@@ -163,180 +158,80 @@ class UsersController extends AppController {
             ResultMessage::setMessage('Cannot get your data.', false);
         }
     }
-    
-    public function username_exists($username){
+
+    public function username_exists($username) {
         $exists = $this->Users->exists(['Users.username' => $username]);
         ResultMessage::setWrapper(false);
         ResultMessage::setData('exists', $exists);
     }
-/*
-    public function social_login() {
 
-        if (!empty($this->request->is('post')) && !empty($this->request->data['provider'])) {
+//    public function social_login() {
+//        if (!empty($this->request->is('post')) && !empty($this->request->data['provider'])) {
+//            $provider = $this->request->data['provider'];
+//
+//            try {
+//                // initialize Hybrid_Auth class with the config file
+//                $hybridauth = new \Hybrid_Auth(\Cake\Core\Configure::read('HybridAuth'));
+//
+//                // try to authenticate with the selected provider
+//                $adapter = $hybridauth->authenticate($provider);
+//
+//                // then grab the user profile
+//                $user_profile = $adapter->getUserProfile();
+//                ResultMessage::overwriteData($user_profile);
+//                $this->Auth->setUser($user_profile);
+//                ResultMessage::setMessage('Your are now log in with ' . $provider, true);
+//            }
+//            // something went wrong?
+//            catch (Exception $e) {
+//                ResultMessage::setMessage('We cannot log you in with ' . $provider, false);
+//            }
+//        } else {
+//            ResultMessage::setMessage("Unknown provider. Please try again", false);
+//        }
+//    }
 
-            try {
-                $provider = $this->request->data['provider'];
-                // initialize Hybrid_Auth class with the config file
-                $hybridauth = new \Hybrid_Auth(\Cake\Core\Configure::read('HybridAuth'));
+    public function facebook_login() {
+        $provider = 'facebook';
+        //initialize facebook sdk
+        $facebook = new \Facebook\Facebook(array(
+            'app_id' => \Cake\Core\Configure::read('Facebook.id'),
+            'app_secret' => \Cake\Core\Configure::read('Facebook.key'),
+//            'code' => $this->request->data['code'],
+//            'client_id' =>  $this->request->data['clientId']
+        ));
 
-                // try to authenticate with the selected provider
-                $adapter = $hybridauth->authenticate($provider);
+        $code = $this->request->data['code'];
+        $oauth2 = $facebook->getOAuth2Client();
+        $accessToken = $oauth2->getAccessTokenFromCode($code, \Cake\Routing\Router::url('/', true));
 
-                // then grab the user profile
-                $user_profile = $adapter->getUserProfile();
-            }
-            // something went wrong?
-            catch (Exception $e) {
-                header("Location: http://www.example.com/login-error.php");
-            }
-        }
-    }
- * 
- */
-
-    /*
-      public function login_facebook() {
-      session_start();
-      $state = uniqid();
-      $persistantDataHandler = new \Facebook\PersistentData\FacebookSessionPersistentDataHandler();
-      $fb = new \Facebook\Facebook([
-      'app_id' => \Cake\Core\Configure::read('Facebook.id'),
-      'app_secret' => \Cake\Core\Configure::read('Facebook.key'),
-      'default_graph_version' => 'v2.2',
-      //'default_access_token' => \Cake\Core\Configure::read('Facebook.id').'|'.\Cake\Core\Configure::read('Facebook.key')
-      ], $persistantDataHandler->set('state', $state));
-
-      //        debug($this->request->query);
-      //        debug($this->request->data);
-
-
-      $_GET = $this->request->data;
-      $_GET['state'] = $state;
-      //debug($_GET);die();
-
-      $helper = $fb->getRedirectLoginHelper();
-      try {
-      $accessToken = $helper->getAccessToken();
-      } catch (Facebook\Exceptions\FacebookResponseException $e) {
-      // When Graph returns an error
-      ResultMessage::setMessage('Graph returned an error: ' . $e->getMessage(), false);
-      return;
-      } catch (Facebook\Exceptions\FacebookSDKException $e) {
-      // When validation fails or other local issues
-      ResultMessage::setMessage('Facebook SDK returned an error: ' . $e->getMessage(), false);
-      return;
-      }
-      debug('okkkkk"');
-      die();
-      if (isset($accessToken)) {
-      // Logged in!
-      $token = (string) $accessToken;
-
-      // Check if user has already an account
-      $socialAccounts = \Cake\ORM\TableRegistry::get('SocialAccounts');
-      $user = $socialAccounts->find()
-      ->contain(['Users'])
-      ->where(['social_provider_id' => 'facebook', 'profile_id' => $profile['id']]);
-
-      if ($user->first()) {
-      // Identify
-      $this->Auth->login($user['User']['id']);
-      $this->setToken();
-      return;
-      }
-
-      // Create new user
-      $user = $this->Users->newEntity();
-      $user->username = $profile['first_name'] . ' ' . $profile['last_name'];
-      $user->email = $profile['email'];
-
-      if (!$this->Users->save($user)) {
-      ResultMessage::setMessage('Cannot create user', false);
-      return;
-      }
-
-      $this->Auth->login($user['User']['id']);
-      $this->setToken();
-      // Now you can redirect to another page and use the
-      // access token from $_SESSION['facebook_access_token']
-      ResultMessage::setMessage("You are log in with facebook", true);
-      } else {
-      debug($helper);
-      die();
-      ResultMessage::setMessage('Facebook login is not available for now. Please try again later.', false);
-      }
-      }
-
-    public function login_facebook() {
-        $client = new \Cake\Network\Http\Client();
-        $params = [
-            'client_id' => \Cake\Core\Configure::read('Facebook.id'),
-            'redirect_uri' => $this->request->data['redirectUri'],
-            'client_secret' => \Cake\Core\Configure::read('Facebook.key'),
-            'grant_type' => 'client_credentials',
-            'code' => $this->request->data['code'],
-        ];
-        // Step 1. Exchange authorization code for access token.
-        $accessToken = $client->get('https://graph.facebook.com/v2.5/oauth/access_token', $params);
-        if (!$accessToken->isOk()) {
-            ResultMessage::setMessage('Facebook login is not available for now. Please try again later.', false);
-            ResultMessage::addTrace($accessToken->statusCode());
+        if (!isset($accessToken)) {
+            ResultMessage::setMessage('Cannot get access token', false);
             return;
         }
-        $accessTokenData = json_decode($accessToken->body());
-
-        // Step 2. Retrieve profile information about the current user.
-        //$client = new \Cake\Network\Http\Client(['headers' => ['Authorization' => 'bearer ' . $accessTokenData->access_token]]);
-        $profile = $client->get('https://graph.facebook.com/v2.5/me', [
-            'access_token' => $accessTokenData->access_token
-        ]);
-        debug($accessTokenData);
-        debug($profile);
-        die();
-
-        // Step 3a. If user is already signed in then link accounts.
-        if ($this->Auth->user('id')) {
-            $socialAccounts = \Cake\ORM\TableRegistry::get('SocialAccounts');
-            $user = $socialAccounts->find()
-                    ->where([
-                'SocialAccounts.social_provider_id' => 'facebook',
-                'SocialAccounts.social_id' => $profile['id']
-            ]);
-            if ($user->first()) {
-                ResultMessage::setMessage('There is already a Facebook account that belongs to you', false);
-                return;
-            }
-            $socialAccount = $socialAccounts->newEntity();
-            $socialAccount->user_id = $this->Auth->user('id');
-            $socialAccount->social_provider_id = 'facebook';
-            $socialAccount->social_id = $profile['id'];
+        try {
+            // Proceed knowing you have a logged in user who's authenticated.
+            $response = $facebook->get('/me', $accessToken); //user
+            $me = $response->getGraphUser();
+        } catch (\Facebook\Exceptions\FacebookApiException $e) {
+            //echo error_log($e);
+            ResultMessage::setMessage('Sorry but we cannot log you in with '.ucfirst($provider).' right now.', false);
+            return;
         }
-        // Step 3b. Create a new user account or return an existing one.
-        else {
-            $user = $this->Users->find()
-                    ->where([
-                'email' => $profile['email']
-            ]);
+        // TODO catch all
 
-            if ($user->first()) {
-                // Identify
-                $this->Auth->login($user['User']['id']);
-                $this->setToken();
-                return;
-            }
-
-            // Create new user
-            $user = $this->Users->newEntity();
-            $user->username = $profile['first_name'] . ' ' . $profile['last_name'];
-            $user->email = $profile['email'];
-            if (!$this->Users->save($user)) {
-                ResultMessage::setMessage('Cannot create user', false);
-                return;
-            }
-            ResultMessage::setMessage('You are logged in with facebook', true);
+        $providerInfo = [
+            'displayName' => $me->getName(),
+            'identifier' => $me->getId()
+        ];
+        if (!$user = $this->Users->createSocialAccount($provider, $providerInfo)) {
+            ResultMessage::setMessage('Sorry but we cannot create your account right now.', false);
+            return;
         }
+        $this->Auth->setUser($user->toArray());
+        $this->setToken();
+        ResultMessage::setSuccess(true);        
     }
-     */
 
     public function logout() {
         ResultMessage::setMessage('You are now logged out.', true);
@@ -352,15 +247,15 @@ class UsersController extends AppController {
             $query = $this->Users->find()
                     ->select(['Users.password'])
                     ->where([
-                        'id' => $this->Auth->user('id'),
-                        'provider_uid IS NULL'
-                    ]);
+                'id' => $this->Auth->user('id'),
+                'provider_uid IS NULL'
+            ]);
             $data = $query->first();
-            
-            if (empty($data) || !\App\Model\Entity\User::checkPassword($this->request->data['password'], $data->password)){
+
+            if (empty($data) || !\App\Model\Entity\User::checkPassword($this->request->data['password'], $data->password)) {
                 return;
             }
-                    
+
             $success = $this->Users->deleteAll([
                 'Users.id' => $this->Auth->user('id'),
             ]);
@@ -368,7 +263,6 @@ class UsersController extends AppController {
                 ResultMessage::setMessage("Your account has been deleted. We hope to see you back soon!", true);
                 $this->Auth->logout();
             }
-            
         }
     }
 
@@ -382,7 +276,7 @@ class UsersController extends AppController {
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->data);
-            if ($this->Users->save($user)) {      
+            if ($this->Users->save($user)) {
                 $userArray = [
                     'id' => $user->id,
                     'email' => $user->email,

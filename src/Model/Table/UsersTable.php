@@ -49,7 +49,7 @@ class UsersTable extends TableWithTags {
                 ->requirePresence('email', 'create')
                 ->notEmpty('email')
                 ->add('email', 'unique', [
-                    'rule' => 'validateUnique', 
+                    'rule' => 'validateUnique',
                     'provider' => 'table',
                     'message' => 'There is already an account with this email.']);
 
@@ -57,8 +57,8 @@ class UsersTable extends TableWithTags {
                 ->requirePresence('username', 'create')
                 ->notEmpty('username')
                 ->add('username', 'unique', [
-                    'rule' => 'validateUnique', 
-                    'provider' => 'table', 
+                    'rule' => 'validateUnique',
+                    'provider' => 'table',
                     'message' => 'This user name is not available. Please choose another one.']);
 
         return $validator;
@@ -106,23 +106,24 @@ class UsersTable extends TableWithTags {
       'coverInfoURL' => ''
      */
     public function createSocialAccount($provider, $data) {
-        $exists = $this->exists([
-            'provider' => $provider,
-            'provider_uid' => $data['identifier']
-        ]);
+        $user = $this->find()
+                ->where([
+                    'provider' => $provider,
+                    'provider_uid' => $data['identifier']
+                ])
+                ->limit(1)
+                ->first();
 
-        if (!$exists) {
-            $entity = $this->newEntity();
-            $entity->username = $data['displayName'];
-            $entity->provider = $provider;
-            $entity->status = \App\Model\Entity\User::STATUS_ACTIVATED;
-            $entity->provider_uid = $data['identifier'];
-            if ($this->save($entity, ['checkRules' => false])) {
-                return $entity;
-            }
+        if ($user) {
+            return $user;
         }
-
-        return false;
+        
+        $entity = $this->newEntity();
+        $entity->username = $data['displayName'];
+        $entity->provider = $provider;
+        $entity->status = \App\Model\Entity\User::STATUS_ACTIVATED;
+        $entity->provider_uid = $data['identifier'];
+        return $this->save($entity, ['checkRules' => false]);
     }
 
 }
