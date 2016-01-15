@@ -726,8 +726,8 @@ module.controller('ViewVideoTagController', function($scope, VideoTagEntity, $ro
 
 });
 module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $filter,
-        $routeParams, SportEntity, VideoEntity, VideoTagEntity, TagEntity, SharedData,
-        messageCenterService, AuthenticationService) {
+        $routeParams, VideoEntity, VideoTagEntity, TagEntity, SharedData,
+        messageCenterService, AuthenticationService, RiderEntity) {
 
     AuthenticationService.requireLogin();
 
@@ -754,8 +754,10 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     $scope.sports = SharedData.sports;
     $scope.suggestedTags = [];
     $scope.suggestedCategories = [];
+    $scope.suggestedRiders = [];
     $scope.refreshSuggestedTags = refreshSuggestedTags;
     $scope.refreshSuggestedCategories = refreshSuggestedCategories;
+    $scope.refreshSuggestedRiders = refreshSuggestedRiders;
     $scope.playRange = playRange;
     $scope.addStartRange = addStartRange;
     $scope.addEndRange = addEndRange;
@@ -818,6 +820,17 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
                 for (var i = 0; i < results.length; i++) {
                     $scope.suggestedTags.push(results[i]);
                 }
+            });
+        }
+    }
+
+
+    function refreshSuggestedRiders(name) {
+        if (name.length >= 2) {
+            RiderEntity.search({
+                q: name
+            }, function(results) {
+                $scope.suggestedRiders = results.data;
             });
         }
     }

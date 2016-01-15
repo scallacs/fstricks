@@ -485,6 +485,18 @@ commonModule.factory('SharedScope', function() {
     };
     return myService;
 });
+
+commonModule.factory('RiderEntity', function($resource) {
+    var url = WEBROOT_FULL + '/Riders/:action/:id.json';
+    return $resource(url, {id: '@id', action: '@action'}, {
+        search: {
+            method: 'GET',
+            params: {action: 'search'},
+            isArray: false
+        }
+    });
+});
+
 commonModule.factory('UserEntity', function($resource) {
     var url = WEBROOT_FULL + '/Users/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {

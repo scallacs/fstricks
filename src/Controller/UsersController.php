@@ -196,9 +196,7 @@ class UsersController extends AppController {
         //initialize facebook sdk
         $facebook = new \Facebook\Facebook(array(
             'app_id' => \Cake\Core\Configure::read('Facebook.id'),
-            'app_secret' => \Cake\Core\Configure::read('Facebook.key'),
-//            'code' => $this->request->data['code'],
-//            'client_id' =>  $this->request->data['clientId']
+            'app_secret' => \Cake\Core\Configure::read('Facebook.key')
         ));
 
         $code = $this->request->data['code'];
@@ -228,7 +226,9 @@ class UsersController extends AppController {
             ResultMessage::setMessage('Sorry but we cannot create your account right now.', false);
             return;
         }
-        $this->Auth->setUser($user->toArray());
+        $userArray = $user->toArray();
+        $userArray['access_token'] = $accessToken;
+        $this->Auth->setUser($userArray);
         $this->setToken();
         ResultMessage::setSuccess(true);        
     }

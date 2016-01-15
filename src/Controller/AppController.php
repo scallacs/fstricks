@@ -49,7 +49,7 @@ class AppController extends Controller {
 
         $this->loadComponent('Auth', [
             'authenticate' => [
-                'ADmad/HybridAuth.HybridAuth',
+                //'ADmad/HybridAuth.HybridAuth',
                 'Form' => [
                     'fields' => [
                         'username' => 'email',
