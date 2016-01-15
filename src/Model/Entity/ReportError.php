@@ -18,6 +18,7 @@ use Cake\ORM\Entity;
  */
 class ReportError extends Entity
 {
+    const STATUS_PENDING = 'pending';
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().

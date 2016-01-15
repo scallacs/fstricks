@@ -274,6 +274,7 @@ module.controller('ModalReportErrorController', function($scope, $uibModalInstan
     $scope.videoTag = videoTag;
     $scope.feedback = null;
     $scope.isFormLoading = false;
+    $scope.errorReport = {};
 
     $scope.ok = function() {
         messageCenterService.removeShown();

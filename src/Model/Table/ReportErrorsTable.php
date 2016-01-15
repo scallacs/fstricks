@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Model\Table;
 
 use App\Model\Entity\ReportError;
@@ -14,8 +15,7 @@ use Cake\Validation\Validator;
  * @property \Cake\ORM\Association\BelongsTo $ErrorTypes
  * @property \Cake\ORM\Association\BelongsTo $VideoTags
  */
-class ReportErrorsTable extends Table
-{
+class ReportErrorsTable extends Table {
 
     /**
      * Initialize method
@@ -23,8 +23,7 @@ class ReportErrorsTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config)
-    {
+    public function initialize(array $config) {
         parent::initialize($config);
 
         $this->table('report_errors');
@@ -52,14 +51,21 @@ class ReportErrorsTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
-    {
+    public function validationDefault(Validator $validator) {
         $validator
-            ->add('id', 'valid', ['rule' => 'numeric'])
-            ->allowEmpty('id', 'create');
+                ->add('id', 'valid', ['rule' => 'numeric'])
+                ->allowEmpty('id', 'create');
 
         $validator
-            ->allowEmpty('comment');
+                ->notEmpty('user_id', 'create')
+                ->requirePresence('user_id', 'create');
+        
+        $validator
+                ->notEmpty('video_tag_id', 'create')
+                ->requirePresence('video_tag_id', 'create');
+        
+        $validator
+                ->allowEmpty('comment');
 
         return $validator;
     }
@@ -71,11 +77,12 @@ class ReportErrorsTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules)
-    {
+    public function buildRules(RulesChecker $rules) {
+        $rules->add($rules->isUnique(['video_tag_id', 'user_id', 'status'], 'You already have report an error for this trick.'));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
         $rules->add($rules->existsIn(['error_type_id'], 'ErrorTypes'));
         $rules->add($rules->existsIn(['video_tag_id'], 'VideoTags'));
         return $rules;
     }
+
 }
