@@ -14,7 +14,7 @@ class VideosController extends AppController {
 
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['view', 'search']);
+        $this->Auth->allow(['view', 'search', 'report_dead_link']);
     }
 
     /**
@@ -27,12 +27,13 @@ class VideosController extends AppController {
     public function view($id = null) {
         ResultMessage::setWrapper(false);
         $video = $this->Videos->get($id, [
+            'conditions' => ['Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC],
             'contain' => [
-                'VideoTags' => function($q){
-                    return $q
+                'VideoTags' => function($q) {
+            return $q
                             ->where(['VideoTags.status' => 'validated'])
                             ->order(['VideoTags.begin ASC'])
-                            ->contain(['Tags' => function($q){
+                            ->contain(['Tags' => function($q) {
                             return $q
                                     ->select([
                                         'category_name' => 'Categories.name',
@@ -41,8 +42,8 @@ class VideosController extends AppController {
                                     ])
                                     ->contain(['Sports', 'Categories']);
                         }
-                    ]);
-                }
+            ]);
+        }
             ]
         ]);
 
@@ -108,17 +109,52 @@ class VideosController extends AppController {
     public function addOrGet() {
 
         if ($this->request->is('post')) {
-            
+
             $data = $this->request->data;
-            if (empty($data['video_url']) || empty($data['provider_id'])){
+            if (empty($data['video_url']) || empty($data['provider_id'])) {
                 return $this->add();
             }
             $video = $this->Videos->search($data['video_url'], $data['provider_id'])->first();
-            if (empty($video)){
+            if (empty($video)) {
                 return $this->add();
             }
             ResultMessage::overwriteData($video);
             ResultMessage::setMessage("The video is already existing", true);
+        }
+    }
+
+    /**
+     * 
+      status => object(stdClass) {
+      uploadStatus => 'processed'
+      privacyStatus => 'public'
+      license => 'youtube'
+      embeddable => true
+      publicStatsViewable => true
+      }
+     * @param type $videoUrl
+     * @param type $provider
+     * @return type
+     */
+    public function report_dead_link($videoUrl, $provider) {
+        ResultMessage::setWrapper(false);
+        ResultMessage::overwriteData(['success' => true]);
+        switch ($provider) {
+            case 'youtube':
+                $youtubeInfo = $this->Videos->videoInfo($videoUrl, $provider);
+                if (    !$youtubeInfo ||
+                        ( $youtubeInfo->status->privacyStatus !== 'public' && 
+                        $youtubeInfo->status->privacyStatus !== 'unlistead') ||
+                        !$youtubeInfo->status->embeddable) {
+                    $this->Videos->updateAll([
+                        'status' => \App\Model\Entity\Video::STATUS_PRIVATE
+                            ], [
+                        'video_url' => $videoUrl,
+                        'provider_id' => $provider
+                    ]);
+                    \Cake\Log\Log::write('info', 'Removing video ' . $videoUrl . ' from ' . $provider);
+                }
+                break;
         }
     }
 

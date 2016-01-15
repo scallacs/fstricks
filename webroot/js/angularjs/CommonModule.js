@@ -106,7 +106,7 @@ commonModule.constant('YT_event', {
 commonModule.constant('API_KEYS', {
     facebook: '1536208040040285'
 });
-commonModule.directive('youtube', function($window, YT_event) {
+commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
 
     function initPlayer(element, scope) {
         var player;
@@ -130,6 +130,22 @@ commonModule.directive('youtube', function($window, YT_event) {
             width: scope.playerVideo.width, //scope.playerVideo.width,
             videoId: scope.playerVideo.video_url,
             events: {
+                onError: function(error) {
+                    switch (error.data) {
+                        case 2: // Invalid id
+                            break;
+                        case 100: // Video has been removed
+                        case 101: // Video is private
+                        case 150: // Same, video is private
+                            VideoEntity.reportDeadLink({
+                                id: player.getVideoData()['video_id'],
+                                provider:  'youtube'
+                            }, function() {
+                                // ignore results
+                            });
+                            break
+                    }
+                },
                 onReady: function() {
 
                     scope.$emit('onYouTubePlayerReady', player);
@@ -150,7 +166,8 @@ commonModule.directive('youtube', function($window, YT_event) {
                             };
                             console.log(info);
                             player.loadVideoById(info);
-                            player.playVideo();
+//                            alert('ok');
+//                            player.playVideo();
                         }
                         else {
                             console.log(scope.playerVideo.begin);
@@ -514,7 +531,7 @@ commonModule.factory('ErrorReportEntity', function($resource) {
     });
 });
 commonModule.factory('VideoEntity', function($resource) {
-    var url = WEBROOT_FULL + '/Videos/:action/:id.json';
+    var url = WEBROOT_FULL + '/Videos/:action/:id/:provider.json';
     return $resource(url, {id: '@id', action: '@action'}, {
         addOrGet: {
             method: 'POST',
@@ -529,6 +546,11 @@ commonModule.factory('VideoEntity', function($resource) {
         search: {
             method: 'GET',
             params: {action: 'search', id: null},
+            isArray: false
+        },
+        reportDeadLink: {
+            method: 'GET',
+            params: {action: 'report_dead_link', id: null},
             isArray: false
         }
     });

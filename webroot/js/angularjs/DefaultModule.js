@@ -103,6 +103,7 @@ module.controller('MainController', function($scope, AuthenticationService,
     $scope.logout = logout;
     $scope.setCurrentSport = setCurrentSport;
     $scope.resetVideo = resetVideo;
+    //$scope.reportDeadLink = reportDeadLink;
 
     $scope.playerInfo = {
         begin: 0,
@@ -116,9 +117,6 @@ module.controller('MainController', function($scope, AuthenticationService,
         id: null
     };
 
-    $scope.video = {
-        video_tags: []
-    };
     $scope.player = {
         provider: PlayerProviders.list()[0].name
     };
@@ -204,7 +202,7 @@ module.controller('MainController', function($scope, AuthenticationService,
         $scope.playerInfo.id = 0;
         $scope.playerInfo.begin = 0;
         $scope.playerInfo.end = 0;
-        $scope.video.video_tags = [];
+        VideoTagData.data = [];
     }
 
     /**
@@ -600,6 +598,7 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
     }
 
     function add(data) {
+        messageCenterService.removeShown();
         $scope.isFormLoading = true;
         if (YoutubeVideoInfo.extractVideoIdFromUrl(data.video_url)) {
             data.video_url = YoutubeVideoInfo.extractVideoIdFromUrl(data.video_url);
@@ -609,7 +608,7 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
                 $location.path('/tag/add/' + response.data.id);
             }
             else {
-                messageCenterService.add('warning', response.message);
+                messageCenterService.add('warning', response.message, {status: messageCenterService.status.shown});
             }
             $scope.isFormLoading = false;
         }, function() {
@@ -742,7 +741,7 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
         begin: 0,
         end: 0,
         range: [0, MIN_TAG_DURATION],
-        tag: {}
+        tag: null
     };
     $scope.video = {video_tags: []};
     $scope.playerInfo = {begin: 0, end: 0};

@@ -468,5 +468,4 @@ header .navbar-header{
 @-moz-document url-prefix() {
   .btn-facebook-share .facebookButton .pluginButton button .pluginButtonIcon {
     margin: 0 1px;
-  }
-}
+  }  

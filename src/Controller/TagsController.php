@@ -72,7 +72,10 @@ class TagsController extends AppController {
                     'category_id' => 'Tags.category_id',
                     'category_name' => 'Categories.name',
                     'sport_name' => 'Sports.name'])
-                ->where(['Tags.name LIKE' => '%' . $term . '%'])
+                ->where([
+                    'Tags.name LIKE' => '%' . $term . '%',
+                    'Tags.count_ref > 0'
+                ])
                 ->contain(['Categories', 'Sports'])
                 ->limit(20)
                 ->order(['Tags.count_ref DESC']);

@@ -20,6 +20,8 @@ use Cake\ORM\Entity;
 class Video extends Entity
 {
 
+    const STATUS_PRIVATE = 'private';
+    const STATUS_PUBLIC = 'public';
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
      *

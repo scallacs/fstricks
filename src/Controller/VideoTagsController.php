@@ -102,6 +102,7 @@ class VideoTagsController extends AppController {
 //        $offset = ((!empty($this->request->query['page']) ? (int) $this->request->query['page'] : 1) - 1) * $limit;
 
             $query = $this->VideoTags->findAndJoin();
+            $query->where(['Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC]);
 
             if (!empty($this->request->query['order'])) {
                 switch ($this->request->query['order']) {

@@ -4,7 +4,7 @@
 <div class="container">
     <div class="bg-light padding-sm">
 
-        <form class="form" name="formAddVideoTag">
+        <form class="form" name="formAddVideoTag" novalidate>
             <div class="">
                 <div class="iframe-wrapper res-16by9">   
                     <youtube player-video="playerInfo" frameborder="0"></youtube> 
@@ -78,7 +78,6 @@
                             <ui-select 
                                 ng-model="videoTag.category" 
                                 theme="bootstrap"
-                                ng-disabled="disabled"
                                 reset-search-input="false"
                                 required>
                                 <ui-select-match placeholder="Sport and category">{{$select.selected.sport_name}} {{$select.selected.category_name}} </ui-select-match>
@@ -149,10 +148,9 @@
                         <span class="glyphicon glyphicon-play"></span> Preview
                     </button>
                     <button type="button"
-                            ng-attr="{ 'disabled': !formAddVideoTag.$valid }"
+                            ng-disabled="!formAddVideoTag.$valid || similarTags.length > 0"
                             class="btn btn-primary" 
                             ng-click="addVideoTag(videoTag, videoTag.range)"
-                            ng-disabled="similarTags.length > 0"
                             >
                         <span class="glyphicon glyphicon-plus-sign"></span> 
                         Post
