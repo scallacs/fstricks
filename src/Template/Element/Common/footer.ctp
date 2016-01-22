@@ -1,4 +1,4 @@
-<footer class="col-sm-4 col-sm-offset-8 nopadding">
+<footer class="nopadding">
     <div class="footer clearfix">
         <div >
             <div class="">

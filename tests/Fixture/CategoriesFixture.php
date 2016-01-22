@@ -38,7 +38,19 @@ class CategoriesFixture extends TestFixture
     public $records = [
         [
             'id' => 1,
-            'name' => 'Lorem ipsum dolor sit amet'
+            'name' => 'sport'
+        ],
+        [
+            'id' => 2,
+            'name' => 'bar'
+        ],
+        [
+            'id' => 3,
+            'name' => 'party'
+        ],
+        [
+            'id' => 4,
+            'name' => 'show'
         ],
     ];
 }

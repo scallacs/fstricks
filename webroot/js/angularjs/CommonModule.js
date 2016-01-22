@@ -108,6 +108,18 @@ commonModule.constant('API_KEYS', {
 });
 commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
 
+    function parseYTEvent(player, newVal) {
+
+        switch (newVal) {
+            case YT_event.PLAYING:
+                player.playVideo();
+                break;
+            case YT_event.STOP:
+                player.stopVideo();
+                break;
+        }
+    }
+
     function initPlayer(element, scope) {
         var player;
         var myTimer;
@@ -126,9 +138,9 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
                 rel: 0,
                 loop: 1
             },
-            height: scope.playerVideo.height,
-            width: scope.playerVideo.width, //scope.playerVideo.width,
-            videoId: scope.playerVideo.video_url,
+            height: scope.playerData.data.height,
+            width: scope.playerData.data.width, //scope.playerData.data.width,
+            videoId: scope.playerData.data.video_url,
             events: {
                 onError: function(error) {
                     switch (error.data) {
@@ -139,7 +151,7 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
                         case 150: // Same, video is private
                             VideoEntity.reportDeadLink({
                                 id: player.getVideoData()['video_id'],
-                                provider:  'youtube'
+                                provider: 'youtube'
                             }, function() {
                                 // ignore results
                             });
@@ -150,29 +162,34 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
 
                     scope.$emit('onYouTubePlayerReady', player);
 
-                    scope.$watch('playerVideo.width', function(newValue, oldValue) {
+                    parseYTEvent(player, scope.playerData.data.state);
+
+                    scope.$watch('playerData.data.width', function(newValue, oldValue) {
                         if (newValue == oldValue) {
                             return;
                         }
                         //alert('new width'); 
-                        //player.setSize(scope.playerVideo.width, element.parent().parent().width() * 9 / 16);
+                        //player.setSize(scope.playerData.data.width, element.parent().parent().width() * 9 / 16);
                     });
-                    scope.$watch('playerVideo.video_url + playerVideo.begin + playerVideo.end', function(newValue, oldValue) {
-                        if (scope.playerVideo.video_url) {
+                    scope.$watch('playerData.data.video_url + playerData.data.begin + playerData.data.end', function(newValue, oldValue) {
+                        if (scope.playerData.data.video_url) {
                             var info = {
-                                videoId: scope.playerVideo.video_url,
-                                startSeconds: scope.playerVideo.begin,
-                                endSeconds: scope.playerVideo.end
+                                videoId: scope.playerData.data.video_url,
+                                startSeconds: scope.playerData.data.begin,
+                                endSeconds: scope.playerData.data.end
                             };
                             console.log(info);
                             player.loadVideoById(info);
-//                            alert('ok');
 //                            player.playVideo();
                         }
                         else {
-                            console.log(scope.playerVideo.begin);
-                            player.seekTo(scope.playerVideo.begin);
+                            console.log(scope.playerData.data.begin);
+                            player.seekTo(scope.playerData.data.begin);
                         }
+                    });
+
+                    scope.$watch('playerData.data.state', function(newVal) {
+                        parseYTEvent();
                     });
 
                     scope.$on(YT_event.STOPED, function() {
@@ -191,14 +208,14 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
 
                         switch (youtubeEvent) {
                             case YT.PlayerState.ENDED:
-                                player.seekTo(scope.playerVideo.begin);
+                                player.seekTo(scope.playerData.data.begin);
                                 break;
                         }
                     });
 
-                    scope.$watch('playerVideo.goToTime', function(newVal, oldVal) {
+                    scope.$watch('playerData.data.goToTime', function(newVal, oldVal) {
                         player.seekTo(newVal);
-                        //scope.playerVideo.goToTime = null;
+                        //scope.playerData.data.goToTime = null;
                     });
                 },
                 onStateChange: function(event) {
@@ -207,26 +224,13 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
                         event: YT_event.STATUS_CHANGE,
                         data: event.data
                     };
-//
-//                            switch (event.data) {
-//                                case YT.PlayerState.PLAYING:
-//                                    message.event = YT_event.PLAYING;
-//                                    break;
-//                                case YT.PlayerState.STOPED:
-//                                    message.event = YT_event.ENDED;
-//                                    break;
-//                                case YT.PlayerState.UNSTARTED:
-//                                    message.event = YT_event.UNSTARTED;
-//                                    break;
-//                                case YT.PlayerState.PAUSED:
-//                                    message.event = YT_event.PAUSED;
-//                                    break;
-//                            }
 
                     if (event.data === YT.PlayerState.PLAYING) { // playing
                         myTimer = setInterval(function() {
+                            var newTime = player.getCurrentTime();
+                            scope.playerData.onCurrentTimeUpdate(newTime);
                             scope.$apply(function() {
-                                scope.playerVideo.currentTime = player.getCurrentTime();
+                                scope.playerData.data.currentTime = newTime;
                             });
                         }, 100); // 100 means repeat in 100 ms
                     }
@@ -244,7 +248,7 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
 
     return {
         restrict: "E",
-        scope: {playerVideo: '='},
+        scope: {playerData: '='},
         template: '<div></div>',
         link: function(scope, element, attrs, $rootScope) {
             if (typeof YT === 'undefined') {
@@ -425,11 +429,79 @@ commonModule.factory('SharedData', function() {
     };
     return data;
 });
+commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
+
+    return {
+        currentTag: null,
+        data: {
+            begin: 0,
+            end: 0,
+            video_url: null,
+            duration: 0,
+            currentTime: 0,
+            goToTime: null,
+            width: '100%',
+            height: '100%',
+            id: null
+        },
+        view: view,
+        replay: replay,
+        reset: reset,
+        play: play,
+        stop: stop,
+        url: url,
+        onCurrentTimeUpdate: function(){}
+    };
+    function view(videoTag) {
+        if (videoTag === null) {
+            this.currentTag = null;
+            return;
+        }
+        this.currentTag = videoTag;
+        this.data.id = videoTag.id;
+        if (videoTag.video_url !== null && videoTag.video_url !== this.data.video_url) {
+            this.data.video_url = videoTag.video_url;
+        }
+        this.data.begin = videoTag.begin;
+        this.data.end = videoTag.end;
+        this.play();
+    }
+
+    function replay(videoTag) {
+        this.data.goToTime = videoTag.begin;
+    }
+
+    function reset() {
+        VideoTagData.reset();
+        this.stop();
+
+        this.currentTag = null;
+        this.video_url = null;
+        this.id = 0;
+        this.begin = 0;
+        this.end = 0;
+        
+        this.onCurrentTimeUpdate = function(){};
+    }
+
+    function url(url) {
+        this.data.video_url = url;
+    }
+
+    function play() {
+        this.data.state = YT_event.PLAYING;
+    }
+
+    function stop() {
+        this.data.state = YT_event.STOP;
+    }
+});
 commonModule.factory('VideoTagData', function(VideoTagEntity, SharedData) {
     var filters = {};
 
     return {
         data: [],
+        current: 0, // Index of the current tag playing
         disabled: true,
         loading: false,
         currentPage: 1,
@@ -439,6 +511,8 @@ commonModule.factory('VideoTagData', function(VideoTagEntity, SharedData) {
             this.currentPage = 1;
             this.data = [];
             filters = {};
+            this.callbackSuccess = null;
+            this.callbackError = null;
         },
         setFilter: function(name, value) {
             this.reset();                  // We reset the results that are in cache if we change the filter
@@ -447,6 +521,29 @@ commonModule.factory('VideoTagData', function(VideoTagEntity, SharedData) {
         setFilters: function(value) {
             this.reset();                  // We reset the results that are in cache if we change the filter
             filters = value;
+        },
+        next: function() {
+            if ((this.current - 1) < this.data.length) {
+                this.current++;
+                return this.data[this.current];
+            }
+            return null;
+        },
+        prev: function() {
+            if (this.current > 0) {
+                this.current--;
+                return this.data[this.current];
+            }
+            return null;
+        },
+        findNextTagToPlay: function(playerTime) {
+            for (var i = 0; i < this.data.length; i++) {
+                if (this.data[i].begin > playerTime) {
+                    this.current = i;
+                    return this.data[i];
+                }
+            }
+            return null;
         },
         loadNextPage: function() {
             //alert(this.currentPage);
@@ -834,6 +931,20 @@ commonModule.directive('youtubeItem', function() {
             scope.description = scope.info.snippet.description;
             scope.published = scope.info.snippet.publishedAt;
             scope.provider_name = 'youtube';
+        }
+    };
+
+});
+
+commonModule.directive('videoTagItem', function() {
+    return {
+        restrict: 'EA',
+        templateUrl: WEBROOT_FULL + '/html/VideoTags/item.html',
+        scope: {
+            videoTag: '='
+        },
+        link: function(scope, element) {
+
         }
     };
 

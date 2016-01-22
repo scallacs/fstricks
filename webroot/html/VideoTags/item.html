@@ -1,5 +1,6 @@
 
-<div class="item bg-primary" ng-class="$parent.playerInfo.id === videoTag.id ? 'active' : ''" style="text-transform: capitalize;">
+<div class="item item-video-tag bg-primary" 
+     ng-class="{ 'active': $parent.playerInfo.id === videoTag.id}" style="text-transform: capitalize;">
     <div class="item-heading">
         <div class="row clickable">
             <div class="col-xs-3">
@@ -16,7 +17,13 @@
                     {{videoTag.tag_name}}
                 </p>
                 
-                <p class="text-muted">
+                <p class="text-muted" ng-if="videoTag.time_to_play > 0">
+                    playing in {{videoTag.time_to_play}} seconds.
+                </p>
+                <p class="text-muted" ng-if="videoTag.time_to_play === 0">
+                    Now playing
+                </p>
+                <p class="text-muted" ng-if="videoTag.time_to_play == null">
                     {{videoTag.end - videoTag.begin | number:1 }} seconds from {{videoTag.begin | secondsToHours}}
                 </p>
             </div>
