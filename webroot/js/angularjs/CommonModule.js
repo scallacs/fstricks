@@ -108,6 +108,8 @@ commonModule.constant('API_KEYS', {
 });
 commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
 
+    var myTimer;
+        
     function parseYTEvent(player, newVal) {
 
         switch (newVal) {
@@ -122,7 +124,6 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
 
     function initPlayer(element, scope) {
         var player;
-        var myTimer;
 
         var playerContainer = element.children()[0];
         player = new YT.Player(playerContainer, {
@@ -224,6 +225,7 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
                         data: event.data
                     };
 
+                    clearInterval(myTimer);
                     if (event.data === YT.PlayerState.PLAYING) { // playing
                         myTimer = setInterval(function() {
                             var newTime = player.getCurrentTime();
@@ -233,9 +235,9 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
                             });
                         }, 100); // 100 means repeat in 100 ms
                     }
-                    else { // not playing
-                        clearInterval(myTimer);
-                    }
+//                    else { // not playing
+//                        clearInterval(myTimer);
+//                    }
 
                     scope.$apply(function() {
                         scope.$emit(message.event, message.data);
@@ -452,7 +454,8 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
         stop: stop,
         url: url,
         seekTo: seekTo,
-        onCurrentTimeUpdate: function(){}
+        onCurrentTimeUpdate: function() {
+        }
     };
     function view(videoTag) {
         if (videoTag === null) {
@@ -477,15 +480,16 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
     function reset() {
         VideoTagData.reset();
         this.stop();
-
         this.currentTag = null;
         this.data.video_url = null;
         this.data.id = 0;
         this.data.begin = 0;
         this.data.end = 0;
+        this.data.currentTime = 0;
+        this.data.goToTime = 0;
         this.showListTricks = true;
-        
-        this.onCurrentTimeUpdate = function(){};
+        this.onCurrentTimeUpdate = function() {
+        };
     }
 
     function url(url) {
@@ -501,7 +505,7 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
         this.data.end = end;
         this.data.state = YT_event.PLAYING;
     }
-    function seekTo(val){
+    function seekTo(val) {
         this.data.goToTime = val;
     }
 
@@ -514,7 +518,7 @@ commonModule.factory('VideoTagData', function(VideoTagEntity, SharedData) {
 
     return {
         data: [],
-        current: 0, // Index of the current tag playing
+        current: 0, // Index of the current tag 
         disabled: true,
         loading: false,
         currentPage: 1,
@@ -542,10 +546,10 @@ commonModule.factory('VideoTagData', function(VideoTagEntity, SharedData) {
             }
             return null;
         },
-        hasPrev: function(){
+        hasPrev: function() {
             return this.current > 0;
         },
-        hasNext: function(){
+        hasNext: function() {
             return this.current < this.data.length - 1;
         },
         prev: function() {
@@ -792,7 +796,7 @@ commonModule.factory('YoutubeVideoInfo', function() {
         exists: exists,
         data: data,
         extractVideoIdFromUrl: extractVideoIdFromUrl,
-        snippet : snippet
+        snippet: snippet
     };
 
     function extractVideoIdFromUrl(url) {

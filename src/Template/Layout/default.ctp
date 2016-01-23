@@ -6,7 +6,7 @@
         <?= $this->fetch('meta') ?>
         <?= $this->fetch('css') ?>
         <?= $this->fetch('script') ?>
-
+        
     </head>
     <body ng-app="DefaultModule" ng-controller="MainController">
         <!--<base href="#/Tricker/"/>-->
