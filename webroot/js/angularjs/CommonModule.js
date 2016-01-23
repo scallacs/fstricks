@@ -180,7 +180,6 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
                             };
                             console.log(info);
                             player.loadVideoById(info);
-//                            player.playVideo();
                         }
                         else {
                             console.log(scope.playerData.data.begin);
@@ -433,6 +432,7 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
 
     return {
         currentTag: null,
+        showListTricks: true,
         data: {
             begin: 0,
             end: 0,
@@ -448,8 +448,10 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
         replay: replay,
         reset: reset,
         play: play,
+        playRange: playRange,
         stop: stop,
         url: url,
+        seekTo: seekTo,
         onCurrentTimeUpdate: function(){}
     };
     function view(videoTag) {
@@ -464,11 +466,12 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
         }
         this.data.begin = videoTag.begin;
         this.data.end = videoTag.end;
+        this.showListTricks = false;
         this.play();
     }
 
     function replay(videoTag) {
-        this.data.goToTime = videoTag.begin;
+        this.seekTo(videoTag.begin);
     }
 
     function reset() {
@@ -476,10 +479,11 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
         this.stop();
 
         this.currentTag = null;
-        this.video_url = null;
-        this.id = 0;
-        this.begin = 0;
-        this.end = 0;
+        this.data.video_url = null;
+        this.data.id = 0;
+        this.data.begin = 0;
+        this.data.end = 0;
+        this.showListTricks = true;
         
         this.onCurrentTimeUpdate = function(){};
     }
@@ -490,6 +494,15 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
 
     function play() {
         this.data.state = YT_event.PLAYING;
+    }
+
+    function playRange(begin, end) {
+        this.data.begin = begin;
+        this.data.end = end;
+        this.data.state = YT_event.PLAYING;
+    }
+    function seekTo(val){
+        this.data.goToTime = val;
     }
 
     function stop() {
@@ -523,14 +536,20 @@ commonModule.factory('VideoTagData', function(VideoTagEntity, SharedData) {
             filters = value;
         },
         next: function() {
-            if ((this.current - 1) < this.data.length) {
+            if (this.hasNext()) {
                 this.current++;
                 return this.data[this.current];
             }
             return null;
         },
+        hasPrev: function(){
+            return this.current > 0;
+        },
+        hasNext: function(){
+            return this.current < this.data.length - 1;
+        },
         prev: function() {
-            if (this.current > 0) {
+            if (this.hasPrev()) {
                 this.current--;
                 return this.data[this.current];
             }
@@ -772,7 +791,8 @@ commonModule.factory('YoutubeVideoInfo', function() {
         info: contentDetails,
         exists: exists,
         data: data,
-        extractVideoIdFromUrl: extractVideoIdFromUrl
+        extractVideoIdFromUrl: extractVideoIdFromUrl,
+        snippet : snippet
     };
 
     function extractVideoIdFromUrl(url) {
@@ -828,6 +848,26 @@ commonModule.factory('YoutubeVideoInfo', function() {
                 if (data.items.length > 0) {
                     var contentDetails = data.items[0].contentDetails;
                     callback(contentDetails);
+                }
+                else {
+                    callback(null);
+                }
+            },
+            error: function() {
+                callback(null);
+            }
+        });
+    }
+    function snippet(videoUrl, callback) {
+        var url = getUrl(videoUrl);
+        $.ajax({
+            async: false,
+            type: 'GET',
+            url: url,
+            success: function(data) {
+                if (data.items.length > 0) {
+                    var snippet = data.items[0].snippet;
+                    callback(snippet);
                 }
                 else {
                     callback(null);

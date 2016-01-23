@@ -20,6 +20,18 @@ h3, h2, h1{
 .table-current-trick .item-video-tag{
     border: none;
 }
+.table-current-trick td.disabled{
+  
+}
+
+.table-current-trick td.disabled a{
+  color: #777;
+}
+.table-current-trick td.disabled:hover,
+.table-current-trick td.disabled a:hover{
+  cursor: default;
+  background: #000;
+}
 .toggle-list-tricks{
   color: white;
   background: #000;
@@ -291,7 +303,7 @@ header .navbar-header{
 
 .player-container{
     margin: 0 auto;
-    width: 100%;
+    max-width: 80%;
 }
 
 .iframe-wrapper{

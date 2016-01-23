@@ -7,7 +7,7 @@
         <form class="form" name="formAddVideoTag" novalidate>
             <div class="">
                 <div class="iframe-wrapper res-16by9">   
-                    <youtube player-video="playerInfo" frameborder="0"></youtube> 
+                    <youtube player-data="playerData" frameborder="0"></youtube> 
                 </div>
             </div>
             <fieldset ng-disabled="isFormLoading">
@@ -17,7 +17,7 @@
                         ng-model="videoTag.range"
                         ui-slider="{range: true}" 
                         min="0" 
-                        max="{{playerInfo.duration}}" 
+                        max="{{playerData.data.duration}}" 
                         step="{{slider.step}}"
                         use-decimals
                         >
