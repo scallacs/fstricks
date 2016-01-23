@@ -6,12 +6,13 @@
         <?= $this->fetch('meta') ?>
         <?= $this->fetch('css') ?>
         <?= $this->fetch('script') ?>
-        
+
     </head>
     <body ng-app="DefaultModule" ng-controller="MainController">
         <!--<base href="#/Tricker/"/>-->
 
         <?= $this->Element('Common/header_ajs'); ?>
+
 
         <div id="container" style="position: relative;" class="clearfix">
             <div class="loading-spiner-holder" id="overlay" data-loading >
@@ -20,40 +21,6 @@
                 </div>
             </div>
             <div id="content">
-                <div  ng-if="showVideoPlayer" class="bg-secondary clearfix">
-                    <table class="table-current-trick" style="width: 100%;text-align: center;">
-                        <tbody>
-                            <tr>
-                                <td class="text-capitalize">
-                                    <h3>{{playerData.title}}</h3>
-                                </td>
-                                <td ng-if="playerData.currentTag" 
-                                    ng-click="prevTrick()"
-                                    ng-class="{disabled: !videoTagData.hasPrev()}"
-                                    class="toggle-list-tricks player-prev-trick" >
-                                    <a  href="" 
-                                        class="text-big">
-                                        <span class="glyphicon glyphicon-arrow-left"></span>
-                                    </a>
-                                </td>
-                                <td ng-if="playerData.currentTag" >
-                                    <div video-tag-item video-tag="playerData.currentTag"></div>
-                                </td>
-                                <td ng-if="playerData.currentTag" 
-                                    class="toggle-list-tricks" 
-                                    ng-click="nextTrick()"
-                                    ng-class="{disabled: !videoTagData.hasNext()}">
-                                    <a href="" class="text-big">
-                                        <span class="glyphicon glyphicon-arrow-right"></span>
-                                    </a>
-                                </td>
-                                <td class="toggle-list-tricks"  ng-click="toggleListTricks()">
-                                    <a href="" class="text-big"><span class="glyphicon glyphicon-list"></span></a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
                 <div ng-if="showVideoPlayer" class="full-player">
 
                     <div ng-show="videoTagData.data.length === 0 && !videoTagData.loading" 

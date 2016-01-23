@@ -1,6 +1,5 @@
 body{
     overflow-x: hidden;
-    padding-top: 50px; 
 }
 .footer{
     background: #080808;
@@ -62,11 +61,36 @@ h3, h2, h1{
 }
 
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+.navbar-form{
+    padding: 0px;
+    margin: 0px;
+}
 .navbar-form .input-group span.ui-select-toggle.form-control {
     width: 100% !important;
 }
 .navbar-form .input-group input.ui-select-search.form-control{
     width: 100% !important;	
+}
+
+.navbar-form .btn, .input-group>.ui-select-bootstrap>input.ui-select-search.form-control{
+    background: none;
+    border: none;
+    color: white;
+    font-size: 15px;
+    height: 45px;
+    background: #277D91;
+    font-weight: bold;
+}
+.navbar-form .btn{
+    padding-top: 12px;
+    padding-bottom: 10px;
+    color: white;
+    /* border-radius: 5px; */
+    font-weight: bold;
+}
+.navbar-form .ui-select-container .ui-select-placeholder{
+    color: #EEE;
 }
 .nopadding{
     padding: 0px;
@@ -121,6 +145,12 @@ body{
 .padding-sm{
     padding: 10px;
 }
+.padding-sm-side{
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
 label.hide-radio{
     padding-left: 0px;
 }
@@ -138,6 +168,7 @@ label.hide-radio{
 .navbar-fixed-top{
     /* padding: 0px 10px; */
 }
+
 header .navbar-toggle{
 }
 header .navbar-header ul{
@@ -151,9 +182,25 @@ header .header-title{
     text-transform: capitalize;
     font-family: Helvetica;
     padding-top: 5px;
-    padding-left: 10px;
+    /* padding-left: 10px; */
+}
+header .navbar-header{
+    /* height: 50px; */
 }
 
+
+header .navbar-nav{
+}
+
+header .page-title .title{
+    font-size: 1.4em;
+    padding: 0px;
+}
+
+header .navbar-nav > li > a{
+    color: white;
+    border-radius: 0px 0px 5px 5px;
+}
 .max-height{
     height: 500px; 
     overflow: auto; 
@@ -164,11 +211,6 @@ header .header-title{
     background: #080808;
     border-bottom: 1px solid #222;
 }
-header .navbar-header{
-    /* height: 50px; */
-}
-
-
 
 .message{
     background: green;
@@ -271,6 +313,11 @@ header .navbar-header{
 
 .bg-colored{
     background: #F3C212;
+    color: white;
+}
+.bg-secondary-darker{
+    background: #277D91;
+    border-color: #055B70;
     color: white;
 }
 .bg-secondary{
