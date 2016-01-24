@@ -102,6 +102,7 @@ commonModule.constant('YT_event', {
     STOPED: 2,
     UNSARTED: 3,
     STATUS_CHANGE: 4,
+    LOAD_VIDEO: 5
 });
 commonModule.constant('API_KEYS', {
     facebook: '1536208040040285'
@@ -109,13 +110,23 @@ commonModule.constant('API_KEYS', {
 commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
 
     var myTimer;
-        
-    function parseYTEvent(player, newVal) {
 
-        switch (newVal) {
+    function parseYTEvent(player, scope) {
+
+        switch (scope.playerData.data.state) {
             case YT_event.PLAYING:
                 player.playVideo();
                 break;
+//            case YT_event.LOAD_VIDEO:
+//                console.log('Loading video:');
+//                var data = {
+//                    videoId: scope.playerData.data.video_url,
+//                    startSeconds: scope.playerData.data.begin,
+//                    endSeconds: scope.playerData.data.end
+//                };
+//                console.log(data);
+//                player.loadVideoById(data);
+//                break;
             case YT_event.STOP:
                 player.stopVideo();
                 break;
@@ -163,16 +174,16 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
 
                     scope.$emit('onYouTubePlayerReady', player);
 
-                    parseYTEvent(player, scope.playerData.data.state);
+                    parseYTEvent(player, scope);
 
-                    scope.$watch('playerData.data.width', function(newValue, oldValue) {
-                        if (newValue == oldValue) {
-                            return;
-                        }
-                        //alert('new width'); 
-                        //player.setSize(scope.playerData.data.width, element.parent().parent().width() * 9 / 16);
-                    });
-                    scope.$watch('playerData.data.video_url + playerData.data.begin + playerData.data.end', function(newValue, oldValue) {
+//                    scope.$watch('playerData.data.width', function(newValue, oldValue) {
+//                        if (newValue == oldValue) {
+//                            return;
+//                        }
+//                        //alert('new width'); 
+//                        //player.setSize(scope.playerData.data.width, element.parent().parent().width() * 9 / 16);
+//                    });
+                    scope.$watch('playerData.data.video_url', function(newValue, oldValue) {
                         if (scope.playerData.data.video_url) {
                             var info = {
                                 videoId: scope.playerData.data.video_url,
@@ -182,14 +193,14 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
                             console.log(info);
                             player.loadVideoById(info);
                         }
-                        else {
-                            console.log(scope.playerData.data.begin);
-                            player.seekTo(scope.playerData.data.begin);
-                        }
+//                        else {
+//                            console.log(scope.playerData.data.begin);
+//                            player.seekTo(scope.playerData.data.begin);
+//                        }
                     });
 
-                    scope.$watch('playerData.data.state', function(newVal) {
-                        parseYTEvent();
+                    scope.$watch('playerData.data.state', function() {
+                        parseYTEvent(player, scope);
                     });
 
                     scope.$on(YT_event.STOPED, function() {
@@ -454,22 +465,29 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
         stop: stop,
         url: url,
         seekTo: seekTo,
+        loadVideo: loadVideo,
         onCurrentTimeUpdate: function() {
         }
     };
     function view(videoTag) {
+        console.log("Viewing tag: ");
+        console.log(videoTag);
         if (videoTag === null) {
             this.currentTag = null;
             return;
         }
         this.currentTag = videoTag;
         this.data.id = videoTag.id;
-        if (videoTag.video_url !== null && videoTag.video_url !== this.data.video_url) {
-            this.data.video_url = videoTag.video_url;
-        }
         this.data.begin = videoTag.begin;
         this.data.end = videoTag.end;
         this.showListTricks = false;
+
+        if (videoTag.video_url !== null && videoTag.video_url !== this.data.video_url) {
+            this.loadVideo(videoTag.video_url);
+        }
+        else {
+            this.seekTo(this.data.begin);
+        }
         this.play();
     }
 
@@ -511,6 +529,12 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
 
     function stop() {
         this.data.state = YT_event.STOP;
+    }
+
+    function loadVideo(url) {
+        console.log('Load video in playerData');
+        this.data.video_url = url;
+        this.data.state = YT_event.LOAD_VIDEO;
     }
 });
 commonModule.factory('VideoTagData', function(VideoTagEntity, SharedData) {
@@ -985,7 +1009,8 @@ commonModule.directive('videoTagItem', function() {
         restrict: 'EA',
         templateUrl: WEBROOT_FULL + '/html/VideoTags/item.html',
         scope: {
-            videoTag: '='
+            playerData: '=playerData',
+            videoTag: '=videoTag'
         },
         link: function(scope, element) {
 

@@ -54,8 +54,8 @@
                                 infinite-scroll-distance='1'>
                                 <div ng-repeat="videoTag in videoTagData.data">
                                     <div class="col-sm-6 nopadding">
-                                        <!--<div video-tag-item video-tag="currentVideoTag"></div>-->
-                                        <div ng-include="'html/VideoTags/item.html'"></div>
+                                        <div video-tag-item video-tag="videoTag" player-data="playerData"></div>
+                                        <!--<div ng-include="'html/VideoTags/item.html'"></div>-->
                                     </div>
                                 </div>
 

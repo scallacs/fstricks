@@ -58,8 +58,7 @@
                                     id="SearchBar"
                                     ng-model="search.tag" 
                                     theme="bootstrap"
-                                    reset-search-input="false"
-                                    style="min-width:300px;">
+                                    reset-search-input="false">
                                     <ui-select-match placeholder="Trick name" style="text-transform: capitalize;" >
                                         <span class="text-bold">{{$select.selected.name}} </span>
                                         <span class="">
@@ -97,7 +96,7 @@
                             <tr>
                                 <td  ng-if="playerData.currentTag"
                                      ng-click="prevTrick()"
-                                    ng-class="{disabled: !videoTagData.hasPrev()}"
+                                    ng-class="{disabled: videoTagData.current == 0}"
                                     class="toggle-list-tricks player-prev-trick" >
                                     <a  href="" 
                                         class="text-big">
@@ -106,13 +105,13 @@
                                 </td>
                                 <td
                                      ng-if="playerData.currentTag">
-                                    <div video-tag-item video-tag="playerData.currentTag"></div>
+                                    <div video-tag-item video-tag="playerData.currentTag"  player-data="playerData"></div>
                                 </td>
                                 <td
                                     ng-if="playerData.currentTag"
                                     class="toggle-list-tricks" 
                                     ng-click="nextTrick()"
-                                    ng-class="{disabled: !videoTagData.hasNext()}">
+                                    ng-class="{disabled: videoTagData.current >= videoTagData.data.length - 1}">
                                     <a href="" class="text-big">
                                         <span class="glyphicon glyphicon-arrow-right"></span>
                                     </a>

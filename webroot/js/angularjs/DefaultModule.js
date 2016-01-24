@@ -1007,7 +1007,7 @@ module.controller('ViewVideoController', function($scope, VideoTagData, $routePa
         PlayerData.onCurrentTimeUpdate = function(newVal) {
             var current = PlayerData.currentTag;
             // Still current trick 
-            console.log(current);
+            //console.log(current);
             if (current !== null && current.begin <= newVal && current.end >= newVal) {
                 current.time_to_play = 0;
             }

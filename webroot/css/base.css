@@ -341,7 +341,7 @@ header .navbar-nav > li > a{
 }
 
 .res-16by9{
-    padding-bottom: 56.25%;
+    padding-bottom: 40%;
 }
 
 .res-1by1{
@@ -350,8 +350,9 @@ header .navbar-nav > li > a{
 
 .player-container{
     margin: 0 auto;
-    max-width: 80%;
 }
+
+.nopadding.player-container {}
 
 .iframe-wrapper{
     width: 100%;

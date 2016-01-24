@@ -218,8 +218,6 @@ Plugin::load('Bootstrap') ; // instead of Plugin::load('Bootstrap3') ;
 
 
 Configure::write('Company.name','Freestyle Tricks');
-
-
 Configure::write('Youtube.key', 'AIzaSyC851NBlFCigGum0qdk04GHGVYF_tqd-M4');
 Configure::write('Facebook', ['key' => '079e8ce1830a2177f3a10b939615a7f6', 'id' => '1536208040040285']);
 
