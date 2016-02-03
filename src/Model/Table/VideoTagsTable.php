@@ -20,7 +20,8 @@ class VideoTagsTable extends Table {
 
     const MIN_TAG_DURATION = 2;
     const MAX_TAG_DURATION = 40;
-    const SIMILARITY_RATIO_THRESHOLD = 0.6;
+    const SIMILARITY_RATIO_THRESHOLD = 0.6;    
+    const SIMILARITY_PRECISION_SECONDS = 2;
     
     /**
      * Find data for tags and do joins 
@@ -153,8 +154,7 @@ class VideoTagsTable extends Table {
         return $validator;
     }
 
-    
-    const SIMILARITY_PRECISION_SECONDS = 2;
+
     function findSimilarTags($videoId, $begin, $end){
         $beginMin = $begin + self::SIMILARITY_PRECISION_SECONDS;
         $endMin = $begin - self::SIMILARITY_PRECISION_SECONDS;
@@ -199,6 +199,17 @@ class VideoTagsTable extends Table {
             return true;
         });
         return $rules;
+    }
+
+    /**
+     * @param \App\Model\Table\Event $event
+     * @param \Cake\ORM\Entity $entity
+     * @param \App\Model\Table\ArrayObject $options
+     */
+    public function beforeSave($event, $entity, $options){
+        if ($entity->isNew() && empty($entity->status)){
+            $entity->status = VideoTag::STATUS_VALIDATED;
+        }
     }
 
 }

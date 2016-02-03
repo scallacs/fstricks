@@ -72,7 +72,8 @@
                         playing in {{videoTag.time_to_play}} seconds.
                     </span>
                 </p>
-                <div  ng-controller="VideoTagPointsController" ng-show="videoTag.time_to_play == null || videoTag.time_to_play == 0">
+                <div  ng-controller="VideoTagPointsController" 
+                      ng-show="videoTag.time_to_play == null || videoTag.time_to_play == 0">
                     <button type="button" class="btn btn-primary"  ng-click="down(videoTag)" 
                             ng-disabled="videoTag.user_rate === 'loading'"
                             ng-class="videoTag.user_rate === 'down' ? 'active' : ''">

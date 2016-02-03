@@ -7,34 +7,21 @@ use Cake\TestSuite\IntegrationTestCase;
 /**
  * App\Controller\VideoTagsController Test Case
  */
-class VideoTagsControllerTest extends IntegrationTestCase
+class VideoTagsControllerTest extends MyIntegrationTestCase
 {
 
-    
-    private function logUser(){
-        // Set session data
-        $this->session([
-            'Auth' => [
-                'User' => [
-                    'id' => 1,
-                    'username' => 'testing',
-                ]
-            ]
-        ]);
-    }
     /**
      * Fixtures
      *
      * @var array
      */
     public $fixtures = [
-        'app.video_tags',
+        'app.video_providers',
         'app.videos',
-        'app.users',
+        'app.users',        
+        'app.video_tags',
+        'app.categories',
         'app.tags',
-        'app.spots',
-        'app.spots_tags',
-        'app.tags_users',
         'app.video_tag_points'
     ];
 

@@ -26,39 +26,46 @@ class VideosController extends AppController {
      */
     public function view($id = null) {
         ResultMessage::setWrapper(false);
-        $video = $this->Videos->get($id, [
-            'conditions' => ['Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC],
-            'contain' => [
-                'VideoTags' => function($q) {
-            return $q
-                            ->where(['VideoTags.status' => 'validated'])
-                            ->order(['VideoTags.begin ASC'])
-                            ->contain(['Tags' => function($q) {
-                            return $q
-                                    ->select([
-                                        'category_name' => 'Categories.name',
-                                        'sport_name' => 'Sports.name',
-                                        'tag_name' => 'Tags.name',
-                                    ])
-                                    ->contain(['Sports', 'Categories']);
-                        }
+        try {
+            $video = $this->Videos->get($id, [
+                'conditions' => ['Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC],
+                'contain' => [
+                    'VideoTags' => function($q) {
+                return $q
+                                ->where(['VideoTags.status' => 'validated'])
+                                ->order(['VideoTags.begin ASC'])
+                                ->contain(['Tags' => function($q) {
+                                return $q
+                                        ->select([
+                                            'category_name' => 'Categories.name',
+                                            'sport_name' => 'Sports.name',
+                                            'tag_name' => 'Tags.name',
+                                        ])
+                                        ->contain(['Sports', 'Categories']);
+                            }
+                ]);
+            }
+                ]
             ]);
+        } catch (Cake\Datasource\Exception\RecordNotFoundException $ex) {
+            throw new \Cake\Network\Exception\NotFoundException();
         }
-            ]
-        ]);
 
         ResultMessage::overwriteData($video);
     }
 
     public function search() {
         ResultMessage::setWrapper(false);
-        if ($this->request->is('get')) {
-            $data = $this->request->query;
-            if (!empty($data['video_url']) || !empty($data['provider_id'])) {
+        if ($this->request->is('get') ) {
+            $data = $this->request->query;            
+            if (empty($data['video_url']) || empty($data['provider_id'])) {
                 return;
             }
-            $video = $this->Videos->search($data['video_url'], $data['provider_id']);
-            ResultMessage::overwriteData($video->first());
+            $query = $this->Videos->search($data['video_url'], $data['provider_id']);
+            $video = $query->first();
+            if (!empty($video)){
+                ResultMessage::overwriteData($video);
+            }
         }
     }
 
@@ -142,8 +149,8 @@ class VideosController extends AppController {
         switch ($provider) {
             case 'youtube':
                 $youtubeInfo = $this->Videos->videoInfo($videoUrl, $provider);
-                if (    !$youtubeInfo ||
-                        ( $youtubeInfo->status->privacyStatus !== 'public' && 
+                if (!$youtubeInfo ||
+                        ( $youtubeInfo->status->privacyStatus !== 'public' &&
                         $youtubeInfo->status->privacyStatus !== 'unlistead') ||
                         !$youtubeInfo->status->embeddable) {
                     $this->Videos->updateAll([

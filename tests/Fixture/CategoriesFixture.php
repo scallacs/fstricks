@@ -4,7 +4,7 @@ namespace App\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * CategoriesFixture
+ * SportsFixture
  *
  */
 class CategoriesFixture extends TestFixture
@@ -15,7 +15,10 @@ class CategoriesFixture extends TestFixture
      *
      * @var array
      */
+    // @codingStandardsIgnoreStart
     public $import = ['table' => 'categories', 'connection' => 'default'];
+
+    // @codingStandardsIgnoreEnd
 
     /**
      * Records
@@ -25,19 +28,13 @@ class CategoriesFixture extends TestFixture
     public $records = [
         [
             'id' => 1,
-            'name' => 'sport'
+            'sport_id' => 1,
+            'name' => 'Jib'
         ],
         [
             'id' => 2,
-            'name' => 'bar'
-        ],
-        [
-            'id' => 3,
-            'name' => 'party'
-        ],
-        [
-            'id' => 4,
-            'name' => 'show'
+            'sport_id' => 1,
+            'name' => 'Kicker'
         ],
     ];
 }

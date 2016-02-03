@@ -102,9 +102,9 @@ class RidersControllerTest extends MyIntegrationTestCase {
     }
 
     
-    public function testFacebookSearch(){
-        $this->get('riders/facebook_search.json?q=Stephane');
-        $this->assertResponseOk();
-    }
+//    public function testFacebookSearch(){
+//        $this->get('riders/facebook_search.json?q=Stephane');
+//        $this->assertResponseOk();
+//    }
 
 }

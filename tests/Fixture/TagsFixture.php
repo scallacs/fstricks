@@ -16,18 +16,8 @@ class TagsFixture extends TestFixture
      * @var array
      */
     // @codingStandardsIgnoreStart
-    public $fields = [
-        'id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'autoIncrement' => true, 'precision' => null],
-        'name' => ['type' => 'string', 'length' => 45, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'fixed' => null],
-        'count_ref' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => '0', 'comment' => '', 'precision' => null, 'autoIncrement' => null],
-        '_constraints' => [
-            'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
-        ],
-        '_options' => [
-            'engine' => 'InnoDB',
-            'collation' => 'utf8_general_ci'
-        ],
-    ];
+    public $import = ['table' => 'tags', 'connection' => 'default'];
+
     // @codingStandardsIgnoreEnd
 
     /**
@@ -38,8 +28,21 @@ class TagsFixture extends TestFixture
     public $records = [
         [
             'id' => 1,
-            'name' => 'Lorem ipsum dolor sit amet',
-            'count_ref' => 1
+            'name' => 'Frontside 360',
+            'count_ref' => 1,
+            'sport_id' => 1,
+            'category_id' => null,
+            'user_id' => null,
+            'created' => 10000,
+            'slug' => 'frontside-360'
         ],
+        [
+            'id' => 2,
+            'name' => 'Backside 360',
+            'count_ref' => 1,
+            'sport_id' => 1,
+            'created' => 10000,
+            'slug' => 'backside-360'
+        ]
     ];
 }

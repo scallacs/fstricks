@@ -22,6 +22,10 @@ use Cake\ORM\Entity;
  */
 class VideoTag extends Entity
 {
+    const STATUS_VALIDATED = 'validated';
+    const STATUS_BLOCKED = 'blocked';
+    const STATUS_PENDING = 'pending';
+    const STATUS_REJECTED = 'rejected';
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -41,5 +45,4 @@ class VideoTag extends Entity
         'status' => false
     ];
     
-    const STATUS_VALIDATED = 'validated';
 }

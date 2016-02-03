@@ -336,7 +336,8 @@ module.controller('SettingsController', function($scope, SharedData, messageCent
     }
 });
 
-module.controller('UserLoginController', function($scope, $rootScope, $auth, SharedData, messageCenterService, $location, AuthenticationService) {
+module.controller('UserLoginController', function($scope, $rootScope, $auth, SharedData, messageCenterService, $location, 
+AuthenticationService, PlayerData) {
     // create a message to display in our view
     PlayerData.show = false;
     $scope.authenticate = authenticate;

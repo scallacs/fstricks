@@ -8,29 +8,20 @@ use Cake\TestSuite\IntegrationTestCase;
 /**
  * App\Controller\VideosController Test Case
  */
-class VideosControllerTest extends IntegrationTestCase {
+class VideosControllerTest extends MyIntegrationTestCase {
 
-    
-    private function logUser(){
-        // Set session data
-        $this->session([
-            'Auth' => [
-                'User' => [
-                    'id' => 1,
-                    'username' => 'testing',
-                // other keys.
-                ]
-            ]
-        ]);
-    }
     /**
      * Fixtures
      *
      * @var array
      */
     public $fixtures = [
+        'app.video_providers',
         'app.videos',
         'app.users',
+        'app.video_tags',
+        'app.categories',
+        'app.tags',
     ];
 
     /**
@@ -42,6 +33,10 @@ class VideosControllerTest extends IntegrationTestCase {
         $this->configRequest([
             'headers' => ['Accept' => 'application/json']
         ]);
+
+        //$this->providers = \Cake\Core\Configure::read('videoProviders');
+        $this->providers = ['youtube'];
+        $this->assertTrue(count($this->providers) > 0);
     }
 
     /**
@@ -50,51 +45,66 @@ class VideosControllerTest extends IntegrationTestCase {
      * @return void
      */
     public function testAdd() {
-        $table = \Cake\ORM\TableRegistry::get('Videos');
         // Set session data
         $this->logUser();
-        $providers = \Cake\Core\Configure::read('videoProviders');
-        $this->assertTrue(count($providers) > 0);
-        $providerName = $providers[0]['name'];
+
         $data = [
-            'provider_id' => $providerName,
+            'provider_id' => $this->providers[0],
             'video_url' => '6mEHw5q6Yfs'
         ];
-        $table->deleteAll($data);
         $this->post('/Videos/add.json', $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body());
         $this->assertTrue($result->success);
-        
+    }
+
+    public function testAddDuplicateVideo() {
+        $this->logUser();
         // Add duplicate
+        $data = [
+            'provider_id' => $this->providers[0],
+            'video_url' => '6mEHw5q6Yfs'
+        ];
+        $this->post('/Videos/add.json', $data);
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body());
+        $this->assertTrue($result->success);
+        $data = [
+            'provider_id' => $this->providers[0],
+            'video_url' => '6mEHw5q6Yfs'
+        ];
         $this->post('/Videos/add.json', $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body());
         $this->assertFalse($result->success);
-        $this->assertNotEmpty($result->validationErrors->Videos->video_url);
-
     }
+
+    // ---------------------------------------------------------------------
+    // Add Not logged in 
+    public function testAddUnauthorized() {
+        try {
+            $this->post('/Videos/add.json');
+            $this->assertResponseError();
+        } catch (\Cake\Network\Exception\UnauthorizedException $ex) {
+            
+        }
+    }
+
     /**
      * Test add method
      *
      * @return void
      */
     public function testAddInvalidData() {
-        // ---------------------------------------------------------------------
-        // Not logged in 
-        $this->post('/Videos/add.json');
-        $this->assertResponseCode(401);
-        
-        
         // Set session data
         $this->logUser();
         // No data
         $this->post('/Videos/add.json');
         $this->assertResponseOk();
-        
+
         $result = json_decode($this->_response->body());
         $this->assertFalse($result->success);
-        
+
         // ---------------------------------------------------------------------
         // Invalid provider
         $this->post('/Videos/add.json', [
@@ -102,74 +112,66 @@ class VideosControllerTest extends IntegrationTestCase {
             'videoId' => 'feizjfeio'
         ]);
         $this->assertResponseOk();
-        
-        $result = json_decode($this->_response->body());
-        $this->assertFalse($result->success);
-        $this->assertNotEmpty($result->validationErrors->Videos);
-        $this->assertNotEmpty($result->validationErrors->Videos->provider_id);
-        
+        $result = json_decode($this->_response->body(), true);
+        $this->assertFalse($result['success']);
+        $this->assertArrayHasKey('validationErrors', $result);
+        $this->assertArrayHasKey('Videos', $result['validationErrors']);
+        $this->assertArrayHasKey('provider_id', $result['validationErrors']['Videos']);
+
         // ---------------------------------------------------------------------
         // valid provider, invalid video id
-        $providers = \Cake\Core\Configure::read('videoProviders');
-        $this->assertTrue(count($providers) > 0);
-        
-        $providerName = $providers[0]['name'];
         $this->post('/Videos/add.json', [
-            'provider_id' => $providerName,
+            'provider_id' => $this->providers[0],
             'video_url' => 'feizjfvefefefezfezfezcezfeeio'
         ]);
         $this->assertResponseOk();
-        
+
         $result = json_decode($this->_response->body());
         $this->assertFalse($result->success);
         $this->assertNotEmpty($result->validationErrors->Videos);
         $this->assertFalse(isset($result->validationErrors->Videos->provider_id));
         $this->assertNotEmpty($result->validationErrors->Videos->video_url);
-        
     }
 
-    public function testAddOrGet(){
+    public function testAddOrGet() {
         $this->logUser();
-        $table = \Cake\ORM\TableRegistry::get('Videos');
-        $providers = \Cake\Core\Configure::read('videoProviders');
-        $this->assertTrue(count($providers) > 0);
-        $providerName = $providers[0]['name'];
         $data = [
-            'provider_id' => $providerName,
+            'provider_id' => $this->providers[0],
             'video_url' => '6mEHw5q6Yfs'
         ];
-        $table->deleteAll($data);
-        
+
         $this->post("/Videos/addOrGet.json", $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body());
         $this->assertTrue($result->success);
-        
+
         $this->post("/Videos/addOrGet.json", $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body());
         $this->assertTrue($result->success);
     }
-    
-    public function testView(){
-        $id = 1;
-        $this->get("/Videos/view/$id.json");
+
+    public function testView() {
+        $this->get("/Videos/view/1.json");
         $this->assertResponseOk();
-        
         $result = json_decode($this->_response->body());
-//        debug($result);
-        
-        $this->assertTrue(isset($result->id));
+        $this->assertEquals(1, $result->id);
     }
-    
-    public function testSearch(){
-        $id = 1;
-        $this->get("/Videos/search?video_url=tetetzeez?provider=youtube.json");
+
+    public function testViewNotExists() {
+        try {
+            $this->get("/Videos/view/99999.json");
+            $this->assertResponseCode(404);
+        } catch (\Cake\Network\Exception\NotFoundException $ex) {
+            
+        }
+    }
+
+    public function testSearch() {
+        $this->get("/Videos/search?video_url=myfakevideourl&provider_id=youtube");
         $this->assertResponseOk();
-        
-        $result = json_decode($this->_response->body());
-//        debug($result);
-        
-        $this->assertTrue(isset($result->id));
+        $result = json_decode($this->_response->body(), true);
+        $this->assertArrayHasKey('id', $result);
     }
+
 }

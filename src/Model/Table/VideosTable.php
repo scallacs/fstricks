@@ -136,4 +136,14 @@ class VideosTable extends Table {
         return $rules;
     }
 
+    /**
+     * @param \App\Model\Table\Event $event
+     * @param \Cake\ORM\Entity $entity
+     * @param \App\Model\Table\ArrayObject $options
+     */
+    public function beforeSave($event, $entity, $options){
+        if ($entity->isNew() && empty($entity->status)){
+            $entity->status = Video::STATUS_PUBLIC;
+        }
+    }
 }

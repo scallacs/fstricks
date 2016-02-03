@@ -4,10 +4,10 @@ namespace App\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * SportsFixture
+ * VideosFixture
  *
  */
-class SportsFixture extends TestFixture
+class VideoProvidersFixture extends TestFixture
 {
 
     /**
@@ -16,7 +16,7 @@ class SportsFixture extends TestFixture
      * @var array
      */
     // @codingStandardsIgnoreStart
-    public $import = ['table' => 'sports', 'connection' => 'default'];
+    public $import = ['table' => 'video_providers', 'connection' => 'default'];
 
     // @codingStandardsIgnoreEnd
 
@@ -27,12 +27,7 @@ class SportsFixture extends TestFixture
      */
     public $records = [
         [
-            'id' => 1,
-            'name' => 'Snowboard'
-        ],
-        [
-            'id' => 2,
-            'name' => 'Ski'
+            'name' => 'youtube'
         ],
     ];
 }
