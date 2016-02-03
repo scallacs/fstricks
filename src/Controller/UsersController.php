@@ -276,6 +276,8 @@ class UsersController extends AppController {
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->data);
+            $this->status = App\Model\Entity\User::STATUS_ACTIVATED;
+            
             if ($this->Users->save($user)) {
                 $userArray = [
                     'id' => $user->id,

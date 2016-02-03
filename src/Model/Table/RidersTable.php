@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Model\Table;
 
 use App\Model\Entity\Rider;
@@ -14,8 +15,7 @@ use Cake\Validation\Validator;
  * @property \Cake\ORM\Association\BelongsTo $SocialProviders
  * @property \Cake\ORM\Association\HasMany $VideoTags
  */
-class RidersTable extends Table
-{
+class RidersTable extends Table {
 
     /**
      * Initialize method
@@ -23,8 +23,7 @@ class RidersTable extends Table
      * @param array $config The configuration for the Table.
      * @return void
      */
-    public function initialize(array $config)
-    {
+    public function initialize(array $config) {
         parent::initialize($config);
 
         $this->table('riders');
@@ -34,12 +33,30 @@ class RidersTable extends Table
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id'
         ]);
-        $this->belongsTo('SocialProviders', [
-            'foreignKey' => 'social_provider_id',
-            'joinType' => 'INNER'
-        ]);
         $this->hasMany('VideoTags', [
             'foreignKey' => 'rider_id'
+        ]);
+        
+        // Add the behaviour and configure any options you want
+        $this->addBehavior('Proffer.Proffer', [
+            'picture' => [    // The name of your upload field
+                'root' => WWW_ROOT . 'files', // Customise the root upload folder here, or omit to use the default
+                'dir' => 'picture_dir',   // The name of the field to store the folder
+                'thumbnailSizes' => [ // Declare your thumbnails
+                    'square' => [   // Define the prefix of your thumbnail
+                        'w' => 200, // Width
+                        'h' => 200, // Height
+                        'crop' => true,  // Crop will crop the image as well as resize it
+                        'jpeg_quality'  => 100,
+                        'png_compression_level' => 9
+                    ],
+                    'portrait' => [     // Define a second thumbnail
+                        'w' => 100,
+                        'h' => 300
+                    ],
+                ],
+                'thumbnailMethod' => 'Gd'  // Options are Imagick, Gd or Gmagick
+            ]
         ]);
     }
 
@@ -49,31 +66,47 @@ class RidersTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
-    {
+    public function validationDefault(Validator $validator) {
         $validator
-            ->add('id', 'valid', ['rule' => 'numeric'])
-            ->allowEmpty('id', 'create');
+                ->add('id', 'valid', ['rule' => 'numeric'])
+                ->allowEmpty('id', 'create');
 
         $validator
-            ->requirePresence('firstname', 'create')
-            ->notEmpty('firstname');
+                ->requirePresence('firstname', 'create')
+                ->add('firstname', [
+                    'minLength' => [
+                        'rule' => ['minLength', 2],
+                        'message' => 'Choose a longer name.'
+                    ],
+                    'maxLength' => [
+                        'rule' => ['maxLength', 20],
+                        'message' => 'Choose a shorter name.'
+                    ]
+                ])
+                ->notEmpty('firstname');
 
         $validator
-            ->requirePresence('lastname', 'create')
-            ->notEmpty('lastname');
+                ->requirePresence('lastname', 'create')
+                ->add('lastname', [
+                    'minLength' => [
+                        'rule' => ['minLength', 2],
+                        'message' => 'Choose a longer name.'
+                    ],
+                    'maxLength' => [
+                        'rule' => ['maxLength', 20],
+                        'message' => 'Choose a shorter name.'
+                    ]
+                ])
+                ->notEmpty('lastname');
 
         $validator
-            ->allowEmpty('picture');
+                ->allowEmpty('picture');
 
         $validator
-            ->add('is_pro', 'valid', ['rule' => 'boolean'])
-            ->requirePresence('is_pro', 'create')
-            ->notEmpty('is_pro');
+                ->add('is_pro', 'valid', ['rule' => 'boolean'])
+                ->requirePresence('is_pro', 'create')
+                ->notEmpty('is_pro');
 
-        $validator
-            ->requirePresence('provider_uid', 'create')
-            ->notEmpty('provider_uid');
 
         return $validator;
     }
@@ -85,10 +118,23 @@ class RidersTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
-    public function buildRules(RulesChecker $rules)
-    {
+    public function buildRules(RulesChecker $rules) {
         $rules->add($rules->existsIn(['user_id'], 'Users'));
-        $rules->add($rules->existsIn(['social_provider_id'], 'SocialProviders'));
+        //$rules->add($rules->existsIn(['social_provider_id'], 'SocialProviders'));
         return $rules;
     }
+    
+    /**
+     * @param \App\Model\Table\Event $event
+     * @param \Cake\ORM\Entity $entity
+     * @param \App\Model\Table\ArrayObject $options
+     */
+    public function beforeSave($event, $entity, $options){
+        if (!empty($entity->firstname) && !empty($entity->lastname)){
+            $entity->firstname = strtolower($entity->firstname);
+            $entity->lastname = strtolower($entity->lastname);
+            $entity->slug = \Cake\Utility\Inflector::slug($entity->firstname.'-'.$entity->lastname);
+        }
+    }
+
 }

@@ -1,14 +1,13 @@
 <?php
+
 namespace App\Test\TestCase\Controller;
 
 use App\Controller\RidersController;
-use Cake\TestSuite\IntegrationTestCase;
 
 /**
  * App\Controller\RidersController Test Case
  */
-class RidersControllerTest extends IntegrationTestCase
-{
+class RidersControllerTest extends MyIntegrationTestCase {
 
     /**
      * Fixtures
@@ -18,16 +17,6 @@ class RidersControllerTest extends IntegrationTestCase
     public $fixtures = [
         'app.riders',
         'app.users',
-        'app.tags',
-        'app.video_tags',
-        'app.videos',
-        'app.video_providers',
-        'app.categories',
-        'app.sports',
-        'app.tags_users',
-        'app.spots',
-        'app.social_providers',
-        'app.social_accounts'
     ];
 
     /**
@@ -35,48 +24,87 @@ class RidersControllerTest extends IntegrationTestCase
      *
      * @return void
      */
-    public function testIndex()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
+    public function testUnauthorizedSave() {
+        $this->post('riders/save');
+        $this->assertResponseError("Should raise a not authorh");
     }
 
     /**
-     * Test view method
+     * Test index method
      *
      * @return void
      */
-    public function testView()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
+    public function testSave() {
+        $this->logUser(2);
+        $data = [
+            'firstname' => 'test',
+            'lastname' => 'test',
+            'nationality' => 'fr',
+            'is_pro' => false
+        ];
+        $this->post('riders/save.json', $data);
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        $this->assertTrue($result['success']);
     }
 
-    /**
-     * Test add method
-     *
-     * @return void
-     */
-    public function testAdd()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
+    public function testEdit() {
+        $this->logUser(1);
+        $data = [
+            'firstname' => 'test',
+            'lastname' => 'test',
+            'nationality' => 'fr',
+            'is_pro' => false
+        ];
+        $this->post('riders/save.json', $data);
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        $this->assertTrue($result['success']);
     }
 
-    /**
-     * Test edit method
-     *
-     * @return void
-     */
-    public function testEdit()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
+    public function testUserRiderProfile() {
+        $this->logUser(1);
+        $this->get('riders/profile.json');
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        $this->assertArrayHasKey('id', $result);
     }
 
-    /**
-     * Test delete method
-     *
-     * @return void
-     */
-    public function testDelete()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
+    public function testUserRiderProfileNotLoggedIn() {
+        try {
+            $this->get('riders/profile.json');
+            $this->assertResponseCode(404);
+        } catch (Exception $ex) {
+            
+        }
     }
+
+    public function testViewProfile() {
+        $this->get('riders/profile/2.json');
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        $this->assertArrayHasKey('id', $result);
+    }
+
+    public function testProfileNotFound() {
+        try {
+            $this->get('riders/profile/9999999.json');
+            $this->assertResponseCode(404);
+        } catch (Exception $ex) {
+            
+        }
+    }
+    
+    
+    public function testLocalSearch(){
+        $this->get('riders/local_search.json?q=Stephane');
+        $this->assertResponseOk();
+    }
+
+    
+    public function testFacebookSearch(){
+        $this->get('riders/facebook_search.json?q=Stephane');
+        $this->assertResponseOk();
+    }
+
 }

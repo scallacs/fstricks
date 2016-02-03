@@ -256,7 +256,7 @@ return [
             //'port' => 'nonstandard_port_number',
             'username' => 'root',
             'password' => '',
-            'database' => 'trickers',
+            'database' => 'trickers_test',
             'encoding' => 'utf8',
             'timezone' => 'UTC',
             'cacheMetadata' => true,

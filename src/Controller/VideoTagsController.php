@@ -111,6 +111,12 @@ class VideoTagsController extends AppController {
                             'VideoTags.begin ASC',
                         ]);
                         break;
+                    case 'created':
+                        $query->order([
+                            'VideoTags.created DESC',
+                            'VideoTags.count_points DESC',
+                        ]);
+                        break;
                     case 'best':
                     default:
                         $query->order([
@@ -120,7 +126,7 @@ class VideoTagsController extends AppController {
                 }
             }
 
-            if (!empty($this->request->query['sport_id'])) {
+            if (!empty($this->request->query['sport_id']) && is_numeric($this->request->query['sport_id'])) {
                 $query->where(['Tags.sport_id' => $this->request->query['sport_id']]);
             } else if (!empty($this->request->query['sport_name'])) {
                 // Get id from name
@@ -131,7 +137,7 @@ class VideoTagsController extends AppController {
                     $query->where(['Tags.sport_id' => $sport['id']]);
                 }
             }
-            if (!empty($this->request->query['category_id'])) {
+            if (!empty($this->request->query['category_id']) && is_numeric($this->request->query['category_id'])) {
                 $query->where(['Tags.category_id' => $this->request->query['category_id']]);
             } else if (!empty($this->request->query['category_name']) && isset($sportName)) {
                 $categoryName = strtolower($this->request->query['category_name']);
@@ -142,14 +148,17 @@ class VideoTagsController extends AppController {
                 }
             }
 
-            if (!empty($this->request->query['tag_id'])) {
+            if (!empty($this->request->query['tag_id']) && is_numeric($this->request->query['tag_id'])) {
                 $query->where(['VideoTags.tag_id' => $this->request->query['tag_id']]);
             }
             if (!empty($this->request->query['trick_name'])) {
                 $query->where(['Tags.slug' => $this->request->query['trick_name']]);
             }
-            if (!empty($this->request->query['video_id'])) {
+            if (!empty($this->request->query['video_id']) && is_numeric($this->request->query['video_id'])) {
                 $query->where(['VideoTags.video_id' => (int) $this->request->query['video_id']]);
+            }
+            if (!empty($this->request->query['rider_id']) && is_numeric($this->request->query['rider_id'])) {
+                $query->where(['VideoTags.rider_id' => (int) $this->request->query['rider_id']]);
             }
 //        if (!empty($this->request->query['with_total'])){
 //            $data = [
@@ -204,4 +213,5 @@ class VideoTagsController extends AppController {
         }
     }
 
+    
 }

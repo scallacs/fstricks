@@ -1,4 +1,4 @@
-<div class="section bg-secondary">
+<div class="section">
     <h3 class="container">Add new tricks</h3>
 </div>
 <div class="container">
@@ -117,8 +117,8 @@
                                     <div class="clearfix">
                                         <div class="col-xs-10" style="text-transform: capitalize;"  >
                                             <span class="text-bold">{{tag.name}}</span> <br/>
-                                            <span class="text-muted">{{tag.sport_name}}</span> - 
-                                            <span class="text-muted">{{tag.category_name}}</span>
+                                            <span class="">{{tag.sport_name}}</span> - 
+                                            <span class="">{{tag.category_name}}</span>
                                         </div>
                                         <div class="col-xs-2" style="overflow: hidden;" >
                                             <span class="text-big" ng-if="!tag.is_new">{{tag.count_ref}}</span>
@@ -130,7 +130,7 @@
                         </div>
                     </div>
                 </div>
-                <!--
+                
                 <div class="form-group">
                     <div class="clearfix">
                         <div class="col-sm-5 form-group">
@@ -148,20 +148,39 @@
                                     refresh="refreshSuggestedRiders($select.search)"
                                     refresh-delay="500">
                                     <div class="clearfix" style="text-transform: capitalize;">
+                                        <img ng-src="{{rider.picture.data.url}}" alt=""/>  
+                                        <span class="text-bold">{{rider.name}}</span> 
+                                        <a class="text-sm" href="http://www.facebook.com/" target="_blank" >(View on facebook)</a>
+                                    </div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <!--
+                        <div class="col-sm-5 form-group">
+                            <label class="control-label">Key words</label>
+                            <ui-select 
+                                ng-model="videoTag.riders" 
+                                theme="bootstrap"
+                                reset-search-input="false"
+                                required>
+                                <ui-select-match placeholder="Tags...">
+                                    <span class="text-bold">{{$select.selected.name}} </span>
+                                </ui-select-match>
+                                <ui-select-choices
+                                    repeat="rider in suggestedRiders"
+                                    refresh="refreshSuggestedRiders($select.search)"
+                                    refresh-delay="500">
+                                    <div class="clearfix" style="text-transform: capitalize;">
                                         <img ng-src="{{rider.picture.data.url}}" alt=""/> 
                                         <span class="text-bold">{{rider.name}}</span>
                                     </div>
                                 </ui-select-choices>
                             </ui-select>
                         </div>
-                        <div class="col-sm-5 form-group">
-                            <label class="control-label">Key words</label>
-                            Adding tags
-                        </div>
+                        -->
                     </div>
                 </div>
-                -->
-
+                
                 <div ng-if="similarTags.length > 0" class=" form-group">
                     <div class="alert alert-danger"> 
                         <p class="">

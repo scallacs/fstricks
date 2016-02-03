@@ -20,6 +20,8 @@ use Cake\ORM\Entity;
  */
 class Rider extends Entity
 {
+    
+    protected $_virtual = ['picture_portrait', 'picture_square', 'picture_original'];
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -34,4 +36,36 @@ class Rider extends Entity
         '*' => true,
         'id' => false,
     ];
+    
+    private function getPicturePath($prefix = ''){
+        return 'files/riders/picture/'.$this->picture_dir.'/'.$prefix.(!empty($prefix) ? '_' : '').$this->picture;
+    }
+
+
+
+
+    public function _getPictureOriginal(){
+        if (!empty($this->picture)){
+            return $this->getPicturePath();
+        }
+        else{
+            return 'http://www.placehold.it/200x200/EFEFEF/AAAAAA&amp;text=no+profile+picture';
+        }
+    }
+    public function _getPicturePortrait(){
+        if (!empty($this->picture)){
+            return $this->getPicturePath('portrait');
+        }
+        else{
+            return 'http://www.placehold.it/200x200/EFEFEF/AAAAAA&amp;text=no+profile+picture';
+        }
+    }
+    public function _getPictureSquare(){
+        if (!empty($this->picture)){
+            return $this->getPicturePath('square');
+        }
+        else{
+            return 'http://www.placehold.it/100x300/EFEFEF/AAAAAA&amp;text=no+profile+picture';
+        }
+    }
 }

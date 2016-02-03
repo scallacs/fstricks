@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div id="content">
-                <div ng-if="showVideoPlayer" class="full-player">
+                <div ng-if="playerData.show" class="full-player">
 
                     <div ng-show="videoTagData.data.length === 0 && !videoTagData.loading" 
                          class="pick-video-message">

@@ -1,4 +1,4 @@
-<footer class="nopadding" ng-show="!playerData.showListTricks">
+<footer class="nopadding" ng-show="!showVideoPlayer || !playerData.showListTricks">
     <div class="footer clearfix">
         <div >
             <div class="col-sm-4">

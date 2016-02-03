@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
-
 use App\Lib\ResultMessage;
 
 /**
@@ -15,33 +14,121 @@ class RidersController extends AppController {
 
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['view', 'search']);
+        $this->Auth->allow(['view', 'facebook_search', 'local_search', 'profile']);
+    }
+
+    /**
+     * API
+     * 
+     * Get user rider profile is $profileId is null. Otherwise rider profile for $profileId
+     */
+    public function profile($profileId = null) {
+        ResultMessage::setWrapper(false);
+        $query = $this->Riders->find();
+        if ($profileId === null && $this->Auth->user('id')) {
+            $query->where(['Riders.user_id' => $this->Auth->user('id')]);
+        } else if ($profileId != null) {
+            $query->where(['Riders.id' => $profileId]);
+        } else {
+            throw new \Cake\Network\Exception\NotFoundException();
+        }
+        $data = $query->first();
+        if (empty($data)) {
+            throw new \Cake\Network\Exception\NotFoundException();
+        }
+        ResultMessage::overwriteData($data);
+    }
+
+    /**
+     * API
+     * 
+     * Save rider profile
+     * 
+     * @return type
+     */
+    public function save() {
+        if ($this->request->is('post')) {
+            $userId = $this->Auth->user('id');
+            $rider = $this->Riders->find()->where(['Riders.user_id' => $userId])->first();
+            if (!empty($rider)) {
+                $rider = $this->Riders->patchEntity($rider, $this->request->data);
+            } else {
+                $rider = $this->Riders->newEntity($this->request->data);
+                $rider->user_id = $this->Auth->user('id');
+            }
+            if ($this->Riders->save($rider)) {
+                ResultMessage::setData('rider_id', $rider->id);
+                ResultMessage::setMessage("Rider profile has been saved", true);
+                return;
+            }
+            ResultMessage::addValidationErrorsModel($rider);
+        }
+        ResultMessage::setMessage("Cannot save rider profile", false);
     }
 
     /**
      * Search rider thanks to Facebook API
      * @return type
      */
-    public function search() {
+    public function facebook_search() {
         ResultMessage::setWrapper(false);
-        
         // If not log in with facebook
         if (!$this->Auth->user('access_token')) {
-            return;
+            throw new \Cake\Network\Exception\UnauthorizedException("You must be logged in facebook");
         }
-        $q = !empty($this->request->query['q']) ? $this->request->query['q'] : '';
-        if (strlen($q) <= 2){
-            return;
-        }
-        $facebookRequest = new \App\Lib\FacebookRequest([
-            'key' => \Cake\Core\Configure::read('Facebook.key'),
-            'id' => \Cake\Core\Configure::read('Facebook.id'),
-            'token' => $this->Auth->user('access_token')->getValue()
-        ]);
+        if ($this->request->is('get') && !empty($this->request->query['q']) && strlen($this->request->query['q']) > 2) {
+            $q = $this->request->query['q'];
+            $facebookRequest = new \App\Lib\FacebookRequest([
+                'key' => \Cake\Core\Configure::read('Facebook.key'),
+                'id' => \Cake\Core\Configure::read('Facebook.id'),
+                'token' => $this->Auth->user('access_token')->getValue()
+            ]);
 
-        $data = $facebookRequest->searchPeople($q);
-        if ($data) {
-            ResultMessage::overwriteData($data);
+            $data = $facebookRequest->searchPeople($q);
+            if ($data) {
+                ResultMessage::overwriteData($data);
+                return;
+            }
+        }
+
+        ResultMessage::overwriteData([
+            'data' => [],
+            'next' => null
+        ]);
+        return;
+    }
+
+    /**
+     * @queryType GET
+     * 
+     * Return a list of the most famous tag begining by the search term $term
+     * @param string $term
+     */
+    public function local_search() {
+        ResultMessage::setWrapper(false);
+        if ($this->request->is('get') && !empty($this->request->query['q'])) {
+            $term = strtolower($this->request->query['q']);
+            $query = $this->Riders->find('all')
+                    ->select([
+                        'display_name' => 'CONCAT(Riders.firstname, Riders.lastname)',
+                        'slug' => 'Riders.slug',
+//                        'count_video_tags' => 'Riders.count_video_tags',
+                        'id' => 'Riders.id',
+                    ])
+                    ->where([
+                        'Riders.firstname LIKE "%' . $term . '%" OR Riders.lastname LIKE "%' . $term . '%"',
+                    ])
+                    ->limit(20);
+//                    ->order(['Riders.count_video_tags DESC']);
+            ResultMessage::overwriteData([
+                'data' => $query->all(),
+                'next' => null
+            ]);
+        } else {
+            ResultMessage::overwriteData([
+                'data' => [],
+                'next' => null
+            ]);
         }
     }
 

@@ -37,8 +37,8 @@
                                     <span class="glyphicon glyphicon-cog"></span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <!--<li> <a href="#/users/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>-->
-                                    <li> <a href="#/users/settings"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
+                                    <li> <a href="#/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                                    <li> <a href="#/settings"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
                                     <li ng-click="logout()"><a href="#/users/login"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                                 </ul>
                             </li>
@@ -90,8 +90,8 @@
                         </form>
                     </div>
                 </div>
-                <div class="col-sm-6 nopadding" ng-if="showVideoPlayer" >
-                    <table class="table-current-trick" style="width: 100%;text-align: center; min-height: 100px;"  >
+                <div class="col-sm-6 nopadding" ng-if="playerData.show" >
+                    <table class="table-current-trick" >
                         <tbody>
                             <tr>
                                 <td  ng-if="playerData.currentTag"
@@ -116,7 +116,10 @@
                                         <span class="glyphicon glyphicon-arrow-right"></span>
                                     </a>
                                 </td>
-                                <td class="toggle-list-tricks"  ng-click="toggleListTricks()">
+                                <td
+                                    ng-if="!playerData.currentTag">
+                                </td>
+                                <td class="toggle-list-tricks"  ng-click="toggleListTricks()" style="width: 40px">
                                     <a href="" class="text-big"><span class="glyphicon glyphicon-list"></span></a>
                                 </td>
                             </tr>

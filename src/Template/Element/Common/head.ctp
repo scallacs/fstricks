@@ -50,3 +50,4 @@
 <?= $this->Html->script("message-center/message-center.js"); ?>         
 <?= $this->Html->script("angularUtils-pagination/dirPagination.js"); ?>         <!-- Use mimified -->
 <?= $this->Html->script("ngInfiniteScroll/build/ng-infinite-scroll.min.js"); ?>
+<?= $this->Html->script("ng-flow/dist/ng-flow-standalone.min"); ?>

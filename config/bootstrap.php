@@ -214,6 +214,14 @@ Log::config('queries', [
     'scopes' => ['queriesLog']
 ]);
 
+// File logging
+Log::config('m', [
+    'className' => 'File',
+    'path' => LOGS,
+    'file' => 'messages.log',
+    'scopes' => ['queriesLog']
+]);
+
 Plugin::load('Bootstrap') ; // instead of Plugin::load('Bootstrap3') ;
 
 
@@ -229,3 +237,10 @@ Cache::config('veryLongCache', [
 ]);
 
 Plugin::load('ADmad/HybridAuth', ['bootstrap' => true, 'routes' => true]);
+Plugin::load('Proffer');
+
+
+
+ini_set('memory_limit', '256M');
+
+

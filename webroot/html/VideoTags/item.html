@@ -16,16 +16,20 @@
                 <p class="item-title">
                     {{videoTag.tag_name}}
                 </p>
-                
-                <p class="text-muted" ng-if="videoTag.time_to_play > 0">
-                    playing in {{videoTag.time_to_play}} seconds.
-                </p>
-                <p class="text-muted" ng-if="videoTag.time_to_play === 0">
-                    Now playing
-                </p>
+                <div class="item-user-xs">
+                    <span class="thumbnail-round-xs">
+                        <img ng-if="videoTag.rider" ng-src="videoTag.rider.profile_round_xs"/>
+                        <img ng-if="!videoTag.rider" src="img/icon_avatar.png"/>
+                    </span>
+                    <span class="item-user-name">
+                        Unknown rider
+                    </span>
+                </div>
+                <!--
                 <p class="text-muted" ng-if="videoTag.time_to_play == null">
                     {{videoTag.end - videoTag.begin | number:1 }} seconds from {{videoTag.begin | secondsToHours}}
                 </p>
+                -->
             </div>
             <div class="col-xs-2">
                 <div class="dropdown">
@@ -61,20 +65,28 @@
                     {{videoTag.category_name}}
                 </p>
             </div>
-            <div class="col-xs-7" ng-controller="VideoTagPointsController">
-                <button type="button" class="btn btn-primary"  ng-click="down(videoTag)" 
-                        ng-disabled="videoTag.user_rate === 'loading'"
-                        ng-class="videoTag.user_rate === 'down' ? 'active' : ''">
-                    <span class="glyphicon glyphicon-arrow-down"></span>
-                </button>
-                <span class="item-points">
-                    {{videoTag.count_points}}
-                </span>
-                <button type="button" class="btn btn-primary" ng-click="up(videoTag)" 
-                        ng-disabled="videoTag.user_rate === 'loading'"
-                        ng-class="videoTag.user_rate === 'up' ? 'active' : ''">
-                    <span class="glyphicon glyphicon-arrow-up"></span>
-                </button>
+            <div class="col-xs-7">
+                
+                <p class="text-muted padding-sm"  ng-show="videoTag.time_to_play > 0">
+                    <span>
+                        playing in {{videoTag.time_to_play}} seconds.
+                    </span>
+                </p>
+                <div  ng-controller="VideoTagPointsController" ng-show="videoTag.time_to_play == null || videoTag.time_to_play == 0">
+                    <button type="button" class="btn btn-primary"  ng-click="down(videoTag)" 
+                            ng-disabled="videoTag.user_rate === 'loading'"
+                            ng-class="videoTag.user_rate === 'down' ? 'active' : ''">
+                        <span class="glyphicon glyphicon-arrow-down"></span>
+                    </button>
+                    <span class="item-points">
+                        {{videoTag.count_points}}
+                    </span>
+                    <button type="button" class="btn btn-primary" ng-click="up(videoTag)" 
+                            ng-disabled="videoTag.user_rate === 'loading'"
+                            ng-class="videoTag.user_rate === 'up' ? 'active' : ''">
+                        <span class="glyphicon glyphicon-arrow-up"></span>
+                    </button>
+                </div>
             </div>
             <div class="col-xs-2">
                 <div class="dropdown">

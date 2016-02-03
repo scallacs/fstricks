@@ -10,8 +10,9 @@
                         <td>{{data.user.username}}</td>
                     </tr>
                     <tr>
-                        <td>Post number</td>
-                        <td>{{data.user.count_posts}}</td>
+                        <td>Points</td>
+                        <td>{{data.user.count_video_tags}}</td>
+                        <td>The more you create valid video tags, the more you earn points!</td>
                     </tr>
                     <!--
                     <tr>
@@ -22,6 +23,29 @@
                 </tbody>
             </table>
         </div>
+
+    <h3 class="text-center">Rider profile</h3>
+    <form class="form-inline">
+        <div class="form-group">
+            <div class="input-group">
+                <input type="text" 
+                       class="form-control" 
+                       placeholder="Firstname"
+                       ng-model="newTag"/>
+            </div>
+            <div class="input-group">
+                <input type="text" 
+                       class="form-control" 
+                       placeholder="Lastname"
+                       ng-model="newTag"/>
+            </div>
+            <div class="input-group-btn">
+                <button type="submit" class="btn btn-primary" ng-click="addTag(newTag)">
+                    <span class="glyphicon glyphicon-plus-sign"></span>
+                </button>
+            </div>
+        </div>
+    </form>
 
         <div class="col-sm-4">
             <form class="form-inline">
@@ -56,14 +80,5 @@
         </div>
     </div>
 
-    <h3 class="text-center">Posts</h3>
-    <div class="clearfix">
-        <div  ng-controller="AddPostController" >
-            <div ng-include="'html/Spots/form.html'"></div>
-        </div>
-        <div ng-repeat="post in data.user.spots">
-            <div ng-include="'html/Spots/item.html'"></div>
-        </div>       
-    </div>
 
 </div>

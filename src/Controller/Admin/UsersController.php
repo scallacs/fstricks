@@ -171,7 +171,34 @@ class UsersController extends AppController {
         ResultMessage::setSuccess();
     }
 
+    public function generate_mock_user(){
+        $start = 100;
+        $nb = 10000;
+        $success = 0;
+        for ($i = $start; $i < $nb+$start; $i++){
+            $user = $this->Users->newEntity();
+            $data = [
+                'id' => $i,
+                'email' => 'user'.$i.'@mockuser.com',
+                'username' => 'user'.$i,
+                'password' => 'test'
+            ];
+            $user = $this->Users->patchEntity($user, $data);
+            if ($this->Users->save($user)) {
+                $success++;
+            }
+            else{
+                debug($user->errors());
+            }
+        }
+        debug('Success: '.$success.'/'.$nb.' ratio de '. $success * 100/$nb);
+        die();
+    }
+    
+    
+    
 }
+
 
 
 

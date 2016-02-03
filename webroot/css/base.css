@@ -14,7 +14,10 @@ h3, h2, h1{
     height: 0.6em;
 }
 .table-current-trick{
-    border-bottom: 1px solid #444;
+    /* border-bottom: 1px solid #444; */
+    width: 100%;
+    min-height: 106px;
+    text-align: center;
 }
 .table-current-trick .item-video-tag{
     border: none;
@@ -63,7 +66,7 @@ h3, h2, h1{
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
 .navbar-form{
-    padding: 0px;
+    padding: 5px 0px;
     margin: 0px;
 }
 .navbar-form .input-group span.ui-select-toggle.form-control {
@@ -209,7 +212,7 @@ header .navbar-nav > li > a{
 .navbar{
     margin-bottom: 0px;
     background: #080808;
-    border-bottom: 1px solid #222;
+    border: none;
 }
 
 .message{
@@ -311,11 +314,11 @@ header .navbar-nav > li > a{
     /* padding: 10px; */
 }
 
-.bg-colored{
-    background: #F3C212;
+.bg-primary{
+    background: #111;
     color: white;
 }
-.bg-secondary-darker{
+.bg-secondary-darker, div.section{
     background: #277D91;
     border-color: #055B70;
     color: white;
@@ -406,6 +409,14 @@ header .navbar-nav > li > a{
 }
 
 
+.thumbnail-round-xs img{
+  width: 25px;
+  border-radius: 30px;
+  background: white;
+}
+.item-user-name{
+  padding-left: 4px;
+}
 
 
 /******************************/
@@ -566,3 +577,4 @@ header .navbar-nav > li > a{
   top: -7px;
 }
   
+

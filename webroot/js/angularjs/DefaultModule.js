@@ -1,7 +1,7 @@
 /*
  * Module for ...
  */
-var module = angular.module('DefaultModule', ['ngRoute', 'ngCookies', 'CommonModule', 'ngResource']);
+var module = angular.module('DefaultModule', ['ngRoute', 'ngCookies', 'CommonModule', 'ngResource', 'flow']);
 
 module.config(function($routeProvider, $controllerProvider) {
 
@@ -62,7 +62,7 @@ module.config(function($routeProvider, $controllerProvider) {
                 controller: 'AddVideoTagController'
             })
             /* --------------------------------------------------------------- */
-            .when('/users/settings', {
+            .when('/settings', {
                 templateUrl: HTML_FOLDER + 'Users/settings.html',
                 controller: 'SettingsController'
             })
@@ -78,14 +78,14 @@ module.config(function($routeProvider, $controllerProvider) {
                 templateUrl: HTML_FOLDER + 'Users/signup.html',
                 controller: 'SignupController'
             })
-//            .when('/users/profile/:username', {
-//                templateUrl: HTML_FOLDER + 'Users/profile.html',
-//                controller: 'UserController'
-//            })
-//            .when('/users/profile', {
-//                templateUrl: HTML_FOLDER + 'Users/profile.html',
-//                controller: 'UserController'
-//            })
+            .when('/profile/:username', {
+                templateUrl: HTML_FOLDER + 'Riders/profile.html',
+                controller: 'RiderProfileController'
+            })
+            .when('/profile', {
+                templateUrl: HTML_FOLDER + 'Riders/profile.html',
+                controller: 'RiderProfileController'
+            })
             .otherwise({redirectTo: '/'});
 
 });
@@ -311,7 +311,7 @@ module.controller('SettingsController', function($scope, SharedData, messageCent
     init();
 
     function init() {
-        $scope.$parent.showVideoPlayer = false;
+        PlayerData.show = false;
         SharedData.loadingState = 0;
         $scope.data.user = AuthenticationService.getCurrentUser();
         console.log($scope.data);
@@ -336,127 +336,9 @@ module.controller('SettingsController', function($scope, SharedData, messageCent
     }
 });
 
-module.controller('UserController',
-        function($filter, $scope, $location, UserEntity, $routeParams,
-                AuthenticationService, SharedData) {
-
-
-            // =========================================================================
-            // Properties
-            $scope.editionMode = false;
-            $scope.new_tag = '';
-            $scope.isCurrentUserProfile = false;
-
-            var saved = true;
-
-            function loadProfile(userId) {
-
-                UserEntity.profile({id: userId}, function(response) {
-                    if (!response.username) {
-                        $location.path('/login');
-                        return;
-                    }
-                    $scope.isCurrentUserProfile = (AuthenticationService.isAuthed() &&
-                            AuthenticationService.getCurrentUser().id === response.id);
-                    $scope.data.user = response;
-                    $scope.data.user.count_posts = 0;
-
-//                    if (response.tag_string.length > 0) {
-//                        $scope.tags = $.map(response.tag_string.split(','), function(value) {
-//                            return {name: value, edition_status: 'keep'};
-//                        });
-//                    }
-//                    else {
-//                        $scope.tags = [{name: 'EditMePlease', edition_status: 'keep'}];
-//                    }
-                    SharedData.loadingState = 0;
-                    //console.log(response);
-                });
-            }
-
-
-            // =========================================================================
-            // Init
-
-            function initData() {
-                $scope.data = {
-                    user: null,
-                };
-            }
-            function init() {
-                $scope.$parent.showVideoPlayer = false;
-
-                initData();
-                var username = null;
-                if ($routeParams.username) {
-                    username = $routeParams.username;
-                }
-                loadProfile(username);
-            }
-            init();
-
-            // =========================================================================
-            // Form
-
-
-            function save() {
-                $scope.message = 'Saving... Please wait';
-                var data = {
-                    tag_string: $.map($scope.tags, function(tag) {
-                        return tag.name;
-                    }).join(","),
-                };
-                UserEntity.edit(data, function(response) {
-                    console.log(response);
-                    saved = response.success;
-                    $scope.message = response.message;
-                });
-            }
-            // =========================================================================
-            // scope
-
-            $scope.addTag = function(val) {
-                if (!val || val.length < 2) {
-                    $scope.message = "Tag must be at least 2 chars";
-                    return;
-                }
-                $scope.new_tag = '';
-                $scope.tags.push({id: null, name: $filter('camelCase')(val), edition_status: 'new'});
-            };
-
-            $scope.removeTag = function(tag) {
-                tag.edition_status = 'remove';
-                return false;
-            };
-
-            $scope.startEditionMode = function() {
-                $scope.editionMode = true;
-            };
-            $scope.cancelEditionMode = function() {
-                $scope.editionMode = false;
-                for (var i = $scope.tags.length - 1; i >= 0; i--) {
-                    if ($scope.tags[i].edition_status === 'new') {
-                        $scope.tags.splice(i, 1);
-                    }
-                    else {
-                        $scope.tags[i].edition_status = 'keep';
-                    }
-                }
-            };
-            $scope.save = function() {
-                save();
-                $scope.editionMode = false;
-            };
-
-            $scope.isSaved = function() {
-                return saved;
-            };
-
-        });
-
 module.controller('UserLoginController', function($scope, $rootScope, $auth, SharedData, messageCenterService, $location, AuthenticationService) {
     // create a message to display in our view
-    $scope.$parent.showVideoPlayer = false;
+    PlayerData.show = false;
     $scope.authenticate = authenticate;
     $scope.isFormLoading = false;
     $scope.login = login;
@@ -555,7 +437,7 @@ module.controller('UserLoginController', function($scope, $rootScope, $auth, Sha
 
 });
 module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $location,
-        VideoEntity, VideoTagEntity, PlayerProviders, messageCenterService, SharedData, AuthenticationService) {
+        VideoEntity, VideoTagEntity, PlayerProviders, messageCenterService, SharedData, AuthenticationService, PlayerData) {
 
     AuthenticationService.requireLogin();
     var videosInCache = {};
@@ -575,7 +457,7 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
 
     function init() {
         $scope.feedback = null;
-        $scope.$parent.showVideoPlayer = false;
+        PlayerData.show = false;
         SharedData.loadingState = 0;
 
         loadRecentlyTagged(1);
@@ -706,14 +588,14 @@ module.controller('VideoTagPointsController', function($scope, VideoTagPointEnti
 //            $scope.$parent.video.video_url = tag.video_url;
 //            $scope.$parent.video.video_tags = [tag];
 //            SharedData.loadingState = 0;
-//            $scope.$parent.showVideoPlayer = true;
+//            PlayerData.show = true;
 //        });
 //    }
 //
 //});
 module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $filter,
         $routeParams, VideoEntity, VideoTagEntity, TagEntity, SharedData, PlayerData,
-        messageCenterService, AuthenticationService, RiderEntity) {
+        messageCenterService, AuthenticationService, RiderEntity, YT_event) {
 
     AuthenticationService.requireLogin();
 
@@ -726,9 +608,10 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     };
     $scope.videoTag = {
         begin: 0,
-        end: 0,
+        end: MIN_TAG_DURATION,
         range: [0, MIN_TAG_DURATION],
-        tag: null
+        tag: null,
+        video_url: null
     };
     $scope.video = {video_tags: []};
     //$scope.playerInfo = {begin: 0, end: 0};
@@ -756,11 +639,12 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
 
     function init() {
         PlayerData.reset();
-        $scope.$parent.showVideoPlayer = false;
+        PlayerData.show = false;
 
         VideoEntity.view({id: $routeParams.id}, function(response) {
             $scope.video = response;
             PlayerData.url(response.video_url);
+            $scope.videoTag.video_url = response.video_url;
 
             YoutubeVideoInfo.duration(response.video_url, function(duration) {
                 PlayerData.data.duration = duration;
@@ -775,11 +659,11 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
             }
             if (oldValue == undefined || newValue[0] !== oldValue[0]) {
                 PlayerData.seekTo(newValue[0]);
-                adaptRange(newValue[0], newValue, 0);
+                adaptRange(newValue[0], 0);
             }
             else if (newValue[1] !== oldValue[1]) {
                 PlayerData.seekTo(newValue[1]);
-                adaptRange(newValue[1], newValue, 1);
+                adaptRange(newValue[1], 1);
             }
             $scope.similarTags = findSimilarTags($scope.videoTag.range);
         });
@@ -818,6 +702,7 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
             RiderEntity.search({
                 q: name
             }, function(results) {
+                console.log(results);
                 $scope.suggestedRiders = results.data;
             });
         }
@@ -871,7 +756,10 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     }
 
     function playRange(videoTag) {
-        PlayerData.playRange(videoTag.range[0], videoTag.range[1]);
+        videoTag.begin = videoTag.range[0];
+        videoTag.end = videoTag.range[1];
+        $scope.$broadcast(YT_event.PLAY_TAG, videoTag);
+        //PlayerData.playRange(videoTag.range[0], videoTag.range[1]);
     }
 
     function addStartRange(value) {
@@ -949,7 +837,7 @@ module.controller('ViewSportController', function($scope, VideoTagData, $routePa
         PlayerData.reset();
         PlayerData.title = 'Best in ' + $routeParams.sport;
         VideoTagData.setFilter('sport_name', $routeParams.sport);
-        $scope.$parent.showVideoPlayer = true;
+        PlayerData.show = true;
         VideoTagData.loadNextPage();
     }
 
@@ -974,7 +862,7 @@ module.controller('ViewTagController', function($scope, VideoTagData, $routePara
             }
         };
 
-        $scope.$parent.showVideoPlayer = true;
+        PlayerData.show = true;
         VideoTagData.loadNextPage();
     }
 });
@@ -1020,7 +908,7 @@ module.controller('ViewVideoController', function($scope, VideoTagData, $routePa
             }
         };
 
-        $scope.$parent.showVideoPlayer = true;
+        PlayerData.show = true;
         VideoTagData.loadNextPage();
     }
 });
@@ -1034,7 +922,7 @@ module.controller('ExploreController', function($scope, VideoTagData, PlayerData
         PlayerData.title = 'Best tricks';
         VideoTagData.setFilters({order: 'best'});
 
-        $scope.$parent.showVideoPlayer = true;
+        PlayerData.show = true;
         VideoTagData.loadNextPage();
     }
 
@@ -1083,12 +971,12 @@ module.controller('SearchTagController', function($scope, TagEntity) {
 
 
 //toastr
-module.controller('SignupController', function($scope, $location, UserEntity, SharedData,
+module.controller('SignupController', function($scope, $location, PlayerData, SharedData,
         messageCenterService, AuthenticationService) {
 
     SharedData.loadingState = 0;
     messageCenterService.removeShown();
-    $scope.$parent.showVideoPlayer = false;
+    PlayerData.show = false;
     $scope.signup = signup;
 
     function signup(data) {
@@ -1125,51 +1013,188 @@ module.controller('SignupController', function($scope, $location, UserEntity, Sh
     }
 });
 
-module.controller('PagesController', function($scope, SharedData) {
-    $scope.$parent.showVideoPlayer = false;
+module.controller('PagesController', function($scope, SharedData, PlayerData) {
+    PlayerData.show = false;
     SharedData.loadingState = 0;
 });
 
-module.controller('ProfileController', function($scope, $auth, toastr, Account) {
-    $scope.getProfile = function() {
-        Account.getProfile()
-                .then(function(response) {
-                    $scope.user = response.data;
-                })
-                .catch(function(response) {
-                    toastr.error(response.data.message, response.status);
-                });
-    };
-    $scope.updateProfile = function() {
-        Account.updateProfile($scope.user)
-                .then(function() {
-                    toastr.success('Profile has been updated');
-                })
-                .catch(function(response) {
-                    toastr.error(response.data.message, response.status);
-                });
-    };
-    $scope.link = function(provider) {
-        $auth.link(provider)
-                .then(function() {
-                    toastr.success('You have successfully linked a ' + provider + ' account');
-                    $scope.getProfile();
-                })
-                .catch(function(response) {
-                    toastr.error(response.data.message, response.status);
-                });
-    };
-    // TODO
-    $scope.unlink = function(provider) {
-        $auth.unlink(provider)
-                .then(function() {
-                    toastr.info('You have unlinked a ' + provider + ' account');
-                    $scope.getProfile();
-                })
-                .catch(function(response) {
-                    toastr.error(response.data ? response.data.message : 'Could not unlink ' + provider + ' account', response.status);
-                });
-    };
+module.controller('RiderProfileController',
+        function($scope, $location, UserEntity, $routeParams, AuthenticationService, SharedData, RiderEntity, VideoTagData, PlayerData) {
 
-    $scope.getProfile();
-});
+            // =========================================================================
+            // Properties
+            $scope.editionMode = false;
+            $scope.isCurrentUserProfile = false;
+            $scope.riderEdit = {
+                sports: [],
+                is_pro: 0
+            };
+            $scope.rider = {
+            };
+            $scope.uploader = {
+                flow: {
+                    target: 'riders/upload_picture',
+                    singleFile: true
+                }
+            };
+            $scope.hasRiderProfile = hasRiderProfile;
+
+            var saved = true;
+
+
+            // =========================================================================
+            // Init
+
+            function loadProfile(userId) {
+                UserEntity.profile({id: userId}, function(response) {
+                    if (!response.username) {
+                        $location.path('/login');
+                        return;
+                    }
+                    $scope.isCurrentUserProfile = (AuthenticationService.isAuthed() &&
+                            AuthenticationService.getCurrentUser().id === response.id);
+                    $scope.data.user = response;
+                    $scope.data.user.count_posts = 0;
+
+                    SharedData.loadingState = 0;
+                });
+
+                RiderEntity.profile({}, function(rider) {
+                    console.log(rider);
+                    $scope.rider = rider;
+                });
+            }
+            function initData() {
+                $scope.data = {
+                    user: null,
+                };
+            }
+            function init() {
+                PlayerData.reset();
+                PlayerData.show = false;
+
+                initData();
+                var username = null;
+                if ($routeParams.username) {
+                    username = $routeParams.username;
+                }
+                loadProfile(username);
+            }
+            init();
+
+            // =========================================================================
+            // Form
+
+            function save(data) {
+//                console.log($scope.$flow.files);
+                $scope.message = 'Saving... Please wait';
+                RiderEntity.save(data, function(response) {
+                    if (response.success) {
+                        $scope.editionMode = false;
+                        $scope.rider = data;
+                        console.log(response);
+                        saved = response.success;
+                        $scope.message = response.message;
+                    }
+                    else {
+
+                    }
+                });
+            }
+            function hasRiderProfile() {
+                return $scope.rider.firstname != null;
+            }
+            ;
+            // =========================================================================
+            // scope
+
+            // selected fruits
+            $scope.selection = ['apple', 'pear'];
+
+            // toggle selection for a given fruit by name
+            $scope.toggleSportSelection = function(sportId) {
+                var idx = $scope.riderEdit.sports.indexOf(sportId);
+                if (idx > -1) {
+                    $scope.riderEdit.sports.splice(idx, 1);
+                }
+                else {
+                    $scope.riderEdit.sports.push(sportId);
+                }
+            };
+
+            $scope.startEditionMode = function() {
+                $scope.riderEdit = $scope.rider;
+                $scope.editionMode = true;
+            };
+            $scope.cancelEditionMode = function() {
+                $scope.editionMode = false;
+            };
+            $scope.save = save;
+
+            $scope.isSaved = function() {
+                return saved;
+            };
+
+
+            $scope.uploadPicture = function(flow) {
+                console.log(flow);
+                console.log(flow.files[0]);
+                flow.upload();
+            };
+
+            $scope.isEditabled = function() {
+                return !hasRiderProfile() || $scope.rider.user_id === AuthenticationService.getCurrentUser().id;
+            };
+
+            $scope.viewVideos = function() {
+                PlayerData.show = true;
+                VideoTagData.setFilter('rider_id', $scope.rider.id);
+                VideoTagData.setOrder('created');
+                VideoTagData.loadNextPage();
+            };
+
+            /*    
+             
+             
+             $scope.getProfile = function() {
+             Account.getProfile()
+             .then(function(response) {
+             $scope.user = response.data;
+             })
+             .catch(function(response) {
+             toastr.error(response.data.message, response.status);
+             });
+             };
+             $scope.updateProfile = function() {
+             Account.updateProfile($scope.user)
+             .then(function() {
+             toastr.success('Profile has been updated');
+             })
+             .catch(function(response) {
+             toastr.error(response.data.message, response.status);
+             });
+             };
+             $scope.link = function(provider) {
+             $auth.link(provider)
+             .then(function() {
+             toastr.success('You have successfully linked a ' + provider + ' account');
+             $scope.getProfile();
+             })
+             .catch(function(response) {
+             toastr.error(response.data.message, response.status);
+             });
+             };
+             // TODO
+             $scope.unlink = function(provider) {
+             $auth.unlink(provider)
+             .then(function() {
+             toastr.info('You have unlinked a ' + provider + ' account');
+             $scope.getProfile();
+             })
+             .catch(function(response) {
+             toastr.error(response.data ? response.data.message : 'Could not unlink ' + provider + ' account', response.status);
+             });
+             };
+             
+             $scope.getProfile();*/
+        });

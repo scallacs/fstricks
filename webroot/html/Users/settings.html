@@ -1,17 +1,15 @@
-
-<div class="section bg-secondary">
-    <h2 class="container"> {{data.user.username}} </h2>
-</div>
 <div class="container">
-
     <div class="bg-light padding-sm">
+
+        <h2 class="container"> {{data.user.username}} </h2>
+
         <p class="padding-sm">
             Account created {{data.user.created| timeago}}.
         </p>
 
 
         <div class="text-center" ng-if="!isSociaLogin()">
-            
+
             <hr/>
 
             <button class="btn btn-warning" 
@@ -50,12 +48,15 @@
                                 Cancel
                             </button>
                         </div>
-                        </div>
                 </form>
-
             </div>
 
         </div>
 
+    </div>
+    <div class="text-center" ng-if="isSociaLogin()">
+        <p>
+            Your are logged in with facebook.
+        </p>
     </div>
 </div>

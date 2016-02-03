@@ -88,6 +88,22 @@ commonModule.config(function($authProvider, API_KEYS) {
 //    });
 });
 
+//app.config(['flowFactoryProvider', function (flowFactoryProvider) {
+//  flowFactoryProvider.defaults = {
+//    target: 'upload.php',
+//    permanentErrors: [404, 500, 501],
+//    maxChunkRetries: 1,
+//    chunkRetryInterval: 5000,
+//    simultaneousUploads: 4,
+//    singleFile: true
+//  };
+//  flowFactoryProvider.on('catchAll', function (event) {
+//    console.log('catchAll', arguments);
+//  });
+//  // Can be used with different implementations of Flow.js
+//  // flowFactoryProvider.factory = fustyFlowFactory;
+//}]);
+
 commonModule.run(function($FB, API_KEYS, $rootScope, $location) {
     $FB.init(API_KEYS.facebook);
     $rootScope.WEBROOT_FULL = WEBROOT_FULL;
@@ -102,7 +118,8 @@ commonModule.constant('YT_event', {
     STOPED: 2,
     UNSARTED: 3,
     STATUS_CHANGE: 4,
-    LOAD_VIDEO: 5
+    LOAD_VIDEO: 5,
+    PLAY_TAG: 6,
 });
 commonModule.constant('API_KEYS', {
     facebook: '1536208040040285'
@@ -135,6 +152,16 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
 
     function initPlayer(element, scope) {
         var player;
+
+        function playVideoRange() {
+            var info = {
+                videoId: scope.playerData.data.video_url,
+                startSeconds: scope.playerData.data.begin,
+                endSeconds: scope.playerData.data.end
+            };
+            console.log(info);
+            player.loadVideoById(info);
+        }
 
         var playerContainer = element.children()[0];
         player = new YT.Player(playerContainer, {
@@ -176,27 +203,10 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
 
                     parseYTEvent(player, scope);
 
-//                    scope.$watch('playerData.data.width', function(newValue, oldValue) {
-//                        if (newValue == oldValue) {
-//                            return;
-//                        }
-//                        //alert('new width'); 
-//                        //player.setSize(scope.playerData.data.width, element.parent().parent().width() * 9 / 16);
-//                    });
                     scope.$watch('playerData.data.video_url', function(newValue, oldValue) {
                         if (scope.playerData.data.video_url) {
-                            var info = {
-                                videoId: scope.playerData.data.video_url,
-                                startSeconds: scope.playerData.data.begin,
-                                endSeconds: scope.playerData.data.end
-                            };
-                            console.log(info);
-                            player.loadVideoById(info);
+                            playVideoRange();
                         }
-//                        else {
-//                            console.log(scope.playerData.data.begin);
-//                            player.seekTo(scope.playerData.data.begin);
-//                        }
                     });
 
                     scope.$watch('playerData.data.state', function() {
@@ -209,6 +219,13 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
 
                     scope.$on(YT_event.PLAYING, function() {
                         player.playVideo();
+                    });
+
+                    scope.$on(YT_event.PLAY_TAG, function(event, videoTag) {
+                        scope.playerData.data.video_url = videoTag.video_url;
+                        scope.playerData.data.begin = videoTag.begin;
+                        scope.playerData.data.end = videoTag.end;
+                        playVideoRange();
                     });
 
                     scope.$on(YT_event.PAUSED, function() {
@@ -445,6 +462,7 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
 
     return {
         currentTag: null,
+        show: true,
         showListTricks: true,
         data: {
             begin: 0,
@@ -498,6 +516,7 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
     function reset() {
         VideoTagData.reset();
         this.stop();
+        this.show = true;
         this.currentTag = null;
         this.data.video_url = null;
         this.data.id = 0;
@@ -556,12 +575,13 @@ commonModule.factory('VideoTagData', function(VideoTagEntity, SharedData) {
             this.callbackError = null;
         },
         setFilter: function(name, value) {
-            this.reset();                  // We reset the results that are in cache if we change the filter
             filters[name] = value;
         },
         setFilters: function(value) {
-            this.reset();                  // We reset the results that are in cache if we change the filter
             filters = value;
+        },
+        setOrder: function(value){
+            filters.order = value;
         },
         next: function() {
             if (this.hasNext()) {
@@ -635,11 +655,21 @@ commonModule.factory('RiderEntity', function($resource) {
     return $resource(url, {id: '@id', action: '@action'}, {
         search: {
             method: 'GET',
-            params: {action: 'search'},
+            params: {action: 'facebook_search'},
+            isArray: false
+        },
+        save: {
+            method: 'POST',
+            params: {action: 'save'},
+            isArray: false
+        },
+        profile: {
+            method: 'GET',
+            params: {action: 'profile'},
             isArray: false
         }
     });
-});
+}); 
 
 commonModule.factory('UserEntity', function($resource) {
     var url = WEBROOT_FULL + '/Users/:action/:id.json';
@@ -1116,6 +1146,11 @@ commonModule.factory('VideoTagEntity', function($resource) {
         search: {
             method: 'GET',
             params: {action: 'search'},
+            isArray: true
+        },
+        rider: {
+            method: 'GET',
+            params: {action: 'rider'},
             isArray: true
         },
         recentlyTagged: {

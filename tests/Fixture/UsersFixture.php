@@ -16,20 +16,8 @@ class UsersFixture extends TestFixture
      * @var array
      */
     // @codingStandardsIgnoreStart
-    public $fields = [
-        'id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'autoIncrement' => true, 'precision' => null],
-        'email' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'fixed' => null],
-        'username' => ['type' => 'string', 'length' => 45, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'fixed' => null],
-        '_constraints' => [
-            'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
-            'email_UNIQUE' => ['type' => 'unique', 'columns' => ['email'], 'length' => []],
-            'username_UNIQUE' => ['type' => 'unique', 'columns' => ['username'], 'length' => []],
-        ],
-        '_options' => [
-            'engine' => 'InnoDB',
-            'collation' => 'utf8_general_ci'
-        ],
-    ];
+    public $import = ['table' => 'users', 'connection' => 'default'];
+    
     // @codingStandardsIgnoreEnd
 
     /**
@@ -42,6 +30,11 @@ class UsersFixture extends TestFixture
             'id' => 1,
             'email' => 'sca.leonard@gmail.com',
             'username' => 'scallacs'
+        ],
+        [
+            'id' => 2,
+            'email' => 'sca.leonard2@gmail.com',
+            'username' => 'scallacs2'
         ],
     ];
 }
