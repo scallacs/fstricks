@@ -90,7 +90,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="col-sm-6 nopadding" ng-if="playerData.show" >
+                <div class="col-sm-6 nopadding" ng-if="playerData.visible" >
                     <table class="table-current-trick" >
                         <tbody>
                             <tr>

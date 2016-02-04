@@ -46,6 +46,10 @@ class VideoTagsTable extends Table {
             'foreignKey' => 'tag_id',
             'joinType' => 'INNER'
         ]);
+        $this->belongsTo('Riders', [
+            'foreignKey' => 'rider_id',
+            'joinType' => 'LEFT'
+        ]);
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id'
         ]);
@@ -58,7 +62,7 @@ class VideoTagsTable extends Table {
      * @param query | null $queryTags
      * @return query
      */
-    public function findAndJoin($queryVideo = null, $queryTags = null){
+    public function findAndJoin($queryVideo = null, $queryTags = null, $queryRiders = null){
         if ($queryVideo === null){
             $queryVideo = function($q){
                 return $q;
@@ -74,6 +78,14 @@ class VideoTagsTable extends Table {
                             ])
                             ->contain(['Sports', 'Categories']);
                     };
+        }
+        if ($queryRiders === null){
+            $queryRiders = function($q){
+                return $q->select([
+                            'rider_name' => 'CONCAT(Riders.firstname, \' \', Riders.lastname)',
+                            'rider_picture' => 'Riders.picture'
+                        ]);
+            };
         }
         return $this->find('all')
                 ->select([
@@ -93,7 +105,8 @@ class VideoTagsTable extends Table {
                 ])
                 ->contain([
                     'Videos' => $queryVideo, 
-                    'Tags' => $queryTags
+                    'Tags' => $queryTags,
+                    'Riders' => $queryRiders
                 ]);
     }
     

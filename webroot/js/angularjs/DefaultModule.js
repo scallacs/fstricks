@@ -311,7 +311,7 @@ module.controller('SettingsController', function($scope, SharedData, messageCent
     init();
 
     function init() {
-        PlayerData.show = false;
+        PlayerData.hide();
         SharedData.loadingState = 0;
         $scope.data.user = AuthenticationService.getCurrentUser();
         console.log($scope.data);
@@ -339,7 +339,7 @@ module.controller('SettingsController', function($scope, SharedData, messageCent
 module.controller('UserLoginController', function($scope, $rootScope, $auth, SharedData, messageCenterService, $location,
         AuthenticationService, PlayerData) {
     // create a message to display in our view
-    PlayerData.show = false;
+    PlayerData.hide();
     $scope.authenticate = authenticate;
     $scope.isFormLoading = false;
     $scope.login = login;
@@ -458,7 +458,7 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
 
     function init() {
         $scope.feedback = null;
-        PlayerData.show = false;
+        PlayerData.hide();
         SharedData.loadingState = 0;
 
         loadRecentlyTagged(1);
@@ -636,7 +636,7 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     function init() {
         PlayerData.reset();
         PlayerData.showListTricks = false;
-        PlayerData.show = true;
+        PlayerData.show();
         PlayerData.extra_class = 'col-lg-7';
         PlayerData.currentTag = $scope.videoTag;
         VideoTagData.setFilter('video_id', $routeParams.id);
@@ -677,10 +677,12 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
             console.log(rider);
             $scope.showCreateRiderForm = false;
             if (rider != null) {
-                $scope.videoTag.rider_name = rider.display_name;
+                //$scope.videoTag.rider_name = rider.display_name;
+                $scope.videoTag.rider = rider;
             }
             else {
-                $scope.videoTag.rider_name = 'Pick a rider';
+                $scope.videoTag.rider = null;
+                //$scope.videoTag.rider_name = 'Pick a rider';
             }
         });
     }
@@ -730,13 +732,16 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
         var postData = {
             video_id: $routeParams.id,
             begin: data.range[0],
-            end: data.range[1]
+            end: data.range[1],
         };
         if (data.tag.is_new) {
             postData.tag = data.tag;
         }
         else {
             postData.tag_id = data.tag.id;
+        }
+        if (data.rider){
+            postData.rider_id = data.rider.id;
         }
 
         VideoTagEntity.add(postData, function(response) {
@@ -865,7 +870,7 @@ module.controller('ViewSportController', function($scope, VideoTagData, $routePa
         PlayerData.reset();
         PlayerData.title = 'Best in ' + $routeParams.sport;
         VideoTagData.setFilter('sport_name', $routeParams.sport);
-        PlayerData.show = true;
+        PlayerData.show();
         VideoTagData.loadNextPage();
     }
 
@@ -950,7 +955,7 @@ module.controller('ViewTagController', function($scope, VideoTagData, $routePara
             }
         };
 
-        PlayerData.show = true;
+        PlayerData.show();
         VideoTagData.loadNextPage();
     }
 });
@@ -996,7 +1001,7 @@ module.controller('ViewVideoController', function($scope, VideoTagData, $routePa
             }
         };
 
-        PlayerData.show = true;
+        PlayerData.show();
         VideoTagData.loadNextPage();
     }
 });
@@ -1010,7 +1015,7 @@ module.controller('ExploreController', function($scope, VideoTagData, PlayerData
         PlayerData.title = 'Best tricks';
         VideoTagData.setFilters({order: 'best'});
 
-        PlayerData.show = true;
+        PlayerData.show();
         VideoTagData.loadNextPage();
     }
 
@@ -1064,7 +1069,7 @@ module.controller('SignupController', function($scope, $location, PlayerData, Sh
 
     SharedData.loadingState = 0;
     messageCenterService.removeShown();
-    PlayerData.show = false;
+    PlayerData.hide();
     $scope.signup = signup;
     console.log($scope.signupForm);
     var formManager = null;
@@ -1097,7 +1102,7 @@ module.controller('SignupController', function($scope, $location, PlayerData, Sh
 });
 
 module.controller('PagesController', function($scope, SharedData, PlayerData) {
-    PlayerData.show = false;
+    PlayerData.hide();
     SharedData.loadingState = 0;
 });
 
@@ -1154,7 +1159,7 @@ module.controller('RiderProfileController',
             }
             function init() {
                 PlayerData.reset();
-                PlayerData.show = false;
+                PlayerData.hide();
 
                 initData();
                 var username = null;
@@ -1229,7 +1234,7 @@ module.controller('RiderProfileController',
             };
 
             $scope.viewVideos = function() {
-                PlayerData.show = true;
+                PlayerData.show();
                 VideoTagData.setFilter('rider_id', $scope.rider.id);
                 VideoTagData.setOrder('created');
                 VideoTagData.loadNextPage();

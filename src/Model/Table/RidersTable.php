@@ -71,6 +71,19 @@ class RidersTable extends Table {
                 ->add('id', 'valid', ['rule' => 'numeric'])
                 ->allowEmpty('id', 'create');
 
+        $validator->allowEmpty('user_id');
+        $validator->allowEmpty('picture');
+        
+        $validator
+                ->requirePresence('nationality', 'create')
+
+                ->add('nationality', 'custom', [
+                    'rule' => function ($value, $context){
+                        return \App\Lib\CountryHelper::isValidCode($value);
+                    },
+                    'message' => 'Choose a valid nationality'
+                ]);
+        
         $validator
                 ->requirePresence('firstname', 'create')
                 ->add('firstname', [
@@ -100,9 +113,6 @@ class RidersTable extends Table {
                 ->notEmpty('lastname');
 
         $validator
-                ->allowEmpty('picture');
-
-        $validator
                 ->add('is_pro', 'valid', ['rule' => 'boolean'])
                 ->requirePresence('is_pro', 'create')
                 ->notEmpty('is_pro');
@@ -120,6 +130,8 @@ class RidersTable extends Table {
      */
     public function buildRules(RulesChecker $rules) {
         $rules->add($rules->existsIn(['user_id'], 'Users'));
+        $rules->add($rules->isUnique(['user_id']));
+        $rules->add($rules->isUnique(['firstname', 'lastname', 'nationality']));
         //$rules->add($rules->existsIn(['social_provider_id'], 'SocialProviders'));
         return $rules;
     }
@@ -135,6 +147,7 @@ class RidersTable extends Table {
             $entity->lastname = strtolower($entity->lastname);
             $entity->slug = \Cake\Utility\Inflector::slug($entity->firstname.'-'.$entity->lastname);
         }
+        $entity->nationality = strtolower($entity->nationality);
     }
 
 }

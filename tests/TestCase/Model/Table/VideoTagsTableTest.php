@@ -62,22 +62,22 @@ class VideoTagsTableTest extends TestCase
     }
 
     /**
-     * Test validationDefault method
-     *
+     * Test adding a similar tag 
+     * TODO
      * @return void
      */
-    public function testValidationDefault()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test buildRules method
-     *
-     * @return void
-     */
-    public function testBuildRules()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
+    public function testAddSimilarTag() {
+        // Add a video:
+        $data = [
+            'provider_id' => 'youtube',
+            'video_url' => 'xb5LHuZGXi0',
+        ];
+        $video = $this->VideoTags->newEntity($data);
+        $video->user_id = 1;
+        if (!$this->VideoTags->save($video)){
+            debug($video);
+            $this->assertTrue(false);
+        }
+        
     }
 }

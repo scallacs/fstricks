@@ -18,7 +18,8 @@ class VideoTagsControllerTest extends MyIntegrationTestCase
     public $fixtures = [
         'app.video_providers',
         'app.videos',
-        'app.users',        
+        'app.users',    
+        'app.riders',        
         'app.video_tags',
         'app.categories',
         'app.tags',
@@ -45,25 +46,11 @@ class VideoTagsControllerTest extends MyIntegrationTestCase
      *
      * @return void
      */
-    public function testAdd()
-    {
-        // Add a video:
-        $videoTable = \Cake\ORM\TableRegistry::get('Videos');
-        $data = [
-            'provider_id' => 'youtube',
-            'video_url' => 'xb5LHuZGXi0',
-        ];
-        $videoTable->deleteAll($data);
-        $video = $videoTable->newEntity($data);
-        $video->user_id = 1;
-        if (!$videoTable->save($video)){
-            debug($video);
-            $this->assertTrue(false);
-        }
-        
+    public function testAddWithoutRider()
+    {   
         $this->logUser();
         $data = [
-            'video_id' => $video->id,
+            'video_id' => 1,
             'tag_id' => 1,
             'begin' => 2,
             'end' => 10
@@ -76,29 +63,45 @@ class VideoTagsControllerTest extends MyIntegrationTestCase
     }
 
     /**
+     * Test add method
+     *
+     * @return void
+     */
+    public function testAddWithRider()
+    {   
+        $riderId = 1;
+        $this->logUser();
+        $data = [
+            'video_id' => 1,
+            'tag_id' => 1,
+            'begin' => 2,
+            'end' => 10,
+            'rider_id' => $riderId
+        ];
+        $this->post('/VideoTags/add.json', $data);
+        
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        $this->assertTrue($result['success']);
+        $this->assertArrayHasKey('data', $result);
+        $this->assertArrayHasKey('video_tag_id', $result['data']);
+        $this->assertArrayHasKey('tag_id', $result['data']);
+        
+        $videoTagsTable = \Cake\ORM\TableRegistry::get('VideoTags');
+        $videoTag = $videoTagsTable->get($result['data']['video_tag_id']);
+        $this->assertEquals($riderId, $videoTag->rider_id);
+    }
+
+    /**
      * Test add invalid time range
      *
      * @return void
      */
     public function testAddInvalidTimeRange() {
         // Add a video:
-        $videoTable = \Cake\ORM\TableRegistry::get('Videos');
-        $data = [
-            'provider_id' => 'youtube',
-            'video_url' => 'xb5LHuZGXi0',
-        ];
-        $videoTable->deleteAll($data);
-        $video = $videoTable->newEntity($data);
-        $video->user_id = 1;
-        if (!$videoTable->save($video)){
-            debug($video);
-            $this->assertTrue(false);
-        }
-        
         $this->logUser();
-        
         $data = [
-            'video_id' => $video->id,
+            'video_id' => 1,
             'tag_id' => 1,
             'begin' => 2,
             'end' => 2 + (\App\Model\Table\VideoTagsTable::MIN_TAG_DURATION - 1)
@@ -113,7 +116,7 @@ class VideoTagsControllerTest extends MyIntegrationTestCase
         
         
         $data = [
-            'video_id' => $video->id,
+            'video_id' => 1,
             'tag_id' => 1,
             'begin' => 2,
             'end' => 2 + \App\Model\Table\VideoTagsTable::MAX_TAG_DURATION + 1
@@ -127,27 +130,4 @@ class VideoTagsControllerTest extends MyIntegrationTestCase
     }
     
     
-    /**
-     * Test adding a similar tag 
-     *
-     * @return void
-     */
-    public function testAddSimilarTag() {
-        // Add a video:
-        $videoTable = \Cake\ORM\TableRegistry::get('Videos');
-        $data = [
-            'provider_id' => 'youtube',
-            'video_url' => 'xb5LHuZGXi0',
-        ];
-        $videoTable->deleteAll($data);
-        $video = $videoTable->newEntity($data);
-        $video->user_id = 1;
-        if (!$videoTable->save($video)){
-            debug($video);
-            $this->assertTrue(false);
-        }
-        
-        $this->logUser();
-    }
-
 }

@@ -386,7 +386,7 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
         extra_class: '',
         player: null,
         currentTag: null,
-        show: true,
+        visible: true,
         showListTricks: true,
         data: {
             begin: 0,
@@ -398,6 +398,8 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
             height: '100%',
             id: null
         },
+        show: function(){this.visible = true;},
+        hide: function(){this.visible = false; this.showListTricks = false;},
         url: url,
         view: function() {
         },
@@ -514,9 +516,7 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
     }
 
     function stop() {
-        if (this.player != null) {
-            this.player.stopVideo();
-        }
+        this.player.stopVideo();
     }
 
     function loadVideo(url) {

@@ -42,8 +42,6 @@ class Rider extends Entity
     }
 
 
-
-
     public function _getPictureOriginal(){
         if (!empty($this->picture)){
             return $this->getPicturePath();

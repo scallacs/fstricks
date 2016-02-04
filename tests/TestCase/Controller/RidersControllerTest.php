@@ -15,6 +15,7 @@ class RidersControllerTest extends MyIntegrationTestCase {
      * @var array
      */
     public $fixtures = [
+        'app.nationalities',
         'app.riders',
         'app.users',
     ];
@@ -34,8 +35,8 @@ class RidersControllerTest extends MyIntegrationTestCase {
      *
      * @return void
      */
-    public function testSave() {
-        $this->logUser(2);
+    public function testCreateNewProfileForUser() {
+        $this->logUser(3);
         $data = [
             'firstname' => 'test',
             'lastname' => 'test',
@@ -48,7 +49,7 @@ class RidersControllerTest extends MyIntegrationTestCase {
         $this->assertTrue($result['success']);
     }
 
-    public function testEdit() {
+    public function testEditExistingRiderProfile() {
         $this->logUser(1);
         $data = [
             'firstname' => 'test',
@@ -71,6 +72,7 @@ class RidersControllerTest extends MyIntegrationTestCase {
             'is_pro' => false
         ];
         $this->post('riders/add.json', $data);
+//        debug($this->_response->body());
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
         $this->assertTrue($result['success']);
@@ -86,6 +88,8 @@ class RidersControllerTest extends MyIntegrationTestCase {
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
         $this->assertFalse($result['success']);
+        $this->assertArrayHasKey('validationErrors', $result);
+        $this->assertArrayHasKey('Riders', $result['validationErrors']);
     }
 
     public function testUserRiderProfile() {

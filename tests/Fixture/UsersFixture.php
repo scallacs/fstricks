@@ -36,5 +36,10 @@ class UsersFixture extends TestFixture
             'email' => 'sca.leonard2@gmail.com',
             'username' => 'scallacs2'
         ],
+        [
+            'id' => 3,
+            'email' => 'sca.leonard3@gmail.com',
+            'username' => 'scallacs3'
+        ],
     ];
 }

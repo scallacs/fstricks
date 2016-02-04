@@ -74,6 +74,8 @@ class VideoTagsController extends AppController {
 
             if ($this->VideoTags->save($videoTag)) {
                 ResultMessage::setMessage(__('Your trick has been saved.'), true);
+                ResultMessage::setData('video_tag_id', $videoTag->id);
+                ResultMessage::setData('tag_id', $videoTag->tag_id);
             } else {
                 ResultMessage::setMessage(__('Your trick could not be saved, please check your inputs.'), false);
                 ResultMessage::addValidationErrorsModel($videoTag);
