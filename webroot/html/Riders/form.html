@@ -1,0 +1,141 @@
+<form ng-controller="AddRiderController" 
+      server-form
+      name="addRiderForm" 
+      method="post"  
+      ng-submit="save(rider)" novalidate>
+    <fieldset>
+        <legend  ng-disabled="addRiderForm._pending">Create rider</legend>
+
+        <div class="clearfix">
+            <div class="col-sm-6">
+                <div class="form-group has-feedback" 
+                     ng-class="{ 'has-error' : addRiderForm.firstname.$invalid && addRiderForm.firstname.$dirty }">
+                    <label>Firstname</label>
+                    <input type="text" 
+                           class="form-control" 
+                           placeholder="Firstname"
+                           name="firstname"
+                           ng-model="rider.firstname"
+                           required
+                           servererror
+                           ng-minlength="2"
+                           ng-maxlength="20"/>
+                    <span class="ion-person form-control-feedback"></span>
+                    <div class="help-block text-danger" 
+                         ng-if="addRiderForm.firstname.$dirty" 
+                         ng-messages="addRiderForm.firstname.$error">
+                        <div ng-message="required">You must enter your name.</div>
+                        <div ng-message="minlength">You must enter at least 2 caracters.</div>
+                        <div ng-message="maxlength">You cannot enter more than 20 caracters.</div>
+                        <div ng-message="server">{{addRiderForm.firstname.$error.server}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group has-feedback" 
+                     ng-class="{ 'has-error' : addRiderForm.lastname.$invalid && addRiderForm.lastname.$dirty }">
+                    <label>Lastname</label>
+                    <input type="text" 
+                           class="form-control" 
+                           placeholder="Lastname"
+                           name="lastname"
+                           ng-model="rider.lastname"
+                           required
+                           servererror
+                           ng-minlength="2"
+                           ng-maxlength="20"/>
+                    <span class="ion-person form-control-feedback"></span>
+                    <div class="help-block text-danger" 
+                         ng-if="addRiderForm.lastname.$dirty" 
+                         ng-messages="addRiderForm.lastname.$error">
+                        <div ng-message="required">You must enter your last name.</div>
+                        <div ng-message="minlength">You must enter at least 2 caracters.</div>
+                        <div ng-message="maxlength">You cannot enter more than 20 caracters.</div>
+                        <div ng-message="server">{{addRiderForm.lastname.$error.server}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix">
+            <div class="col-sm-6">
+                <div class="form-group has-feedback" 
+                     ng-class="{ 'has-error' : addRiderForm.nationality.$invalid}">
+                    <label>Nationality</label>
+                    <select
+                        ng-model="rider.nationality"
+                        name="nationality"
+                        class="form-control"
+                        servererror>
+                        <option name="riderNationalityFrance" value="fr">France</option>
+                    </select>
+                    <span class="ion-person form-control-feedback"></span>
+                    <div class="help-block text-danger" 
+                         ng-messages="addRiderForm.nationality.$error">
+                        <div ng-message="server">{{addRiderForm.nationality.$error.server}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group has-feedback" 
+                     ng-class="{ 'has-error' : addRiderForm.is_pro.$invalid}">
+                    <label>Level</label>
+                    <select
+                        name="is_pro"
+                        ng-model="rider.is_pro"
+                        class="form-control"
+                        servererror>
+                        <option name="riderLevelPro" value="1">Pro</option>
+                        <option name="riderLevelAmateur" value="0">Amateur</option>
+                    </select>
+                    <span class="ion-person form-control-feedback"></span>
+                    <div class="help-block text-danger" 
+                         ng-messages="addRiderForm.is_pro.$error">
+                        <div ng-message="server">{{addRiderForm.is_pro.$error.server}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-info padding-sm text-center" ng-show="loaderSearchSimilars">
+            <img src="img/ajax_loader.gif" alt="Loading..."/> 
+            Searching for existing riders.
+        </div>
+        <div ng-if="riders.length > 0">
+            <h3>Existing riders</h3>
+            <div ng-repeat="rider in riders">
+                <div class="col-xs-10">
+                    <div rider-item rider="rider"></div>
+                </div>
+                <div class="col-xs-2">
+                    <button type="button" 
+                            class="btn btn-default"
+                            ng-click="selectExistingRider(rider)">
+                        <span class="glyphicon glyphicon-check"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div ng-if="!loaderSearchSimilars && riders.length === 0 && !addRiderForm.$invalid">
+            <p class="bg-success padding-sm text-center">
+                <span class="glyphicon glyphicon-check"></span> 
+                Okay, you're good to go, this rider does not exists
+            </p>
+        </div>
+
+        <div class="text-center form-group">
+            <button type="button" 
+                    class="btn btn-danger"
+                    ng-click="cancel()">
+                <span class="glyphicon glyphicon-remove"></span>
+                Cancel
+            </button>
+            <button type="submit" 
+                    ng-disabled="addRiderForm.$invalid"
+                    class="btn btn-success">
+                <div ng-loading-icon is-loading="addRiderForm._pending"></div>
+                <span ng-show="!addRiderForm._pending" class="glyphicon glyphicon-plus-sign"></span>
+                Create
+            </button>
+        </div>
+    </fieldset>
+</form>
