@@ -1,6 +1,7 @@
 
 <div class="item item-video-tag bg-primary" 
-     ng-class="{ 'active': $parent.playerInfo.id === videoTag.id}" style="text-transform: capitalize;">
+     ng-class="{ 'active': playerData.currentTag.id === videoTag.id}" style="text-transform: capitalize;">
+    
     <div class="item-heading">
         <div class="row clickable">
             <div class="col-xs-3">
@@ -18,11 +19,11 @@
                 </p>
                 <div class="item-user-xs">
                     <span class="thumbnail-round-xs">
-                        <img ng-if="videoTag.rider" ng-src="videoTag.rider.profile_round_xs"/>
-                        <img ng-if="!videoTag.rider" src="img/icon_avatar.png"/>
+                        <img ng-if="videoTag.rider_picture_round_xs" ng-src="videoTag.rider_picture_round_xs"/>
+                        <img ng-if="!videoTag.rider_picture_round_xs" src="img/icon_avatar.png"/>
                     </span>
                     <span class="item-user-name">
-                        Unknown rider
+                        {{videoTag.rider_name}}
                     </span>
                 </div>
                 <!--

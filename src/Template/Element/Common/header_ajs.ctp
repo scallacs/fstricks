@@ -4,13 +4,13 @@
 
             <div class="bg-secondary clearfix">
                 <div class="col-sm-6 nopadding">
-                    <div class="clearfix bg-secondary  padding-sm-side">
+                    <div class="clearfix bg-secondary padding-sm-side">
                         <div class="navbar-header">
-                            <div class="header-title pull-left  hidden-sm hidden-xs">
+                            <div class="header-title pull-left hidden-sm hidden-xs">
                                 <span><?= \Cake\Core\Configure::read('Company.name') ?></span>
                             </div>
                         </div>
-                        <ul class="nav navbar-nav text-capitalize ">
+                        <ul class="nav navbar-nav text-capitalize navbar-no-collapse ">
                             <li class="dropdown">
                                 <a data-toggle="dropdown" ng-if="currentSport"  class="text-big"><b class="caret"></b> 
                                     {{currentSport.name}}
@@ -80,7 +80,7 @@
                                             </div>
                                         </div>
                                     </ui-select-choices>
-                                </ui-select>
+                                </ui-select>              
                                 <div class="input-group-btn" style="width:1%">
                                     <button class="btn btn-default" type="submit">
                                         <span class="glyphicon glyphicon-search"></span>
@@ -96,15 +96,15 @@
                             <tr>
                                 <td  ng-if="playerData.currentTag"
                                      ng-click="prevTrick()"
-                                    ng-class="{disabled: videoTagData.current == 0}"
-                                    class="toggle-list-tricks player-prev-trick" >
+                                     ng-class="{disabled: videoTagData.current == 0}"
+                                     class="toggle-list-tricks player-prev-trick" >
                                     <a  href="" 
                                         class="text-big">
                                         <span class="glyphicon glyphicon-arrow-left"></span>
                                     </a>
                                 </td>
                                 <td
-                                     ng-if="playerData.currentTag">
+                                    ng-if="playerData.currentTag">
                                     <div video-tag-item video-tag="playerData.currentTag"  player-data="playerData"></div>
                                 </td>
                                 <td

@@ -24,6 +24,34 @@ class VideoTagsTable extends Table {
     const SIMILARITY_PRECISION_SECONDS = 2;
     
     /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config) {
+        parent::initialize($config);
+
+        $this->table('video_tags');
+        $this->displayField('id');
+        $this->primaryKey('id');
+
+        $this->addBehavior('Timestamp');
+
+        $this->belongsTo('Videos', [
+            'foreignKey' => 'video_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Tags', [
+            'foreignKey' => 'tag_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Users', [
+            'foreignKey' => 'user_id'
+        ]);
+    }
+
+    /**
      * Find data for tags and do joins 
      * 
      * @param query | null $queryVideo 
@@ -68,34 +96,7 @@ class VideoTagsTable extends Table {
                     'Tags' => $queryTags
                 ]);
     }
-    /**
-     * Initialize method
-     *
-     * @param array $config The configuration for the Table.
-     * @return void
-     */
-    public function initialize(array $config) {
-        parent::initialize($config);
-
-        $this->table('video_tags');
-        $this->displayField('id');
-        $this->primaryKey('id');
-
-        $this->addBehavior('Timestamp');
-
-        $this->belongsTo('Videos', [
-            'foreignKey' => 'video_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('Tags', [
-            'foreignKey' => 'tag_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('Users', [
-            'foreignKey' => 'user_id'
-        ]);
-    }
-
+    
     /**
      * Default validation rules.
      *

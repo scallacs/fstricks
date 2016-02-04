@@ -69,99 +69,15 @@
                     </div>
 
                     <div class="col-sm-8">
-                        <div class="clearfix">
-                            <div class="col-sm-6">
-                                <div class="form-group has-feedback" 
-                                     ng-class="{ 'has-error' : signupForm.username.$invalid && signupForm.username.$dirty }">
-                                    <label>Firstname</label>
-                                    <input type="text" 
-                                           class="form-control" 
-                                           placeholder="Firstname"
-                                           name="firstname"
-                                           ng-model="riderEdit.firstname"
-                                           required
-                                           servererror
-                                           ng-minlength="2"
-                                           ng-maxlength="20"/>
-                                    <span class="ion-person form-control-feedback"></span>
-                                    <div class="help-block text-danger" 
-                                         ng-if="riderProfileForm.firstname.$dirty" 
-                                         ng-messages="riderProfileForm.firstname.$error">
-                                        <div ng-message="required">You must enter your name.</div>
-                                        <div ng-message="minlength">You must enter at least 2 caracters.</div>
-                                        <div ng-message="maxlength">You cannot enter more than 20 caracters.</div>
-                                        <div ng-message="server">{{riderProfileForm.firstname.$error.server}}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group has-feedback" 
-                                     ng-class="{ 'has-error' : signupForm.username.$invalid && signupForm.username.$dirty }">
-                                    <label>Lastname</label>
-                                    <input type="text" 
-                                           class="form-control" 
-                                           placeholder="Lastname"
-                                           name="lastname"
-                                           ng-model="riderEdit.lastname"
-                                           required
-                                           servererror
-                                           ng-minlength="2"
-                                           ng-maxlength="20"/>
-                                    <span class="ion-person form-control-feedback"></span>
-                                    <div class="help-block text-danger" 
-                                         ng-if="riderProfileForm.lastname.$dirty" 
-                                         ng-messages="riderProfileForm.lastname.$error">
-                                        <div ng-message="required">You must enter your last name.</div>
-                                        <div ng-message="minlength">You must enter at least 2 caracters.</div>
-                                        <div ng-message="maxlength">You cannot enter more than 20 caracters.</div>
-                                        <div ng-message="server">{{riderProfileForm.lastname.$error.server}}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                <label>Nationality</label>
-                                <select
-                                    ng-model="riderEdit.nationality"
-                                    class="form-control"
-                                    servererror>
-                                    <option name="riderNationalityFrance" value="fr">France</option>
-                                </select>
-                            </div>
-                            <div class="col-sm-6">
-                                <label>Level</label>
-                                <select
-                                    ng-model="riderEdit.is_pro"
-                                    class="form-control"
-                                    servererror>
-                                    <option name="riderLevelPro" value="1">Pro</option>
-                                    <option name="riderLevelAmateur" value="0">Amateur</option>
-                                </select>
-                            </div>
-                        </div>
-                        <h4 class="text-center">Sports</h4>
-                        <div class="form-group">
-                            <div class="col-sm-4" ng-repeat="sport in sports">
-                                <label>
-                                    <input type="checkbox" 
-                                           name="SportSelection[]" 
-                                           ng-checked="riderEdit.sports.indexOf(sport.id) > -1"
-                                           ng-click="toggleSportSelection(sport.id)"
-                                           value="{{sport.id}}"/> 
-                                    {{sport.name}} 
-                                </label>
-                            </div>
-                        </div>
-                        -->
+                        <div ng-include="'html/Riders/add.html'"></div>
                     </div>
                 </fieldset>
                 <div class="form-group text-center">
                     <button type="button" class="btn btn-default" ng-click="cancelEditionMode()">
                         <span class="glyphicon glyphicon-remove"></span> Cancel
                     </button>
-                    <button type="submit" class="btn btn-primary" ng-disabled="riderProfileForm.$invalid">
+                    <button type="submit" class="btn btn-primary" 
+                            ng-disabled="riderProfileForm.$invalid">
                         <span class="glyphicon glyphicon-save"></span> Save
                         <div ng-loading-icon is-loading="isFormLoading"></div> 
                     </button>

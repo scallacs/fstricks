@@ -296,7 +296,7 @@ module.controller('ModalReportErrorController', function($scope, $uibModalInstan
 });
 
 
-module.controller('SettingsController', function($scope, SharedData, messageCenterService, AuthenticationService, UserEntity) {
+module.controller('SettingsController', function($scope, SharedData, messageCenterService, AuthenticationService, UserEntity, PlayerData) {
 
     AuthenticationService.requireLogin();
 
@@ -336,8 +336,8 @@ module.controller('SettingsController', function($scope, SharedData, messageCent
     }
 });
 
-module.controller('UserLoginController', function($scope, $rootScope, $auth, SharedData, messageCenterService, $location, 
-AuthenticationService, PlayerData) {
+module.controller('UserLoginController', function($scope, $rootScope, $auth, SharedData, messageCenterService, $location,
+        AuthenticationService, PlayerData) {
     // create a message to display in our view
     PlayerData.show = false;
     $scope.authenticate = authenticate;
@@ -577,26 +577,9 @@ module.controller('VideoTagPointsController', function($scope, VideoTagPointEnti
         });
     }
 });
-//module.controller('ViewVideoTagController', function($scope, VideoTagEntity, $routeParams, SharedData, PlayerData) {
-//
-//    init();
-//
-//    function init() {
-//        PlayerData.title = 'TODO : ????';
-//        
-//        VideoTagEntity.view({id: $routeParams.id}, function(tag) {
-//            PlayerData.view(tag);
-//            $scope.$parent.video.video_url = tag.video_url;
-//            $scope.$parent.video.video_tags = [tag];
-//            SharedData.loadingState = 0;
-//            PlayerData.show = true;
-//        });
-//    }
-//
-//});
 module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $filter,
         $routeParams, VideoEntity, VideoTagEntity, TagEntity, SharedData, PlayerData,
-        messageCenterService, AuthenticationService, RiderEntity, YT_event) {
+        messageCenterService, AuthenticationService, RiderEntity, YT_event, VideoTagData) {
 
     AuthenticationService.requireLogin();
 
@@ -607,19 +590,21 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     $scope.slider = {
         step: 0.5
     };
+    $scope.showCreateRiderForm = false;
     $scope.videoTag = {
         begin: 0,
         end: MIN_TAG_DURATION,
         range: [0, MIN_TAG_DURATION],
         tag: null,
+        tag_name: 'Choose a trick',
         video_url: null
     };
-    $scope.video = {video_tags: []};
+    //$scope.video = {video_tags: []};
     //$scope.playerInfo = {begin: 0, end: 0};
     $scope.similarTags = [];
     $scope.isFormLoading = false;
 
-    $scope.playerData = PlayerData;
+    //$scope.playerData = PlayerData;
     $scope.sports = SharedData.sports;
     $scope.suggestedTags = [];
     $scope.suggestedCategories = [];
@@ -628,19 +613,36 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     $scope.addVideoTag = addVideoTag;
     $scope.removeVideoTag = removeVideoTag;
     $scope.refreshSuggestedTags = refreshSuggestedTags;
+    $scope.onSelectTrick = onSelectTrick;
+    $scope.onRemoveTrick = onRemoveTrick;
+
     $scope.refreshSuggestedCategories = refreshSuggestedCategories;
+    $scope.onSelectCategory = onSelectCategory;
+    $scope.onRemoveCategory = onRemoveCategory;
+
     $scope.refreshSuggestedRiders = refreshSuggestedRiders;
-    $scope.playRange = playRange;
+    $scope.onSelectRider = onSelectRider;
+    $scope.onRemoveRider = onRemoveRider;
+
+
+    $scope.playEditionTag = playEditionTag;
     $scope.addStartRange = addStartRange;
     $scope.addEndRange = addEndRange;
     $scope.setStartRangeNow = setStartRangeNow;
     $scope.setEndRangeNow = setEndRangeNow;
-//    $scope.view = view;
+
     init();
 
     function init() {
         PlayerData.reset();
-        PlayerData.show = false;
+        PlayerData.showListTricks = false;
+        PlayerData.show = true;
+        PlayerData.extra_class = 'col-lg-7';
+        PlayerData.currentTag = $scope.videoTag;
+        VideoTagData.setFilter('video_id', $routeParams.id);
+        VideoTagData.loadNextPage();
+
+        PlayerData.view($scope.videoTag);
 
         VideoEntity.view({id: $routeParams.id}, function(response) {
             $scope.video = response;
@@ -659,16 +661,28 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
                 return;
             }
             if (oldValue == undefined || newValue[0] !== oldValue[0]) {
-                PlayerData.seekTo(newValue[0]);
+//                PlayerData.seekTo(newValue[0]);
                 adaptRange(newValue[0], 0);
+                playEditionTag();
             }
             else if (newValue[1] !== oldValue[1]) {
                 PlayerData.seekTo(newValue[1]);
+                PlayerData.pause();
                 adaptRange(newValue[1], 1);
             }
             $scope.similarTags = findSimilarTags($scope.videoTag.range);
         });
 
+        $scope.$on('rider-selected', function(event, rider) {
+            console.log(rider);
+            $scope.showCreateRiderForm = false;
+            if (rider != null) {
+                $scope.videoTag.rider_name = rider.display_name;
+            }
+            else {
+                $scope.videoTag.rider_name = 'Pick a rider';
+            }
+        });
     }
     function refreshSuggestedCategories(term) {
         $scope.suggestedCategories = $filter('searchCategory')(SharedData.categories, term);
@@ -740,8 +754,8 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
                     removable: true,
                     count_points: 0
                 }, data.category);
-
-                $scope.video.video_tags.push(videoTag);
+                // TODO replace
+                //$scope.video.video_tags.push(videoTag);
             }
             else {
                 messageCenterService.add('warning', response.message, {
@@ -753,14 +767,14 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     ;
 
     function removeVideoTag(index) {
-        $scope.video.video_tags.splice(index, 1);
+        // TODO 
+        //$scope.video.video_tags.splice(index, 1);
     }
 
-    function playRange(videoTag) {
-        videoTag.begin = videoTag.range[0];
-        videoTag.end = videoTag.range[1];
-        $scope.$broadcast(YT_event.PLAY_TAG, videoTag);
-        //PlayerData.playRange(videoTag.range[0], videoTag.range[1]);
+    function playEditionTag() {
+        $scope.videoTag.begin = $scope.videoTag.range[0];
+        $scope.videoTag.end = $scope.videoTag.range[1];
+        PlayerData.view($scope.videoTag);
     }
 
     function addStartRange(value) {
@@ -804,7 +818,7 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     function findSimilarTags(range) {
         var limit = 0.6;                // TODO global variable
         var similarTags = [];
-        angular.forEach($scope.video.video_tags, function(tag) {
+        angular.forEach(VideoTagData.data, function(tag) {
             // Contain
             var commonSeconds = Math.min(tag.end, range[1]) - Math.max(tag.begin, range[0]);
             // Check percentage in common with other tag
@@ -820,15 +834,28 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
         return similarTags;
     }
 
-// TODO remove duplicate with main controller
-//    function view(data) {
-//        $scope.playerInfo.id = data.id;
-//        if (data.video_url != null) {
-//            $scope.playerInfo.video_url = data.video_url;
-//        }
-//        $scope.playerInfo.begin = data.begin;
-//        $scope.playerInfo.end = data.end;
-//    }
+    function onSelectRider($item) {
+        $scope.videoTag.rider_name = $item.display_name;
+    }
+    function onRemoveRider() {
+        $scope.videoTag.rider_name = 'Unknown rider';
+    }
+    function onSelectTrick($item) {
+        console.log($item);
+        $scope.videoTag.tag_name = $item.name;
+    }
+    function onRemoveTrick() {
+        $scope.videoTag.tag_name = 'Define the trick';
+    }
+    function onSelectCategory($item) {
+        $scope.videoTag.sport_name = $item.sport_name;
+        $scope.videoTag.category_name = $item.category_name;
+    }
+    function onRemoveCategory() {
+        $scope.videoTag.category_name = '';
+        $scope.videoTag.sport_name = '';
+    }
+
 });
 module.controller('ViewSportController', function($scope, VideoTagData, $routeParams, PlayerData) {
 
@@ -842,6 +869,66 @@ module.controller('ViewSportController', function($scope, VideoTagData, $routePa
         VideoTagData.loadNextPage();
     }
 
+});
+module.controller('AddRiderController', function($scope, RiderEntity) {
+
+    $scope.riders = [];
+    $scope.rider = {firstname: '', lastname: '', nationality: 'fr', is_pro: 0};
+    $scope.save = save;
+    $scope.selectExistingRider = selectExistingRider;
+    $scope.cancel = cancel;
+
+    $scope.$watch('rider.firstname + rider.lastname', function() {
+        console.log($scope.rider);
+        if ($scope.rider.lastname.length >= 2 && $scope.rider.firstname.length) {
+            searchSimilars($scope.rider.firstname, $scope.rider.lastname);
+        }
+    });
+
+    
+    function save(rider){
+        console.log($scope.addRiderForm);
+        
+        $scope.addRiderForm.submit(RiderEntity.add, rider, function(result) {
+            if (result.success) {
+                rider.id = result.data.id;
+                emitRider(rider);
+            }
+            else {
+                console.log('Setting form errors:');
+                $scope.addRiderForm.setValidationErrors(result.validationErrors.Riders);
+            }
+        });
+    }
+
+    function selectExistingRider(rider) {
+        emitRider(rider);
+    }
+
+    function emitRider(rider) {
+        console.log('Emitting rider: ' + rider);
+        $scope.$emit("rider-selected", rider);
+    }
+
+    function cancel() {
+        emitRider(null);
+    }
+
+    /**
+     * Find similar riders
+     * @param {type} firstname
+     * @param {type} lastname
+     * @returns {undefined}
+     */
+    function searchSimilars(firstname, lastname) {
+        $scope.loaderSearchSimilars = true;
+        RiderEntity.search({firstname: firstname, lastname: lastname}, function(results) {
+            $scope.riders = results.data;
+            $scope.loaderSearchSimilars = false;
+        }, function() {
+            $scope.loaderSearchSimilars = false;
+        });
+    }
 });
 module.controller('ViewTagController', function($scope, VideoTagData, $routeParams, PlayerData) {
 
@@ -973,12 +1060,18 @@ module.controller('SearchTagController', function($scope, TagEntity) {
 
 //toastr
 module.controller('SignupController', function($scope, $location, PlayerData, SharedData,
-        messageCenterService, AuthenticationService) {
+        messageCenterService, AuthenticationService, FormManager) {
 
     SharedData.loadingState = 0;
     messageCenterService.removeShown();
     PlayerData.show = false;
     $scope.signup = signup;
+    console.log($scope.signupForm);
+    var formManager = null;
+    
+    $scope.$watch('signupForm', function(form){
+        formManager = FormManager.instance($scope.signupForm);
+    });
 
     function signup(data) {
         messageCenterService.removeShown();
@@ -993,18 +1086,7 @@ module.controller('SignupController', function($scope, $location, PlayerData, Sh
             }
             else {
                 messageCenterService.add('danger', response.message, {status: messageCenterService.status.shown});
-                angular.forEach(response.validationErrors.Users, function(errors, field) {
-                    var errorString = Object.keys(errors).map(function(k) {
-                        return errors[k];
-                    }).join(', ');
-                    console.log("Setting error '" + errorString + "' for field " + field);
-                    $scope.signupForm[field].$setValidity('server', false);
-                    $scope.signupForm[field].$error.server = errorString;
-//                    angular.forEach(errors, function(error) {
-//                       // keep the error messages from the server
-//
-//                    });
-                });
+                formManager.setErrors(response.validationErrors.Users);
             }
             $scope.isFormLoading = false;
         }, function() {
@@ -1105,7 +1187,6 @@ module.controller('RiderProfileController',
             function hasRiderProfile() {
                 return $scope.rider.firstname != null;
             }
-            ;
             // =========================================================================
             // scope
 

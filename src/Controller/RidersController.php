@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use App\Lib\ResultMessage;
+use App\Lib\DataUtil;
 
 /**
  * Riders Controller
@@ -37,6 +38,27 @@ class RidersController extends AppController {
             throw new \Cake\Network\Exception\NotFoundException();
         }
         ResultMessage::overwriteData($data);
+    }
+
+    /**
+     * 
+     * Create a new rider (not associated with the current user)
+     * 
+     * @return type
+     */
+    public function add() {
+        if ($this->request->is('post')) {
+            $rider = $this->Riders->newEntity($this->request->data);
+            $rider->user_id = null;
+
+            if ($this->Riders->save($rider)) {
+                ResultMessage::setData('rider_id', $rider->id);
+                ResultMessage::setMessage("Rider profile has been saved", true);
+                return;
+            }
+            ResultMessage::addValidationErrorsModel($rider);
+        }
+        ResultMessage::setMessage("Cannot create rider profile", false);
     }
 
     /**
@@ -106,30 +128,40 @@ class RidersController extends AppController {
      */
     public function local_search() {
         ResultMessage::setWrapper(false);
-        if ($this->request->is('get') && !empty($this->request->query['q'])) {
-            $term = strtolower($this->request->query['q']);
+        ResultMessage::overwriteData([
+            'data' => [],
+            'next' => null
+        ]);
+        if ($this->request->is('get') && !empty($this->request->query)) {
+            $data = $this->request->query;
             $query = $this->Riders->find('all')
                     ->select([
-                        'display_name' => 'CONCAT(Riders.firstname, Riders.lastname)',
+                        'display_name' => 'CONCAT(Riders.firstname, \' \', Riders.lastname)',
                         'slug' => 'Riders.slug',
-//                        'count_video_tags' => 'Riders.count_video_tags',
                         'id' => 'Riders.id',
                     ])
-                    ->where([
-                        'Riders.firstname LIKE "%' . $term . '%" OR Riders.lastname LIKE "%' . $term . '%"',
-                    ])
                     ->limit(20);
+            if (isset($data['q'])) {
+                $term = strtolower($data['q']);
+                $query->where([
+                    'Riders.firstname LIKE "%' . $term . '%" OR Riders.lastname LIKE "%' . $term . '%"',
+                ]);
+            } else if (isset($data['firstname']) ||
+                    isset($data['lastname'])) {
+
+                $query->where([
+                    'Riders.firstname LIKE "%' . DataUtil::getLowerString($data, 'firstname') . '%"',
+                    'Riders.lastname LIKE "%' . DataUtil::getLowerString($data, 'lastname') . '%"',
+                ]);
+            } else {
+                return;
+            }
 //                    ->order(['Riders.count_video_tags DESC']);
             ResultMessage::overwriteData([
                 'data' => $query->all(),
                 'next' => null
             ]);
-        } else {
-            ResultMessage::overwriteData([
-                'data' => [],
-                'next' => null
-            ]);
-        }
+        } 
     }
 
 }

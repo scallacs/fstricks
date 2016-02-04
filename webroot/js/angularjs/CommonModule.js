@@ -124,47 +124,15 @@ commonModule.constant('YT_event', {
 commonModule.constant('API_KEYS', {
     facebook: '1536208040040285'
 });
-commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
+commonModule.directive('youtube', function($window, YT_event, VideoEntity, PlayerData) {
 
     var myTimer;
-
-    function parseYTEvent(player, scope) {
-
-        switch (scope.playerData.data.state) {
-            case YT_event.PLAYING:
-                player.playVideo();
-                break;
-//            case YT_event.LOAD_VIDEO:
-//                console.log('Loading video:');
-//                var data = {
-//                    videoId: scope.playerData.data.video_url,
-//                    startSeconds: scope.playerData.data.begin,
-//                    endSeconds: scope.playerData.data.end
-//                };
-//                console.log(data);
-//                player.loadVideoById(data);
-//                break;
-            case YT_event.STOP:
-                player.stopVideo();
-                break;
-        }
-    }
 
     function initPlayer(element, scope) {
         var player;
 
-        function playVideoRange() {
-            var info = {
-                videoId: scope.playerData.data.video_url,
-                startSeconds: scope.playerData.data.begin,
-                endSeconds: scope.playerData.data.end
-            };
-            console.log(info);
-            player.loadVideoById(info);
-        }
-
         var playerContainer = element.children()[0];
-        player = new YT.Player(playerContainer, {
+        var player = new YT.Player(playerContainer, {
             playerVars: {
                 autoplay: 0,
                 html5: 1,
@@ -189,7 +157,7 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
                         case 101: // Video is private
                         case 150: // Same, video is private
                             VideoEntity.reportDeadLink({
-                                id: player.getVideoData()['video_id'],
+                                id: PlayerData.player.getVideoData()['video_id'],
                                 provider: 'youtube'
                             }, function() {
                                 // ignore results
@@ -198,61 +166,16 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
                     }
                 },
                 onReady: function() {
-
                     scope.$emit('onYouTubePlayerReady', player);
 
-                    parseYTEvent(player, scope);
-
-                    scope.$watch('playerData.data.video_url', function(newValue, oldValue) {
-                        if (scope.playerData.data.video_url) {
-                            playVideoRange();
-                        }
-                    });
-
-                    scope.$watch('playerData.data.state', function() {
-                        parseYTEvent(player, scope);
-                    });
-
-                    scope.$on(YT_event.STOPED, function() {
-                        player.stopVideo();
-                    });
-
-                    scope.$on(YT_event.PLAYING, function() {
-                        player.playVideo();
-                    });
-
-                    scope.$on(YT_event.PLAY_TAG, function(event, videoTag) {
-                        scope.playerData.data.video_url = videoTag.video_url;
-                        scope.playerData.data.begin = videoTag.begin;
-                        scope.playerData.data.end = videoTag.end;
-                        playVideoRange();
-                    });
-
-                    scope.$on(YT_event.PAUSED, function() {
-                        player.pauseVideo();
-                    });
-
-                    scope.$on(YT_event.STATUS_CHANGE, function(event, youtubeEvent) {
-
-                        switch (youtubeEvent) {
-                            case YT.PlayerState.ENDED:
-                                player.seekTo(scope.playerData.data.begin);
-                                break;
-                        }
-                    });
-
-                    scope.$watch('playerData.data.goToTime', function(newVal, oldVal) {
-                        player.seekTo(newVal);
-                        //scope.playerData.data.goToTime = null;
-                    });
+                    PlayerData.setPlayer(player);
+//                    scope.$watch('playerData.data.video_url', function(newValue, oldValue) {
+//                        if (scope.playerData.data.video_url) {
+//                            PlayerData.view(scope.playerData.data);
+//                        }
+//                    });
                 },
                 onStateChange: function(event) {
-
-                    var message = {
-                        event: YT_event.STATUS_CHANGE,
-                        data: event.data
-                    };
-
                     clearInterval(myTimer);
                     if (event.data === YT.PlayerState.PLAYING) { // playing
                         myTimer = setInterval(function() {
@@ -263,13 +186,12 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity) {
                             });
                         }, 100); // 100 means repeat in 100 ms
                     }
-//                    else { // not playing
-//                        clearInterval(myTimer);
-//                    }
 
-                    scope.$apply(function() {
-                        scope.$emit(message.event, message.data);
-                    });
+                    switch (event.data) {
+                        case YT.PlayerState.ENDED:
+                            player.seekTo(scope.playerData.data.begin);
+                            break;
+                    }
                 }
             }
         });
@@ -461,6 +383,8 @@ commonModule.factory('SharedData', function() {
 commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
 
     return {
+        extra_class: '',
+        player: null,
         currentTag: null,
         show: true,
         showListTricks: true,
@@ -470,26 +394,61 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
             video_url: null,
             duration: 0,
             currentTime: 0,
-            goToTime: null,
             width: '100%',
             height: '100%',
             id: null
         },
-        view: view,
-        replay: replay,
-        reset: reset,
-        play: play,
-        playRange: playRange,
-        stop: stop,
         url: url,
-        seekTo: seekTo,
-        loadVideo: loadVideo,
+        view: function() {
+        },
+        replay: function() {
+        },
+        reset: function() {
+        },
+        play: function() {
+        },
+//        playRange: function() {
+//        },
+        stop: function() {
+        },
+        seekTo: function() {
+        },
+        pause: function() {
+        },
+        loadVideo: function() {
+        },
         onCurrentTimeUpdate: function() {
+
+        },
+        setPlayer: function(player) {
+            this.player = player;
+            this.view = view;
+            this.replay = replay;
+            this.reset = reset;
+            this.play = play;
+//            this.playRange = playRange;
+            this.stop = stop;
+            this.seekTo = seekTo;
+            this.pause = pause;
+            this.loadVideo = loadVideo;
+            this.playVideoRange = playVideoRange;
         }
+
     };
+
+    function playVideoRange(data) {
+        var info = {
+            videoId: data.video_url,
+            startSeconds: data.begin,
+            endSeconds: data.end
+        };
+//            console.log(info);
+        this.player.loadVideoById(info);
+    }
+
     function view(videoTag) {
-        console.log("Viewing tag: ");
-        console.log(videoTag);
+        console.log("Viewing tag id " + videoTag.id);
+//        console.log(videoTag);
         if (videoTag === null) {
             this.currentTag = null;
             return;
@@ -498,15 +457,19 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
         this.data.id = videoTag.id;
         this.data.begin = videoTag.begin;
         this.data.end = videoTag.end;
+        this.data.video_url = videoTag.video_url;
         this.showListTricks = false;
 
-        if (videoTag.video_url !== null && videoTag.video_url !== this.data.video_url) {
-            this.loadVideo(videoTag.video_url);
-        }
-        else {
-            this.seekTo(this.data.begin);
-        }
-        this.play();
+        this.playVideoRange(videoTag);
+//        // If we change the video url or we change the video end we need to load it 
+//        if ((videoTag.video_url !== null && videoTag.video_url !== this.data.video_url)
+//                || (videoTag.end != null && videoTag.end !== this.data.end)) {
+//            playVideoRange(videoTag);
+//        }
+//        else {
+//            this.seekTo(this.data.begin);
+//        }
+//        this.play();
     }
 
     function replay(videoTag) {
@@ -516,6 +479,7 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
     function reset() {
         VideoTagData.reset();
         this.stop();
+        this.extra_class = '';
         this.show = true;
         this.currentTag = null;
         this.data.video_url = null;
@@ -523,7 +487,6 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
         this.data.begin = 0;
         this.data.end = 0;
         this.data.currentTime = 0;
-        this.data.goToTime = 0;
         this.showListTricks = true;
         this.onCurrentTimeUpdate = function() {
         };
@@ -534,26 +497,32 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
     }
 
     function play() {
-        this.data.state = YT_event.PLAYING;
+        this.player.playVideo();
     }
-
-    function playRange(begin, end) {
-        this.data.begin = begin;
-        this.data.end = end;
-        this.data.state = YT_event.PLAYING;
-    }
+//
+//    function playRange(begin, end) {
+//        this.view({
+//            beign: begin,
+//            end: end
+//        });
+//    }
     function seekTo(val) {
-        this.data.goToTime = val;
+        this.player.seekTo(val);
+    }
+    function pause() {
+        this.player.pauseVideo();
     }
 
     function stop() {
-        this.data.state = YT_event.STOP;
+        if (this.player != null) {
+            this.player.stopVideo();
+        }
     }
 
     function loadVideo(url) {
         console.log('Load video in playerData');
         this.data.video_url = url;
-        this.data.state = YT_event.LOAD_VIDEO;
+        this.play();
     }
 });
 commonModule.factory('VideoTagData', function(VideoTagEntity, SharedData) {
@@ -580,7 +549,7 @@ commonModule.factory('VideoTagData', function(VideoTagEntity, SharedData) {
         setFilters: function(value) {
             filters = value;
         },
-        setOrder: function(value){
+        setOrder: function(value) {
             filters.order = value;
         },
         next: function() {
@@ -655,12 +624,17 @@ commonModule.factory('RiderEntity', function($resource) {
     return $resource(url, {id: '@id', action: '@action'}, {
         search: {
             method: 'GET',
-            params: {action: 'facebook_search'},
+            params: {action: 'local_search'},
             isArray: false
         },
         save: {
             method: 'POST',
             params: {action: 'save'},
+            isArray: false
+        },
+        add: {
+            method: 'POST',
+            params: {action: 'add'},
             isArray: false
         },
         profile: {
@@ -669,7 +643,7 @@ commonModule.factory('RiderEntity', function($resource) {
             isArray: false
         }
     });
-}); 
+});
 
 commonModule.factory('UserEntity', function($resource) {
     var url = WEBROOT_FULL + '/Users/:action/:id.json';
@@ -1046,7 +1020,19 @@ commonModule.directive('videoTagItem', function() {
 
         }
     };
+});
 
+commonModule.directive('riderItem', function() {
+    return {
+        restrict: 'EA',
+        templateUrl: WEBROOT_FULL + '/html/Riders/item.html',
+        scope: {
+            rider: '=rider'
+        },
+        link: function(scope, element) {
+
+        }
+    };
 });
 
 commonModule.directive('ngLoadingIcon', function() {
@@ -1176,7 +1162,77 @@ commonModule.directive('passwordMatch', function() {
         }
     };
 });
+commonModule.directive('serverForm', function() {
 
+    return {
+        require: 'form',
+        link: function(scope, elem, attr, form) {
+            form._pending = false;
+            
+            form.submit = function(resourceCall, data, success, error){
+                console.log("Call server form submit with data: " + data);
+                if (form._pending){
+                    return ;
+                }
+                form._pending = true;
+                resourceCall(data, success, error).$promise.finally(function(){
+                    console.log('Finally called');
+                    form._pending = false;
+                });
+            };
+
+            form.setValidationErrors = function setValidationErrors(serverErrors) {
+                console.log("Setting validation errors (" + serverErrors.length + ")");
+                angular.forEach(serverErrors, function(errors, field) {
+                    var errorString = Object.keys(errors).map(function(k) {
+                        return errors[k];
+                    }).join(', ');
+                    if (form[field] !== undefined) {
+                        form[field].$setValidity('server', false);
+                        form[field].$error.server = errorString;
+                        console.log(form.$name + "." + field + ": " + errorString);
+                    }
+                    else{
+                        console.log(form.$name + "." + field + ": " + errorString);
+                    }
+                });
+            };
+        }
+    };
+
+});
+commonModule.factory('FormManager', function() {
+    var FormManager = function(form) {
+        this.form = form;
+        this.pending = false;
+    };
+    FormManager.prototype.setErrors = function(errors) {
+        var form = this.form;
+        angular.forEach(errors, function(errors, field) {
+            var errorString = Object.keys(errors).map(function(k) {
+                return errors[k];
+            }).join(', ');
+            console.log(form.$name + "." + field + ": " + errorString);
+            if (form[field] !== undefined) {
+                form[field].$setValidity('server', false);
+                form[field].$error.server = errorString;
+            }
+        });
+    };
+    FormManager.prototype.submit = function(callback, data) {
+        if (this.pending) {
+            // Form is already pendiong
+            return;
+        }
+        this.pending = true;
+        callback(data);
+    };
+    return {
+        instance: function(form) {
+            return new FormManager(form);
+        }
+    }
+});
 
 commonModule.factory('DataExistsService', function($resource) {
     var url = WEBROOT_FULL + '/:controller/:action/:value.json';

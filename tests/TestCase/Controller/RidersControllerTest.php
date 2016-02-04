@@ -61,6 +61,32 @@ class RidersControllerTest extends MyIntegrationTestCase {
         $result = json_decode($this->_response->body(), true);
         $this->assertTrue($result['success']);
     }
+    
+    public function testAdd() {
+        $this->logUser(1);
+        $data = [
+            'firstname' => 'test',
+            'lastname' => 'test',
+            'nationality' => 'fr',
+            'is_pro' => false
+        ];
+        $this->post('riders/add.json', $data);
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        $this->assertTrue($result['success']);
+    }
+    
+    public function testAddMissingData() {
+        $this->logUser(1);
+        $data = [
+            'firstname' => 'test',
+            'lastname' => 'test',
+        ];
+        $this->post('riders/add.json', $data);
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        $this->assertFalse($result['success']);
+    }
 
     public function testUserRiderProfile() {
         $this->logUser(1);
