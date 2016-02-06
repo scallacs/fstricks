@@ -1,6 +1,4 @@
-/*
- * Module for generating fake spot and testing
- */
+
 var commonModule = angular.module('CommonModule', [
     'ngResource',
     'ngMessages',
@@ -383,11 +381,12 @@ commonModule.factory('SharedData', function() {
 commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
 
     return {
-        extra_class: '',
+        //extra_class: '',
         player: null,
         currentTag: null,
         visible: true,
         showListTricks: true,
+        editionMode: false,
         data: {
             begin: 0,
             end: 0,
@@ -398,9 +397,20 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
             height: '100%',
             id: null
         },
-        show: function(){this.visible = true;},
-        hide: function(){this.visible = false; this.showListTricks = false;},
-        url: url,
+        url: function(url) {
+            if (url !== this.data.video_url) {
+                this.data.video_url = url;
+                this.loadVideo(url);
+            }
+        },
+        show: function() {
+            this.visible = true;
+        },
+        hide: function() {
+            this.stop();
+            this.visible = false;
+            this.showListTricks = false;
+        },
         view: function() {
         },
         replay: function() {
@@ -409,8 +419,6 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
         },
         play: function() {
         },
-//        playRange: function() {
-//        },
         stop: function() {
         },
         seekTo: function() {
@@ -420,7 +428,6 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
         loadVideo: function() {
         },
         onCurrentTimeUpdate: function() {
-
         },
         setPlayer: function(player) {
             this.player = player;
@@ -433,7 +440,12 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
             this.seekTo = seekTo;
             this.pause = pause;
             this.loadVideo = loadVideo;
+            this.editionMode = false;
             this.playVideoRange = playVideoRange;
+
+            if (this.data.video_url !== null) {
+                this.loadVideo(this.data.video_url);
+            }
         }
 
     };
@@ -458,11 +470,18 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
         this.currentTag = videoTag;
         this.data.id = videoTag.id;
         this.data.begin = videoTag.begin;
-        this.data.end = videoTag.end;
-        this.data.video_url = videoTag.video_url;
         this.showListTricks = false;
+        
+        if (videoTag.video_url === this.data.video_url &&
+                videoTag.end === this.data.end){
+            this.seekTo(videoTag.begin);
+        }
+        else{
+            this.data.end = videoTag.end;
+            this.data.video_url = videoTag.video_url;
+            this.playVideoRange(videoTag);
+        }
 
-        this.playVideoRange(videoTag);
 //        // If we change the video url or we change the video end we need to load it 
 //        if ((videoTag.video_url !== null && videoTag.video_url !== this.data.video_url)
 //                || (videoTag.end != null && videoTag.end !== this.data.end)) {
@@ -480,9 +499,8 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
 
     function reset() {
         VideoTagData.reset();
-        this.stop();
-        this.extra_class = '';
-        this.show = true;
+        this.hide();
+        //this.extra_class = '';
         this.currentTag = null;
         this.data.video_url = null;
         this.data.id = 0;
@@ -492,10 +510,6 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
         this.showListTricks = true;
         this.onCurrentTimeUpdate = function() {
         };
-    }
-
-    function url(url) {
-        this.data.video_url = url;
     }
 
     function play() {
@@ -516,13 +530,16 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
     }
 
     function stop() {
-        this.player.stopVideo();
+        if (this.player) {
+            this.player.stopVideo();
+        }
     }
 
     function loadVideo(url) {
-        console.log('Load video in playerData');
+        console.log('Load video in playerData: ' + url);
+        console.log(this);
         this.data.video_url = url;
-        this.play();
+        this.player.loadVideoById({videoId: url});
     }
 });
 commonModule.factory('VideoTagData', function(VideoTagEntity, SharedData) {
@@ -551,6 +568,9 @@ commonModule.factory('VideoTagData', function(VideoTagEntity, SharedData) {
         },
         setOrder: function(value) {
             filters.order = value;
+        },
+        add: function(tag) {
+            this.data.push(tag);
         },
         next: function() {
             if (this.hasNext()) {
@@ -617,6 +637,18 @@ commonModule.factory('SharedScope', function() {
         emptyAvatarPath: IMAGE_FOLDER + DS + 'icon_avatar.png'
     };
     return myService;
+});
+
+commonModule.factory('NationalityEntity', function($resource) {
+
+    var url = WEBROOT_FULL + '/nationalities/:action.json';
+    return $resource(url, {id: '@id', action: '@action'}, {
+        all: {
+            method: 'GET',
+            params: {action: 'index'},
+            isArray: true
+        }
+    });
 });
 
 commonModule.factory('RiderEntity', function($resource) {
@@ -1014,10 +1046,150 @@ commonModule.directive('videoTagItem', function() {
         templateUrl: WEBROOT_FULL + '/html/VideoTags/item.html',
         scope: {
             playerData: '=playerData',
-            videoTag: '=videoTag'
+            videoTag: '=videoTag',
+            editionMode: '@'
         },
-        link: function(scope, element) {
+        controller: function($scope) {
+        },
+        link: function($scope, element) {
+            $scope.editionMode = angular.isDefined($scope.editionMode) ? $scope.playerData.editionMode : false;
+        }
+    };
+});
 
+
+commonModule.directive('formAddRider', function() {
+    return {
+        restrict: 'EA',
+        templateUrl: WEBROOT_FULL + '/html/Riders/form.html',
+        scope: {
+            profilePicture: '=profilePicture',
+            saveMethod: '=saveMethod',
+            defaultRider: '&rider',
+            findSimilarRiders: '=similarRiders'
+        },
+        controller: function($scope, RiderEntity, NationalityEntity) {
+            $scope.save = save;
+            $scope.cancel = cancel;
+            //$scope.uploadPicture = uploadPicture;
+            $scope.selectExistingRider = selectExistingRider;
+            
+            $scope.similarRiders = [];
+            $scope.nationalities = [];
+            $scope.uploader = {
+                flow: null
+            };
+            $scope.onUploadSuccess = onUploadSuccess;
+            
+            if (!angular.isDefined($scope.findSimilarRiders)) {
+                $scope.findSimilarRiders = false;
+            }
+            
+            NationalityEntity.all({}, function(nationalities) {
+                $scope.nationalities = nationalities;
+            });            
+
+            $scope.$watch('rider.firstname + rider.lastname', function() {
+                console.log($scope.rider);
+                if ($scope.findSimilarRiders && $scope.rider.lastname.length >= 2 && $scope.rider.firstname.length) {
+                    searchSimilars($scope.rider.firstname, $scope.rider.lastname);
+                }
+            });
+            
+            function save(rider) {
+                console.log($scope.addRiderForm);
+                console.log($scope.saveMethod);
+                $scope.addRiderForm.submit(RiderEntity[$scope.saveMethod], rider, function(result) {
+                    if (result.success) {
+                        rider.id = result.data.rider_id;
+                        rider.display_name = result.data.rider_display_name;
+                        
+                        // TODO only if profile picture has changed
+                        if ($scope.profilePicture){
+                            uploadPicture();
+                        }
+                        else{
+                            emitRider(rider);
+                        }
+                    }
+                    else {
+                        console.log('Setting form errors:');
+                        $scope.addRiderForm.setValidationErrors(result.validationErrors.Riders);
+                    }
+                });
+            }
+            function cancel() {
+                emitRider(null);
+            }
+            function selectExistingRider(rider) {
+                emitRider(rider);
+            }
+
+            function emitRider(rider) {
+                $scope.initRider();
+                console.log('Emitting rider: ' + rider);
+                $scope.$emit("rider-selected", rider);
+            }
+
+
+            /**
+             * Find similar similarRiders
+             * @param {type} firstname
+             * @param {type} lastname
+             * @returns {undefined}
+             */
+            function searchSimilars(firstname, lastname) {
+                $scope.loaderSearchSimilars = true;
+                RiderEntity.search({firstname: firstname, lastname: lastname}, function(results) {
+                    $scope.similarRiders = results.data;
+                    $scope.loaderSearchSimilars = false;
+                }, function() {
+                    $scope.loaderSearchSimilars = false;
+                });
+            }
+
+            function toggleSportSelection(sportId) {
+                var idx = $scope.riderEdit.sports.indexOf(sportId);
+                if (idx > -1) {
+                    $scope.riderEdit.sports.splice(idx, 1);
+                }
+                else {
+                    $scope.riderEdit.sports.push(sportId);
+                }
+            }
+            
+            function uploadPicture() {
+                var flow = $scope.uploader.flow;
+//                console.log(flow.files[0]);
+                flow.upload();
+            }
+
+            function onUploadSuccess($file, $message, $flow){
+                console.log($file);
+                console.log($message);
+                console.log($flow);
+                emitRider($scope.rider);
+            }
+
+        },
+        link: function($scope, element) {
+            $scope.rider = {};
+            $scope.initRider = initRider;
+            
+            initRider();
+
+            function initRider() {
+                if (!angular.isDefined($scope.defaultRider)) {
+                    console.log("Init rider");
+                    $scope.rider = {firstname: '', lastname: '', nationality: 'fr', is_pro: 0};
+                }
+                else {
+                    console.log("Using default rider");
+                    $scope.rider = angular.copy($scope.defaultRider());
+                }
+                console.log("Init form add rider");
+                console.log($scope.rider);
+            }
         }
     };
 });
@@ -1168,14 +1340,14 @@ commonModule.directive('serverForm', function() {
         require: 'form',
         link: function(scope, elem, attr, form) {
             form._pending = false;
-            
-            form.submit = function(resourceCall, data, success, error){
+
+            form.submit = function(resourceCall, data, success, error) {
                 console.log("Call server form submit with data: " + data);
-                if (form._pending){
-                    return ;
+                if (form._pending) {
+                    return;
                 }
                 form._pending = true;
-                resourceCall(data, success, error).$promise.finally(function(){
+                resourceCall(data, success, error).$promise.finally(function() {
                     console.log('Finally called');
                     form._pending = false;
                 });
@@ -1192,7 +1364,7 @@ commonModule.directive('serverForm', function() {
                         form[field].$error.server = errorString;
                         console.log(form.$name + "." + field + ": " + errorString);
                     }
-                    else{
+                    else {
                         console.log(form.$name + "." + field + ": " + errorString);
                     }
                 });

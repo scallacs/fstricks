@@ -129,7 +129,40 @@ class RidersControllerTest extends MyIntegrationTestCase {
     public function testLocalSearch(){
         $this->get('riders/local_search.json?q=Stephane');
         $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        $this->assertArrayHasKey('data', $result);
+        
+        $this->get('riders/local_search.json?firstname=Stephane');
+        $this->assertResponseOk();
+        
+        $this->get('riders/local_search.json?firstname=Stephane&lastname=test');
+        $this->assertResponseOk();
     }
+    
+    public function testLocalSearchResults(){
+        $this->get('riders/local_search.json?q=XaVIer de le rue');
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        $data = $result['data'];
+        $this->assertCount(1, $data);
+        $this->assertEquals(3, $data[0]['id']);
+        
+        // Test ignore accents
+        $this->get('riders/local_search.json?q=Stephane Leonard');
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        $data = $result['data'];
+        $this->assertCount(1, $data);
+        $this->assertEquals(1, $data[0]['id']);
+        
+        // Test no results
+        $this->get('riders/local_search.json?q=Stephane De le rue');
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        $data = $result['data'];
+        $this->assertCount(0, $data);
+    }
+
 
     
 //    public function testFacebookSearch(){

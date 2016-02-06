@@ -259,4 +259,12 @@ class CountryHelper {
     public static function isValidCode($code){
         return isset(self::$mapCode[strtoupper($code)]);
     }
+    
+    public static function toJson(){
+        $result = [];
+        foreach (self::$mapCode as $code => $name){
+            $result[] = ['code' => $code, 'name' => $name];
+        }
+        return $result;
+    }
 }

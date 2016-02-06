@@ -89,6 +89,7 @@ class VideoTagsController extends AppController {
      *  - category_id
      *  - tag_id
      *  - video_id
+     *  - rider_id
      *  - page: page number
      */
     public function search() {
@@ -100,9 +101,6 @@ class VideoTagsController extends AppController {
         ResultMessage::setWrapper(false);
 
         try {
-//        $limit = !empty($this->request->query['quantity']) && (int) $this->request->query['quantity'] < 20 ? $this->request->query['quantity'] : 10;
-//        $offset = ((!empty($this->request->query['page']) ? (int) $this->request->query['page'] : 1) - 1) * $limit;
-
             $query = $this->VideoTags->findAndJoin();
             $query->where(['Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC]);
 

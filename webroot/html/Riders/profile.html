@@ -1,10 +1,11 @@
 <div class="container">
     <div class="bg-light padding-sm">
-        <div class="clearfix" ng-controller="RiderProfileController">
+        <div class="clearfix">
             <div  ng-show="!editionMode">
                 <div class="view-rider clearfix">
                     <div class="thumbnail col-sm-4" ng-show="!$flow.files.length">
-                        <img ng-src="{{rider.picture_original}}">
+                        <img ng-if="rider.picture_original" ng-src="{{rider.picture_original}}">
+                        <img ng-if="!rider.picture_original" src="img/icon_avatar.png">
                     </div>
                     <div class="col-sm-8">
                         <div ng-if="hasRiderProfile()">
@@ -26,71 +27,24 @@
                     </div>
                 </div>
                 <div class="text-center" ng-if="isEditabled()">
-                    <button type="submit" class="btn btn-default" ng-click="startEditionMode()">
+                    <button type="submit" class="btn btn-primary" ng-click="startEditionMode()">
                         <span class="glyphicon glyphicon-edit"></span>
                         <span ng-if="hasRiderProfile()">Edit</span> 
                         <span ng-if="!hasRiderProfile()">Create</span> 
                     </button>
                 </div>
             </div>
-            <form class="" 
-                  ng-show="editionMode" 
-                  name="riderProfileForm"
-                  ng-submit="save(riderEdit)">
-                <fieldset ng-disabled="isFormLoading">
-                    <div class="col-sm-4">
-                        <div flow-name="uploader.flow"
-                             flow-init="{target:'riders/save.json',singleFile:true,testChunks:false,fileParameterName:'picture', chunkSize:1024*1024*5}" 
-                             flow-files-submitted="uploadPicture($flow)"
-                             flow-file-added="!!{png:1,gif:1,jpg:1,jpeg:1}[$file.getExtension()]" 
-                             class="ng-scope">
-                            <div class="thumbnail" ng-show="!$flow.files.length">
-                                <img ng-src="{{rider.picture_original}}">
-                            </div>
-                            <div class="thumbnail ng-hide" ng-show="$flow.files.length">
-                                <img flow-img="$flow.files[0]">
-                            </div>
-                            <div class="text-center">
-                                <p>
-                                    <span class="btn btn-primary" ng-show="!$flow.files.length" flow-btn="">Select image
-                                        <input type="file" style="visibility: hidden; position: absolute;"></span>
-                                    <span class="btn btn-info ng-hide" ng-show="$flow.files.length" flow-btn="">Change
-                                        <input type="file" style="visibility: hidden; position: absolute;"></span>
-                                    <span class="btn btn-danger ng-hide" ng-show="$flow.files.length" ng-click="$flow.cancel()">
-                                        Remove
-                                    </span>
 
-                                </p>
-                                <p class="text-muted">
-                                    Only PNG,GIF,JPG,JEPG files allowed.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+            <div ng-if="rider.id" ng-show="editionMode">
+                <h3> <span class="glyphicon glyphicon-edit"></span> Editing rider profile</h3>
+                <div form-add-rider 
+                     profile-picture="true" 
+                     save-method="'save'"
+                     rider="rider"
+                     similar-riders="false"></div>
+            </div>
 
-                    <div class="col-sm-8">
-                        <div ng-include="'html/Riders/add.html'"></div>
-                    </div>
-                </fieldset>
-                <div class="form-group text-center">
-                    <button type="button" class="btn btn-default" ng-click="cancelEditionMode()">
-                        <span class="glyphicon glyphicon-remove"></span> Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary" 
-                            ng-disabled="riderProfileForm.$invalid">
-                        <span class="glyphicon glyphicon-save"></span> Save
-                        <div ng-loading-icon is-loading="isFormLoading"></div> 
-                    </button>
-                </div>
-
-            </form>
         </div>
-        
-        <!--
-        <div>
-            <h3>Last a</h3>
-        </div>
-        -->
     </div>
-    
+
 </div>

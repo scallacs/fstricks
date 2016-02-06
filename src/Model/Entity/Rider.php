@@ -21,7 +21,12 @@ use Cake\ORM\Entity;
 class Rider extends Entity
 {
     
-    protected $_virtual = ['picture_portrait', 'picture_square', 'picture_original'];
+    protected $_virtual = [
+        'picture_portrait', 
+        'picture_square', 
+        'picture_original',
+        'display_name'
+    ];
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -36,6 +41,10 @@ class Rider extends Entity
         '*' => true,
         'id' => false,
     ];
+    
+    public function _getDisplayName(){
+        return $this->firstname.' '.$this->lastname;
+    }
     
     private function getPicturePath($prefix = ''){
         return 'files/riders/picture/'.$this->picture_dir.'/'.$prefix.(!empty($prefix) ? '_' : '').$this->picture;

@@ -20,10 +20,8 @@ use App\Lib\YoutubeRequest;
  */
 class VideosTable extends Table {
 
-    public function search($videoId, $provider) {
-        return $this->find('all')->where(['video_url' => $videoId, 'provider_id' => $provider])->limit(1);
-    }
-
+    private $youtube = null;
+    
     /**
      * Initialize method
      *
@@ -57,6 +55,9 @@ class VideosTable extends Table {
 //        $this->hasMany('Videos', [
 //            'foreignKey' => 'video_id'
 //        ]);
+        
+
+        $this->youtube = new YoutubeRequest(array('key' => \Cake\Core\Configure::read('Youtube.key')));
     }
 
     /**
@@ -81,13 +82,15 @@ class VideosTable extends Table {
         $validator
                 ->requirePresence('user_id', 'create')
                 ->notEmpty('user_id');
+//        $validator
+//                ->requirePresence('duration', 'create')
+//                ->notEmpty('duration');
 
         $validator
                 ->requirePresence('video_url', 'create')
                 ->notEmpty('video_url')
                 ->add('video_url', 'custom', [
                     'rule' => function ($value, $context) {
-                // $context['data']['provider_id']
                 return $this->videoExists($value);
             },
                     'message' => 'The video id is invalid'
@@ -99,8 +102,7 @@ class VideosTable extends Table {
     public function videoInfo($url, $provider = 'youtube') {
         switch ($provider) {
             case 'youtube':
-                $youtube = new YoutubeRequest(array('key' => \Cake\Core\Configure::read('Youtube.key')));
-                return $youtube->getVideoInfo(YoutubeRequest::urlToId($url));
+                return $this->youtube->getVideoInfo(YoutubeRequest::urlToId($url));
                 break;
         }
         return false;
@@ -144,6 +146,22 @@ class VideosTable extends Table {
     public function beforeSave($event, $entity, $options){
         if ($entity->isNew() && empty($entity->status)){
             $entity->status = Video::STATUS_PUBLIC;
+            $entity->duration = $this->youtube->duration();
         }
+    }
+    
+    public function search($videoId, $provider) {
+        return $this->find('all')->where(['video_url' => $videoId, 'provider_id' => $provider])->limit(1);
+    }
+
+    public function updateVideoDuration(){
+        $videos = $this->find('all')->where(['Videos.duration' => 0]);
+        foreach ($videos as $video){
+            $this->youtube->clearVideoInfo();
+            $this->youtube->getVideoInfo($video->video_url);
+            $video->duration = $this->youtube->duration();
+            $this->save($video);
+        }
+        return true;
     }
 }

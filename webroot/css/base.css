@@ -14,7 +14,7 @@ h3, h2, h1{
     height: 0.6em;
 }
 .table-current-trick{
-    /* border-bottom: 1px solid #444; */
+    background: #000;
     width: 100%;
     min-height: 106px;
     text-align: center;
@@ -54,22 +54,27 @@ h3, h2, h1{
     padding: 0px 0px 0px 0px;
 }
 .panel-add-video-tag{
-    /* width: 80%; */
-    /* margin-left: 10%; */
-    /* border-radius: 10px; */
-    background: none;
+    border-radius: 10px;
     padding: 10px 10px 0px 10px;
-    background: white;
+    background: #111;
     max-width: 966px;
-    margin: auto;
+    margin: 10px auto;
+    width: 97%;
+}
+
+.panel-add-video-tag legend{
+    border-bottom: 1px solid #333;
+    color: #AAA;
+    text-align: center;
 }
 .panel-add-video-tag:hover{
 }
 
 .panel-add-video-tag .form-group label{
-    background: #fff;
+    /* background: #fff; */
     padding: 3px 10px;
-    border-radius: 5px
+    border-radius: 5px;
+    color: #AAA;
 }
 
 .pagination-container{

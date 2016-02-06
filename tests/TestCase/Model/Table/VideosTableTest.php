@@ -1,14 +1,14 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\VideoTagsTable;
+use App\Model\Table\VideosTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\VideoTagsTable Test Case
+ * App\Model\Table\VideosTable Test Case
  */
-class VideoTagsTableTest extends TestCase
+class VideosTableTest extends TestCase
 {
 
     /**
@@ -17,14 +17,9 @@ class VideoTagsTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.video_tags',
+        'app.video_providers',
         'app.videos',
         'app.users',
-        'app.tags',
-        'app.spots',
-        'app.spots_tags',
-        'app.tags_users',
-        'app.video_tag_points'
     ];
 
     /**
@@ -35,8 +30,8 @@ class VideoTagsTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::exists('VideoTags') ? [] : ['className' => 'App\Model\Table\VideoTagsTable'];
-        $this->VideoTags = TableRegistry::get('VideoTags', $config);
+        $config = TableRegistry::exists('Videos') ? [] : ['className' => 'App\Model\Table\VideosTable'];
+        $this->Videos = TableRegistry::get('Videos', $config);
     }
 
     /**
@@ -46,28 +41,30 @@ class VideoTagsTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->VideoTags);
+        unset($this->Videos);
 
         parent::tearDown();
     }
+
 
     /**
      * Test adding a similar tag 
      * TODO
      * @return void
      */
-    public function testAddSimilarTag() {
+    public function testAdd() {
         // Add a video:
         $data = [
+            'user_id' => 1,
             'provider_id' => 'youtube',
             'video_url' => 'xb5LHuZGXi0',
         ];
-        $video = $this->VideoTags->newEntity($data);
+        $video = $this->Videos->newEntity($data);
         $video->user_id = 1;
-        if (!$this->VideoTags->save($video)){
-            debug($video);
+        if (!$this->Videos->save($video)){
             $this->assertTrue(false);
-        }
-        
+        }            
+        $this->assertGreaterThanOrEqual(0, $video->duration);
     }
+
 }

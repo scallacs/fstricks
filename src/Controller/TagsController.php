@@ -19,8 +19,6 @@ class TagsController extends AppController {
 
     // -------------------------------------------------------------------------
     // API
-
-
     public function view($sportName = null, $category = null, $trick = null) {
         ResultMessage::setWrapper(false);
         // TODO rewrite query from video tag point of view ? 

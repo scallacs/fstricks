@@ -577,13 +577,49 @@ module.controller('VideoTagPointsController', function($scope, VideoTagPointEnti
         });
     }
 });
+
+/*
+ EditionTag
+ - range
+ - tag: { id, name }
+ - rider: {display_name, id}
+ - video_url
+ - category
+ 
+ VideoTag
+ - begin: 245.5
+ - category_name: "jib"
+ - count_points: 0
+ - end: 248.5
+ - id: 96
+ - provider_id: "youtube"
+ - rider_name: "sebastien toutant"
+ - rider_picture: null
+ - sport_name: "snowboard"
+ - tag_name: "backside 360 in"
+ - tag_slug: "backside-360-in"
+ - video_id: 113
+ - video_url: "hDnGPpHEM6U"
+ 
+ PostData
+ - begin
+ - end
+ - sport_id
+ - category_id
+ - rider_id [optional]
+ */
 module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $filter,
         $routeParams, VideoEntity, VideoTagEntity, TagEntity, SharedData, PlayerData,
         messageCenterService, AuthenticationService, RiderEntity, YT_event, VideoTagData) {
 
-    AuthenticationService.requireLogin();
+    SharedData.loadingState = 1;
 
-    // TODO match with server side
+    AuthenticationService.requireLogin();
+    PlayerData.reset();
+    PlayerData.show();
+
+    // -------------------------------------------------------------------------
+    // Properties: TODO match with server side
     var MIN_TAG_DURATION = 2;
     var MAX_TAG_DURATION = 40;
 
@@ -591,27 +627,44 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
         step: 0.5
     };
     $scope.showCreateRiderForm = false;
-    $scope.videoTag = {
+    // We maintain two version the VideoTag and the 
+    var editionTagExtra = {
+        tag: null,
+    };
+    $scope.editionTag = {
+        mode: 'edition',
+        id: null,
         begin: 0,
         end: MIN_TAG_DURATION,
-        range: [0, MIN_TAG_DURATION],
-        tag: null,
-        tag_name: 'Choose a trick',
-        video_url: null
+        video_url: null,
+        video_id: 113,
+        tag_name: 'No trick specified',
+        tag_slug: null,
+        tag_id: null,
+        sport_name: null,
+        category_name: null,
+        sport_id: null,
+        category_id: null,
+        rider_name: 'No rider specified',
+        rider_picture: null,
+        rider_id: null,
+        provider_id: "youtube",
+        count_points: 0,
+        // ---
+        range: [0, 0]
     };
-    //$scope.video = {video_tags: []};
-    //$scope.playerInfo = {begin: 0, end: 0};
     $scope.similarTags = [];
     $scope.isFormLoading = false;
-
-    //$scope.playerData = PlayerData;
     $scope.sports = SharedData.sports;
     $scope.suggestedTags = [];
     $scope.suggestedCategories = [];
     $scope.suggestedRiders = [];
+
+    // -------------------------------------------------------------------------
     // Functions
+    $scope.playEditionTag = playEditionTag;
     $scope.addVideoTag = addVideoTag;
-    $scope.removeVideoTag = removeVideoTag;
+    $scope.editVideoTag = editVideoTag;
     $scope.refreshSuggestedTags = refreshSuggestedTags;
     $scope.onSelectTrick = onSelectTrick;
     $scope.onRemoveTrick = onRemoveTrick;
@@ -624,7 +677,6 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     $scope.onSelectRider = onSelectRider;
     $scope.onRemoveRider = onRemoveRider;
 
-
     $scope.playEditionTag = playEditionTag;
     $scope.addStartRange = addStartRange;
     $scope.addEndRange = addEndRange;
@@ -634,78 +686,82 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     init();
 
     function init() {
-        PlayerData.reset();
         PlayerData.showListTricks = false;
-        PlayerData.show();
-        PlayerData.extra_class = 'col-lg-7';
-        PlayerData.currentTag = $scope.videoTag;
+        PlayerData.editionMode = true;
+        PlayerData.currentTag = $scope.editionTag;
         VideoTagData.setFilter('video_id', $routeParams.id);
         VideoTagData.loadNextPage();
 
-        PlayerData.view($scope.videoTag);
-
-        VideoEntity.view({id: $routeParams.id}, function(response) {
-            $scope.video = response;
-            PlayerData.url(response.video_url);
-            $scope.videoTag.video_url = response.video_url;
-
-            YoutubeVideoInfo.duration(response.video_url, function(duration) {
-                PlayerData.data.duration = duration;
-            });
-
-            SharedData.loadingState = 0;
-        });
-
-        $scope.$watch('videoTag.range', function(newValue, oldValue) {
+        $scope.$watch('editionTag.range', function(newValue, oldValue) {
             if (newValue == undefined) {
                 return;
             }
             if (oldValue == undefined || newValue[0] !== oldValue[0]) {
 //                PlayerData.seekTo(newValue[0]);
                 adaptRange(newValue[0], 0);
+                $scope.editionTag.begin = $scope.editionTag.range[0];
                 playEditionTag();
             }
             else if (newValue[1] !== oldValue[1]) {
                 PlayerData.seekTo(newValue[1]);
                 PlayerData.pause();
                 adaptRange(newValue[1], 1);
+                $scope.editionTag.end = $scope.editionTag.range[1];
             }
-            $scope.similarTags = findSimilarTags($scope.videoTag.range);
+            $scope.similarTags = findSimilarTags($scope.editionTag.range);
         });
 
         $scope.$on('rider-selected', function(event, rider) {
             console.log(rider);
             $scope.showCreateRiderForm = false;
-            if (rider != null) {
-                //$scope.videoTag.rider_name = rider.display_name;
-                $scope.videoTag.rider = rider;
+            if (rider !== null) {
+                $scope.editionTag.rider = rider;
+                $scope.editionTag.rider_name = rider.display_name;
+                $scope.editionTag.rider_picture = rider.rider_picture;
+                $scope.editionTag.rider_id = rider.id;
             }
             else {
-                $scope.videoTag.rider = null;
-                //$scope.videoTag.rider_name = 'Pick a rider';
+                $scope.editionTag.rider = null;
+                $scope.editionTag.rider_name = null;
+                $scope.editionTag.rider_id = null;
+                $scope.editionTag.rider_picture = null;
             }
         });
+        VideoEntity.view({id: $routeParams.id}, function(video) {
+            $scope.editionTag.range[1] = MIN_TAG_DURATION;
+            $scope.editionTag.video_url = video.video_url;
+            PlayerData.data.duration = video.duration;
+            PlayerData.url(video.video_url);
+            PlayerData.play();
+            SharedData.loadingState = 0;
+
+            // OLD 
+//            YoutubeVideoInfo.duration(video.video_url, function(duration) {
+//                PlayerData.data.duration = duration;
+//            });
+        });
+
     }
+
     function refreshSuggestedCategories(term) {
         $scope.suggestedCategories = $filter('searchCategory')(SharedData.categories, term);
     }
 
-
     function refreshSuggestedTags(trick) {
-        var category = $scope.videoTag.category;
+        var tag = $scope.editionTag;
         if (trick.length >= 2) {
             TagEntity.suggest({
                 id: trick,
-                category_id: category.category_id,
-                sport_id: category.sport_id
+                category_id: tag.category_id,
+                sport_id: tag.sport_id
             }, function(results) {
                 $scope.suggestedTags = [{
                         is_new: true,
                         name: trick,
-                        sport_name: category.sport_name,
-                        category_name: category.category_name,
-                        sport_id: category.sport_id,
-                        category_id: category.category_id
+                        sport_name: tag.sport_name,
+                        category_name: tag.category_name,
+                        sport_id: tag.sport_id,
+                        category_id: tag.category_id
                     }];
                 for (var i = 0; i < results.length; i++) {
                     $scope.suggestedTags.push(results[i]);
@@ -729,20 +785,7 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
         messageCenterService.removeShown();
         $scope.isFormLoading = true;
 
-        var postData = {
-            video_id: $routeParams.id,
-            begin: data.range[0],
-            end: data.range[1],
-        };
-        if (data.tag.is_new) {
-            postData.tag = data.tag;
-        }
-        else {
-            postData.tag_id = data.tag.id;
-        }
-        if (data.rider){
-            postData.rider_id = data.rider.id;
-        }
+        var postData = toPostData(data);
 
         VideoTagEntity.add(postData, function(response) {
             $scope.isFormLoading = false;
@@ -751,16 +794,8 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
                     timeout: 3000,
                     status: messageCenterService.status.shown
                 });
-
-                var videoTag = angular.extend({
-                    tag_name: data.tag.name,
-                    begin: data.range[0],
-                    end: data.range[1],
-                    removable: true,
-                    count_points: 0
-                }, data.category);
-                // TODO replace
-                //$scope.video.video_tags.push(videoTag);
+                $scope.editionTag.id = response.data.id;
+                VideoTagData.add($scope.editionTag);
             }
             else {
                 messageCenterService.add('warning', response.message, {
@@ -769,24 +804,21 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
             }
         });
     }
-    ;
 
-    function removeVideoTag(index) {
-        // TODO 
-        //$scope.video.video_tags.splice(index, 1);
-    }
+//    function removeVideoTag(index) {
+//        // TODO 
+//        //$scope.video.video_tags.splice(index, 1);
+//    }
 
     function playEditionTag() {
-        $scope.videoTag.begin = $scope.videoTag.range[0];
-        $scope.videoTag.end = $scope.videoTag.range[1];
-        PlayerData.view($scope.videoTag);
+        PlayerData.view($scope.editionTag);
     }
 
     function addStartRange(value) {
-        $scope.videoTag.range = [$scope.videoTag.range[0] + value, $scope.videoTag.range[1]];
+        $scope.editionTag.range = [$scope.editionTag.range[0] + value, $scope.editionTag.range[1]];
     }
     function addEndRange(value) {
-        $scope.videoTag.range = [$scope.videoTag.range[0], $scope.videoTag.range[1] + value];
+        $scope.editionTag.range = [$scope.editionTag.range[0], $scope.editionTag.range[1] + value];
     }
     function setStartRangeNow() {
         adaptRange($scope.$parent.getCurrentPlayerTime(), 0);
@@ -801,25 +833,25 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
      * @param {0,1} i the time to change (0 => begin, 1 => end)
      */
     function adaptRange(newValue, i) {
-
         if (i === 1 && newValue <= MIN_TAG_DURATION) {
-            $scope.videoTag.range[1] = MIN_TAG_DURATION;
-            $scope.videoTag.range[0] = 0;
+            $scope.editionTag.range[1] = MIN_TAG_DURATION;
+            $scope.editionTag.range[0] = 0;
             return;
         }
         else if (i === 0 && (PlayerData.data.duration - newValue) <= MIN_TAG_DURATION) {
-            $scope.videoTag.range[0] = PlayerData.data.duration - MIN_TAG_DURATION;
-            $scope.videoTag.range[1] = PlayerData.data.duration;
+            $scope.editionTag.range[0] = PlayerData.data.duration - MIN_TAG_DURATION;
+            $scope.editionTag.range[1] = PlayerData.data.duration;
             return;
         }
 
-        $scope.videoTag.range[i] = newValue;
-        if (($scope.videoTag.range[1] - $scope.videoTag.range[0]) < MIN_TAG_DURATION) {
-            $scope.videoTag.range[1 - i] = $scope.videoTag.range[i] + (i === 1 ? -MIN_TAG_DURATION : MIN_TAG_DURATION);
-        } else if (($scope.videoTag.range[1] - $scope.videoTag.range[0]) >= MAX_TAG_DURATION) {
-            $scope.videoTag.range[1 - i] = $scope.videoTag.range[i] + (i === 1 ? -MAX_TAG_DURATION : MAX_TAG_DURATION);
+        $scope.editionTag.range[i] = newValue;
+        if (($scope.editionTag.range[1] - $scope.editionTag.range[0]) < MIN_TAG_DURATION) {
+            $scope.editionTag.range[1 - i] = $scope.editionTag.range[i] + (i === 1 ? -MIN_TAG_DURATION : MIN_TAG_DURATION);
+        } else if (($scope.editionTag.range[1] - $scope.editionTag.range[0]) >= MAX_TAG_DURATION) {
+            $scope.editionTag.range[1 - i] = $scope.editionTag.range[i] + (i === 1 ? -MAX_TAG_DURATION : MAX_TAG_DURATION);
         }
     }
+
     function findSimilarTags(range) {
         var limit = 0.6;                // TODO global variable
         var similarTags = [];
@@ -840,27 +872,77 @@ module.controller('AddVideoTagController', function($scope, YoutubeVideoInfo, $f
     }
 
     function onSelectRider($item) {
-        $scope.videoTag.rider_name = $item.display_name;
+        $scope.editionTag.rider_name = $item.display_name;
+        $scope.editionTag.rider_id = $item.id;
     }
     function onRemoveRider() {
-        $scope.videoTag.rider_name = 'Unknown rider';
+        $scope.editionTag.rider_name = 'Unknown rider';
+        $scope.editionTag.rider_id = null;
     }
     function onSelectTrick($item) {
         console.log($item);
-        $scope.videoTag.tag_name = $item.name;
+        $scope.editionTag.tag_name = $item.name;
+        $scope.editionTag.tag_id = $item.id;
+        editionTagExtra.tag = $item;
     }
     function onRemoveTrick() {
-        $scope.videoTag.tag_name = 'Define the trick';
+        $scope.editionTag.tag_name = 'Define the trick';
+        $scope.editionTag.tag_id = null;
     }
     function onSelectCategory($item) {
-        $scope.videoTag.sport_name = $item.sport_name;
-        $scope.videoTag.category_name = $item.category_name;
+        $scope.editionTag.sport_name = $item.sport_name;
+        $scope.editionTag.sport_id = $item.sport_id;
+        $scope.editionTag.category_name = $item.category_name;
+        $scope.editionTag.category_id = $item.category_id;
     }
     function onRemoveCategory() {
-        $scope.videoTag.category_name = '';
-        $scope.videoTag.sport_name = '';
+        $scope.editionTag.category_name = '';
+        $scope.editionTag.sport_name = '';
+        $scope.editionTag.sport_id = null;
+        $scope.editionTag.category_id = null;
     }
 
+    function editVideoTag(videoTag) {
+        videoTag.range = [videoTag.begin, videoTag.end];
+        $scope.editionTag = videoTag;
+        PlayerData.view(videoTag);
+    }
+
+
+    /**
+     * Convert the EditionTag to a PostData
+     * @param EditionTag data
+     * @returns 
+     */
+    function toPostData(editionTag) {
+        var postData = {
+            video_id: $routeParams.id,
+            begin: editionTag.begin,
+            end: editionTag.end,
+            rider_id: editionTag.rider_id,
+            tag_id: editionTag.tag_id,
+        };
+        if (editionTagExtra.tag.is_new) {
+            postData.tag = editionTagExtra.tag;
+        }
+        return postData;
+    }
+//    
+//    /**
+//     * Convert a EditionTag to a VideoTag
+//     * @param EditionTag data
+//     * @returns 
+//     */
+//    function toVideoTag(data) {
+//        return angular.extend({
+//            rider_name: data.rider_name,
+//            tag_name: data.tag.name,
+//            begin: data.range[0],
+//            end: data.range[1],
+//            removable: false,
+//            count_points: 0
+//        }, data.category);
+//    }
 });
 module.controller('ViewSportController', function($scope, VideoTagData, $routeParams, PlayerData) {
 
@@ -875,66 +957,7 @@ module.controller('ViewSportController', function($scope, VideoTagData, $routePa
     }
 
 });
-module.controller('AddRiderController', function($scope, RiderEntity) {
 
-    $scope.riders = [];
-    $scope.rider = {firstname: '', lastname: '', nationality: 'fr', is_pro: 0};
-    $scope.save = save;
-    $scope.selectExistingRider = selectExistingRider;
-    $scope.cancel = cancel;
-
-    $scope.$watch('rider.firstname + rider.lastname', function() {
-        console.log($scope.rider);
-        if ($scope.rider.lastname.length >= 2 && $scope.rider.firstname.length) {
-            searchSimilars($scope.rider.firstname, $scope.rider.lastname);
-        }
-    });
-
-    
-    function save(rider){
-        console.log($scope.addRiderForm);
-        
-        $scope.addRiderForm.submit(RiderEntity.add, rider, function(result) {
-            if (result.success) {
-                rider.id = result.data.id;
-                emitRider(rider);
-            }
-            else {
-                console.log('Setting form errors:');
-                $scope.addRiderForm.setValidationErrors(result.validationErrors.Riders);
-            }
-        });
-    }
-
-    function selectExistingRider(rider) {
-        emitRider(rider);
-    }
-
-    function emitRider(rider) {
-        console.log('Emitting rider: ' + rider);
-        $scope.$emit("rider-selected", rider);
-    }
-
-    function cancel() {
-        emitRider(null);
-    }
-
-    /**
-     * Find similar riders
-     * @param {type} firstname
-     * @param {type} lastname
-     * @returns {undefined}
-     */
-    function searchSimilars(firstname, lastname) {
-        $scope.loaderSearchSimilars = true;
-        RiderEntity.search({firstname: firstname, lastname: lastname}, function(results) {
-            $scope.riders = results.data;
-            $scope.loaderSearchSimilars = false;
-        }, function() {
-            $scope.loaderSearchSimilars = false;
-        });
-    }
-});
 module.controller('ViewTagController', function($scope, VideoTagData, $routeParams, PlayerData) {
 
     init();
@@ -1030,12 +1053,6 @@ module.controller('SearchTagController', function($scope, TagEntity) {
     $scope.onSelectTag = onSelectTag;
     $scope.tagTransform = tagTransform;
 
-    function init() {
-    }
-
-
-    init();
-
     function onSelectTag($item, $model) {
         $scope.$emit('onSelectedTagUpdated', $scope.selected);
     }
@@ -1073,8 +1090,8 @@ module.controller('SignupController', function($scope, $location, PlayerData, Sh
     $scope.signup = signup;
     console.log($scope.signupForm);
     var formManager = null;
-    
-    $scope.$watch('signupForm', function(form){
+
+    $scope.$watch('signupForm', function(form) {
         formManager = FormManager.instance($scope.signupForm);
     });
 
@@ -1107,127 +1124,64 @@ module.controller('PagesController', function($scope, SharedData, PlayerData) {
 });
 
 module.controller('RiderProfileController',
-        function($scope, $location, UserEntity, $routeParams, AuthenticationService, SharedData, RiderEntity, VideoTagData, PlayerData) {
-
+        function($scope, UserEntity, $routeParams, AuthenticationService, SharedData, RiderEntity, VideoTagData, PlayerData) {
+            SharedData.profileLoaded = false;
+            PlayerData.reset();
+            PlayerData.hide();
+            
             // =========================================================================
             // Properties
+            $scope.SharedData = SharedData;
             $scope.editionMode = false;
             $scope.isCurrentUserProfile = false;
-            $scope.riderEdit = {
-                sports: [],
-                is_pro: 0
-            };
-            $scope.rider = {
-            };
-            $scope.uploader = {
-                flow: {
-                    target: 'riders/upload_picture',
-                    singleFile: true
-                }
-            };
+            $scope.rider = {id: null};
             $scope.hasRiderProfile = hasRiderProfile;
 
-            var saved = true;
-
+            $scope.$on("rider-selected", function(event, rider) {
+                if (rider === null) {
+                    cancelEditionMode();
+                }
+                else {
+                    console.log(rider);
+                    $scope.editionMode = false;
+                    $scope.rider = rider;
+                }
+            });
 
             // =========================================================================
             // Init
-
-            function loadProfile(userId) {
-                UserEntity.profile({id: userId}, function(response) {
-                    if (!response.username) {
-                        $location.path('/login');
-                        return;
-                    }
-                    $scope.isCurrentUserProfile = (AuthenticationService.isAuthed() &&
-                            AuthenticationService.getCurrentUser().id === response.id);
-                    $scope.data.user = response;
-                    $scope.data.user.count_posts = 0;
-
+            function loadProfile(riderId) {
+                RiderEntity.profile({id: riderId}, function(rider) {
+                    $scope.rider = rider;
+                    $scope.profileLoaded = true;
+                }).$promise.finally(function(){
                     SharedData.loadingState = 0;
                 });
+            }
 
-                RiderEntity.profile({}, function(rider) {
-                    console.log(rider);
-                    $scope.rider = rider;
-                });
-            }
-            function initData() {
-                $scope.data = {
-                    user: null,
-                };
-            }
             function init() {
-                PlayerData.reset();
-                PlayerData.hide();
-
-                initData();
-                var username = null;
-                if ($routeParams.username) {
-                    username = $routeParams.username;
+                var riderId = null;
+                if ($routeParams.riderId) {
+                    username = $routeParams.riderId;
                 }
-                loadProfile(username);
+                loadProfile(riderId);
             }
             init();
 
             // =========================================================================
             // Form
-
-            function save(data) {
-//                console.log($scope.$flow.files);
-                $scope.message = 'Saving... Please wait';
-                RiderEntity.save(data, function(response) {
-                    if (response.success) {
-                        $scope.editionMode = false;
-                        $scope.rider = data;
-                        console.log(response);
-                        saved = response.success;
-                        $scope.message = response.message;
-                    }
-                    else {
-
-                    }
-                });
-            }
             function hasRiderProfile() {
                 return $scope.rider.firstname != null;
             }
             // =========================================================================
             // scope
 
-            // selected fruits
-            $scope.selection = ['apple', 'pear'];
-
-            // toggle selection for a given fruit by name
-            $scope.toggleSportSelection = function(sportId) {
-                var idx = $scope.riderEdit.sports.indexOf(sportId);
-                if (idx > -1) {
-                    $scope.riderEdit.sports.splice(idx, 1);
-                }
-                else {
-                    $scope.riderEdit.sports.push(sportId);
-                }
-            };
-
             $scope.startEditionMode = function() {
-                $scope.riderEdit = $scope.rider;
                 $scope.editionMode = true;
             };
-            $scope.cancelEditionMode = function() {
+            function cancelEditionMode() {
                 $scope.editionMode = false;
-            };
-            $scope.save = save;
-
-            $scope.isSaved = function() {
-                return saved;
-            };
-
-
-            $scope.uploadPicture = function(flow) {
-                console.log(flow);
-                console.log(flow.files[0]);
-                flow.upload();
-            };
+            }
 
             $scope.isEditabled = function() {
                 return !hasRiderProfile() || $scope.rider.user_id === AuthenticationService.getCurrentUser().id;
@@ -1240,48 +1194,4 @@ module.controller('RiderProfileController',
                 VideoTagData.loadNextPage();
             };
 
-            /*    
-             
-             
-             $scope.getProfile = function() {
-             Account.getProfile()
-             .then(function(response) {
-             $scope.user = response.data;
-             })
-             .catch(function(response) {
-             toastr.error(response.data.message, response.status);
-             });
-             };
-             $scope.updateProfile = function() {
-             Account.updateProfile($scope.user)
-             .then(function() {
-             toastr.success('Profile has been updated');
-             })
-             .catch(function(response) {
-             toastr.error(response.data.message, response.status);
-             });
-             };
-             $scope.link = function(provider) {
-             $auth.link(provider)
-             .then(function() {
-             toastr.success('You have successfully linked a ' + provider + ' account');
-             $scope.getProfile();
-             })
-             .catch(function(response) {
-             toastr.error(response.data.message, response.status);
-             });
-             };
-             // TODO
-             $scope.unlink = function(provider) {
-             $auth.unlink(provider)
-             .then(function() {
-             toastr.info('You have unlinked a ' + provider + ' account');
-             $scope.getProfile();
-             })
-             .catch(function(response) {
-             toastr.error(response.data ? response.data.message : 'Could not unlink ' + provider + ' account', response.status);
-             });
-             };
-             
-             $scope.getProfile();*/
         });

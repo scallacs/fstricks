@@ -35,5 +35,7 @@ class Video extends Entity
         '*' => true,
         'count_tags' => false,
         'id' => false,
+        'duration' => false
     ];
+    
 }

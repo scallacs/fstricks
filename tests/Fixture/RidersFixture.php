@@ -25,7 +25,7 @@ class RidersFixture extends TestFixture
     public $records = [
         [
             'id' => 1,
-            'firstname' => 'Stephane',
+            'firstname' => 'Stéphane',
             'lastname' => 'Leonard',
             'picture' => null,
             'user_id' => 1,
@@ -40,6 +40,15 @@ class RidersFixture extends TestFixture
             'user_id' => 2,
             'is_pro' => false,
             'slug' =>'test-test2'
+        ],
+        [
+            'id' => 3,
+            'firstname' => 'Xavier',
+            'lastname' => 'De le rue',
+            'picture' => null,
+            'user_id' => null,
+            'is_pro' => false,
+            'slug' =>'xavier-de-le-rue-fr'
         ],
     ];
 }

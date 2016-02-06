@@ -101,7 +101,8 @@ class VideosController extends AppController {
                     ResultMessage::overwriteData([
                         'video_url' => $video->video_url,
                         'id' => $video->id,
-                        'provider' => $video->provider_id
+                        'provider' => $video->provider_id,
+                        'duration' => $video->duration
                     ]);
                 } else {
                     ResultMessage::setMessage(__('The video could not be saved. Please, try again.'), false);

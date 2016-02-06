@@ -53,6 +53,7 @@ class RidersController extends AppController {
 
             if ($this->Riders->save($rider)) {
                 ResultMessage::setData('rider_id', $rider->id);
+                ResultMessage::setData('rider_display_name', $rider->display_name);
                 ResultMessage::setMessage("Rider profile has been saved", true);
                 return;
             }
@@ -80,6 +81,7 @@ class RidersController extends AppController {
             }
             if ($this->Riders->save($rider)) {
                 ResultMessage::setData('rider_id', $rider->id);
+                ResultMessage::setData('profile_picture', $rider->picture);
                 ResultMessage::setMessage("Rider profile has been saved", true);
                 return;
             }
@@ -136,15 +138,23 @@ class RidersController extends AppController {
             $data = $this->request->query;
             $query = $this->Riders->find('all')
                     ->select([
-                        'display_name' => 'CONCAT(Riders.firstname, \' \', Riders.lastname)',
+                        'firstname' => 'Riders.firstname',
+                        'lastname' => 'Riders.lastname',
+                        'nationality' => 'Riders.nationality',
                         'slug' => 'Riders.slug',
                         'id' => 'Riders.id',
                     ])
+                    ->order(['Riders.is_pro DESC'])
                     ->limit(20);
             if (isset($data['q'])) {
-                $term = strtolower($data['q']);
+                $term = DataUtil::getLowerString($data, 'q');
+                $terms = explode(' ', $term);
+                $conditions = [];
+                foreach ($terms as $term){
+                    $conditions[] = 'CONCAT(Riders.firstname, \' \', Riders.lastname) LIKE "%' . trim($term) . '%"';
+                }
                 $query->where([
-                    'Riders.firstname LIKE "%' . $term . '%" OR Riders.lastname LIKE "%' . $term . '%"',
+                    $conditions,
                 ]);
             } else if (isset($data['firstname']) ||
                     isset($data['lastname'])) {
