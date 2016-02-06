@@ -116,7 +116,6 @@ module.controller('MainController', function($scope, AuthenticationService,
     $scope.showVideoPlayer = false;
 
     //$scope.view = view;
-    $scope.openReportErrorModal = openReportErrorModal;
 
     $scope.getCurrentPlayerTime = function() {
         return 0;
@@ -236,18 +235,6 @@ module.controller('MainController', function($scope, AuthenticationService,
         SharedData.currentSport = sport;
     }
 
-    function openReportErrorModal(videoTag) {
-        var modal = $uibModal.open({
-            templateUrl: HTML_FOLDER + '/ReportErrors/form.html',
-            controller: 'ModalReportErrorController',
-            size: 'lg',
-            resolve: {
-                videoTag: function() {
-                    return videoTag;
-                }
-            }
-        });
-    }
 });
 
 
@@ -441,6 +428,7 @@ module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $loca
         VideoEntity, VideoTagEntity, PlayerProviders, messageCenterService, SharedData, AuthenticationService, PlayerData) {
 
     AuthenticationService.requireLogin();
+
     var videosInCache = {};
     $scope.data = {provider_id: PlayerProviders.list()[0].name, video_url: null};
     $scope.playerProviders = PlayerProviders.list();
@@ -1124,11 +1112,15 @@ module.controller('PagesController', function($scope, SharedData, PlayerData) {
 });
 
 module.controller('RiderProfileController',
-        function($scope, UserEntity, $routeParams, AuthenticationService, SharedData, RiderEntity, VideoTagData, PlayerData) {
+        function($scope, $routeParams, AuthenticationService, SharedData, RiderEntity, VideoTagData, PlayerData) {
+            if (!$routeParams.riderId){
+                AuthenticationService.requireLogin();
+            }
+
             SharedData.profileLoaded = false;
             PlayerData.reset();
             PlayerData.hide();
-            
+
             // =========================================================================
             // Properties
             $scope.SharedData = SharedData;
@@ -1154,7 +1146,7 @@ module.controller('RiderProfileController',
                 RiderEntity.profile({id: riderId}, function(rider) {
                     $scope.rider = rider;
                     $scope.profileLoaded = true;
-                }).$promise.finally(function(){
+                }).$promise.finally(function() {
                     SharedData.loadingState = 0;
                 });
             }

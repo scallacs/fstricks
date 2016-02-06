@@ -29,7 +29,7 @@ class YoutubeRequest {
      * @var array
      */
     var $page_info = array();
-    private $videoInfo = null;
+    private $videoInfo = [];
 
     /**
      * Upload a video to youtube
@@ -108,7 +108,7 @@ class YoutubeRequest {
     }
 
     public function clearVideoInfo(){
-        $this->videoInfo = null;
+        $this->videoInfo = [];
     }
     /**
      * @param $vId
@@ -116,8 +116,8 @@ class YoutubeRequest {
      * @throws \Exception
      */
     public function getVideoInfo($vId, $parts = 'id, snippet, contentDetails, player, statistics, status') {
-        if ($this->videoInfo !== null) {
-            return $this->videoInfo;
+        if ($this->videoInfo[$vId] !== null) {
+            return $this->videoInfo[$vId];
         }
         $API_URL = $this->getApi('videos.list');
         $params = array(
@@ -127,15 +127,16 @@ class YoutubeRequest {
         );
 
         $apiData = $this->api_get($API_URL, $params);
-        $this->videoInfo = $this->decodeSingle($apiData);
-        return $this->videoInfo;
+        $this->videoInfo[$vId] = $this->decodeSingle($apiData);
+        return $this->videoInfo[$vId];
     }
 
-    public function duration() {
-        if ($this->videoInfo === null){
+    public function duration($videoId) {
+        $data = $this->getVideoInfo($videoId);
+        if (!isset($data)){
             return 0;
         }
-        return $this->toSeconds($this->videoInfo->contentDetails->duration);
+        return $this->toSeconds($data->contentDetails->duration);
     }
 
     private function toSeconds($youtube_time) {

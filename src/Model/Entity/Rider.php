@@ -12,7 +12,7 @@ use Cake\ORM\Entity;
  * @property string $picture
  * @property int $user_id
  * @property \App\Model\Entity\User $user
- * @property bool $is_pro
+ * @property bool $level
  * @property string $provider_uid
  * @property string $social_provider_id
  * @property \App\Model\Entity\SocialProvider $social_provider
@@ -20,6 +20,11 @@ use Cake\ORM\Entity;
  */
 class Rider extends Entity
 {
+    
+    public static $levels = [
+        1 => 'Amateur',
+        2 => 'Pro'
+    ];
     
     protected $_virtual = [
         'picture_portrait', 
@@ -39,7 +44,7 @@ class Rider extends Entity
      */
     protected $_accessible = [
         '*' => true,
-        'id' => false,
+        'id' => false
     ];
     
     public function _getDisplayName(){

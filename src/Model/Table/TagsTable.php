@@ -78,7 +78,7 @@ class TagsTable extends Table
      */
     public function beforeSave($event, $entity, $options){
         if (!empty($entity->name)){
-            $entity->name = strtolower($entity->name);
+            $entity->name = \App\Lib\DataUtil::lowernamenumeric($entity->name);
             $entity->slug = \Cake\Utility\Inflector::slug($entity->name);
         }
     }

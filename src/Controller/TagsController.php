@@ -43,7 +43,7 @@ class TagsController extends AppController {
                 $conditions['Tags.category_id'] = $category['id'];
                 
                 if ($trick !== null){
-                    $conditions['Tags.slug'] = strtolower($trick);
+                    $conditions['Tags.slug'] = \App\Lib\DataUtil::lowernamenumeric($trick);
                 }
             }
         }

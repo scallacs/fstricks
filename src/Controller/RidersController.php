@@ -28,10 +28,10 @@ class RidersController extends AppController {
         $query = $this->Riders->find();
         if ($profileId === null && $this->Auth->user('id')) {
             $query->where(['Riders.user_id' => $this->Auth->user('id')]);
-        } else if ($profileId != null) {
+        } else if (!empty($profileId)) {
             $query->where(['Riders.id' => $profileId]);
         } else {
-            throw new \Cake\Network\Exception\NotFoundException();
+            throw new \Cake\Network\Exception\UnauthorizedException();
         }
         $data = $query->first();
         if (empty($data)) {
@@ -70,6 +70,7 @@ class RidersController extends AppController {
      * @return type
      */
     public function save() {
+//        debug($this->request);
         if ($this->request->is('post')) {
             $userId = $this->Auth->user('id');
             $rider = $this->Riders->find()->where(['Riders.user_id' => $userId])->first();
@@ -144,7 +145,7 @@ class RidersController extends AppController {
                         'slug' => 'Riders.slug',
                         'id' => 'Riders.id',
                     ])
-                    ->order(['Riders.is_pro DESC'])
+                    ->order(['Riders.level DESC'])
                     ->limit(20);
             if (isset($data['q'])) {
                 $term = DataUtil::getLowerString($data, 'q');

@@ -21,10 +21,6 @@ class VideoTagsTableTest extends TestCase
         'app.videos',
         'app.users',
         'app.tags',
-        'app.spots',
-        'app.spots_tags',
-        'app.tags_users',
-        'app.video_tag_points'
     ];
 
     /**
@@ -53,21 +49,28 @@ class VideoTagsTableTest extends TestCase
 
     /**
      * Test adding a similar tag 
-     * TODO
-     * @return void
      */
     public function testAddSimilarTag() {
         // Add a video:
         $data = [
-            'provider_id' => 'youtube',
-            'video_url' => 'xb5LHuZGXi0',
+            'tag_id' => 1,
+            'video_id' => 1,
+            'begin' => 10,
+            'end' => 12
         ];
         $video = $this->VideoTags->newEntity($data);
         $video->user_id = 1;
-        if (!$this->VideoTags->save($video)){
-            debug($video);
-            $this->assertTrue(false);
-        }
+        $this->assertTrue((bool) $this->VideoTags->save($video));
+        
+        $data = [
+            'tag_id' => 1,
+            'video_id' => 1,
+            'begin' => 10,
+            'end' => 12
+        ];
+        $video = $this->VideoTags->newEntity($data);
+        $video->user_id = 1;
+        $this->assertFalse((bool) $this->VideoTags->save($video));
         
     }
 }

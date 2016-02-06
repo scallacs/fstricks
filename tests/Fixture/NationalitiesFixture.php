@@ -27,5 +27,9 @@ class NationalitiesFixture extends TestFixture
             'code' => 'fr',
             'name' => 'France'
         ],
+        [
+            'code' => 'usa',
+            'name' => 'USA'
+        ],
     ];
 }

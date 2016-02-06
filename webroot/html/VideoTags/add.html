@@ -179,30 +179,6 @@
                         </button>
                     </div>
                 </div>
-                <!--
-                <div class="col-sm-5 form-group">
-                    <label class="control-label">Key words</label>
-                    <ui-select 
-                        ng-model="editionTag.riders" 
-                        theme="bootstrap"
-                        reset-search-input="false"
-                        required>
-                        <ui-select-match placeholder="Tags...">
-                            <span class="text-bold">{{$select.selected.name}} </span>
-                        </ui-select-match>
-                        <ui-select-choices
-                            repeat="rider in suggestedRiders"
-                            refresh="refreshSuggestedRiders($select.search)"
-                            refresh-delay="500">
-                            <div class="clearfix" style="text-transform: capitalize;">
-                                <img ng-src="{{rider.picture.data.url}}" alt=""/> 
-                                <span class="text-bold">{{rider.name}}</span>
-                            </div>
-                        </ui-select-choices>
-                    </ui-select>
-                </div>
-                -->
-
                 <div ng-if="similarTags.length > 0" class=" form-group">
                     <div class="alert alert-danger"> 
                         <p class="">

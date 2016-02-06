@@ -22,6 +22,7 @@ class VideosControllerTest extends MyIntegrationTestCase {
         'app.video_tags',
         'app.categories',
         'app.tags',
+        'app.sports',
     ];
 
     /**

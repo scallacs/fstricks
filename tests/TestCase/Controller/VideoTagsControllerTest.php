@@ -23,7 +23,8 @@ class VideoTagsControllerTest extends MyIntegrationTestCase
         'app.video_tags',
         'app.categories',
         'app.tags',
-        'app.video_tag_points'
+        'app.video_tag_points',
+        'app.sports'
     ];
 
 

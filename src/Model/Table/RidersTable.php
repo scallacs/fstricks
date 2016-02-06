@@ -36,18 +36,18 @@ class RidersTable extends Table {
         $this->hasMany('VideoTags', [
             'foreignKey' => 'rider_id'
         ]);
-        
+
         // Add the behaviour and configure any options you want
         $this->addBehavior('Proffer.Proffer', [
             'picture' => [    // The name of your upload field
                 'root' => WWW_ROOT . 'files', // Customise the root upload folder here, or omit to use the default
-                'dir' => 'picture_dir',   // The name of the field to store the folder
+                'dir' => 'picture_dir', // The name of the field to store the folder
                 'thumbnailSizes' => [ // Declare your thumbnails
                     'square' => [   // Define the prefix of your thumbnail
                         'w' => 200, // Width
                         'h' => 200, // Height
-                        'crop' => true,  // Crop will crop the image as well as resize it
-                        'jpeg_quality'  => 100,
+                        'crop' => true, // Crop will crop the image as well as resize it
+                        'jpeg_quality' => 100,
                         'png_compression_level' => 9
                     ],
                     'portrait' => [     // Define a second thumbnail
@@ -73,17 +73,16 @@ class RidersTable extends Table {
 
         $validator->allowEmpty('user_id');
         $validator->allowEmpty('picture');
-        
+
         $validator
                 ->requirePresence('nationality', 'create')
-
                 ->add('nationality', 'custom', [
-                    'rule' => function ($value, $context){
-                        return \App\Lib\CountryHelper::isValidCode($value);
-                    },
+                    'rule' => function ($value, $context) {
+                return \App\Lib\CountryHelper::isValidCode($value);
+            },
                     'message' => 'Choose a valid nationality'
-                ]);
-        
+        ]);
+
         $validator
                 ->requirePresence('firstname', 'create')
                 ->add('firstname', [
@@ -113,9 +112,11 @@ class RidersTable extends Table {
                 ->notEmpty('lastname');
 
         $validator
-                ->add('is_pro', 'valid', ['rule' => 'boolean'])
-                ->requirePresence('is_pro', 'create')
-                ->notEmpty('is_pro');
+                ->add('level', 'valid', ['rule' => function ($value){
+                    return isset(Rider::$levels[$value]);
+                }])
+                ->requirePresence('level', 'create')
+                ->notEmpty('level');
 
 
         return $validator;
@@ -135,19 +136,19 @@ class RidersTable extends Table {
         //$rules->add($rules->existsIn(['social_provider_id'], 'SocialProviders'));
         return $rules;
     }
-    
+
     /**
      * @param \App\Model\Table\Event $event
      * @param \Cake\ORM\Entity $entity
      * @param \App\Model\Table\ArrayObject $options
      */
-    public function beforeSave($event, $entity, $options){
-        if (!empty($entity->firstname) && !empty($entity->lastname)){
-            $entity->firstname = strtolower($entity->firstname);
-            $entity->lastname = strtolower($entity->lastname);
-            $entity->slug = \Cake\Utility\Inflector::slug($entity->firstname.'-'.$entity->lastname);
+    public function beforeSave($event, $entity, $options) {
+        if ($entity->isNew()) {
+            $entity->firstname = \App\Lib\DataUtil::lowername($entity->firstname);
+            $entity->lastname = \App\Lib\DataUtil::lowername($entity->lastname);
         }
-        $entity->nationality = strtolower($entity->nationality);
+        $entity->nationality = \App\Lib\DataUtil::lowername($entity->nationality);
+        $entity->slug = \Cake\Utility\Inflector::slug($entity->firstname . '-' . $entity->lastname);
     }
 
 }

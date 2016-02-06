@@ -29,16 +29,16 @@ class RidersFixture extends TestFixture
             'lastname' => 'Leonard',
             'picture' => null,
             'user_id' => 1,
-            'is_pro' => false,
+            'level' => 1,
             'slug' =>'stephane-leonard'
         ],
         [
             'id' => 2,
             'firstname' => 'Test',
             'lastname' => 'Test2',
-            'picture' => null,
+            'picture' => 1,
             'user_id' => 2,
-            'is_pro' => false,
+            'level' => false,
             'slug' =>'test-test2'
         ],
         [
@@ -47,7 +47,7 @@ class RidersFixture extends TestFixture
             'lastname' => 'De le rue',
             'picture' => null,
             'user_id' => null,
-            'is_pro' => false,
+            'level' => 1,
             'slug' =>'xavier-de-le-rue-fr'
         ],
     ];

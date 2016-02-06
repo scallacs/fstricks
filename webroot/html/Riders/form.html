@@ -6,13 +6,15 @@
         <div class="col-sm-4" ng-if="profilePicture">
             
             <div flow-name="uploader.flow"
-                 flow-init="{target:'riders/save.json',singleFile:true,testChunks:false,fileParameterName:'picture', chunkSize:1024*1024*5}" 
+                 flow-init="uploader.init" 
                  flow-file-added="!!{png:1,gif:1,jpg:1,jpeg:1}[$file.getExtension()]" 
                  flow-file-success="onUploadSuccess($file, $message, $flow )"
+                 flow-error="onUploadError( $file, $message, $flow )"
+                 flow-complete="onUploadComplete()"
                  class="ng-scope">
                 <div class="thumbnail" ng-show="!$flow.files.length">
-                    <img ng-if="!rider.picture_original" ng-src="{{rider.picture_original}}">
-                    <img ng-if="rider" src="img/icon_avatar.png">
+                    <img ng-if="rider.picture_original" ng-src="{{rider.picture_original}}">
+                    <img ng-if="!rider.picture_original" src="img/icon_avatar.png">
                 </div>
                 <div class="thumbnail ng-hide" ng-show="$flow.files.length">
                     <img flow-img="$flow.files[0]">
@@ -123,21 +125,24 @@
                      ng-class="{ 
                          'col-md-6': profilePicture,
                          'col-sm-6': !profilePicture,
-                         'has-error' : addRiderForm.is_pro.$invalid}">
+                         'has-error' : addRiderForm.level.$invalid}">
                     <label class="col-xs-3">Level</label>
                     <div class="col-xs-9">
                         <select
-                            name="is_pro"
-                            ng-model="rider.is_pro"
+                            name="level"
+                            ng-model="rider.level"
                             class="form-control"
-                            servererror>
-                            <option name="riderLevelPro" value="1">Pro</option>
-                            <option name="riderLevelAmateur" value="0">Amateur</option>
+                            servererror
+                            ng-required>
+                            <option ng-repeat="level in levels" name="riderLevel{{level.code}}" 
+                                    value="{{level.code}}">
+                                {{level.name}}
+                            </option>
                         </select>
                         <span class="ion-person form-control-feedback"></span>
                         <div class="help-block text-danger" 
-                             ng-messages="addRiderForm.is_pro.$error">
-                            <div ng-message="server">{{addRiderForm.is_pro.$error.server}}</div>
+                             ng-messages="addRiderForm.level.$error">
+                            <div ng-message="server">{{addRiderForm.level.$error.server}}</div>
                         </div>
                     </div>
                 </div>

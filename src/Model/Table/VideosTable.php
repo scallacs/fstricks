@@ -146,7 +146,7 @@ class VideosTable extends Table {
     public function beforeSave($event, $entity, $options){
         if ($entity->isNew() && empty($entity->status)){
             $entity->status = Video::STATUS_PUBLIC;
-            $entity->duration = $this->youtube->duration();
+            $entity->duration = $this->youtube->duration($entity->video_url);
         }
     }
     
@@ -157,9 +157,7 @@ class VideosTable extends Table {
     public function updateVideoDuration(){
         $videos = $this->find('all')->where(['Videos.duration' => 0]);
         foreach ($videos as $video){
-            $this->youtube->clearVideoInfo();
-            $this->youtube->getVideoInfo($video->video_url);
-            $video->duration = $this->youtube->duration();
+            $video->duration = $this->youtube->duration($video->video_url);
             $this->save($video);
         }
         return true;

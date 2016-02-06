@@ -131,7 +131,7 @@ class VideoTagsController extends AppController {
             } else if (!empty($this->request->query['sport_name'])) {
                 // Get id from name
                 $sports = \Cake\ORM\TableRegistry::get('Sports');
-                $sportName = strtolower($this->request->query['sport_name']);
+                $sportName = \App\Lib\DataUtil::lowername($this->request->query['sport_name']);
                 $sport = $sports->findFromNameCached($sportName);
                 if (!empty($sport)) {
                     $query->where(['Tags.sport_id' => $sport['id']]);
@@ -140,7 +140,7 @@ class VideoTagsController extends AppController {
             if (!empty($this->request->query['category_id']) && is_numeric($this->request->query['category_id'])) {
                 $query->where(['Tags.category_id' => $this->request->query['category_id']]);
             } else if (!empty($this->request->query['category_name']) && isset($sportName)) {
-                $categoryName = strtolower($this->request->query['category_name']);
+                $categoryName = \App\Lib\DataUtil::lowername($this->request->query['category_name']);
                 $sports = \Cake\ORM\TableRegistry::get('Sports');
                 $category = $sports->findFromCategoryCached($sportName, $categoryName);
                 if (!empty($category)) {

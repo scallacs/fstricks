@@ -41,7 +41,7 @@ class RidersControllerTest extends MyIntegrationTestCase {
             'firstname' => 'test',
             'lastname' => 'test',
             'nationality' => 'fr',
-            'is_pro' => false
+            'level' => 1
         ];
         $this->post('riders/save.json', $data);
         $this->assertResponseOk();
@@ -55,7 +55,7 @@ class RidersControllerTest extends MyIntegrationTestCase {
             'firstname' => 'test',
             'lastname' => 'test',
             'nationality' => 'fr',
-            'is_pro' => false
+            'level' => 1
         ];
         $this->post('riders/save.json', $data);
         $this->assertResponseOk();
@@ -69,7 +69,7 @@ class RidersControllerTest extends MyIntegrationTestCase {
             'firstname' => 'test',
             'lastname' => 'test',
             'nationality' => 'fr',
-            'is_pro' => false
+            'level' => 1
         ];
         $this->post('riders/add.json', $data);
 //        debug($this->_response->body());
@@ -103,8 +103,7 @@ class RidersControllerTest extends MyIntegrationTestCase {
     public function testUserRiderProfileNotLoggedIn() {
         try {
             $this->get('riders/profile.json');
-            $this->assertResponseCode(404);
-        } catch (Exception $ex) {
+        } catch (Cake\Network\Exception\UnauthorizedException $ex) {
             
         }
     }
@@ -163,6 +162,29 @@ class RidersControllerTest extends MyIntegrationTestCase {
         $this->assertCount(0, $data);
     }
 
+    /**
+     * 
+     */
+    public function testUploadFiles(){
+        $this->logUser(1);
+        $data = [
+            'id' => 1
+        ];
+        $file = [
+                'name' => 'image_640x480.jpg',
+                'type' => 'application/octet-stream',
+                'tmp_name' => WWW_ROOT . 'tests' . DS . 'Fixture' . DS . 'files/small_file.jpg',
+                'size' => 33000,
+                'error' => UPLOAD_ERR_OK
+        ];
+        $_FILES['picture'] = $file;
+        debug($_FILES);
+        $this->post('riders/save.json', $data);
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        debug($result);
+        $this->assertTrue($result['success']);
+    }
 
     
 //    public function testFacebookSearch(){

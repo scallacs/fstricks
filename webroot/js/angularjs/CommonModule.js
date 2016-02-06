@@ -14,17 +14,11 @@ var commonModule = angular.module('CommonModule', [
 
     //$locationProvider.html5Mode(true).hashPrefix('!');
 
-    var interceptor = ['$location', '$rootScope', '$q', function($location, scope, $q) {
+    var interceptor = ['$location', '$rootScope', '$q', '$injector',
+        function($location, scope, $q, $injector) {
 
             function requestError(rejection) {
                 console.log(rejection);
-//            var status = rejection.status;
-////
-//            if (status == 401) {
-//                $location.path("/login");
-//                return;
-//            }
-//            // otherwise
                 return $q.reject(rejection);
             }
 
@@ -33,12 +27,12 @@ var commonModule = angular.module('CommonModule', [
                 console.log(rejection);
                 var status = rejection.status;
                 if (status === 401) {
+                    $injector.get('AuthenticationService').logout();
                     $location.path("/login");
-                    //window.location = "/login";
                     return;
                 }
                 else if (status >= 500) {
-                    alert('This functinality is not available for now. Try again later');
+                    alert('Sorry but we have a few issues right now. This functinality is not available, try again later.');
                     return;
                 }
                 return $q.reject(rejection);
@@ -471,12 +465,12 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
         this.data.id = videoTag.id;
         this.data.begin = videoTag.begin;
         this.showListTricks = false;
-        
+
         if (videoTag.video_url === this.data.video_url &&
-                videoTag.end === this.data.end){
+                videoTag.end === this.data.end) {
             this.seekTo(videoTag.begin);
         }
-        else{
+        else {
             this.data.end = videoTag.end;
             this.data.video_url = videoTag.video_url;
             this.playVideoRange(videoTag);
@@ -1049,7 +1043,23 @@ commonModule.directive('videoTagItem', function() {
             videoTag: '=videoTag',
             editionMode: '@'
         },
-        controller: function($scope) {
+        controller: function($scope, $uibModal) {
+
+            $scope.openReportErrorModal = openReportErrorModal;
+
+            function openReportErrorModal(videoTag) {
+                var modal = $uibModal.open({
+                    templateUrl: HTML_FOLDER + '/ReportErrors/form.html',
+                    controller: 'ModalReportErrorController',
+                    size: 'lg',
+                    resolve: {
+                        videoTag: function() {
+                            return videoTag;
+                        }
+                    }
+                });
+            }
+
         },
         link: function($scope, element) {
             $scope.editionMode = angular.isDefined($scope.editionMode) ? $scope.playerData.editionMode : false;
@@ -1071,23 +1081,38 @@ commonModule.directive('formAddRider', function() {
         controller: function($scope, RiderEntity, NationalityEntity) {
             $scope.save = save;
             $scope.cancel = cancel;
-            //$scope.uploadPicture = uploadPicture;
             $scope.selectExistingRider = selectExistingRider;
+            $scope.onUploadSuccess = onUploadSuccess;
+            $scope.onUploadError = onUploadError;
             
             $scope.similarRiders = [];
             $scope.nationalities = [];
+            $scope.levels = [
+                // TODO syncho with servers
+                {code: 1, name: 'Amateur'},
+                {code: 2, name: 'Pro'}
+            ];
             $scope.uploader = {
-                flow: null
+                flow: null,
+                init: {
+                    target: 'riders/save.json',
+                    singleFile: true,
+                    testChunks: false,
+                    fileParameterName: 'picture',
+                    chunkSize: 1024 * 1024 * 5,
+                    query: function (){
+                        return $scope.rider;
+                    }
+                }
             };
-            $scope.onUploadSuccess = onUploadSuccess;
-            
+
             if (!angular.isDefined($scope.findSimilarRiders)) {
                 $scope.findSimilarRiders = false;
             }
-            
+
             NationalityEntity.all({}, function(nationalities) {
                 $scope.nationalities = nationalities;
-            });            
+            });
 
             $scope.$watch('rider.firstname + rider.lastname', function() {
                 console.log($scope.rider);
@@ -1095,28 +1120,20 @@ commonModule.directive('formAddRider', function() {
                     searchSimilars($scope.rider.firstname, $scope.rider.lastname);
                 }
             });
-            
+
             function save(rider) {
-                console.log($scope.addRiderForm);
-                console.log($scope.saveMethod);
-                $scope.addRiderForm.submit(RiderEntity[$scope.saveMethod], rider, function(result) {
-                    if (result.success) {
-                        rider.id = result.data.rider_id;
-                        rider.display_name = result.data.rider_display_name;
-                        
-                        // TODO only if profile picture has changed
-                        if ($scope.profilePicture){
-                            uploadPicture();
-                        }
-                        else{
-                            emitRider(rider);
-                        }
-                    }
-                    else {
-                        console.log('Setting form errors:');
-                        $scope.addRiderForm.setValidationErrors(result.validationErrors.Riders);
-                    }
-                });
+                var flow = $scope.uploader.flow;
+                if ($scope.profilePicture && flow.files.length === 1) {
+                    $scope.addRiderForm.pending(true);
+                    console.log("Uploading file...");
+                    flow.upload();
+                }
+                else {
+                    console.log("Adding rider, file not changed");
+                    $scope.addRiderForm.submit(RiderEntity[$scope.saveMethod], rider, function(result) {
+                        handleServerResponse(result);
+                    });
+                }
             }
             function cancel() {
                 emitRider(null);
@@ -1157,31 +1174,50 @@ commonModule.directive('formAddRider', function() {
                     $scope.riderEdit.sports.push(sportId);
                 }
             }
+
+            function onUploadSuccess($file, $message, $flow) {
+                var result = angular.fromJson($message);
+                handleServerResponse(result);
+            }
             
-            function uploadPicture() {
-                var flow = $scope.uploader.flow;
-//                console.log(flow.files[0]);
-                flow.upload();
+            function onUploadError($file, $message, $flow){
+                // TODO error message
+                $scope.addRiderForm.pending(false);
+            }
+            
+            function onUploadComplete(){
+                $scope.addRiderForm.pending(false);
             }
 
-            function onUploadSuccess($file, $message, $flow){
-                console.log($file);
-                console.log($message);
-                console.log($flow);
-                emitRider($scope.rider);
+            function handleServerResponse(result) {
+                if (result.success) {
+                    console.log('Saving rider profile success');
+                    var rider = angular.copy($scope.rider);
+                    rider.id = result.data.rider_id;
+                    rider.display_name = result.data.rider_display_name;
+                    emitRider(rider);
+                }
+                else {
+                    console.log('Setting form errors:');
+                    console.log(result);
+                    $scope.addRiderForm.pending(false);
+                    $scope.addRiderForm.setValidationErrors(result.validationErrors.Riders);
+                }
             }
+            
+            
 
         },
         link: function($scope, element) {
             $scope.rider = {};
             $scope.initRider = initRider;
-            
+
             initRider();
 
             function initRider() {
                 if (!angular.isDefined($scope.defaultRider)) {
                     console.log("Init rider");
-                    $scope.rider = {firstname: '', lastname: '', nationality: 'fr', is_pro: 0};
+                    $scope.rider = {firstname: '', lastname: '', nationality: 'fr', level: '1'};
                 }
                 else {
                     console.log("Using default rider");
@@ -1340,6 +1376,10 @@ commonModule.directive('serverForm', function() {
         require: 'form',
         link: function(scope, elem, attr, form) {
             form._pending = false;
+
+            form.pending = function(val){
+                form._pending = val;
+            };
 
             form.submit = function(resourceCall, data, success, error) {
                 console.log("Call server form submit with data: " + data);
