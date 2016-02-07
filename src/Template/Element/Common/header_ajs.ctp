@@ -104,6 +104,7 @@
                                     </a>
                                 </td>
                                 <td
+                                    class="current-tag"
                                     ng-if="playerData.currentTag">
                                     <div video-tag-item video-tag="playerData.currentTag"  player-data="playerData"></div>
                                 </td>

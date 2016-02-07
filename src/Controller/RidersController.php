@@ -66,7 +66,7 @@ class RidersController extends AppController {
      * API
      * 
      * Save rider profile
-     * 
+     * todo: delete old one
      * @return type
      */
     public function save() {
@@ -82,7 +82,8 @@ class RidersController extends AppController {
             }
             if ($this->Riders->save($rider)) {
                 ResultMessage::setData('rider_id', $rider->id);
-                ResultMessage::setData('profile_picture', $rider->picture);
+                ResultMessage::setData('picture_original', $rider->picture_original);
+                ResultMessage::setData('picture_portrait', $rider->picture_portrait);
                 ResultMessage::setMessage("Rider profile has been saved", true);
                 return;
             }

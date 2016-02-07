@@ -57,10 +57,16 @@
                         infinite-scroll='videoTagData.loadNextPage()' 
                         infinite-scroll-disabled='videoTagData.disabled || videoTagData.loading' 
                         infinite-scroll-distance='1'>
-                        <div ng-repeat="videoTag in videoTagData.data">
+                        
+                        <div ng-repeat="videoTag in videoTagData.data" ng-if="$index % 2 == 0" class="row">
                             <div class="col-sm-6 nopadding">
                                 <div video-tag-item 
                                      video-tag="videoTag" 
+                                     player-data="playerData"></div>
+                            </div>
+                            <div class="col-sm-6 nopadding" ng-if="videoTagData.data.length > $index + 2">
+                                <div video-tag-item 
+                                     video-tag="videoTagData.data[$index+1]" 
                                      player-data="playerData"></div>
                             </div>
                         </div>

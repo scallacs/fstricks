@@ -4,6 +4,8 @@ CakePHP 3
 /config/app.php
 /tmp/*
 /logs/*
+/webroot/js/node_modules/*
+/webroot/js/bower_components/*
 
 CakePHP 2
 

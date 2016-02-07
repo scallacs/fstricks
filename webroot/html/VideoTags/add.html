@@ -172,18 +172,18 @@
                     <div class="col-sm-2 col-sm-offset-0 col-xs-9 col-xs-offset-3" >
                         <button type="button" 
                                 ng-show="suggestedRiders.length === 0"
-                                class="btn btn-primary"
+                                class="btn btn-default"
                                 ng-click="showCreateRiderForm = true">
                             <span class="glyphicon glyphicon-plus-sign"></span>
-                            Create
+                            Add a rider 
                         </button>
                     </div>
                 </div>
                 <div ng-if="similarTags.length > 0" class=" form-group">
                     <div class="alert alert-danger"> 
-                        <p class="">
+                        <p class="text-center">
                             <span class="glyphicon glyphicon-warning-sign"></span> 
-                            You cannot create this tag, their is a similar one that already exists. 
+                            You cannot create this tag, a similar one already exists. 
                         </p>
                     </div>
                     <div ng-repeat="videoTag in similarTags">
@@ -192,15 +192,21 @@
                 </div>
                 <div mc-messages></div>
                 <div class="text-center form-group">
-                    <button  type="button"  class="btn btn-primary" ng-click="playEditionTag()">
+                    <button  type="button"  class="btn btn-info" ng-click="playEditionTag()">
                         <span class="glyphicon glyphicon-play"></span> Preview
                     </button>
                     <button type="submit"
                             ng-disabled="!formAddVideoTag.$valid || similarTags.length > 0"
                             class="btn btn-success" 
                             >
-                        <span class="glyphicon glyphicon-plus-sign"></span> 
-                        Post
+                        <span ng-if="editionTag.id">
+                            <span class="glyphicon glyphicon-save"></span> 
+                            Save
+                        </span>
+                        <span ng-if="!editionTag.id">
+                            <span class="glyphicon glyphicon-plus-sign"></span> 
+                            Add
+                        </span>
                         <div ng-loading-icon is-loading="isFormLoading"></div>
                     </button>
                 </div>

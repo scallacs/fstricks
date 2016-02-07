@@ -4,19 +4,34 @@
             <div  ng-show="!editionMode">
                 <div class="view-rider clearfix">
                     <div class="thumbnail col-sm-4" ng-show="!$flow.files.length">
-                        <img ng-if="rider.picture_original" ng-src="{{rider.picture_original}}">
-                        <img ng-if="!rider.picture_original" src="img/icon_avatar.png">
+                        <img ng-if="rider.picture_portrait" ng-src="{{rider.picture_portrait}}">
+                        <img ng-if="!rider.picture_portrait" src="img/icon_avatar.png">
                     </div>
                     <div class="col-sm-8">
                         <div ng-if="hasRiderProfile()">
                             <h2 class="text-capitalize">{{rider.firstname}} {{rider.lastname}}</h2>
-                            <p class="bg-info padding-sm">
-                                This rider has been tagged <span class="text-big">{{rider.count_tags}} time(s)</span>.
-                                He has <span class="text-big">{{rider.count_points}} points(s)</span>.
-                            </p>
-                            <button class="btn btn-primary" ng-click="viewVideos()">
-                                View videos
-                            </button>
+                            <table class="table table-striped">
+                                <tr>
+                                    <td>Nationality</td>
+                                    <td class="text-bold">{{rider.nationality}}</td>
+                                    <td>Level</td>
+                                    <td class="text-bold">{{rider.level}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Tagged</td>
+                                    <td class="text-bold" ng-if="rider.count_tags > 0">
+                                        {{rider.count_tags}} time(s) <br/>
+                                        <a href="" ng-click="viewVideos()">view videos</a>
+                                    </td>
+                                    <td class="text-bold" ng-if="rider.count_tags === 0">
+                                        Never
+                                    </td>
+                                    <td colspan="2"></td>
+                                    <!--
+                                    <td>Points</td>
+                                    <td class="text-bold">{{rider.count_points}}</td>-->
+                                </tr>
+                            </table>
                         </div>
                         <div ng-if="!hasRiderProfile()" class="text-center">
                             <h3> Create your rider profile now </h3>
@@ -27,7 +42,7 @@
                     </div>
                 </div>
                 <div class="text-center" ng-if="isEditabled()">
-                    <button type="submit" class="btn btn-primary" ng-click="startEditionMode()">
+                    <button type="button" class="btn btn-primary" ng-click="startEditionMode()">
                         <span class="glyphicon glyphicon-edit"></span>
                         <span ng-if="hasRiderProfile()">Edit</span> 
                         <span ng-if="!hasRiderProfile()">Create</span> 

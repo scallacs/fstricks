@@ -83,6 +83,23 @@ class VideoTagsController extends AppController {
         }
     }
 
+    public function edit($id = null) {
+        if (!empty($id) && is_numeric($id) &&
+                $this->request->is('post') && !empty($this->request->data)) {
+            $videoTag = $this->VideoTags->get($id);
+            $this->VideoTags->patchEntity($videoTag, $this->request->data, [
+                'fieldList' => ['rider_id']
+            ]);
+//            debug($videoTag);
+            if ($this->VideoTags->save($videoTag)) {
+                ResultMessage::setMessage(__('Your trick has been saved.'), true);
+            } else {
+                ResultMessage::setMessage(__('Your trick could not be saved.'), false);
+                ResultMessage::addValidationErrorsModel($videoTag);
+            }
+        }
+    }
+
     /**
      * GET data
      *  - sport_id
@@ -213,5 +230,4 @@ class VideoTagsController extends AppController {
         }
     }
 
-    
 }

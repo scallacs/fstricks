@@ -92,6 +92,32 @@ class VideoTagsControllerTest extends MyIntegrationTestCase
         $videoTag = $videoTagsTable->get($result['data']['video_tag_id']);
         $this->assertEquals($riderId, $videoTag->rider_id);
     }
+    
+    
+
+    /**
+     * Test add method
+     *
+     * @return void
+     */
+    public function testEditRider()
+    {   
+        $this->logUser();
+        $riderId = 1;
+        $tagId = 1;
+        $data = [
+            'rider_id' => $riderId
+        ];
+        $this->post('/VideoTags/edit/'.$tagId.'.json', $data);
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        debug($result);
+        $this->assertTrue($result['success'], "Rider should be edited properly.");
+        
+        $videoTagsTable = \Cake\ORM\TableRegistry::get('VideoTags');
+        $videoTag = $videoTagsTable->get($tagId);
+        $this->assertEquals($riderId, $videoTag->rider_id);
+    }
 
     /**
      * Test add invalid time range

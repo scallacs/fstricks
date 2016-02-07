@@ -83,7 +83,8 @@ class VideoTagsTable extends Table {
             $queryRiders = function($q){
                 return $q->select([
                             'rider_name' => 'CONCAT(Riders.firstname, \' \', Riders.lastname)',
-                            'rider_picture' => 'Riders.picture'
+                            'rider_picture' => 'Riders.picture',
+                            'rider_nationality' => 'Riders.nationality'
                         ]);
             };
         }
@@ -96,6 +97,7 @@ class VideoTagsTable extends Table {
                     'provider_id' => 'Videos.provider_id',
                     'video_url' => 'Videos.video_url',
                     'video_id' => 'Videos.id',
+//                    'video_duration' => 'Videos.duration',
                     'begin' => 'VideoTags.begin',
                     'end' => 'VideoTags.end'
                     ])

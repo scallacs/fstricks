@@ -37,12 +37,12 @@ class VideoTag extends Entity
      * @var array
      */
     protected $_accessible = [
-        '*' => true,
         'id' => false,
         'user_id' => false,
         'created' => false,
         'count_points' => false,
-        'status' => false
+        'status' => false,
+        '*' => true,
     ];
     
 }

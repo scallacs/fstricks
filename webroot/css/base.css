@@ -14,13 +14,16 @@ h3, h2, h1{
     height: 0.6em;
 }
 .table-current-trick{
-    background: #000;
+    background: #111;
     width: 100%;
     min-height: 106px;
     text-align: center;
 }
 .table-current-trick .item-video-tag{
     border: none;
+}
+.table-current-trick .current-tag{
+    background: #000;
 }
 .table-current-trick td.disabled{
 
@@ -48,10 +51,14 @@ h3, h2, h1{
 .list-tricks{
     position: absolute;
     top:0px;
-    opacity: 0.85;
+    opacity: 0.92;
     width: 100%;
     background: #111;
     padding: 0px 0px 0px 0px;
+    z-index: 999;
+}
+.list-tricks > div > .row{
+    border-bottom: 1px solid #333;
 }
 .panel-add-video-tag{
     border-radius: 10px;
@@ -257,7 +264,7 @@ header .navbar-nav > li > a{
 .item{
     position: relative;
     background: #111;
-    border-bottom: 1px solid #333;
+    /* border-bottom: 1px solid #333; */
     border-right: 1px solid #333;
 }
 .item.active{
@@ -444,8 +451,22 @@ header .navbar-nav > li > a{
 .item-user-name{
     padding-left: 4px;
 }
-
-
+.item-video-tag .item-user-xs .item-user-name{
+    font-size: 1.1em;
+}
+.item-video-tag .item-user-xs{
+    margin-bottom: 4px;
+}
+.item-video-tag .item-title{
+    margin-bottom: 5px;
+}
+.item-video-tag  .item-add-tag{
+    font-size: 30px;
+    font-weight: bold;
+    padding-bottom: 0px;
+    padding-top: 20px;
+    /* padding: 0.8em; */
+}
 /******************************/
 /* FACEBOOK */
 .btn-facebook-share {

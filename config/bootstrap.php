@@ -244,3 +244,10 @@ Plugin::load('Proffer');
 ini_set('memory_limit', '256M');
 
 
+/**
+ * Config version. Must be increased for each mofification
+ */
+Configure::write('Config.version', 1);
+Configure::write('Config.tags_min_name_length', 2);
+Configure::write('Config.tags_max_name_length', 40);
+Configure::write('Config.tags_name_regex', "/[^A-Za-z0-9 ]/");

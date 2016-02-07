@@ -163,7 +163,7 @@ class RidersControllerTest extends MyIntegrationTestCase {
     }
 
     /**
-     * 
+     * TODO
      */
     public function testUploadFiles(){
         $this->logUser(1);
@@ -178,12 +178,14 @@ class RidersControllerTest extends MyIntegrationTestCase {
                 'error' => UPLOAD_ERR_OK
         ];
         $_FILES['picture'] = $file;
-        debug($_FILES);
+//        debug($_FILES);
         $this->post('riders/save.json', $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
-        debug($result);
+//        debug($result);
+        $this->assertArrayHasKey('success', $result);
         $this->assertTrue($result['success']);
+        $this->assertNotEmpty($result['profile_picture']);
     }
 
     
