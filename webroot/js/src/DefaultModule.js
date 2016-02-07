@@ -4,11 +4,8 @@
 var module = angular.module('DefaultModule', ['ngRoute', 'ngCookies', 'CommonModule', 'ngResource', 'flow']);
 
 module.config(function($routeProvider, $controllerProvider) {
-
     $controllerProvider.allowGlobals();
-
     $routeProvider
-
             // route for the home page
             .when('/', {
                 templateUrl: HTML_FOLDER + 'Videos/view.html',
@@ -91,15 +88,16 @@ module.config(function($routeProvider, $controllerProvider) {
                 controller: 'RiderProfileController'
             })
             .otherwise({redirectTo: '/'});
-
 });
 
 module.controller('MainController', function($scope, AuthenticationService,
-        $location, SportEntity, SharedData, TagEntity, $uibModal, PlayerProviders, YT_event, VideoTagData, PlayerData) {
+        $location, SportEntity, SharedData, TagEntity, $uibModal, PlayerProviders,  VideoTagData, PlayerData) {
     // create a message to display in our view
     $scope.isAuthed = AuthenticationService.isAuthed();
+    
     $scope.searchTags = [];
     $scope.search = {tag: null};
+    
     $scope.currentSport = null;
     $scope.isViewLoading = true;
 
@@ -119,8 +117,6 @@ module.controller('MainController', function($scope, AuthenticationService,
 
     $scope.showVideoPlayer = false;
 
-    //$scope.view = view;
-
     $scope.getCurrentPlayerTime = function() {
         return 0;
     };
@@ -136,7 +132,6 @@ module.controller('MainController', function($scope, AuthenticationService,
 
 
     function init() {
-
         $scope.$on('$routeChangeStart', function() {
             $scope.isViewLoading = true;
         });
@@ -146,22 +141,18 @@ module.controller('MainController', function($scope, AuthenticationService,
         $scope.$on('$routeChangeError', function() {
             $scope.isViewLoading = false;
         });
-
         $scope.$on('onYouTubePlayerReady', function(event, player) {
             $scope.getCurrentPlayerTime = function() {
                 return player.getCurrentTime();
             };
         });
-
         $scope.$on('showVideoPlayer', function(newVal) {
             if (newVal === false) {
                 PlayerData.showViewMode();
             }
         });
-
-
         PlayerData.showViewMode();
-        // loading sports 
+
         SportEntity.index({}, loadSportCallback);
     }
 
@@ -344,20 +335,7 @@ module.controller('UserLoginController', function($scope, $rootScope, $auth, Sha
     function authenticate(provider) {
         $scope.isFormLoading = true;
         messageCenterService.removeShown();
-//        console.log("Start authenticate with provider=" + provider);
-
-//        AuthenticationService.socialLogin(provider, function(isLogin, response){
-//            console.log(response);
-//            $scope.$parent.isAuthed = isLogin;
-//            if (isLogin) {
-//                messageCenterService.add('success', response.message, {status: messageCenterService.status.next});
-//                $location.path($rootScope.previousPage);
-//            }
-//            else {
-//                $scope.isFormLoading = false;
-//                messageCenterService.add('danger', response.message, {status: messageCenterService.status.shown});
-//            }
-//        });
+        
         $auth.authenticate(provider, {provider: provider}).then(function(response) {
             response = response.data;
 //            console.log(response);
@@ -375,11 +353,6 @@ module.controller('UserLoginController', function($scope, $rootScope, $auth, Sha
             }
 
         });
-//                .then(function(error) {
-//            console.log(error);
-//            $scope.isFormLoading = false;
-//            messageCenterService.add('danger', "Facebook login is not available right now. Sorry!", {status: messageCenterService.status.shown});
-//        });
     }
 
 
@@ -401,32 +374,6 @@ module.controller('UserLoginController', function($scope, $rootScope, $auth, Sha
             $scope.isFormLoading = false;
         });
     }
-
-//        $auth.authenticate(provider)
-//                .then(function(response) {
-//                    if (response.data.success) {
-//                        messageCenterService.add('success', 'You have successfully signed in with ' + provider + '!');
-//                        $location.path('/');
-//                    }
-//                    else {
-//                        console.log(response);
-//                        messageCenterService.add('danger', response.data.message, {status: messageCenterService.status.shown});
-//                    }
-//                })
-//                .catch(function(error) {
-//                    console.log(error);
-//                    if (error.error) {
-//                        // Popup error - invalid redirect_uri, pressed cancel button, etc.
-//                        messageCenterService.add('danger', error.error, {status: messageCenterService.status.shown});
-//                    } else if (error.data) {
-//                        // HTTP response error from server
-//                        messageCenterService.add('danger', error.statusText, {status: messageCenterService.status.shown});
-//                    } else {
-//                        messageCenterService.add('danger', "Sorry but this service is not available for now. Try again later.", {status: messageCenterService.status.shown});
-//                    }
-//                });
-//    }
-
 });
 module.controller('AddVideoController', function($scope, YoutubeVideoInfo, $location,
         VideoEntity, VideoTagEntity, PlayerProviders, messageCenterService, SharedData, AuthenticationService, PlayerData) {

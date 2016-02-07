@@ -1,4 +1,3 @@
-
 var commonModule = angular.module('CommonModule', [
     'ngResource',
     'ngMessages',
@@ -107,19 +106,25 @@ commonModule.run(function($FB, API_KEYS, $rootScope, $location) {
         $rootScope.previousPage = location.pathname;
     });
 });
-commonModule.constant('YT_event', {
-    PAUSED: 0,
-    PLAYING: 1,
-    STOPED: 2,
-    UNSARTED: 3,
-    STATUS_CHANGE: 4,
-    LOAD_VIDEO: 5,
-    PLAY_TAG: 6,
-});
+// TODO move constants HERE
 commonModule.constant('API_KEYS', {
     facebook: '1536208040040285'
 });
-commonModule.directive('youtube', function($window, YT_event, VideoEntity, PlayerData) {
+
+commonModule.factory('SharedScope', function() {
+    var myService = {
+        emptyAvatarPath: IMAGE_FOLDER + DS + 'icon_avatar.png'
+    };
+    return myService;
+});
+
+// TODO use
+commonModule.filter('imageUrl', function() {
+    return function(input) {
+        return WEBROOT_FULL + '/img/sports/' + input + '.png';
+    };
+});
+commonModule.directive('youtube', function($window, VideoEntity, PlayerData) {
 
     var myTimer;
 
@@ -162,13 +167,7 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity, Playe
                 },
                 onReady: function() {
                     scope.$emit('onYouTubePlayerReady', player);
-
                     PlayerData.setPlayer(player);
-//                    scope.$watch('playerData.data.video_url', function(newValue, oldValue) {
-//                        if (scope.playerData.data.video_url) {
-//                            PlayerData.view(scope.playerData.data);
-//                        }
-//                    });
                 },
                 onStateChange: function(event) {
                     clearInterval(myTimer);
@@ -209,29 +208,6 @@ commonModule.directive('youtube', function($window, YT_event, VideoEntity, Playe
             $window.onYouTubeIframeAPIReady = function() {
                 initPlayer(element, scope);
             };
-
-
-        }
-    };
-});
-commonModule.directive('integer', function() {
-    return {
-        require: 'ngModel',
-        link: function(scope, elm, attrs, ctrl) {
-            ctrl.$validators.integer = function(modelValue, viewValue) {
-                if (ctrl.$isEmpty(modelValue)) {
-                    // consider empty models to be valid
-                    return true;
-                }
-
-                if (INTEGER_REGEXP.test(viewValue)) {
-                    // it is valid
-                    return true;
-                }
-
-                // it is invalid
-                return false;
-            };
         }
     };
 });
@@ -242,18 +218,14 @@ commonModule.directive('ruleYoutubeVideoId', function($q, YoutubeVideoInfo) {
         link: function(scope, elm, attrs, ctrl) {
 
             ctrl.$asyncValidators.youtubeVideoId = function(videoId, viewValue) {
-
                 if (ctrl.$isEmpty(videoId)) {
                     // consider empty model valid
                     return $q.when();
                 }
-
                 var def = $q.defer();
-
                 if (YoutubeVideoInfo.extractVideoIdFromUrl(videoId)) {
                     videoId = YoutubeVideoInfo.extractVideoIdFromUrl(videoId);
                 }
-
                 YoutubeVideoInfo.exists(videoId, function(exists) {
                     // Mock a delayed response
                     if (exists) {
@@ -262,26 +234,13 @@ commonModule.directive('ruleYoutubeVideoId', function($q, YoutubeVideoInfo) {
                     } else {
                         def.reject();
                     }
-
                 });
-
                 return def.promise;
             };
         }
     };
 });
 
-commonModule.filter('percentage', function() {
-    return function(input, total) {
-        return (parseInt(input) * 100.0 / total) + '%';
-    };
-});
-
-commonModule.filter('imageUrl', function() {
-    return function(input) {
-        return WEBROOT_FULL + '/img/sports/' + input + '.png';
-    };
-});
 
 commonModule.filter('timestamp', function() {
     return function(timestamp) {
@@ -293,27 +252,9 @@ commonModule.filter('timestamp', function() {
 commonModule.filter('yesNo', function() {
     return function(input) {
         return input ? 'yes' : 'no';
-    }
+    };
 });
 
-commonModule.filter('camelCase', function() {
-    return function(str) {
-        str = str.replace(/(?:^\w|[A-Z]|\b\w)/g, function(letter, index) {
-            return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
-        }).replace(/\s+/g, '');
-        str[0] = str.charAt(0).toUpperCase();
-        return str;
-    };
-});
-commonModule.filter('datasize', function() {
-    return function(input) {
-        if (input > 1024.0) {
-            return (input / 1024).toFixed(4) + ' KB';
-        } else if (input > 1024 * 1024) {
-            return (input / 1024.0 * 1024).toFixed(4) + ' MB';
-        }
-    };
-});
 /**
  * AngularJS default filter with the following expression:
  * "person in people | filter: {name: $select.search, age: $select.search}"
@@ -375,7 +316,7 @@ commonModule.factory('SharedData', function() {
     };
     return data;
 });
-commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
+commonModule.factory('PlayerData', function(VideoTagData) {
 
     return {
         //extra_class: '',
@@ -393,12 +334,6 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
             this.reset();
             this.editionMode = false;
             this.show();
-//            if (this.player === null) {
-//                this.onPlayerSet = this.showEditionMode;
-//            }
-//            else{
-//                this.onPlayerSet = this.showViewMode;
-//            }
         },
         data: {
             begin: 0,
@@ -497,16 +432,6 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
             this.data.video_url = videoTag.video_url;
             this.playVideoRange(videoTag);
         }
-
-//        // If we change the video url or we change the video end we need to load it 
-//        if ((videoTag.video_url !== null && videoTag.video_url !== this.data.video_url)
-//                || (videoTag.end != null && videoTag.end !== this.data.end)) {
-//            playVideoRange(videoTag);
-//        }
-//        else {
-//            this.seekTo(this.data.begin);
-//        }
-//        this.play();
     }
 
     function replay(videoTag) {
@@ -533,13 +458,7 @@ commonModule.factory('PlayerData', function(YT_event, VideoTagData) {
     function play() {
         this.player.playVideo();
     }
-//
-//    function playRange(begin, end) {
-//        this.view({
-//            beign: begin,
-//            end: end
-//        });
-//    }
+    
     function seekTo(val) {
         this.player.seekTo(val);
     }
@@ -654,13 +573,6 @@ commonModule.factory('VideoTagData', function(VideoTagEntity, SharedData) {
         }
     };
 });
-commonModule.factory('SharedScope', function() {
-    var myService = {
-        emptyAvatarPath: IMAGE_FOLDER + DS + 'icon_avatar.png'
-    };
-    return myService;
-});
-
 commonModule.factory('NationalityEntity', function($resource) {
 
     var url = WEBROOT_FULL + '/nationalities/:action.json';
@@ -1467,39 +1379,6 @@ commonModule.directive('serverForm', function() {
     };
 
 });
-commonModule.factory('FormManager', function() {
-    var FormManager = function(form) {
-        this.form = form;
-        this.pending = false;
-    };
-    FormManager.prototype.setErrors = function(errors) {
-        var form = this.form;
-        angular.forEach(errors, function(errors, field) {
-            var errorString = Object.keys(errors).map(function(k) {
-                return errors[k];
-            }).join(', ');
-            console.log(form.$name + "." + field + ": " + errorString);
-            if (form[field] !== undefined) {
-                form[field].$setValidity('server', false);
-                form[field].$error.server = errorString;
-            }
-        });
-    };
-    FormManager.prototype.submit = function(callback, data) {
-        if (this.pending) {
-            // Form is already pendiong
-            return;
-        }
-        this.pending = true;
-        callback(data);
-    };
-    return {
-        instance: function(form) {
-            return new FormManager(form);
-        }
-    }
-});
-
 commonModule.factory('DataExistsService', function($resource) {
     var url = WEBROOT_FULL + '/:controller/:action/:value.json';
 
@@ -1541,122 +1420,6 @@ commonModule.directive('ftUnique', function(DataExistsService) {
     }
 });
 
-commonModule.directive('passwordStrength', function() {
-    return {
-        restrict: 'A',
-        require: 'ngModel',
-        link: function(scope, element, attrs, ngModel) {
-            var indicator = element.children();
-            var dots = Array.prototype.slice.call(indicator.children());
-            var weakest = dots.slice(-1)[0];
-            var weak = dots.slice(-2);
-            var strong = dots.slice(-3);
-            var strongest = dots.slice(-4);
-
-            element.after(indicator);
-
-            element.bind('keyup', function() {
-                var matches = {
-                    positive: {},
-                    negative: {}
-                },
-                counts = {
-                    positive: {},
-                    negative: {}
-                },
-                tmp,
-                        strength = 0,
-                        letters = 'abcdefghijklmnopqrstuvwxyz',
-                        numbers = '01234567890',
-                        symbols = '\\!@#$%&/()=?¿',
-                        strValue;
-
-                angular.forEach(dots, function(el) {
-                    el.style.backgroundColor = '#ebeef1';
-                });
-
-                if (ngModel.$viewValue) {
-                    // Increase strength level
-                    matches.positive.lower = ngModel.$viewValue.match(/[a-z]/g);
-                    matches.positive.upper = ngModel.$viewValue.match(/[A-Z]/g);
-                    matches.positive.numbers = ngModel.$viewValue.match(/\d/g);
-                    matches.positive.symbols = ngModel.$viewValue.match(/[$-/:-?{-~!^_`\[\]]/g);
-                    matches.positive.middleNumber = ngModel.$viewValue.slice(1, -1).match(/\d/g);
-                    matches.positive.middleSymbol = ngModel.$viewValue.slice(1, -1).match(/[$-/:-?{-~!^_`\[\]]/g);
-
-                    counts.positive.lower = matches.positive.lower ? matches.positive.lower.length : 0;
-                    counts.positive.upper = matches.positive.upper ? matches.positive.upper.length : 0;
-                    counts.positive.numbers = matches.positive.numbers ? matches.positive.numbers.length : 0;
-                    counts.positive.symbols = matches.positive.symbols ? matches.positive.symbols.length : 0;
-
-                    counts.positive.numChars = ngModel.$viewValue.length;
-                    tmp += (counts.positive.numChars >= 8) ? 1 : 0;
-
-                    counts.positive.requirements = (tmp >= 3) ? tmp : 0;
-                    counts.positive.middleNumber = matches.positive.middleNumber ? matches.positive.middleNumber.length : 0;
-                    counts.positive.middleSymbol = matches.positive.middleSymbol ? matches.positive.middleSymbol.length : 0;
-
-                    // Decrease strength level
-                    matches.negative.consecLower = ngModel.$viewValue.match(/(?=([a-z]{2}))/g);
-                    matches.negative.consecUpper = ngModel.$viewValue.match(/(?=([A-Z]{2}))/g);
-                    matches.negative.consecNumbers = ngModel.$viewValue.match(/(?=(\d{2}))/g);
-                    matches.negative.onlyNumbers = ngModel.$viewValue.match(/^[0-9]*$/g);
-                    matches.negative.onlyLetters = ngModel.$viewValue.match(/^([a-z]|[A-Z])*$/g);
-
-                    counts.negative.consecLower = matches.negative.consecLower ? matches.negative.consecLower.length : 0;
-                    counts.negative.consecUpper = matches.negative.consecUpper ? matches.negative.consecUpper.length : 0;
-                    counts.negative.consecNumbers = matches.negative.consecNumbers ? matches.negative.consecNumbers.length : 0;
-
-                    // Calculations
-                    strength += counts.positive.numChars * 4;
-                    if (counts.positive.upper) {
-                        strength += (counts.positive.numChars - counts.positive.upper) * 2;
-                    }
-                    if (counts.positive.lower) {
-                        strength += (counts.positive.numChars - counts.positive.lower) * 2;
-                    }
-                    if (counts.positive.upper || counts.positive.lower) {
-                        strength += counts.positive.numbers * 4;
-                    }
-                    strength += counts.positive.symbols * 6;
-                    strength += (counts.positive.middleSymbol + counts.positive.middleNumber) * 2;
-                    strength += counts.positive.requirements * 2;
-
-                    strength -= counts.negative.consecLower * 2;
-                    strength -= counts.negative.consecUpper * 2;
-                    strength -= counts.negative.consecNumbers * 2;
-
-                    if (matches.negative.onlyNumbers) {
-                        strength -= counts.positive.numChars;
-                    }
-                    if (matches.negative.onlyLetters) {
-                        strength -= counts.positive.numChars;
-                    }
-
-                    strength = Math.max(0, Math.min(100, Math.round(strength)));
-
-                    if (strength > 85) {
-                        angular.forEach(strongest, function(el) {
-                            el.style.backgroundColor = '#008cdd';
-                        });
-                    } else if (strength > 65) {
-                        angular.forEach(strong, function(el) {
-                            el.style.backgroundColor = '#6ead09';
-                        });
-                    } else if (strength > 30) {
-                        angular.forEach(weak, function(el) {
-                            el.style.backgroundColor = '#e09115';
-                        });
-                    } else {
-                        weakest.style.backgroundColor = '#e01414';
-                    }
-                }
-            });
-        },
-        template: '<span class="password-strength-indicator"><span></span><span></span><span></span><span></span></span>'
-    };
-});
-
 commonModule.directive('servererror', function() {
     return {
         restrict: 'A',
@@ -1671,6 +1434,7 @@ commonModule.directive('servererror', function() {
     }
 });
 
+// TODO do not do like that
 commonModule.factory('PlayerProviders', function() {
     var data = [{name: 'youtube'}];
     return {
