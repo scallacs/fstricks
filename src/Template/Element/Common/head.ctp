@@ -5,11 +5,8 @@
 </title>
 
 <script>
-    const DS = '/';
     const WEBROOT = '<?= $this->request->webroot; ?>';
     const WEBROOT_FULL = '<?= \Cake\Routing\Router::url('/', true); ?>';
-    const IMAGE_FOLDER = WEBROOT_FULL + 'img' + DS;
-    const HTML_FOLDER = WEBROOT_FULL + 'html' + DS;
                     
 </script>
 <?= $this->Html->meta('icon') ?>
@@ -23,10 +20,6 @@
 <?= $this->Html->script('node_modules/jquery/dist/jquery.min.js'); ?> <!-- 2.1.4 -->
 <?= $this->Html->script('node_modules/timeago/jquery.timeago.js'); ?> <!-- 1.0.2 -->
 <?= $this->Html->script('lib/bootstrap.min.js'); ?>  <!-- Can be remove if using angular ? -->
-
-<?= $this->Html->script('src/utils/util.js'); ?>
-<?= $this->Html->script('src/utils/cakephp.util.js'); ?>         
-
 
 <?= $this->Html->script("node_modules/lodash/lodash.js"); ?> <!-- Used by the slider ? -->
 
@@ -43,9 +36,32 @@
 <?= $this->Html->script('lib/select.min.js'); ?>   
 <?= $this->Html->script("bower_components/jquery-ui/jquery-ui.min.js"); ?>
 
+<?= $this->Html->script('src/shared/shared.module'); ?>
+<?= $this->Html->script('src/shared/form/shared.form.module'); ?>
+<?= $this->Html->script('src/shared/form/servererror.directive'); ?>
+<?= $this->Html->script('src/shared/form/server-form.directive'); ?>
+<?= $this->Html->script('src/shared/form/password-strength.directive'); ?>
+<?= $this->Html->script('src/shared/form/password-match.directive'); ?>
+<?= $this->Html->script('src/shared/form/ft-unique.factory'); ?>
 
-<?= $this->Html->script('src/CommonModule'); ?>
-<?= $this->Html->script('src/DefaultModule'); ?>
+<?= $this->Html->script('src/shared/youtube/shared.youtube.module'); ?>
+<?= $this->Html->script('src/shared/youtube/rule-youtube-video-id.directive'); ?>
+<?= $this->Html->script('src/shared/youtube/youtube-item.directive'); ?>
+<?= $this->Html->script('src/shared/youtube/youtube-video-info.factory'); ?>
+
+<?= $this->Html->script('src/core/app.core.module'); ?>
+
+<?= $this->Html->script('src/account/app.account.module'); ?>
+
+<?= $this->Html->script('src/layout/app.layout.module'); ?>
+<?= $this->Html->script('src/layout/topnav.directive'); ?>
+
+<?= $this->Html->script('src/rider/app.rider.module'); ?>
+
+<?= $this->Html->script('src/player/app.player.module'); ?>
+
+<?= $this->Html->script('src/app.config.module'); ?>
+<?= $this->Html->script('src/app.module'); ?>
 
 <?= $this->Html->script("node_modules/angular-socialshare/angular-socialshare.min.js"); ?>   <!-- Can be lighter -->
 <?= $this->Html->script("node_modules/satellizer/satellizer.min.js"); ?>                     <!-- Can be lighter -->
@@ -53,3 +69,8 @@
 <?= $this->Html->script("node_modules/angular-utils-pagination/dirPagination.js"); ?>         <!-- Use mimified -->
 <?= $this->Html->script("node_modules/ng-infinite-scroll/build/ng-infinite-scroll.min.js"); ?>
 <?= $this->Html->script("node_modules/ng-flow/dist/ng-flow-standalone.min"); ?>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.js"></script>

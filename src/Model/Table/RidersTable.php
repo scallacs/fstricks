@@ -7,6 +7,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use App\Lib\JsonConfigHelper;
 
 /**
  * Riders Model
@@ -78,8 +79,8 @@ class RidersTable extends Table {
                 ->requirePresence('nationality', 'create')
                 ->add('nationality', 'custom', [
                     'rule' => function ($value, $context) {
-                return \App\Lib\CountryHelper::isValidCode($value);
-            },
+                        return isset(JsonConfigHelper::countries()[$value]);
+                    },
                     'message' => 'Choose a valid nationality'
         ]);
 
@@ -87,11 +88,11 @@ class RidersTable extends Table {
                 ->requirePresence('firstname', 'create')
                 ->add('firstname', [
                     'minLength' => [
-                        'rule' => ['minLength', 2],
+                        'rule' => ['minLength', JsonConfigHelper::rules("riders", "firstname", "min_length")],
                         'message' => 'Choose a longer name.'
                     ],
                     'maxLength' => [
-                        'rule' => ['maxLength', 20],
+                        'rule' => ['maxLength', JsonConfigHelper::rules("riders", "firstname", "max_length")],
                         'message' => 'Choose a shorter name.'
                     ]
                 ])
@@ -101,11 +102,11 @@ class RidersTable extends Table {
                 ->requirePresence('lastname', 'create')
                 ->add('lastname', [
                     'minLength' => [
-                        'rule' => ['minLength', 2],
+                        'rule' => ['minLength', JsonConfigHelper::rules("riders", "lastname", "min_length")],
                         'message' => 'Choose a longer name.'
                     ],
                     'maxLength' => [
-                        'rule' => ['maxLength', 20],
+                        'rule' => ['maxLength', JsonConfigHelper::rules("riders", "lastname", "max_length")],
                         'message' => 'Choose a shorter name.'
                     ]
                 ])
@@ -113,7 +114,8 @@ class RidersTable extends Table {
 
         $validator
                 ->add('level', 'valid', ['rule' => function ($value){
-                    return isset(Rider::$levels[$value]);
+                    $levels = array_column(JsonConfigHelper::rules("riders", "level", "values"), 'code');
+                    return isset($levels[$value]);
                 }])
                 ->requirePresence('level', 'create')
                 ->notEmpty('level');

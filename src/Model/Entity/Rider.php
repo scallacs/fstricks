@@ -21,10 +21,7 @@ use Cake\ORM\Entity;
 class Rider extends Entity
 {
     
-    public static $levels = [
-        1 => 'Amateur',
-        2 => 'Pro'
-    ];
+    public static $levels = [];
     
     protected $_virtual = [
         'picture_portrait', 

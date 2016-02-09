@@ -116,7 +116,7 @@ class YoutubeRequest {
      * @throws \Exception
      */
     public function getVideoInfo($vId, $parts = 'id, snippet, contentDetails, player, statistics, status') {
-        if ($this->videoInfo[$vId] !== null) {
+        if (!empty($this->videoInfo[$vId])) {
             return $this->videoInfo[$vId];
         }
         $API_URL = $this->getApi('videos.list');

@@ -1,0 +1,36 @@
+
+<table class="table-current-trick" >
+    <tbody>
+        <tr>
+            <td  ng-if="playerData.currentTag"
+                 ng-click="prevTrick()"
+                 ng-class="{disabled: videoTagData.current == 0}"
+                 class="toggle-list-tricks player-prev-trick" >
+                <a  href="" 
+                    class="text-big">
+                    <span class="glyphicon glyphicon-arrow-left"></span>
+                </a>
+            </td>
+            <td
+                class="current-tag"
+                ng-if="playerData.currentTag">
+                <div video-tag-item video-tag="playerData.currentTag"  player-data="playerData"></div>
+            </td>
+            <td
+                ng-if="playerData.currentTag"
+                class="toggle-list-tricks" 
+                ng-click="nextTrick()"
+                ng-class="{disabled: videoTagData.current >= videoTagData.data.length - 1}">
+                <a href="" class="text-big">
+                    <span class="glyphicon glyphicon-arrow-right"></span>
+                </a>
+            </td>
+            <td
+                ng-if="!playerData.currentTag">
+            </td>
+            <td class="toggle-list-tricks"  ng-click="toggleListTricks()" style="width: 40px">
+                <a href="" class="text-big"><span class="glyphicon glyphicon-list"></span></a>
+            </td>
+        </tr>
+    </tbody>
+</table>

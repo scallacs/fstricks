@@ -8,6 +8,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\ORM\Entity;
+use App\Lib\JsonConfigHelper;
 
 /**
  * Tags Model
@@ -57,16 +58,16 @@ class TagsTable extends Table {
                 ->notEmpty('name')
                 ->add('name', [
                     'minLength' => [
-                        'rule' => ['minLength', \Cake\Core\Configure::read('Config.tags_min_name_length')],
+                        'rule' => ['minLength', JsonConfigHelper::rules('tags', 'name', 'min_length')],
                         'message' => 'Choose a longer name.'
                     ],
                     'maxLength' => [
-                        'rule' => ['maxLength', \Cake\Core\Configure::read('Config.tags_max_name_length')],
+                        'rule' => ['maxLength', JsonConfigHelper::rules('tags', 'name', 'max_length')],
                         'message' => 'Choose a shorter name.'
                     ],
                     'allowedChars' => [
                         'rule' => function($value, $context) {
-                            return !preg_match(\Cake\Core\Configure::read('Config.tags_name_regex'), $value);
+                            return !preg_match(JsonConfigHelper::rules('tags', 'name', 'regex'), $value);
                         },
                         'message' => 'Only alpha numeric chars with accents.'
                     ]

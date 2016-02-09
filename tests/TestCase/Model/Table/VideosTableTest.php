@@ -66,5 +66,22 @@ class VideosTableTest extends TestCase
         }            
         $this->assertGreaterThanOrEqual(0, $video->duration);
     }
+    
+    /**
+     * TODO
+     * @return void
+     */
+    public function testValidationErrors() {
+        // Add a video:
+        $data = [
+            'provider_id' => 'invalid',
+            'video_url' => 'invalid',
+        ];
+        $video = $this->Videos->newEntity($data);
+        
+        $errors = $video->errors();
+        $this->assertArrayHasKey('provider_id', $errors);
+        $this->assertArrayHasKey('video_url', $errors);
+    }
 
 }

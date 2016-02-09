@@ -1,0 +1,73 @@
+<div class="section">
+    <h3 class="container section-tile">Select your video</h3>
+</div>
+<div class="container">
+    <div class="panel panel-primary">
+        <div class="panel-body">
+            <form class="form" name="form" server-form novalidate>
+                <fieldset>
+                    <div class="form-group clearfix">
+                        <div class="col-xs-4">
+                            <select ng-model="data.provider_id" 
+                                    class="form-control"
+                                    ng-disabled="playerProviders.length <= 1"
+                                    ng-options="provider.name as provider.name for provider in playerProviders"
+                                    required
+                                    >
+                            </select>
+                        </div>
+                        <div class="col-xs-8"  ng-class="{ 'has-error': form.video_url.$invalid }">
+                            <input type="text" 
+                                   class="form-control"
+                                   ng-model="data.video_url"
+                                   name="video_url"
+                                   placeholder="paste here the video id or video url"
+                                   rule-youtube-video-id
+                                   required/>
+                            <p class="bg-info padding-sm" ng-show="form.video_url.$pending.youtubeVideoId">Checking the video id</p>
+                            <p class="bg-warning padding-sm"  ng-show="form.video_url.$error.youtubeVideoId">This is not a valid video id</p>
+                        </div>
+                    </div>
+                    <!--
+                    <div ng-show="form.$valid" style="margin: auto;">
+                        <youtube   
+                            player-video="data"
+                            height="player.height" 
+                            width="player.height" ></youtube> 
+                    </div>
+                    -->
+
+                    <div mc-messages></div>
+
+                    <div class="text-center form-group">
+                        <button type="button" 
+                                ng-click="add(data)" 
+                                class="btn btn-primary"
+                                ng-disabled="!form.$valid">Next 
+                        </button>
+                    </div>
+                </fieldset>
+            </form>
+
+            <div ng-if="recentVideos.length > 0">
+                <h3>History</h3>
+                <div class="padding-sm">
+                    <ul class="list-unstyled">
+                        <li dir-paginate="video in recentVideos | itemsPerPage: videoPerPage"
+                            total-items="totalVideos"
+                            >
+                        <youtube-item data-info="video.provider_data" data-id="video.id" ng-if="video.provider_data">
+                        </youtube-item>
+                        </li>
+                    </ul>
+
+                    <div dir-pagination-controls
+                         on-page-change="pageChanged(newPageNumber)"
+                         class="pagination-container">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

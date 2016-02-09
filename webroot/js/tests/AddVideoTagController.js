@@ -1,10 +1,4 @@
-describe('example test', function() {
-  it('should be true', function() {
-    expect('foo').toBe('foo');
-  });
-});
-
-/*describe('PasswordController', function() {
+describe('PasswordController', function() {
   beforeEach(module('app'));
 
   var $controller;
@@ -34,4 +28,4 @@ describe('example test', function() {
       expect($scope.strength).toEqual('weak');
     });
   });
-});*/
+});

@@ -9,6 +9,11 @@ body{
 h3, h2, h1{
     padding: 10px 10px;
 }
+
+
+.form-loader{
+    padding-right: 10px;
+}
 .ajax-loader img{
     width: 1.2em;
     height: 0.6em;

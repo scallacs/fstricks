@@ -8,6 +8,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use App\Lib\YoutubeRequest;
+use App\Lib\JsonConfigHelper;
 
 /**
  * Videos Model
@@ -72,19 +73,16 @@ class VideosTable extends Table {
                 ->allowEmpty('id', 'create');
 
         $validator
-//            ->add('provider_id', 'providerValid', [
-//                'rule' => ['inList', array_column(\Cake\Core\Configure::read('videoProviders'), 'name')],
-//                'message' => 'Invalid provider. Please choose available provider from the list'
-//            ])
-                ->requirePresence('provider_id', 'create')
-                ->notEmpty('provider_id');
+            ->add('provider_id', 'providerValid', [
+                'rule' => ['inList', JsonConfigHelper::rules("videos", "provider_id", "values")],
+                'message' => 'Invalid provider. Please choose available provider from the list'
+            ])
+            ->requirePresence('provider_id', 'create')
+            ->notEmpty('provider_id');
 
         $validator
                 ->requirePresence('user_id', 'create')
                 ->notEmpty('user_id');
-//        $validator
-//                ->requirePresence('duration', 'create')
-//                ->notEmpty('duration');
 
         $validator
                 ->requirePresence('video_url', 'create')
@@ -131,9 +129,8 @@ class VideosTable extends Table {
      * @return \Cake\ORM\RulesChecker
      */
     public function buildRules(RulesChecker $rules) {
-//        $rules->add($rules->existsIn(['provider_id'], 'VideoProviders'));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
-        $rules->add($rules->existsIn(['provider_id'], 'VideoProviders'));
+//        $rules->add($rules->existsIn(['provider_id'], 'VideoProviders'));
         $rules->add($rules->isUnique(['video_url', 'provider_id'], 'This video is already in the database'));
         return $rules;
     }

@@ -48,7 +48,6 @@ class RidersTableTest extends TestCase
 
     /**
      * Test adding with accents and upper case
-     * TODO
      * @return void
      */
     public function testAddWithAccent() {
@@ -68,4 +67,27 @@ class RidersTableTest extends TestCase
         $this->assertEquals('de léonard', $rider->lastname);
     }
 
+    
+
+    /**
+     * Test adding with accents and upper case
+     * TODO
+     * @return void
+     */
+    public function testValidationErrors() {
+        // Add a video:
+        $data = [
+            'user_id' => null,
+            'firstname' => 'a',
+            'lastname' => 'b',
+            'level' => 1000,
+            'nationality' => 'blop',
+        ];
+        $rider = $this->Riders->newEntity($data);
+        $errors = $rider->errors();
+        $this->assertArrayHasKey('firstname', $errors);
+        $this->assertArrayHasKey('lastname', $errors);
+        $this->assertArrayHasKey('level', $errors);
+        $this->assertArrayHasKey('nationality', $errors);
+    }
 }
