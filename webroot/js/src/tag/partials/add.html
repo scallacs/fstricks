@@ -8,11 +8,13 @@
                  similar-riders="true"></div>
         </div>
 
-        <form class="form" 
+        <form id="FormAddVideoTag"
+              class="form" 
               name="formAddVideoTag" 
               novalidate 
               ng-show="!showCreateRiderForm"
-              ng-submit="addVideoTag(editionTag)">
+              ng-submit="addVideoTag(editionTag)"
+              server-form>
 
             <fieldset ng-disabled="isFormLoading">
                 <div class="form-group">
@@ -33,11 +35,15 @@
                         <label class="control-label col-xs-3">Start time</label>
                         <div class="col-xs-9">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-default" ng-click="addStartRange(-slider.step)">
+                                <button id="ButtonBeginTimeMinus"
+                                        type="button" 
+                                        class="btn btn-default" 
+                                        ng-click="addStartRange(-slider.step)">
                                     <span class="glyphicon glyphicon-minus"></span>
                                 </button>
                                 <span class="btn btn-default disabled" >{{editionTag.range[0]| secondsToHours}}</span> 
-                                <button type="button" class="btn btn-default" ng-click="addStartRange(slider.step)">
+                                <button id="ButtonBeginTimePlus"
+                                        type="button" class="btn btn-default" ng-click="addStartRange(slider.step)">
                                     <span class="glyphicon glyphicon-plus"></span>
                                 </button>
                             </div>
@@ -51,11 +57,17 @@
                         <label class="control-label  col-xs-3">End time</label>
                         <div class="col-xs-9">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-default" ng-click="addEndRange(-slider.step)">
+                                <button id="ButtonEndTimeMinus"
+                                        type="button" 
+                                        class="btn btn-default" 
+                                        ng-click="addEndRange(-slider.step)">
                                     <span class="glyphicon glyphicon-minus"></span>
                                 </button>
                                 <span class="btn btn-default disabled">{{editionTag.range[1]| secondsToHours}}</span>
-                                <button  type="button"  class="btn btn-default" ng-click="addEndRange(slider.step)">
+                                <button  id="ButtonEndTimePlus"
+                                         type="button"  
+                                         class="btn btn-default" 
+                                         ng-click="addEndRange(slider.step)">
                                     <span class="glyphicon glyphicon-plus"></span>
                                 </button>
                             </div>

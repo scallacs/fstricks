@@ -18,7 +18,6 @@ class RidersTableTest extends TestCase
      */
     public $fixtures = [
         'app.riders',
-        'app.nationalities',
         'app.users',
     ];
 

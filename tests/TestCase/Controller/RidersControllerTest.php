@@ -15,7 +15,6 @@ class RidersControllerTest extends MyIntegrationTestCase {
      * @var array
      */
     public $fixtures = [
-        'app.nationalities',
         'app.riders',
         'app.users',
     ];

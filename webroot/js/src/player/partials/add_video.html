@@ -4,7 +4,12 @@
 <div class="container">
     <div class="panel panel-primary">
         <div class="panel-body">
-            <form id="FormAddVideo" class="form" name="addVideoForm" server-form novalidate>
+            <form id="FormAddVideo" 
+                  class="form" 
+                  name="addVideoForm" 
+                  ng-submit="add(data)"
+                  server-form 
+                  novalidate>
                 <fieldset>
                     <div class="col-xs-4">
                         <div class="form-group clearfix has-feedback"
@@ -53,10 +58,10 @@
                     <div mc-messages></div>
 
                     <div class="text-center form-group">
-                        <button type="button" 
-                                ng-click="add(data)" 
+                        <button type="submit" 
                                 class="btn btn-primary"
-                                ng-disabled="!addVideoForm.$valid">Next 
+                                ng-disabled="!addVideoForm.$valid">
+                            Next 
                         </button>
                     </div>
                 </fieldset>

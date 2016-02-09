@@ -122,12 +122,10 @@ function UserLoginController($scope, $auth, SharedData, messageCenterService, $l
 
         function successCallback(response) {
             response = response.data;
-            $scope.$parent.isAuthed = response.success;
-
             if (response.success) {
                 response.data.provider = provider;
                 AuthenticationService.setCredentials(response.data);
-                $location.path(SharedData.previousPage);
+                $location.path("#/");
             }
         }
     }
@@ -138,8 +136,9 @@ function UserLoginController($scope, $auth, SharedData, messageCenterService, $l
         $scope.loginForm.submit(promise).then(callback);
 
         function callback(response) {
-            var isLogin = response.success;
-            $scope.$parent.isAuthed = isLogin;
+            if (response.success) {
+                $location.path("#/");
+            }
         }
     }
 }
@@ -150,12 +149,12 @@ function SignupController($scope, $location, PlayerData, SharedData,
         messageCenterService, AuthenticationService) {
 
     $scope.signup = signup;
-    
+
     SharedData.loadingState = 0;
-    
+
     PlayerData.hide();
     messageCenterService.removeShown();
-    
+
 
     function signup(data) {
         var promise = $scope.signupForm.submit(AuthenticationService.signup(data));

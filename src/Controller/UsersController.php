@@ -88,7 +88,7 @@ class UsersController extends AppController {
                     'exp' => time() + 604800,
                     'iat' => time()
                         ], Security::salt());
-        
+
         ResultMessage::setData('id', $userId);
         ResultMessage::setData('username', $this->Auth->user('username'));
         ResultMessage::setData('email', $this->Auth->user('email'));
@@ -141,8 +141,8 @@ class UsersController extends AppController {
     }
 
     public function login() {
+        ResultMessage::setWrapper(true);
         if ($this->request->is('post')) {
-
             $user = $this->Auth->identify();
             if ($user) {
                 $this->Auth->setUser($user);
@@ -152,10 +152,6 @@ class UsersController extends AppController {
             } else {
                 ResultMessage::setMessage('Your username or password is incorrect', false);
             }
-            return;
-        }
-        if ($this->request->is('ajax')) {
-            ResultMessage::setMessage('Cannot get your data.', false);
         }
     }
 
@@ -194,43 +190,54 @@ class UsersController extends AppController {
     public function facebook_login() {
         $provider = 'facebook';
         //initialize facebook sdk
-        $facebook = new \Facebook\Facebook(array(
-            'app_id' => \Cake\Core\Configure::read('Facebook.id'),
-            'app_secret' => \Cake\Core\Configure::read('Facebook.key')
-        ));
-
-        $code = $this->request->data['code'];
-        $oauth2 = $facebook->getOAuth2Client();
-        $accessToken = $oauth2->getAccessTokenFromCode($code, \Cake\Routing\Router::url('/', true));
-
-        if (!isset($accessToken)) {
-            ResultMessage::setMessage('Cannot get access token', false);
-            return;
-        }
         try {
-            // Proceed knowing you have a logged in user who's authenticated.
-            $response = $facebook->get('/me', $accessToken); //user
-            $me = $response->getGraphUser();
-        } catch (\Facebook\Exceptions\FacebookApiException $e) {
-            //echo error_log($e);
-            ResultMessage::setMessage('Sorry but we cannot log you in with '.ucfirst($provider).' right now.', false);
-            return;
-        }
-        // TODO catch all
+            $facebook = new \Facebook\Facebook(array(
+                'app_id' => \Cake\Core\Configure::read('Facebook.id'),
+                'app_secret' => \Cake\Core\Configure::read('Facebook.key')
+            ));
 
-        $providerInfo = [
-            'displayName' => $me->getName(),
-            'identifier' => $me->getId()
-        ];
-        if (!$user = $this->Users->createSocialAccount($provider, $providerInfo)) {
-            ResultMessage::setMessage('Sorry but we cannot create your account right now.', false);
-            return;
+            $code = $this->request->data['code'];
+            $oauth2 = $facebook->getOAuth2Client();
+            $accessToken = $oauth2->getAccessTokenFromCode($code, \Cake\Routing\Router::url('/', true));
+
+            if (!isset($accessToken)) {
+                ResultMessage::setMessage('Cannot get access token', false);
+                return;
+            }
+            try {
+                // Proceed knowing you have a logged in user who's authenticated.
+                $response = $facebook->get('/me', $accessToken); //user
+                $me = $response->getGraphUser();
+            } catch (\Facebook\Exceptions\FacebookApiException $e) {
+                //echo error_log($e);
+                ResultMessage::setMessage('Sorry but we cannot log you in with ' . ucfirst($provider) . ' right now.', false);
+                return;
+            }
+            // TODO catch all
+
+            $providerInfo = [
+                'displayName' => $me->getName(),
+                'identifier' => $me->getId()
+            ];
+            if (!$user = $this->Users->createSocialAccount($provider, $providerInfo)) {
+                ResultMessage::setMessage('Sorry but we cannot create your account right now.', false);
+                return;
+            }
+            $userArray = $user->toArray();
+            $userArray['access_token'] = $accessToken;
+            $this->Auth->setUser($userArray);
+            $this->setToken();
+            ResultMessage::setSuccess(true);
+        } 
+        catch (\Facebook\Exceptions\FacebookSDKException $ex) {
+            
+        } 
+        catch (\Facebook\Exceptions\FacebookAuthorizationException $ex) {
+            
+        } 
+        catch (\Facebook\Exceptions\FacebookAuthenticationException $ex) {
+            
         }
-        $userArray = $user->toArray();
-        $userArray['access_token'] = $accessToken;
-        $this->Auth->setUser($userArray);
-        $this->setToken();
-        ResultMessage::setSuccess(true);        
     }
 
     public function logout() {
@@ -276,8 +283,8 @@ class UsersController extends AppController {
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->data);
-            $this->status = App\Model\Entity\User::STATUS_ACTIVATED;
-            
+            $this->status = \App\Model\Entity\User::STATUS_ACTIVATED;
+
             if ($this->Users->save($user)) {
                 $userArray = [
                     'id' => $user->id,

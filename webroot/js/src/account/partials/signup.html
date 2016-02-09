@@ -3,7 +3,7 @@
         <div class="center-form panel"  style="max-width: 500px;margin: auto;">
             <div class="panel-body">
                 <h2 class="text-center">Sign up</h2>
-                <form method="post" ng-submit="signup(user)" name="signupForm" server-form>
+                <form id="FormSignup" method="post" ng-submit="signup(user)" name="signupForm" server-form>
                     <fieldset ng-disabled="isFormLoading"> 
                         <div class="form-group has-feedback" 
                              ng-class="{ 'has-error' : signupForm.username.$invalid && signupForm.username.$dirty }">
@@ -61,10 +61,10 @@
                             <input password-match="user.password" class="form-control input-lg" type="password" name="confirmPassword" ng-model="confirmPassword" placeholder="Confirm Password">
                             <span class="ion-key form-control-feedback"></span>
                             <div class="help-block text-danger" ng-if="signupForm.confirmPassword.$dirty" ng-messages="signupForm.confirmPassword.$error">
-                                <div ng-message="compareTo">Password must match.</div>
+                                <div ng-message="compareTo"> Password must match.</div>
                             </div>
                         </div>
-                        <p class="text-center text-muted"><small>By clicking on Sign up, you agree to <a href="#/#">terms & conditions</a> and <a href="#/#">privacy policy</a></small></p>
+                        <p class="text-center text-muted"><small> By clicking on Sign up, you agree to <a href="#/#">terms & conditions</a> and <a href="#/#">privacy policy</a></small></p>
 
                         <div mc-messages></div>
                         <button type="submit" 

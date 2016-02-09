@@ -79,8 +79,13 @@ class RidersTable extends Table {
                 ->requirePresence('nationality', 'create')
                 ->add('nationality', 'custom', [
                     'rule' => function ($value, $context) {
-                        $data = array_column(JsonConfigHelper::countries(), 'code');
-                        return isset($data[$value]);
+                        $countries = JsonConfigHelper::countries();
+                        foreach ($countries as $county){
+                            if ($county['code'] === $value){
+                                return true;
+                            }
+                        }
+                        return false;
                     },
                     'message' => 'Choose a valid nationality'
         ]);
