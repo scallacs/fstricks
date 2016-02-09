@@ -3,7 +3,7 @@ angular
         .directive('riderItem', function() {
             return {
                 restrict: 'EA',
-                templateUrl: 'rider-item.html',
+                templateUrl:'js/src/rider/partials/rider-item.html',
                 scope: {
                     rider: '=rider'
                 },

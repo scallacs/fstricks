@@ -1,19 +1,22 @@
+angular.module('app.tag', ['ngRoute', 'app.core', 'ui.bootstrap', 'ui.select'])
+        .controller('SearchTagController', SearchTagController)
+        .config(Config);
 
-module.config(function($routeProvider) {
+
+function Config($routeProvider) {
+    var baseUrl = 'js/src/tag/partials/';
     $routeProvider
             .when('/tag/add/:videoId', {
-                templateUrl: HTML_FOLDER + 'VideoTags/add.html',
+                templateUrl: baseUrl + 'add.html',
                 controller: 'AddVideoTagController'
             })
             .when('/tag/edit/:videoId/:tagId', {
-                templateUrl: HTML_FOLDER + 'VideoTags/add.html',
+                templateUrl: baseUrl + 'add.html',
                 controller: 'AddVideoTagController'
-            })
-            .otherwise({redirectTo: '/'});
-});
+            });
+}
 
-
-module.controller('SearchTagController', function($scope, TagEntity) {
+function SearchTagController($scope, TagEntity) {
 
     $scope.suggested = [];
     $scope.selected = [];
@@ -44,4 +47,4 @@ module.controller('SearchTagController', function($scope, TagEntity) {
 
     }
 
-});
+}

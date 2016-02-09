@@ -1,29 +1,33 @@
 angular.module('shared.youtube')
-    .directive('ruleYoutubeVideoId', function($q, YoutubeVideoInfo) {
-    return {
-        require: 'ngModel',
-        link: function(scope, elm, attrs, ctrl) {
+        .constant('YoutubeIdLength', 11)
+        .directive('ruleYoutubeVideoId', function($q, YoutubeVideoInfo, YoutubeIdLength) {
+            return {
+                require: 'ngModel',
+                link: function(scope, elm, attrs, ngModel) {
 
-            ctrl.$asyncValidators.youtubeVideoId = function(videoId, viewValue) {
-                if (ctrl.$isEmpty(videoId)) {
-                    // consider empty model valid
-                    return $q.when();
+                    ngModel.$asyncValidators.youtubeVideoId = function(videoId, viewValue) {
+                        if (ngModel.$isEmpty(videoId)) {
+                            // consider empty model valid
+                            return $q.when();
+                        }
+                        var def = $q.defer();
+                        if (YoutubeVideoInfo.extractVideoIdFromUrl(videoId)) {
+                            videoId = YoutubeVideoInfo.extractVideoIdFromUrl(videoId);
+                        }
+                        if (videoId.length !== YoutubeIdLength) {
+                            return def.reject();
+                        }
+
+                        YoutubeVideoInfo.exists(videoId, function(exists) {
+                            if (exists) {
+//                                scope.$emit('videoIdValidated', {videoId: videoId});
+                                def.resolve();
+                            } else {
+                                def.reject();
+                            }
+                        });
+                        return def.promise;
+                    };
                 }
-                var def = $q.defer();
-                if (YoutubeVideoInfo.extractVideoIdFromUrl(videoId)) {
-                    videoId = YoutubeVideoInfo.extractVideoIdFromUrl(videoId);
-                }
-                YoutubeVideoInfo.exists(videoId, function(exists) {
-                    // Mock a delayed response
-                    if (exists) {
-                        scope.$emit('videoIdValidated', {videoId: videoId});
-                        def.resolve();
-                    } else {
-                        def.reject();
-                    }
-                });
-                return def.promise;
             };
-        }
-    };
-});
+        });

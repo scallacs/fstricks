@@ -1,24 +1,25 @@
-angular.module('app.video')
+angular.module('app.tag')
         .directive('videoTagItem', videoTagItem);
 
 videoTagItem.$inject = ['PlayerData'];
 function videoTagItem(PlayerData) {
     return {
         restrict: 'EA',
-        templateUrl: WEBROOT_FULL + '/html/VideoTags/item.html',
+        templateUrl: 'js/src/tag/partials/item.html',
         scope: {
             playerData: '=playerData',
             videoTag: '=videoTag',
             editionMode: '@'
         },
-        controller: function($scope, $uibModal) {
+        controller: function($scope, $uibModal, PlayerData) {
 
             $scope.openReportErrorModal = openReportErrorModal;
             $scope.view = view;
+            $scope.playerData = PlayerData;
 
             function openReportErrorModal(videoTag) {
                 var modal = $uibModal.open({
-                    templateUrl: HTML_FOLDER + '/ReportErrors/form.html',
+                    templateUrl: 'js/src/tag/partials/report_error_form.html',
                     controller: 'ModalReportErrorController',
                     size: 'lg',
                     resolve: {
@@ -30,8 +31,6 @@ function videoTagItem(PlayerData) {
             }
 
             function view(videoTag) {
-                //console.log("EMIT: view-video-tag");
-                //$scope.$emit('view-video-tag', videoTag);
                 PlayerData.view(videoTag);
             }
 

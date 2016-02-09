@@ -1,16 +1,17 @@
 angular.module('app.page', [])
-        .config('ConfigRoute', ConfigRoute)
+        .config(ConfigRoute)
         .controller('PagesController', PagesController);
 
 ConfigRoute.$inject = ['$routeProvider'];
 function ConfigRoute($routeProvider) {
+    var baseUrl = 'js/src/page/partials/';
     $routeProvider
             .when('/faq', {
-                templateUrl: HTML_FOLDER + '/Pages/faq.html',
+                templateUrl: baseUrl + 'faq.html',
                 controller: 'PagesController'
             })
             .when('/contact', {
-                templateUrl: HTML_FOLDER + '/Pages/contact.html',
+                templateUrl: baseUrl + '/contact.html',
                 controller: 'PagesController'
             });
 }

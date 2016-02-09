@@ -11,10 +11,12 @@
 </script>
 <?= $this->Html->meta('icon') ?>
 
+<link rel="stylesheet" href="js/bower_components/ui-select/dist/select.min.css">
+
+
 <?= $this->Html->css('bootstrap.css') ?>
 <?= $this->Html->css('ui-bootstrap.css') ?>
 <?= $this->Html->css('base.css') ?>
-<?= $this->Html->css('select.min.css'); ?>  
 <?= $this->Html->css('jquery-ui.min.css'); ?>  <!-- ONLY ADD SLIDER CODE -->
 
 <?= $this->Html->script('node_modules/jquery/dist/jquery.min.js'); ?> <!-- 2.1.4 -->
@@ -33,8 +35,8 @@
 <?= $this->Html->script("node_modules/angular-simple-logger/dist/angular-simple-logger.min.js"); ?> <!-- Use online lib ? -->
 <?= $this->Html->script("lib/ui-bootstrap-custom-tpls-0.14.3.min.js"); ?>
 <?= $this->Html->script("lib/slider.js"); ?>
-<?= $this->Html->script('lib/select.min.js'); ?>   
 <?= $this->Html->script("bower_components/jquery-ui/jquery-ui.min.js"); ?>
+<?= $this->Html->script('bower_components/ui-select/dist/select.min.js'); ?>   
 
 <?= $this->Html->script('src/shared/shared.module'); ?>
 <?= $this->Html->script('src/shared/form/shared.form.module'); ?>
@@ -49,6 +51,8 @@
 <?= $this->Html->script('src/shared/youtube/youtube-item.directive'); ?>
 <?= $this->Html->script('src/shared/youtube/youtube-video-info.factory'); ?>
 
+<?= $this->Html->script('src/shared/time.filter'); ?>
+
 <?= $this->Html->script('src/core/app.core.module'); ?>
 
 <?= $this->Html->script('src/account/app.account.module'); ?>
@@ -57,8 +61,19 @@
 <?= $this->Html->script('src/layout/topnav.directive'); ?>
 
 <?= $this->Html->script('src/rider/app.rider.module'); ?>
+<?= $this->Html->script('src/rider/form-add-rider.directive'); ?>
+<?= $this->Html->script('src/rider/rider-item.directive'); ?>
 
 <?= $this->Html->script('src/player/app.player.module'); ?>
+<?= $this->Html->script('src/player/player-nav.directive'); ?>
+<?= $this->Html->script('src/player/player-container.directive'); ?>
+<?= $this->Html->script('src/player/youtube.directive'); ?>
+
+<?= $this->Html->script('src/tag/app.tag.module'); ?>
+<?= $this->Html->script('src/tag/trick-list.directive'); ?>
+<?= $this->Html->script('src/tag/video-tag-item.directive'); ?>
+
+<?= $this->Html->script('src/page/app.page.module'); ?>
 
 <?= $this->Html->script('src/app.config.module'); ?>
 <?= $this->Html->script('src/app.module'); ?>

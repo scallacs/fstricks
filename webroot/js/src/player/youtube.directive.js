@@ -1,5 +1,5 @@
-
-module.directive('youtube', function($window, VideoEntity, PlayerData) {
+angular.module('app.player')
+        .directive('youtube', function($window, VideoEntity, PlayerData) {
 
     var myTimer;
 

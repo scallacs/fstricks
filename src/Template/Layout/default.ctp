@@ -8,14 +8,13 @@
         <?= $this->fetch('script') ?>
 
     </head>
-    <body ng-app="app" ng-controller="MainController">
+    <body ng-app="app" ng-controller="MainController as main">
         <!--<base href="#/Tricker/"/>-->
 
         <?= $this->Element('Common/header_ajs'); ?>
 
 
         <div id="container" style="position: relative;" class="clearfix">
-            
             <!--
             <div class="loading-spiner-holder" id="overlay" data-loading >
                 <div class="loading-spiner">
@@ -24,11 +23,8 @@
             </div>-->
             
             <div id="content">
-                <!--
-                <div ng-show="playerData.visible" class="full-player" player-container></div>
-                <div class="list-tricks" trick-list ng-show="playerData.showListTricks"></div>
-                -->
-
+                <div class="full-player" player-container></div>
+                <div class="list-tricks" trick-list></div>
                 <div ng-view></div>
             </div>
         </div>

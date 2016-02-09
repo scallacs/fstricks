@@ -1,8 +1,9 @@
 <form server-form
       name="addRiderForm" 
       method="post"  
-      ng-submit="save(rider)" novalidate>
-    <fieldset ng-disabled="addRiderForm._pending">
+      ng-submit="save(rider)" 
+      novalidate>
+    <fieldset>
         <div class="col-sm-4" ng-if="profilePicture">
             
             <div flow-name="uploader.flow"
@@ -185,8 +186,7 @@
             <button type="submit" 
                     ng-disabled="addRiderForm.$invalid"
                     class="btn btn-success">
-                <div ng-loading-icon is-loading="addRiderForm._pending"></div>
-                <span ng-show="!addRiderForm._pending" class="glyphicon glyphicon-plus-sign"></span>
+                <span class="glyphicon glyphicon-plus-sign"></span>
                 Save
             </button>
         </div>

@@ -5,15 +5,17 @@ angular.module('app', [
     'app.player',
     'app.layout',
     'app.account',
-//    'app.page'
+    'app.rider',
+    'app.tag',
+    'app.page'
 ])
         .config(ConfigRouting)
         .config(ConfigInterceptor)
-        .controller('MainController', MainController)
+        .controller('MainController', MainController, VideoTagData)
         .run(Run);
 
 
-function MainController($scope) {
+function MainController($scope, PlayerData) {
     $scope.$on('$routeChangeStart', function() {
         $scope.isViewLoading = true;
     });
@@ -23,6 +25,9 @@ function MainController($scope) {
     $scope.$on('$routeChangeError', function() {
         $scope.isViewLoading = false;
     });
+    
+    $scope.playerData = PlayerData;
+    $scope.videoTagData = VideoTagData;
 }
 
 

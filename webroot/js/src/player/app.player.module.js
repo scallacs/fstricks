@@ -3,7 +3,8 @@ angular.module('app.player', [
     'ngMessages',
     'app.core',
     'shared.youtube',
-    'shared'
+    'shared',
+    'angularUtils.directives.dirPagination'
 ])
         .config(ConfigRoute)
         .controller('ModalReportErrorController', ModalReportErrorController)
@@ -96,13 +97,13 @@ function ModalReportErrorController($scope, $uibModalInstance, ErrorReportEntity
 }
 
 function AddVideoController($scope, YoutubeVideoInfo, $location,
-        VideoEntity, VideoTagEntity, PlayerProviders, messageCenterService, SharedData, AuthenticationService, PlayerData) {
+        VideoEntity, VideoTagEntity, ServerConfigEntity, messageCenterService, SharedData, AuthenticationService, PlayerData) {
 
     AuthenticationService.requireLogin();
 
     var videosInCache = {};
-    $scope.data = {provider_id: PlayerProviders.list()[0].name, video_url: null};
-    $scope.playerProviders = PlayerProviders.list();
+    $scope.data = {provider_id: null, video_url: null};
+    $scope.playerProviders = [];
     $scope.add = add;
     $scope.isFormLoading = false;
 
@@ -114,6 +115,11 @@ function AddVideoController($scope, YoutubeVideoInfo, $location,
     };
 
     init();
+    
+    ServerConfigEntity.rules().then(function(rules){
+        $scope.data.provider_id = rules.videos.provider_id.values[0];
+        $scope.playerProviders = rules.videos.provider_id.values;
+    });
 
     function init() {
         $scope.feedback = null;

@@ -9,11 +9,11 @@ angular
         .factory('ErrorReportEntity', ErrorReportEntity)
         .factory('VideoEntity', VideoEntity)
         .factory('SportEntity', SportEntity)
-        .factory('CategoryEntity', CategoryEntity)
         .factory('TagEntity', TagEntity)
         .factory('VideoTagPointEntity', VideoTagPointEntity)
         .factory('VideoTagEntity', VideoTagEntity)
         .factory('AuthenticationService', AuthenticationService)
+        .factory('ServerConfigEntity', ServerConfigEntity)
         .filter('searchCategory', searchCategory)
         .filter('getSportByName', getSportByName);
 
@@ -77,6 +77,7 @@ function PlayerData(VideoTagData) {
         },
         loadVideo: function() {
         },
+        playVideoRange: function(){},
         onCurrentTimeUpdate: function() {
         },
         setPlayer: function(player) {
@@ -440,20 +441,8 @@ function SportEntity($resource) {
         index: {
             method: 'GET',
             params: {action: 'index'},
-            isArray: true
-        }
-    });
-
-}
-
-function CategoryEntity($filter) {
-    var url = WEBROOT_FULL + '/Categories/:action/:id.json';
-    //var url = '/sys/MediaTagTricks/:action/:id';
-    return $resource(url, {id: '@id', action: '@action'}, {
-        index: {
-            method: 'GET',
-            params: {action: 'index'},
-            isArray: true
+            isArray: true,
+            cache: true
         }
     });
 
@@ -567,11 +556,11 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $locatio
 
     function login(username, password) {
         var promise = UserEntity.login({email: username, password: password, id: null}, function(response) {
-                    if (response.success) {
-                        response.data.provider = null;
-                        setCredentials(response.data);
-                    }
-                }).$promise;
+            if (response.success) {
+                response.data.provider = null;
+                setCredentials(response.data);
+            }
+        }).$promise;
         return promise;
     }
 
@@ -629,29 +618,34 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $locatio
 
 
 
-function ServerConfig($http) {
-    var baseUrl = 'data/';
-    
-    var cache = {
-        rules: null,
-        countries: null,
-        config: null
-    };
+function ServerConfigEntity($resource) {
+    var resource = $resource('data/:action.json', {action: '@action'}, {
+        rules: {
+            method: 'GET',
+            params: {action: 'rules'},
+            isArray: false,
+            cache: true
+        },
+        countries: {
+            method: 'GET',
+            params: {action: 'countries'},
+            isArray: true,
+            cache: true
+        }
+    });
     
     return {
-        rules: rules
+        rules: rules,
+        countries: countries
     };
     
-    function rules(){
-        load('rules').then()
+    function rules() {
+        return resource.rules().$promise;
     }
     
-    function load(type){
-        if (cache[type] != null){
-            return cache[type];
-        }
-         cache[type] =  $http.get(baseUrl + type + '.json');
-         return cache[type];
+    function countries() {
+        return resource.countries().$promise;
     }
-    
+
+
 }

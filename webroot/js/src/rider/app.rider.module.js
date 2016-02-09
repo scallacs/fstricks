@@ -1,17 +1,18 @@
 angular
-        .module('app.rider', ['ng-flow', 'ngRoute'])
+        .module('app.rider', ['flow', 'ngRoute', 'ngMessages'])
         .config(ConfigRouting)
         .controller('RiderProfileController', RiderProfileController);
 
 ConfigRouting.$inject = ['$routeProvider'];
 function ConfigRouting($routeProvider) {
+    var baseUrl = 'js/src/rider/partials/';
     $routeProvider
             .when('/profile/:riderId', {
-                templateUrl: HTML_FOLDER + 'Riders/profile.html',
+                templateUrl: baseUrl + 'profile.html',
                 controller: 'RiderProfileController'
             })
             .when('/profile', {
-                templateUrl: HTML_FOLDER + 'Riders/profile.html',
+                templateUrl: baseUrl + 'profile.html',
                 controller: 'RiderProfileController'
             });
 }

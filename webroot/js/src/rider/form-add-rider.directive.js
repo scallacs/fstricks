@@ -3,14 +3,14 @@ angular
         .directive('formAddRider', function() {
             return {
                 restrict: 'EA',
-                templateUrl: 'form-add-rider.html',
+                templateUrl: 'js/src/rider/partials/form-add-rider.html',
                 scope: {
                     profilePicture: '=profilePicture',
                     saveMethod: '=saveMethod',
                     defaultRider: '&rider',
                     findSimilarRiders: '=similarRiders'
                 },
-                controller: function($scope, RiderEntity, NationalityEntity) {
+                controller: function($scope, RiderEntity, ServerConfigEntity) {
                     $scope.save = save;
                     $scope.cancel = cancel;
                     $scope.selectExistingRider = selectExistingRider;
@@ -19,11 +19,7 @@ angular
 
                     $scope.similarRiders = [];
                     $scope.nationalities = [];
-                    $scope.levels = [
-                        // TODO syncho with servers
-                        {code: 1, name: 'Amateur'},
-                        {code: 2, name: 'Pro'}
-                    ];
+                    $scope.levels = [];
                     $scope.uploader = {
                         flow: null,
                         init: {
@@ -42,13 +38,16 @@ angular
                         $scope.findSimilarRiders = false;
                     }
 
-                    NationalityEntity.all({}, function(nationalities) {
+                    ServerConfigEntity.countries().then(function(nationalities) {
                         $scope.nationalities = nationalities;
+                    });
+                    ServerConfigEntity.rules().then(function(rules) {
+                        $scope.levels = rules.riders.level.values;
                     });
 
                     $scope.$watch('rider.firstname + rider.lastname', function() {
                         console.log($scope.rider);
-                        if ($scope.findSimilarRiders && $scope.rider.lastname.length >= 2 && $scope.rider.firstname.length) {
+                        if ($scope.rider && $scope.findSimilarRiders && $scope.rider.lastname.length >= 2 && $scope.rider.firstname.length) {
                             searchSimilars($scope.rider.firstname, $scope.rider.lastname);
                         }
                     });
@@ -62,7 +61,7 @@ angular
                         }
                         else {
                             console.log("Adding rider, file not changed");
-                            $scope.addRiderForm.submit(RiderEntity[$scope.saveMethod], rider, function(result) {
+                            $scope.addRiderForm.submit(RiderEntity[$scope.saveMethod](rider)).then(function(result) {
                                 handleServerResponse(result);
                             });
                         }
@@ -137,8 +136,6 @@ angular
                             emitRider(rider);
                         }
                     }
-
-
 
                 },
                 link: function($scope, element) {

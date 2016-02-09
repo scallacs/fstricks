@@ -1,7 +1,5 @@
-
 <div class="item item-video-tag bg-primary" 
      ng-class="{ 'active': playerData.currentTag.id === videoTag.id}" >
-
     <div class="item-heading row clickable">
 
         <div class="item-add-tag" ng-click="view(videoTag)" ng-if="playerData.editionMode && videoTag.id === null">
@@ -81,6 +79,10 @@
                     <div class="text-danger padding-sm" 
                          ng-if="playerData.editionMode && videoTag.id === playerData.currentTag.id" >
                         <span ng-if="videoTag.id"><span class="glyphicon glyphicon-edit"></span> Editing...</span>
+                    </div>
+                    <div class="padding-sm" 
+                         ng-if="playerData.editionMode && videoTag.id !== playerData.currentTag.id" >
+                        {{videoTag.begin | secondsToHours}} to {{videoTag.end | secondsToHours}} 
                     </div>
                     <div ng-if="!playerData.editionMode" >
 

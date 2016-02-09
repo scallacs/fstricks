@@ -7,16 +7,16 @@
     <ul class="nav navbar-nav text-capitalize navbar-no-collapse ">
         <li class="dropdown">
             <a data-toggle="dropdown" ng-if="currentSport"  class="text-big"><b class="caret"></b> 
-                {{topnav.currentSport.name}}
+                {{currentSport.name}}
             </a>
             <a data-toggle="dropdown" ng-if="!currentSport"  class="text-big">
                 <b class="caret"></b> 
                 All sports
             </a>
             <ul class="dropdown-menu">
-                <li><a href="#/#/" ng-click="topnav.setCurrentSport(null)">All sports</a></li>
-                <li ng-repeat="sport in topnav.sports">
-                    <a ng-href="#/sports/{{sport.name}}" ng-click="topnav.setCurrentSport(sport)">
+                <li><a href="#/#/" ng-click="setCurrentSport(null)">All sports</a></li>
+                <li ng-repeat="sport in sports">
+                    <a ng-href="#/sports/{{sport.name}}" ng-click="setCurrentSport(sport)">
                         {{sport.name}}
                     </a>
                 </li>
@@ -33,7 +33,7 @@
             <ul class="dropdown-menu">
                 <li> <a href="#/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
                 <li> <a href="#/settings"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
-                <li ng-click="topnav.logout()">
+                <li ng-click="logout()">
                     <a href="#/users/login">
                         <span class="glyphicon glyphicon-log-out"></span> Logout
                     </a>
@@ -43,18 +43,11 @@
     </ul>
 </div>
 <div class="bg-secondary padding-sm-side">
-    <!--
-    <div class="page-title">
-        <h3 class="title text-capitalize">
-            {{playerData.title}}
-        </h3>
-    </div>
-    -->
     <form class="navbar-form" role="search">
         <div  class="input-group">
             <ui-select 
                 id="SearchBar"
-                ng-model="topnav.search.tag" 
+                ng-model="search.tag" 
                 theme="bootstrap"
                 reset-search-input="false">
                 <ui-select-match placeholder="Trick name" style="text-transform: capitalize;" >
@@ -64,8 +57,8 @@
                     </span>
                 </ui-select-match>
                 <ui-select-choices
-                    repeat="tag in topnav.searchTags"
-                    refresh="topnav.refreshSearchedTags($select.search)"
+                    repeat="tag in searchTags"
+                    refresh="refreshSearchedTags($select.search)"
                     refresh-delay="500">
                     <div class="clearfix">
                         <div class="col-xs-10" style="text-transform: capitalize;"  >

@@ -1,4 +1,6 @@
 <div
+    ng-if="playerData.visible"
+    ng-show="playerData.showListTricks"
     infinite-scroll='videoTagData.loadNextPage()' 
     infinite-scroll-disabled='videoTagData.disabled || videoTagData.loading' 
     infinite-scroll-distance='1'>

@@ -2,7 +2,7 @@ angular.module('shared.youtube')
     .directive('youtubeItem', function() {
     return {
         restrict: 'EA',
-        templateUrl: WEBROOT_FULL + '/html/Videos/item.html',
+        templateUrl: 'js/src/shared/youtube/youtube-item.html',
         scope: {
             info: '=',
             id: '='

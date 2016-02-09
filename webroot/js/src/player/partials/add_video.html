@@ -4,46 +4,59 @@
 <div class="container">
     <div class="panel panel-primary">
         <div class="panel-body">
-            <form class="form" name="form" server-form novalidate>
+            <form id="FormAddVideo" class="form" name="addVideoForm" server-form novalidate>
                 <fieldset>
-                    <div class="form-group clearfix">
-                        <div class="col-xs-4">
-                            <select ng-model="data.provider_id" 
+                    <div class="col-xs-4">
+                        <div class="form-group clearfix has-feedback"
+                             ng-class="{ 'has-error': addVideoForm.provider_id.$invalid }">
+                            <select 
+                                    id="FormFieldProviderId"
+                                    ng-model="data.provider_id" 
                                     class="form-control"
                                     ng-disabled="playerProviders.length <= 1"
                                     ng-options="provider.name as provider.name for provider in playerProviders"
+                                    servererror
                                     required
                                     >
                             </select>
+                            <span class="ion-person form-control-feedback"></span>
+                            <div class="help-block text-danger"
+                                 ng-if="addVideoForm.provider_id.$dirty" 
+                                 ng-messages="addVideoForm.provider_id.$error">
+                                <div ng-message="required">Pick a valid provider.</div>
+                                <div ng-message="server">{{addVideoForm.provider_id.$error.server}}</div>
+                            </div>
                         </div>
-                        <div class="col-xs-8"  ng-class="{ 'has-error': form.video_url.$invalid }">
+                    </div>
+                    <div class="col-xs-8">
+                        <div class="form-group clearfix has-feedback" 
+                             ng-class="{ 'has-error': addVideoForm.video_url.$invalid }">
                             <input type="text" 
+                                    id="FormFieldVideoUrl"
                                    class="form-control"
                                    ng-model="data.video_url"
                                    name="video_url"
                                    placeholder="paste here the video id or video url"
+                                   servererror
                                    rule-youtube-video-id
                                    required/>
-                            <p class="bg-info padding-sm" ng-show="form.video_url.$pending.youtubeVideoId">Checking the video id</p>
-                            <p class="bg-warning padding-sm"  ng-show="form.video_url.$error.youtubeVideoId">This is not a valid video id</p>
+                            <span class="ion-person form-control-feedback"></span>
+                            <div class="help-block text-danger"
+                                 ng-if="addVideoForm.video_url.$dirty" 
+                                 ng-messages="addVideoForm.video_url.$error">
+                                <div ng-message="required">You must enter a valid youtube link.</div>
+                                <div ng-message="youtubeVideoId">You must enter a valid youtube link.</div>
+                                <div ng-message="server">{{addVideoForm.video_url.$error.server}}</div>
+                            </div>
                         </div>
                     </div>
-                    <!--
-                    <div ng-show="form.$valid" style="margin: auto;">
-                        <youtube   
-                            player-video="data"
-                            height="player.height" 
-                            width="player.height" ></youtube> 
-                    </div>
-                    -->
-
                     <div mc-messages></div>
 
                     <div class="text-center form-group">
                         <button type="button" 
                                 ng-click="add(data)" 
                                 class="btn btn-primary"
-                                ng-disabled="!form.$valid">Next 
+                                ng-disabled="!addVideoForm.$valid">Next 
                         </button>
                     </div>
                 </fieldset>

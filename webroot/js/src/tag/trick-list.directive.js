@@ -1,4 +1,4 @@
-angular.module('app.player')
+angular.module('app.tag')
         .directive('trickList', trickList);
 /**
  * Server form. Extend ng form functionnalities.
@@ -6,9 +6,9 @@ angular.module('app.player')
  */
 function trickList() {
     return {
-        template: 'trick-list.html',
-        controller: function($scope) {
-            
+        templateUrl: 'js/src/tag/partials/trick_list.html',
+        controller: function($scope, PlayerData) {
+            $scope.playerData = PlayerData;
         },
         link: function(scope, elem, attr, form) {
 

@@ -6,9 +6,10 @@ angular.module('app.player')
  */
 function playerContainer() {
     return {
-        template: 'player-container.html',
-        controller: function($scope) {
-            
+        templateUrl: 'js/src/player/partials/player-container.html',
+        controller: function($scope, PlayerData, VideoTagData) {
+            $scope.playerData = PlayerData;
+            $scope.videoTagData = VideoTagData;
         },
         link: function(scope, elem, attr, form) {
 
