@@ -34,27 +34,32 @@ function serverForm(messageCenterService) {
                 promise
                         .then(successCallback)
                         .finally(finallyCallback);
-                
+
                 return promise;
-                
+
                 function finallyCallback() {
                     form.pending(false);
                 }
                 function successCallback(results) {
                     console.log(results);
                     if (!results.success) {
-                        var errors;
-                        if (errors in results.validationErrors) {
-                            form.setValidationErrors(errors)
-                        }
+                        form.setValidationErrors(results.validationErrors);
                     }
                     messageCenterService.add(results.success ? 'success' : 'warning',
                             results.message, {status: messageCenterService.status.shown});
                 }
             };
 
-            form.setValidationErrors = function setValidationErrors(serverErrors) {
+            form.setValidationErrors = function(models) {
+                console.log(models);
+                angular.forEach(models, function(errors){
+                    _setValidationErrors(errors);
+                });
+            };
+
+            function _setValidationErrors(serverErrors) {
                 console.log("Setting validation errors (" + serverErrors.length + ")");
+                console.log(serverErrors);
                 angular.forEach(serverErrors, function(errors, field) {
                     var errorString = Object.keys(errors).map(function(k) {
                         return errors[k];

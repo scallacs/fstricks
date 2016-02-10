@@ -33,7 +33,8 @@
                         </a>
                         <a ng-if="!playerData.editionMode && !videoTag.rider_name" 
                            class="item-user-name text-danger"
-                           ng-href="#/tag/edit/{{videoTag.video_id}}/{{videoTag.id}}">
+                           ui-sref="addtag({videoId:videoTag.video_id, tagId: videoTag.id})"
+                           >
                             Add the rider
                         </a>
                     </div>
@@ -119,13 +120,13 @@
                         </button>
                         <ul class="dropdown-menu nav-stacked nav-pills dropdown-menu-right">
                             <li >
-                                <a ng-href="#/video/view/{{videoTag.video_id}}">
+                                <a ui-sref="videoplayer.video({videoId:videoTag.video_id})">
                                     <span class="glyphicon glyphicon-play-circle"></span>  
                                     View full video
                                 </a>
                             </li>           
                             <li>
-                                <a ng-href="#/view/{{videoTag.sport_name}}/{{videoTag.category_name}}/{{videoTag.tag_slug}}">
+                                <a  ui-sref="videoplayer.tag({tagId:videoTag.tag_id})">
                                     <span class="glyphicon glyphicon-eye-open"></span>  
                                     View this trick
                                 </a>
@@ -138,7 +139,7 @@
                                 </a>
                             </li>
                             <li >
-                                <a href="" ng-href="#/tag/edit/{{videoTag.video_id}}/{{videoTag.id}}">
+                                <a ui-sref="addtag({videoId:VideoTag.video_id, tagId:videoTag.id})">
                                     <span class="glyphicon glyphicon-edit"></span> 
                                     Edit
                                 </a>

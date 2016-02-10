@@ -41,6 +41,25 @@ class VideoTagsControllerTest extends MyIntegrationTestCase
         $this->assertResponseOk();
         $result = json_decode($this->_response->body());
     }
+    
+    /**
+     * Test add method
+     *
+     * @return void
+     */
+    public function testSearch()
+    {   
+        $this->get('/VideoTags/search.json');
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        $first = $result[0];
+        $this->assertArrayHasKey('tag_id', $first);
+        $this->assertArrayHasKey('tag_name', $first);
+        $this->assertArrayHasKey('video_id', $first);
+        $this->assertArrayHasKey('video_url', $first);
+        $this->assertArrayHasKey('begin', $first);
+        $this->assertArrayHasKey('end', $first);
+    }
 
     /**
      * Test add method

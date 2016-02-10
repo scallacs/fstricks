@@ -1,0 +1,49 @@
+<div class="view-rider clearfix">
+    <div class="thumbnail col-sm-4" ng-show="!$flow.files.length">
+        <img ng-if="rider.picture_portrait" ng-src="{{rider.picture_portrait}}">
+        <img ng-if="!rider.picture_portrait" src="img/icon_avatar.png">
+    </div>
+    <div class="col-sm-8">
+        <div ng-if="hasRiderProfile()">
+            <h2 class="page-title text-capitalize">{{rider.firstname}} {{rider.lastname}}</h2>
+            <table class="table table-striped">
+                <tr>
+                    <td>Nationality</td>
+                    <td class="text-bold">{{rider.nationality}}</td>
+                    <td>Level</td>
+                    <td class="text-bold">{{rider.level}}</td>
+                </tr>
+                <tr>
+                    <td>Tagged</td>
+                    <td class="text-bold" ng-if="rider.count_tags > 0">
+                        {{rider.count_tags}} time(s) <br/>
+                        <a ui-sref="player.rider({rider_id: rider.id})">view videos</a>
+                    </td>
+                    <td class="text-bold" ng-if="rider.count_tags === 0">
+                        Never
+                    </td>
+                    <td colspan="2"></td>
+                    <!--
+                    <td>Points</td>
+                    <td class="text-bold">{{rider.count_points}}</td>-->
+                </tr>
+            </table>
+        </div>
+        <div ng-if="!hasRiderProfile()" class="text-center">
+            <h3 class="page-title"> Create your rider profile now </h3>
+            <p class="text-muted">
+                Creating a rider profile allow you to be recognised and tag in video. 
+            </p>
+        </div>
+    </div>
+</div>
+<div class="text-center" ng-if="isEditabled()">
+    <a type="button" 
+       id="buttonEditProfile"
+       class="btn btn-primary"
+       ui-sref="myriderprofile.edit">
+        <span class="glyphicon glyphicon-edit"></span>
+        <span ng-if="hasRiderProfile()">Edit</span> 
+        <span ng-if="!hasRiderProfile()">Create</span> 
+    </a>
+</div>

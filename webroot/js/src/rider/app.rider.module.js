@@ -1,96 +1,93 @@
 angular
-        .module('app.rider', ['flow', 'ngRoute', 'ngMessages'])
+        .module('app.rider', ['flow', 'ngRoute', 'ngMessages', 'ui.router'])
         .config(ConfigRouting)
         .controller('RiderProfileController', RiderProfileController);
 
-ConfigRouting.$inject = ['$routeProvider'];
-function ConfigRouting($routeProvider) {
+ConfigRouting.$inject = ['$stateProvider'];
+function ConfigRouting($stateProvider) {
     var baseUrl = 'js/src/rider/partials/';
-    $routeProvider
-            .when('/profile/:riderId', {
+    $stateProvider
+            .state('myriderprofile', {
+                url: '',
                 templateUrl: baseUrl + 'profile.html',
-                controller: 'RiderProfileController'
+                controller: 'RiderProfileController',
+                data: {
+                    requireLogin: true,
+                    pageLoader: true
+                }
             })
-            .when('/profile', {
+            .state('myriderprofile.edit', {
+                url: '/profile/edit',
+                views: {
+                    viewRiderProfile: {
+                        templateUrl: baseUrl + '/profile_edit.html',
+                    }
+                },
+                data: {
+                    requireLogin: true,
+                    pageLoader: false
+                }
+            })
+            .state('myriderprofile.view', {
+                url: '/profile',
+                views: {
+                    viewRiderProfile: {
+                        templateUrl: baseUrl + '/profile_view.html',
+                    }
+                },
+                data: {
+                    requireLogin: true
+                }
+            })
+            .state('riderprofile', {
+                url: '/profile/:riderId',
                 templateUrl: baseUrl + 'profile.html',
-                controller: 'RiderProfileController'
+                controller: 'RiderProfileController',
+                data: {
+                    requireLogin: false,
+                    pageLoader: true
+                }
             });
+            
 }
 
-RiderProfileController.$inject = ['$scope', '$routeParams', 'AuthenticationService', 'SharedData', 'RiderEntity', 'VideoTagData', 'PlayerData', '$location'];
-function RiderProfileController($scope, $routeParams, AuthenticationService, SharedData, RiderEntity, VideoTagData, PlayerData, $location) {
-    if (!$routeParams.riderId) {
-        AuthenticationService.requireLogin();
-    }
-
-    SharedData.profileLoaded = false;
-    PlayerData.hide();
+function RiderProfileController($scope, $stateParams, AuthenticationService, SharedData, RiderEntity, $state) {
     // =========================================================================
     // Properties
-    $scope.SharedData = SharedData;
-    $scope.editionMode = false;
     $scope.isCurrentUserProfile = false;
     $scope.rider = {id: null};
     $scope.hasRiderProfile = hasRiderProfile;
+    
     $scope.$on("rider-selected", function(event, rider) {
-        if (rider === null) {
-            cancelEditionMode();
-        }
-        else {
-            //               console.log(rider);
-            $scope.editionMode = false;
+        if (rider !== null) {
             $scope.rider = rider;
         }
+        $state.go('myriderprofile.view').then(function(){
+            SharedData.pageLoader(false);
+        });
     });
-    $scope.$watch("rider.id", function(val) {
-        if (val > 0) {
-            SharedData.loadingState = 0;
-        }
-    });
+    
+    init();
+    
     // =========================================================================
     // Init
     function loadProfile(riderId) {
         RiderEntity.profile({id: riderId}, function(rider) {
             $scope.rider = rider;
-            $scope.profileLoaded = true;
-        }, function() {
-            $location.path("/");
+        }).$promise.finally(function(){
+            SharedData.pageLoader(false);
         });
-//                        .$promise.finally(function() {
-//                    SharedData.loadingState = 0;
-//                });
     }
 
     function init() {
-        var riderId = null;
-        if ($routeParams.riderId) {
-            riderId = $routeParams.riderId;
-        }
-        loadProfile(riderId);
+        loadProfile($stateParams.riderId ? $stateParams.riderId : null);
     }
-    init();
+
     // =========================================================================
-    // Form
     function hasRiderProfile() {
-        return $scope.rider.firstname != null;
+        return $scope.rider.id !== null;
     }
-    // =========================================================================
-    // scope
-
-    $scope.startEditionMode = function() {
-        $scope.editionMode = true;
-    };
-    function cancelEditionMode() {
-        $scope.editionMode = false;
-    }
-
     $scope.isEditabled = function() {
         return !hasRiderProfile() || $scope.rider.user_id === AuthenticationService.getCurrentUser().id;
-    };
-    $scope.viewVideos = function() {
-        PlayerData.show();
-        VideoTagData.setFilter('rider_id', $scope.rider.id);
-        VideoTagData.setOrder('created');
-        VideoTagData.loadNextPage();
     };
 }

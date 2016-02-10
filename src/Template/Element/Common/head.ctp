@@ -31,6 +31,7 @@
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.min.js"); ?>
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-cookies.min.js"); ?>
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-messages.min.js"); ?>
+<?= $this->Html->script("bower_components/angular-ui-router/release/angular-ui-router.min"); ?>
 
 <?= $this->Html->script("node_modules/angular-simple-logger/dist/angular-simple-logger.min.js"); ?> <!-- Use online lib ? -->
 <?= $this->Html->script("lib/ui-bootstrap-custom-tpls-0.14.3.min.js"); ?>
@@ -52,10 +53,12 @@
 <?= $this->Html->script('src/shared/youtube/youtube-video-info.factory'); ?>
 
 <?= $this->Html->script('src/shared/time.filter'); ?>
+<?= $this->Html->script('src/shared/directives/page-loader.directive'); ?>
 
 <?= $this->Html->script('src/core/app.core.module'); ?>
 
 <?= $this->Html->script('src/account/app.account.module'); ?>
+<?= $this->Html->script('src/account/form-login.directive'); ?>
 
 <?= $this->Html->script('src/layout/app.layout.module'); ?>
 <?= $this->Html->script('src/layout/topnav.directive'); ?>

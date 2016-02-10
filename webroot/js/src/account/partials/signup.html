@@ -3,7 +3,11 @@
         <div class="center-form panel"  style="max-width: 500px;margin: auto;">
             <div class="panel-body">
                 <h2 class="text-center">Sign up</h2>
-                <form id="FormSignup" method="post" ng-submit="signup(user)" name="signupForm" server-form>
+                <form id="FormSignup" 
+                      method="post" 
+                      ng-submit="signup(user)" 
+                      name="signupForm" 
+                      server-form>
                     <fieldset ng-disabled="isFormLoading"> 
                         <div class="form-group has-feedback" 
                              ng-class="{ 'has-error' : signupForm.username.$invalid && signupForm.username.$dirty }">
@@ -64,7 +68,8 @@
                                 <div ng-message="compareTo"> Password must match.</div>
                             </div>
                         </div>
-                        <p class="text-center text-muted"><small> By clicking on Sign up, you agree to <a href="#/#">terms & conditions</a> and <a href="#/#">privacy policy</a></small></p>
+                        <p class="text-center text-muted"><small> By clicking on Sign up, you agree to <a ui-sref="gtu">terms & conditions</a> 
+                                and <a ui-sref="privacy_policy">privacy policy</a></small></p>
 
                         <div mc-messages></div>
                         <button type="submit" 
@@ -74,7 +79,7 @@
                             <div ng-loading-icon is-loading="isFormLoading"></div>
                         </button>
                         <br/>
-                        <p class="text-center text-muted">Already have an account? <a href="#/login">Log in now</a></p>
+                        <p class="text-center text-muted">Already have an account? <a href="login">Log in now</a></p>
                     </fieldset>
                 </form>
             </div>

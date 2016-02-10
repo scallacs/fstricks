@@ -25,7 +25,7 @@ class RidersController extends AppController {
      */
     public function profile($profileId = null) {
         ResultMessage::setWrapper(false);
-        $query = $this->Riders->find();
+        $query = $this->Riders->find()->limit(1);
         if ($profileId === null && $this->Auth->user('id')) {
             $query->where(['Riders.user_id' => $this->Auth->user('id')]);
         } else if (!empty($profileId)) {
@@ -34,9 +34,6 @@ class RidersController extends AppController {
             throw new \Cake\Network\Exception\UnauthorizedException();
         }
         $data = $query->first();
-        if (empty($data)) {
-            throw new \Cake\Network\Exception\NotFoundException();
-        }
         ResultMessage::overwriteData($data);
     }
 

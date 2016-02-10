@@ -120,8 +120,13 @@ class RidersTable extends Table {
 
         $validator
                 ->add('level', 'valid', ['rule' => function ($value){
-                    $levels = array_column(JsonConfigHelper::rules("riders", "level", "values"), 'code');
-                    return isset($levels[$value]);
+                    $levels = JsonConfigHelper::rules("riders", "level", "values");
+                    foreach ($levels as $level){
+                        if ($level['code'] == $value){
+                            return true;
+                        }
+                    }
+                    return false;
                 }])
                 ->requirePresence('level', 'create')
                 ->notEmpty('level');
@@ -140,7 +145,7 @@ class RidersTable extends Table {
     public function buildRules(RulesChecker $rules) {
         $rules->add($rules->existsIn(['user_id'], 'Users'));
         $rules->add($rules->isUnique(['user_id']));
-        $rules->add($rules->isUnique(['firstname', 'lastname', 'nationality']));
+        $rules->add($rules->isUnique(['firstname', 'lastname', 'nationality'], "There is already a rider with the same name and nationality"));
         //$rules->add($rules->existsIn(['social_provider_id'], 'SocialProviders'));
         return $rules;
     }
@@ -151,12 +156,13 @@ class RidersTable extends Table {
      * @param \App\Model\Table\ArrayObject $options
      */
     public function beforeSave($event, $entity, $options) {
+        // TODO move from here
         if ($entity->isNew()) {
             $entity->firstname = \App\Lib\DataUtil::lowername($entity->firstname);
             $entity->lastname = \App\Lib\DataUtil::lowername($entity->lastname);
         }
         $entity->nationality = \App\Lib\DataUtil::lowername($entity->nationality);
-        $entity->slug = \Cake\Utility\Inflector::slug($entity->firstname . '-' . $entity->lastname);
+        $entity->slug = \Cake\Utility\Inflector::slug($entity->firstname . '-' . $entity->lastname.'-'.$entity->nationality);
     }
 
 }

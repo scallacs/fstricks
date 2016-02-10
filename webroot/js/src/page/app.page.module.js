@@ -1,22 +1,42 @@
-angular.module('app.page', [])
+angular.module('app.page', ['ui.router'])
         .config(ConfigRoute)
         .controller('PagesController', PagesController);
 
-ConfigRoute.$inject = ['$routeProvider'];
-function ConfigRoute($routeProvider) {
+ConfigRoute.$inject = ['$stateProvider'];
+function ConfigRoute($stateProvider) {
     var baseUrl = 'js/src/page/partials/';
-    $routeProvider
-            .when('/faq', {
+    
+    $stateProvider
+            .state('faq', {
                 templateUrl: baseUrl + 'faq.html',
-                controller: 'PagesController'
+                controller: 'PagesController',
+                data: {
+                    requireLogin: false
+                }
             })
-            .when('/contact', {
+            .state('contact', {
                 templateUrl: baseUrl + '/contact.html',
-                controller: 'PagesController'
+                controller: 'PagesController',
+                data: {
+                    requireLogin: false
+                }
+            })
+            .state('gtu', {
+                templateUrl: baseUrl + '/gtu.html',
+                controller: 'PagesController',
+                data: {
+                    requireLogin: false
+                }
+            })
+            .state('privacy_policy', {
+                templateUrl: baseUrl + '/privacy_policy.html',
+                controller: 'PagesController',
+                data: {
+                    requireLogin: false
+                }
             });
 }
 
-function PagesController($scope, SharedData, PlayerData) {
-    PlayerData.hide();
-    SharedData.loadingState = 0;
+function PagesController() {
+    
 }

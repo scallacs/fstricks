@@ -5,7 +5,7 @@
             Oups, there is no tricks registered yet... 
         <p/>
         <p class="text-center">
-            <a href="#/video/add"> Add tricks now</a>
+            <a ui-sref="addvideo"> Add tricks now</a>
         </p>
     </div>
     <div ng-show="playerData.currentTag != null || videoTagData.data.length > 0">
@@ -18,7 +18,7 @@
         <div ng-show="!playerData.data.video_url">
             <p class="pick-video-message" >
                 Pick a trick to play<br/>
-                <span class="text-muted"><a href="#/video/add"> or create new ones</a></span>
+                <span class="text-muted"><a ui-sref="addvideo"> or create new ones</a></span>
             </p>
         </div>
     </div>

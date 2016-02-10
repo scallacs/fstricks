@@ -11,8 +11,9 @@
             Any abuse of service will be punished by removing your account without any type of notice. 
         </span>
     </p>
-    <form class="" name="formReportError" >
-        <fieldset ng-disabled="isFormLoading">
+    <!-- TODO -->
+    <form id="FormReportVideoTagError" name="formReportVideoTagError" server-form >
+        <fieldset>
             <!--
             <div class="form-group">
                 <label class="col-sm-3 control-label">Error type</label>
@@ -58,7 +59,6 @@
                 <button type="submit" class="btn btn-primary" ng-click="sendReport(errorReport)">
                     <span class="glyphicon glyphicon-send"></span> 
                     Send 
-                    <div ng-loading-icon is-loading="isFormLoading"></div>
                 </button>
             </div>
         </fieldset>

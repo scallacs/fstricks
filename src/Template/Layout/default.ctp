@@ -15,17 +15,11 @@
 
 
         <div id="container" style="position: relative;" class="clearfix">
-            <!--
-            <div class="loading-spiner-holder" id="overlay" data-loading >
-                <div class="loading-spiner">
-                    <img id="loading" src="http://bit.ly/pMtW1K" />
-                </div>
-            </div>-->
+            
+            <div page-loader></div>
             
             <div id="content">
-                <div class="full-player" player-container></div>
-                <div class="list-tricks" trick-list></div>
-                <div ng-view></div>
+                <div ui-view></div>
             </div>
         </div>
 

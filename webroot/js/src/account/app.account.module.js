@@ -1,6 +1,6 @@
 angular.module('app.account', [
     'ngResource',
-    'ngRoute',
+    'ui.router',
     'ngMessages',
     'satellizer',
     'MessageCenterModule',
@@ -10,6 +10,8 @@ angular.module('app.account', [
         .run(Run)
         .config(ConfigRoute)
         .config(ConfigSocialApi)
+        .service('loginModal', loginModal)
+        .controller('LoginModalController', LoginModalController)
         .controller('SettingsController', SettingsController)
         .controller('UserLoginController', UserLoginController)
         .controller('SignupController', SignupController);
@@ -22,23 +24,34 @@ function Run() {
 }
 
 
-ConfigRoute.$inject = ['$routeProvider'];
-function ConfigRoute($routeProvider) {
-    $routeProvider
-            .when('/settings', {
-                templateUrl: 'js/src/account/partials/settings.html',
-                controller: 'SettingsController'
-            })
-            .when('/login', {
+ConfigRoute.$inject = ['$stateProvider'];
+function ConfigRoute($stateProvider) {
+    $stateProvider
+            .state('login', {
+                url: '/login',
                 templateUrl: 'js/src/account/partials/login.html',
-                controller: 'UserLoginController'
+                controller: 'UserLoginController',
+                data: {
+                    requireLogin: false
+                }
             })
-            .when('/signup', {
+            .state('signup', {
+                url: '/signup',
                 templateUrl: 'js/src/account/partials/signup.html',
-                controller: 'SignupController'
+                controller: 'SignupController',
+                data: {
+                    requireLogin: false
+                }
             })
+            .state('settings', {
+                url: '/settings',
+                templateUrl: 'js/src/account/partials/settings.html',
+                controller: 'SettingsController',
+                data: {
+                    requireLogin: true
+                }
+            });
 }
-;
 
 function ConfigSocialApi($authProvider, Config) {
     $authProvider.facebook({
@@ -67,10 +80,8 @@ function ConfigSocialApi($authProvider, Config) {
 //    });
 }
 
-SettingsController.$inject = ['$scope', 'SharedData', 'messageCenterService', 'AuthenticationService', 'UserEntity', 'PlayerData']
-function SettingsController($scope, SharedData, messageCenterService, AuthenticationService, UserEntity, PlayerData) {
-
-    AuthenticationService.requireLogin();
+SettingsController.$inject = ['$scope', 'SharedData', 'messageCenterService', 'AuthenticationService', 'UserEntity']
+function SettingsController($scope, SharedData, messageCenterService, AuthenticationService, UserEntity) {
 
     $scope.data = {};
     $scope.password = '';
@@ -78,9 +89,6 @@ function SettingsController($scope, SharedData, messageCenterService, Authentica
     $scope.isFormDeleteAccountLoading = false;
     $scope.isSociaLogin = isSocialLogin;
     $scope.data.user = AuthenticationService.getCurrentUser();
-
-    SharedData.loadingState = 0;
-    PlayerData.hide();
 
     function isSocialLogin() {
         return AuthenticationService.getCurrentUser().provider !== null;
@@ -105,56 +113,21 @@ function SettingsController($scope, SharedData, messageCenterService, Authentica
     }
 }
 
-UserLoginController.$inject = ['$scope', '$auth', 'SharedData', 'messageCenterService', '$location', 'AuthenticationService', 'PlayerData'];
-function UserLoginController($scope, $auth, SharedData, messageCenterService, $location,
-        AuthenticationService, PlayerData) {
-    // create a message to display in our view
-    PlayerData.hide();
-    $scope.authenticate = authenticate;
-    $scope.login = login;
+function UserLoginController($scope, $state) {
 
-    messageCenterService.removeShown();
-    SharedData.loadingState = 0;
+    $scope.$on("user-login-success", function() {
+        console.log("On user-login-success");
+        $state.go('home');
+    });
 
-    function authenticate(provider) {
-        var promise = $auth.authenticate(provider, {provider: provider});
-        promise.then(successCallback);
-
-        function successCallback(response) {
-            response = response.data;
-            if (response.success) {
-                response.data.provider = provider;
-                AuthenticationService.setCredentials(response.data);
-                $location.path("#/");
-            }
-        }
-    }
-
-
-    function login(data) {
-        var promise = AuthenticationService.login(data.email, data.password);
-        $scope.loginForm.submit(promise).then(callback);
-
-        function callback(response) {
-            if (response.success) {
-                $location.path("#/");
-            }
-        }
-    }
 }
 
-SignupController.$inject = ['$scope', '$location', 'PlayerData', 'SharedData',
+SignupController.$inject = ['$scope', '$location', 'SharedData',
     'messageCenterService', 'AuthenticationService']
-function SignupController($scope, $location, PlayerData, SharedData,
+function SignupController($scope, $location, SharedData,
         messageCenterService, AuthenticationService) {
 
     $scope.signup = signup;
-
-    SharedData.loadingState = 0;
-
-    PlayerData.hide();
-    messageCenterService.removeShown();
-
 
     function signup(data) {
         var promise = $scope.signupForm.submit(AuthenticationService.signup(data));
@@ -174,3 +147,25 @@ function SignupController($scope, $location, PlayerData, SharedData,
     }
 }
 
+function loginModal($uibModal) {
+
+    return function() {
+        var instance = $uibModal.open({
+            templateUrl: 'js/src/account/partials/login_modal.html',
+            controller: 'LoginModalController',
+            controllerAs: 'LoginModalController'
+        });
+        return instance.result;
+    };
+}
+
+function LoginModalController($scope) {
+
+    this.cancel = $scope.$dismiss;
+
+    $scope.$on("user-login-success", function(event) {
+        console.log("Modal on user-login-success");
+        $scope.$close();
+    });
+
+}

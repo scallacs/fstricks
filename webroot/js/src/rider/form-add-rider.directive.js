@@ -16,7 +16,8 @@ angular
                     $scope.selectExistingRider = selectExistingRider;
                     $scope.onUploadSuccess = onUploadSuccess;
                     $scope.onUploadError = onUploadError;
-
+                    $scope.convertToInt = function(id){return parseInt(id, 10);};
+                    
                     $scope.similarRiders = [];
                     $scope.nationalities = [];
                     $scope.levels = [];
@@ -60,8 +61,8 @@ angular
                             flow.upload();
                         }
                         else {
-                            console.log("Adding rider, file not changed");
-                            $scope.addRiderForm.submit(RiderEntity[$scope.saveMethod](rider)).then(function(result) {
+                            console.log("Adding rider, file not changed. Method: " + $scope.saveMethod);
+                            $scope.addRiderForm.submit(RiderEntity[$scope.saveMethod](rider).$promise).then(function(result) {
                                 handleServerResponse(result);
                             });
                         }

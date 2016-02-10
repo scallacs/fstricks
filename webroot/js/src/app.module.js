@@ -1,6 +1,6 @@
 angular.module('app', [
     'ngResource',
-    'ngRoute',
+    'ui.router',
     'app.core',
     'app.player',
     'app.layout',
@@ -15,38 +15,64 @@ angular.module('app', [
         .run(Run);
 
 
-function MainController($scope, PlayerData) {
-    $scope.$on('$routeChangeStart', function() {
-        $scope.isViewLoading = true;
-    });
-    $scope.$on('$routeChangeSuccess', function() {
-        $scope.isViewLoading = false;
-    });
-    $scope.$on('$routeChangeError', function() {
-        $scope.isViewLoading = false;
-    });
-    
+function MainController($scope, PlayerData, VideoTagData) {
     $scope.playerData = PlayerData;
     $scope.videoTagData = VideoTagData;
 }
 
 
-function Run($rootScope) {
-    $rootScope.$on('$locationChangeStart', function() {
-        $rootScope.previousPage = location.pathname;
+function Run($rootScope, AuthenticationService, loginModal, $state, messageCenterService, SharedData) {
+
+    messageCenterService.removeShown();
+
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
+        var requireLogin = toState.data.requireLogin;
+
+        if (requireLogin && !AuthenticationService.isAuthed()) {
+            console.log('DENY USER ACCESS FOR THIS LOCATION');
+            event.preventDefault();
+            loginModal()
+                    .then(function() {
+                        return $state.go(toState.name, toParams);
+                    })
+                    .catch(function() {
+                        return $state.go('home');
+                    });
+        }
+        console.log(toState);
+        SharedData.pageLoader(toState.data.pageLoader);
     });
+
 }
 
-function ConfigRouting($routeProvider) {
+function ConfigRouting($stateProvider) {
     'use strict';
-    $routeProvider.otherwise({redirectTo: '/'});
+//
+    $stateProvider
+            .state('home', {
+                url: '/',
+                // ...
+                data: {
+                    requireLogin: false
+                }
+            });
+
 }
 function ConfigInterceptor($httpProvider) {
     'use strict';
     //$locationProvider.html5Mode(true).hashPrefix('!');
 
-    var interceptor = ['$location', '$rootScope', '$q', '$injector',
-        function($location, scope, $q, $injector) {
+    var interceptor = ['$rootScope', '$q', '$injector', '$timeout',
+        function(scope, $q, $injector, $timeout) {
+            var loginModal, $http, $state;
+
+            // this trick must be done so that we don't receive
+            // `Uncaught Error: [$injector:cdep] Circular dependency found`
+            $timeout(function() {
+                loginModal = $injector.get('loginModal');
+                $http = $injector.get('$http');
+                $state = $injector.get('$state');
+            });
 
             function requestError(rejection) {
                 console.log(rejection);
@@ -56,13 +82,20 @@ function ConfigInterceptor($httpProvider) {
             function responseError(rejection) {
                 console.log(rejection);
                 var status = rejection.status;
+                var deferred = $q.defer();
                 if (status === 401) {
                     $injector.get('AuthenticationService').logout();
-                    $location.path("/login");
+                    loginModal()
+                            .then(function() {
+                                deferred.resolve($http(rejection.config));
+                            })
+                            .catch(function() {
+                                $state.go('home');
+                                deferred.reject(rejection);
+                            });
                     return;
                 }
 //                else if (status === 404){
-//                    $location.path("/");
 //                }
                 else if (status >= 500) {
                     alert('Sorry but we have a few issues right now. This functinality is not available, try again later.');

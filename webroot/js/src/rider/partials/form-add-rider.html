@@ -1,11 +1,12 @@
 <form server-form
+      id="FormAddRider"
       name="addRiderForm" 
       method="post"  
       ng-submit="save(rider)" 
       novalidate>
     <fieldset>
         <div class="col-sm-4" ng-if="profilePicture">
-            
+
             <div flow-name="uploader.flow"
                  flow-init="uploader.init" 
                  flow-file-added="!!{png:1,gif:1,jpg:1,jpeg:1}[$file.getExtension()]" 
@@ -22,11 +23,24 @@
                 </div>
                 <div class="text-center">
                     <p>
-                        <span class="btn btn-primary" ng-show="!$flow.files.length" flow-btn="">Select image
-                            <input type="file" style="visibility: hidden; position: absolute;"></span>
-                        <span class="btn btn-info ng-hide" ng-show="$flow.files.length" flow-btn="">Change
-                            <input type="file" style="visibility: hidden; position: absolute;"></span>
-                        <span class="btn btn-danger ng-hide" ng-show="$flow.files.length" ng-click="$flow.cancel()">
+                        <span class="btn btn-primary"
+                              id="ButtonFlowSelectImage"
+                              ng-show="!$flow.files.length" 
+                              flow-btn="">
+                            Select image
+                            <input type="file" style="visibility: hidden; position: absolute;">
+                        </span>
+                        <span class="btn btn-info ng-hide"
+                              id="ButtonFlowChangeImage" 
+                              ng-show="$flow.files.length" 
+                              flow-btn="">
+                            Change
+                            <input type="file" style="visibility: hidden; position: absolute;">
+                        </span>
+                        <span class="btn btn-danger ng-hide" 
+                              id="ButtonFlowRemoveImage" 
+                              ng-show="$flow.files.length" 
+                              ng-click="$flow.cancel()">
                             Remove
                         </span>
 
@@ -36,7 +50,7 @@
                     </p>
                 </div>
             </div>
-            
+
         </div>
 
         <div ng-class="{'col-sm-8': profilePicture}">
@@ -46,7 +60,8 @@
                      ng-class="{ 
                          'col-md-6': profilePicture,
                          'col-sm-6': !profilePicture,
-                         'has-error' : addRiderForm.firstname.$invalid && addRiderForm.firstname.$dirty }">
+                         'has-error'
+                         : addRiderForm.firstname.$invalid && addRiderForm.firstname.$dirty }">
                     <label class="col-xs-3">Firstname</label>
                     <div class="col-xs-9">
                         <input type="text" 
@@ -73,7 +88,8 @@
                      ng-class="{ 
                          'col-md-6': profilePicture,
                          'col-sm-6': !profilePicture,
-                         'has-error' : addRiderForm.lastname.$invalid && addRiderForm.lastname.$dirty }">
+                         'has-error'
+                         : addRiderForm.lastname.$invalid && addRiderForm.lastname.$dirty }">
                     <label class="col-xs-3">Lastname</label>
                     <div class="col-xs-9">
                         <input type="text" 
@@ -102,7 +118,8 @@
                      ng-class="{ 
                          'col-md-6': profilePicture,
                          'col-sm-6': !profilePicture,
-                         'has-error' : addRiderForm.nationality.$invalid}">
+                         'has-error'
+                         : addRiderForm.nationality.$invalid}">
                     <label class="col-xs-3">Nationality</label>
                     <div class="col-xs-9">
                         <select
@@ -126,19 +143,19 @@
                      ng-class="{ 
                          'col-md-6': profilePicture,
                          'col-sm-6': !profilePicture,
-                         'has-error' : addRiderForm.level.$invalid}">
+                         'has-error'
+                         :addRiderForm.level.$invalid}">
                     <label class="col-xs-3">Level</label>
                     <div class="col-xs-9">
+
+
                         <select
                             name="level"
                             ng-model="rider.level"
                             class="form-control"
                             servererror
-                            ng-required>
-                            <option ng-repeat="level in levels" name="riderLevel{{level.code}}" 
-                                    value="{{level.code}}">
-                                {{level.name}}
-                            </option>
+                            ng-required
+                            ng-options="convertToInt(level.code) as level.name for level in levels">
                         </select>
                         <span class="ion-person form-control-feedback"></span>
                         <div class="help-block text-danger" 

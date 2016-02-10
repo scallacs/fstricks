@@ -39,6 +39,7 @@ angular.module('app.player')
                             });
                             break
                     }
+                    PlayerData.deferred.reject(error.data);
                 },
                 onReady: function() {
                     scope.$emit('onYouTubePlayerReady', player);

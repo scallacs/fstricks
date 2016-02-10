@@ -3,8 +3,8 @@
         <div class="bg-secondary clearfix">
             <div class="col-sm-6 nopadding" topnav>
             </div>
-            <div class="col-sm-6 nopadding" player-nav >
-            </div>
+
+            <div class="col-sm-6 nopadding" ui-view="viewNavRight" ></div>
         </div>
     </div>
 </header>

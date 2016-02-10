@@ -92,12 +92,12 @@ class VideoTagsTable extends Table {
                 ->select([
                     'tag_slug' => 'Tags.slug',
                     'tag_name' => 'Tags.name',
+                    'tag_id' => 'Tags.id',
                     'count_points' => 'VideoTags.count_points',
                     'id' => 'VideoTags.id',
                     'provider_id' => 'Videos.provider_id',
                     'video_url' => 'Videos.video_url',
                     'video_id' => 'Videos.id',
-//                    'video_duration' => 'Videos.duration',
                     'begin' => 'VideoTags.begin',
                     'end' => 'VideoTags.end'
                     ])

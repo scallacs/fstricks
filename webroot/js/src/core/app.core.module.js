@@ -18,10 +18,9 @@ angular
         .filter('getSportByName', getSportByName);
 
 
-function PlayerData(VideoTagData) {
-
-    return {
-        //extra_class: '',
+function PlayerData(VideoTagData, $q) {
+    var obj = {
+        deferred: $q.defer(),
         player: null,
         currentTag: null,
         visible: true,
@@ -30,12 +29,11 @@ function PlayerData(VideoTagData) {
         showEditionMode: function() {
             this.reset();
             this.editionMode = true;
-            this.show();
         },
         showViewMode: function() {
             this.reset();
             this.editionMode = false;
-            this.show();
+            this.visible = true;
         },
         data: {
             begin: 0,
@@ -47,93 +45,71 @@ function PlayerData(VideoTagData) {
             height: '100%',
             id: null
         },
-        url: function(url) {
-            if (url !== this.data.video_url) {
-                this.data.video_url = url;
-                this.loadVideo(url);
-            }
-        },
-        show: function() {
-            this.visible = true;
-        },
-        hide: function() {
-            this.stop();
-            this.visible = false;
-            this.showListTricks = false;
-        },
-        view: null,
-        _view: _view,
-        replay: function() {
-        },
-        reset: function() {
-        },
-        play: function() {
-        },
-        stop: function() {
-        },
-        seekTo: function() {
-        },
-        pause: function() {
-        },
-        loadVideo: function() {
-        },
-        playVideoRange: function(){},
+        url: url,
+        view: view,
+        replay: replay,
+        reset: reset,
+        play: play,
+        stop: stop,
+        seekTo: seekTo,
+        pause: pause,
+        loadVideo: loadVideo,
+        playVideoRange: playVideoRange,
+        setPlayer: setPlayer,
         onCurrentTimeUpdate: function() {
-        },
-        setPlayer: function(player) {
-            this.player = player;
-            if (this.view === null) {
-                this.view = view;
-            }
-            this.replay = replay;
-            this.reset = reset;
-            this.play = play;
-//            this.playRange = playRange;
-            this.stop = stop;
-            this.seekTo = seekTo;
-            this.pause = pause;
-            this.loadVideo = loadVideo;
-            this.playVideoRange = playVideoRange;
-
-            if (this.data.video_url !== null) {
-                this.loadVideo(this.data.video_url);
-            }
         }
 
     };
+    
+    return obj;
+    
+    function setPlayer(player) {
+        this.player = player;
+        this.deferred.resolve();
+    }
+    function url(newUrl) {
+        if (newUrl !== this.data.video_url) {
+            this.data.video_url = newUrl;
+            this.loadVideo(newUrl);
+        }
+    }
 
     function playVideoRange(data) {
-        var info = {
-            videoId: data.video_url,
-            startSeconds: data.begin,
-            endSeconds: data.end
-        };
+        this.deferred.promise.then(function() {
+            var info = {
+                videoId: data.video_url,
+                startSeconds: data.begin,
+                endSeconds: data.end
+            };
 //            console.log(info);
-        this.player.loadVideoById(info);
+            obj.player.loadVideoById(info);
+        });
     }
     function view(videoTag) {
-        this._view(videoTag);
+        this.deferred.promise.then(function() {
+            obj._view(videoTag);
+        });
     }
     function _view(videoTag) {
         console.log("PlayerData._view: " + videoTag.id);
 //        console.log(videoTag);
         if (videoTag === null) {
-            this.currentTag = null;
+            obj.currentTag = null;
             return;
         }
-        this.currentTag = videoTag;
-        this.data.id = videoTag.id;
-        this.data.begin = videoTag.begin;
-        this.showListTricks = false;
+        obj.currentTag = videoTag;
+        obj.data.id = videoTag.id;
+        obj.data.begin = videoTag.begin;
+        obj.showListTricks = false;
 
-        if (videoTag.video_url === this.data.video_url &&
-                videoTag.end === this.data.end) {
-            this.seekTo(videoTag.begin);
+        if (videoTag.video_url === obj.data.video_url &&
+                videoTag.end === obj.data.end) {
+            obj.seekTo(videoTag.begin);
         }
         else {
-            this.data.end = videoTag.end;
-            this.data.video_url = videoTag.video_url;
-            this.playVideoRange(videoTag);
+            obj.data.end = videoTag.end;
+            obj.data.video_url = videoTag.video_url;
+            obj.playVideoRange(videoTag);
         }
     }
 
@@ -144,7 +120,6 @@ function PlayerData(VideoTagData) {
     function reset() {
         console.log("RESETING DATA");
         VideoTagData.reset();
-        this.hide();
         this.currentTag = null;
         this.data.video_url = null;
         this.data.id = 0;
@@ -159,53 +134,59 @@ function PlayerData(VideoTagData) {
     }
 
     function play() {
-        this.player.playVideo();
+        this.deferred.promise.then(function() {
+            obj.player.playVideo();
+        });
     }
 
     function seekTo(val) {
-        this.player.seekTo(val);
+        this.deferred.promise.then(function() {
+            obj.player.seekTo(val);
+        });
     }
     function pause() {
-        this.player.pauseVideo();
+        this.deferred.promise.then(function() {
+            obj.player.pauseVideo();
+        });
     }
 
     function stop() {
-        if (this.player) {
-            this.player.stopVideo();
-        }
+        this.deferred.promise.then(function() {
+            obj.player.stopVideo();
+        });
     }
 
     function loadVideo(url) {
-        console.log('Load video in playerData: ' + url);
-        //console.log(this);
-        this.data.video_url = url;
-        this.player.loadVideoById({videoId: url});
+        this.deferred.promise.then(function() {
+            console.log('Load video in playerData: ' + url);
+            //console.log(obj);
+            obj.data.video_url = url;
+            obj.player.loadVideoById({videoId: url});
+        });
     }
 }
 
-function VideoTagData(VideoTagEntity, SharedData) {
+function VideoTagData(VideoTagEntity) {
     var filters = {};
 
-    return {
+    var obj = {
         data: [],
         limit: 20, // TODO synchro server
         current: 0, // Index of the current tag 
         disabled: true,
-        loading: false,
         currentPage: 1,
-        callbackSuccess: null,
-        callbackError: null,
         reset: function() {
             this.currentPage = 1;
             this.data = [];
+            this.disabled = false;
+            this.cachePage = {};
             filters = {};
-            this.callbackSuccess = null;
-            this.callbackError = null;
         },
         setFilter: function(name, value) {
             filters[name] = value;
         },
         setFilters: function(value) {
+            this.reset();
             filters = value;
         },
         setOrder: function(value) {
@@ -243,39 +224,38 @@ function VideoTagData(VideoTagEntity, SharedData) {
             }
             return null;
         },
+        cachePage: {},
         loadNextPage: function() {
-            if (this.loading) {
-                return;
-            }
-            this.disabled = false;
-            this.loading = true;
-            var that = this;
-            filters.page = this.currentPage;
-            SharedData.loadingState = this.data.length > 0 ? 0 : 1;
-            VideoTagEntity.search(filters, function(tags) {
-                console.log('Loading page ' + that.currentPage + ': ' + tags.length + ' tag(s)');
-                if (tags.length < that.limit) {
+            var promise = this.loadPage(this.currentPage).then(function(tags) {
+                if (tags.length < obj.limit) {
                     console.log('disabling video tag data loader');
-                    that.disabled = true;
+                    obj.disabled = true;
                 }
-                for (var i = 0; i < tags.length; i++) {
-                    that.data.push(tags[i]);
-                }
-                that.loading = false;
-                that.currentPage += 1;
-                SharedData.loadingState = 0;
-                if (that.callbackSuccess !== null)
-                    that.callbackSuccess(tags);
-
-            }, function() {
-                that.loading = false;
-                that.disabled = true;
-                SharedData.loadingState = 0;
-                if (that.callbackError !== null)
-                    that.callbackError();
+                obj.currentPage += 1;
             });
+            return promise;
+        },
+        loadPage: function(page) {
+            if (this.cachePage[page]) {
+                return this.cachePage[page];
+            }
+//            if (this.disabled) {
+//                // TODO 
+//            }
+            filters.page = page;
+            this.cachePage[page] = VideoTagEntity.search(filters, function(tags) {
+                console.log('Loading page ' + obj.currentPage + ': ' + tags.length + ' tag(s)');
+                for (var i = 0; i < tags.length; i++) {
+                    obj.data.push(tags[i]);
+                }
+            }, function() {
+                obj.disabled = true;
+            }).$promise;
+            return this.cachePage[page];
         }
     };
+
+    return obj;
 }
 
 function searchCategory() {
@@ -316,9 +296,14 @@ function getSportByName() {
 
 }
 
+// loadingState
 function SharedData() {
     var data = {
-        loadingState: 1
+        loadingState: true,
+        pageLoader: function(val) {
+            console.log('Set loading sate: ' + val);
+            this.loadingState = val ? true : false;
+        }
     };
     return data;
 }
@@ -633,16 +618,16 @@ function ServerConfigEntity($resource) {
             cache: true
         }
     });
-    
+
     return {
         rules: rules,
         countries: countries
     };
-    
+
     function rules() {
         return resource.rules().$promise;
     }
-    
+
     function countries() {
         return resource.countries().$promise;
     }

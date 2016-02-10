@@ -1,12 +1,13 @@
 <div class="clearfix bg-secondary padding-sm-side">
     <div class="navbar-header">
         <div class="header-title pull-left hidden-sm hidden-xs">
-            <span><?= \Cake\Core\Configure::read('Company.name') ?></span>
+            <span>FS Inspiration</span>
         </div>
     </div>
     <ul class="nav navbar-nav text-capitalize navbar-no-collapse ">
         <li class="dropdown">
-            <a data-toggle="dropdown" ng-if="currentSport"  class="text-big"><b class="caret"></b> 
+            <a data-toggle="dropdown" ng-if="currentSport"  class="text-big">
+                <b class="caret"></b> 
                 {{currentSport.name}}
             </a>
             <a data-toggle="dropdown" ng-if="!currentSport"  class="text-big">
@@ -14,27 +15,33 @@
                 All sports
             </a>
             <ul class="dropdown-menu">
-                <li><a href="#/#/" ng-click="setCurrentSport(null)">All sports</a></li>
+                <li><a ui-sref="videoplayer.best" ng-click="setCurrentSport(null)">All sports</a></li>
                 <li ng-repeat="sport in sports">
-                    <a ng-href="#/sports/{{sport.name}}" ng-click="setCurrentSport(sport)">
+                    <a ui-sref="videoplayer.sport({sportName: sport.name})" ng-click="setCurrentSport(sport)">
                         {{sport.name}}
                     </a>
                 </li>
             </ul>
         </li>
         <!--<li><a href=""><span class="glyphicon glyphicon-map-marker"></span> Best of</a></li>-->
-        <li ng-if="isAuthed"><a href="#/video/add"><span class="glyphicon glyphicon-plus-sign"></span></a></li>
-        <li ng-if="!isAuthed"><a href="#/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-        <li ng-if="!isAuthed"><a href="#/signup">Sign up</a></li>
+        <li ng-if="isAuthed">
+            <a ui-sref="addvideo"><span class="glyphicon glyphicon-plus-sign"></span></a>
+        </li>
+        <li ng-if="!isAuthed">
+            <a ui-sref="login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+        </li>
+        <li ng-if="!isAuthed">
+            <a ui-sref="signup">Sign up</a>
+        </li>
         <li ng-if="isAuthed" class="dropdown">
             <a class="" data-toggle="dropdown" >
                 <span class="glyphicon glyphicon-cog"></span>
             </a>
             <ul class="dropdown-menu">
-                <li> <a href="#/profile"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                <li> <a href="#/settings"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
+                <li> <a ui-sref="myriderprofile.view"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                <li> <a ui-sref="settings"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
                 <li ng-click="logout()">
-                    <a href="#/users/login">
+                    <a ui-sref="login">
                         <span class="glyphicon glyphicon-log-out"></span> Logout
                     </a>
                 </li>

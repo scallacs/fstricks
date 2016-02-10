@@ -89,4 +89,49 @@ class RidersTableTest extends TestCase
         $this->assertArrayHasKey('level', $errors);
         $this->assertArrayHasKey('nationality', $errors);
     }
+    
+    
+    /**
+     * It should not be possible to add a rider with the same name and a different nationality
+     * @return void
+     */
+    public function testAddDuplicateRiderFirstAndLastName() {
+        // Add a video:
+        $data = [
+            'user_id' => null,
+            'firstname' => 'ridertest23',
+            'lastname' => 'ridertest23',
+            'level' => 1,
+            'nationality' => 'fr',
+        ];
+        $entity = $this->Riders->newEntity($data);
+        $this->assertTrue((bool)$this->Riders->save($entity));
+        
+        $data['nationality'] = 'ca';
+        $entity = $this->Riders->newEntity($data);
+        $success = (bool)$this->Riders->save($entity);
+        $this->assertTrue($success, 
+                "It should be possible to add a rider with the same name and a different nationality");
+    }
+    
+    /**
+     * It should not be possible to add  a rider with the same name and nationality
+     * @return void
+     */
+    public function testAddDuplicateRiderFirstAndLastNameAndNationality() {
+        // Add a video:
+        $data = [
+            'user_id' => null,
+            'firstname' => 'ridertest23',
+            'lastname' => 'ridertest23',
+            'level' => 1,
+            'nationality' => 'fr',
+        ];
+        $entity = $this->Riders->newEntity($data);
+        $this->assertTrue((bool)$this->Riders->save($entity));
+        
+        $entity = $this->Riders->newEntity($data);
+        $this->assertFalse((bool)$this->Riders->save($entity), 
+                "It should not be possible to add a rider with the same name and nationality");
+    }
 }
