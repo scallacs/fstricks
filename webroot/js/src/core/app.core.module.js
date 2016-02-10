@@ -58,7 +58,6 @@ function PlayerData(VideoTagData, $q) {
         setPlayer: setPlayer,
         onCurrentTimeUpdate: function() {
         }
-
     };
     
     return obj;
@@ -75,7 +74,7 @@ function PlayerData(VideoTagData, $q) {
     }
 
     function playVideoRange(data) {
-        this.deferred.promise.then(function() {
+        return this.deferred.promise.then(function() {
             var info = {
                 videoId: data.video_url,
                 startSeconds: data.begin,
@@ -86,8 +85,8 @@ function PlayerData(VideoTagData, $q) {
         });
     }
     function view(videoTag) {
-        this.deferred.promise.then(function() {
-            obj._view(videoTag);
+        return this.deferred.promise.then(function() {
+            _view(videoTag);
         });
     }
     function _view(videoTag) {
@@ -114,7 +113,7 @@ function PlayerData(VideoTagData, $q) {
     }
 
     function replay(videoTag) {
-        this.seekTo(videoTag.begin);
+        return this.seekTo(videoTag.begin);
     }
 
     function reset() {
@@ -134,30 +133,30 @@ function PlayerData(VideoTagData, $q) {
     }
 
     function play() {
-        this.deferred.promise.then(function() {
+        return this.deferred.promise.then(function() {
             obj.player.playVideo();
         });
     }
 
     function seekTo(val) {
-        this.deferred.promise.then(function() {
+        return this.deferred.promise.then(function() {
             obj.player.seekTo(val);
         });
     }
     function pause() {
-        this.deferred.promise.then(function() {
+        return this.deferred.promise.then(function() {
             obj.player.pauseVideo();
         });
     }
 
     function stop() {
-        this.deferred.promise.then(function() {
+        return this.deferred.promise.then(function() {
             obj.player.stopVideo();
         });
     }
 
     function loadVideo(url) {
-        this.deferred.promise.then(function() {
+        return this.deferred.promise.then(function() {
             console.log('Load video in playerData: ' + url);
             //console.log(obj);
             obj.data.video_url = url;

@@ -469,12 +469,10 @@ header .navbar-nav > li > a{
 .item-video-tag .item-title{
     margin-bottom: 5px;
 }
-.item-video-tag  .item-add-tag{
+
+.current-tag  .item-add-tag{
     font-size: 30px;
     font-weight: bold;
-    padding-bottom: 0px;
-    padding-top: 20px;
-    /* padding: 0.8em; */
 }
 /******************************/
 /* FACEBOOK */

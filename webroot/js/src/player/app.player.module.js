@@ -91,8 +91,6 @@ function ConfigRoute($stateProvider) {
 function AddVideoController($scope, YoutubeVideoInfo, $location,
         VideoEntity, VideoTagEntity, ServerConfigEntity, messageCenterService, SharedData, AuthenticationService, PlayerData) {
 
-    AuthenticationService.requireLogin();
-
     var videosInCache = {};
     $scope.data = {provider_id: null, video_url: null};
     $scope.playerProviders = [];

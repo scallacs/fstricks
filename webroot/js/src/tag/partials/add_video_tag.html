@@ -19,7 +19,7 @@
               ng-submit="addVideoTag(editionTag)"
               server-form>
 
-            <fieldset ng-disabled="isFormLoading">
+            <fieldset >
                 <div class="form-group">
                     <div
                         class="margin-top"
@@ -205,7 +205,6 @@
                         <div video-tag-item video-tag="videoTag"></div>
                     </div>
                 </div>
-                <div mc-messages></div>
                 <div class="text-center form-group">
                     <button  type="button"  class="btn btn-info" ng-click="playEditionTag()">
                         <span class="glyphicon glyphicon-play"></span> Preview
@@ -222,23 +221,20 @@
                             <span class="glyphicon glyphicon-plus-sign"></span> 
                             Add
                         </span>
-                        <div ng-loading-icon is-loading="isFormLoading"></div>
                     </button>
                 </div>
             </fieldset>
+            <div mc-messages></div>
         </form>
     </div>
 </div>
 <div class="container padding-sm">
     <div class="alert alert-info">                    
         <p class="text-info">
-            <span class="text-big">
-                <span class="glyphicon glyphicon-info-sign"></span> 
-                Be sure to 
-            </span> check that your tag is valid before submiting it. 
-            It must be from the begining to the end of the trick. <br/>
-            Do not add useless foutage, be consise. <br/>
-            Be sure to add a valid trick name too. 
+            <span class="glyphicon glyphicon-info-sign"></span> 
+            Be sure to check that your trick is valid before submitting it. 
+            It must be from the beginning to the end of the trick. Avoid to add extra content. <br/>
+            Write the trick name correctly, try to use the suggested tag.<br/>
         </p>
     </div>
 </div>

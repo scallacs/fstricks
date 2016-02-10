@@ -120,21 +120,17 @@ function AddVideoTagController($scope, $filter,
 
     init();
 
-    function init() {
-        PlayerData.view = function(tag) {
-//            console.log("Edition view video tag");
-            $scope.editVideoTag(tag);
-            this._view(tag);
-        };
+    $scope.$on('view-video-tag', function(event, tag){
+        editVideoTag(tag);
+    });
 
+    function init() {
         PlayerData.showListTricks = false;
         PlayerData.currentTag = $scope.editionTag;
         VideoTagData.setFilter('video_id', $stateParams.videoId);
 
         $scope.$watch('editionTag.range', watchEditionTagRange);
         $scope.$on('rider-selected', onRiderSelectedEvent);
-
-        VideoTagData.add($scope.editionTag);
 
         VideoEntity.view({id: $stateParams.videoId}, function(video) {
             $scope.editionTag.range[1] = MIN_TAG_DURATION;

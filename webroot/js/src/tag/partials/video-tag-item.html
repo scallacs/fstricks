@@ -2,13 +2,7 @@
      ng-class="{ 'active': playerData.currentTag.id === videoTag.id}" >
     <div class="item-heading row clickable">
 
-        <div class="item-add-tag" ng-click="view(videoTag)" ng-if="playerData.editionMode && videoTag.id === null">
-            <p class=" text-success">
-                <span class="glyphicon glyphicon-plus-sign"></span> 
-                Add a trick
-            </p>
-        </div>
-        <div  ng-if="!playerData.editionMode || videoTag.id !== null">
+        <div>
             <div class="row clickable">
                 <div class="col-xs-3">
                     <div class="item-sport">

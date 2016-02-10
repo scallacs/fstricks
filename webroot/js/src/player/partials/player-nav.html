@@ -11,10 +11,20 @@
                     <span class="glyphicon glyphicon-arrow-left"></span>
                 </a>
             </td>
-            <td
-                class="current-tag"
-                ng-if="playerData.currentTag">
-                <div video-tag-item video-tag="playerData.currentTag"  player-data="playerData"></div>
+            <td class="current-tag">
+
+                <div class="clickable item-add-tag text-success"
+                     ng-click="view(playerData.currentTag)"
+                     ng-if="playerData.editionMode && playerData.currentTag.id === null">
+                        <span class="glyphicon glyphicon-plus-sign"></span> 
+                        Add a trick
+                </div>
+
+                <div video-tag-item 
+                     video-tag="playerData.currentTag"  
+                     player-data="playerData"  
+                     ng-if="!playerData.editionMode || playerData.currentTag.id !== null">
+                </div>
             </td>
             <td
                 ng-if="playerData.currentTag"
@@ -24,9 +34,6 @@
                 <a href="" class="text-big">
                     <span class="glyphicon glyphicon-arrow-right"></span>
                 </a>
-            </td>
-            <td
-                ng-if="!playerData.currentTag">
             </td>
             <td class="toggle-list-tricks"  ng-click="toggleListTricks()" style="width: 40px">
                 <a href="" class="text-big"><span class="glyphicon glyphicon-list"></span></a>

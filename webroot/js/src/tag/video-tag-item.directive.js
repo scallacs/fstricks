@@ -5,7 +5,7 @@ videoTagItem.$inject = ['PlayerData'];
 function videoTagItem(PlayerData) {
     return {
         restrict: 'EA',
-        templateUrl: 'js/src/tag/partials/item.html',
+        templateUrl: 'js/src/tag/partials/video-tag-item.html',
         scope: {
             playerData: '=playerData',
             videoTag: '=videoTag',
@@ -31,6 +31,7 @@ function videoTagItem(PlayerData) {
             }
 
             function view(videoTag) {
+                $scope.$emit("view-video-tag", videoTag);
                 PlayerData.view(videoTag);
             }
 

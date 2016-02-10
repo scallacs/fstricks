@@ -4,6 +4,8 @@
     infinite-scroll-disabled='videoTagData.disabled || videoTagData.loading' 
     infinite-scroll-distance='1'>
 
+    <!-- TODO add + item -->
+    
     <div ng-repeat="videoTag in videoTagData.data" ng-if="$index % 2 == 0" class="row">
         <div class="col-sm-6 nopadding">
             <div video-tag-item 
