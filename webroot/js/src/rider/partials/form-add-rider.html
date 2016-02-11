@@ -57,11 +57,7 @@
 
             <div class="clearfix">
                 <div class="form-group clearfix has-feedback" 
-                     ng-class="{ 
-                         'col-md-6': profilePicture,
-                         'col-sm-6': !profilePicture,
-                         'has-error'
-                         : addRiderForm.firstname.$invalid && addRiderForm.firstname.$dirty }">
+                     ng-class="[formGroupClass, {'has-error': addRiderForm.firstname.$invalid}]">
                     <label class="col-xs-3">Firstname</label>
                     <div class="col-xs-9">
                         <input type="text" 
@@ -85,11 +81,7 @@
                     </div>
                 </div>
                 <div class="form-group clearfix has-feedback" 
-                     ng-class="{ 
-                         'col-md-6': profilePicture,
-                         'col-sm-6': !profilePicture,
-                         'has-error'
-                         : addRiderForm.lastname.$invalid && addRiderForm.lastname.$dirty }">
+                     ng-class="[formGroupClass, {'has-error': addRiderForm.lastname.$invalid}]">
                     <label class="col-xs-3">Lastname</label>
                     <div class="col-xs-9">
                         <input type="text" 
@@ -115,11 +107,7 @@
             </div>
             <div class="clearfix">
                 <div class="form-group clearfix has-feedback" 
-                     ng-class="{ 
-                         'col-md-6': profilePicture,
-                         'col-sm-6': !profilePicture,
-                         'has-error'
-                         : addRiderForm.nationality.$invalid}">
+                     ng-class="[formGroupClass, {'has-error': addRiderForm.nationality.$invalid}]">
                     <label class="col-xs-3">Nationality</label>
                     <div class="col-xs-9">
                         <select
@@ -140,11 +128,7 @@
                     </div>
                 </div>
                 <div class="form-group clearfix has-feedback" 
-                     ng-class="{ 
-                         'col-md-6': profilePicture,
-                         'col-sm-6': !profilePicture,
-                         'has-error'
-                         :addRiderForm.level.$invalid}">
+                     ng-class="[formGroupClass, {'has-error': addRiderForm.level.$invalid}]">
                     <label class="col-xs-3">Level</label>
                     <div class="col-xs-9">
 

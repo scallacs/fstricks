@@ -15,9 +15,10 @@ angular.module('app', [
         .run(Run);
 
 
-function MainController($scope, PlayerData, VideoTagData) {
+function MainController($scope, PlayerData, VideoTagData, SharedData) {
     $scope.playerData = PlayerData;
     $scope.videoTagData = VideoTagData;
+    $scope.SharedData = SharedData;
 }
 
 

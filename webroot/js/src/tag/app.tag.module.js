@@ -21,7 +21,8 @@ function Config($stateProvider) {
                     }
                 },
                 data: {
-                    requireLogin: true
+                    requireLogin: true,
+                    pageLoader: true
                 }
             });
 }
@@ -123,6 +124,7 @@ function AddVideoTagController($scope, $filter,
     $scope.$on('view-video-tag', function(event, tag){
         editVideoTag(tag);
     });
+    
 
     function init() {
         PlayerData.showListTricks = false;

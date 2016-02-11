@@ -66,27 +66,34 @@ h3, h2, h1{
     border-bottom: 1px solid #333;
 }
 .panel-add-video-tag{
-    border-radius: 10px;
-    padding: 10px 10px 0px 10px;
-    background: #111;
+    /* border-radius: 10px; */
+    padding-left: 10px;
+    padding-right: 10px;
     max-width: 966px;
-    margin: 10px auto;
-    width: 97%;
+    /* margin: 10px auto; */
+    /* width: 97%; */
 }
 
-.panel-add-video-tag legend{
-    border-bottom: 1px solid #333;
+.bg-primary-darker{
+    background: #000;
     color: #AAA;
+}
+.bg-primary{
+    background: #111;
+    color: #AAA;
+}
+.bg-primary legend,
+.bg-primary-darker legend{
+    border-bottom: 1px solid #333;
     text-align: center;
 }
-.panel-add-video-tag:hover{
-}
 
-.panel-add-video-tag .form-group label{
-    /* background: #fff; */
-    padding: 3px 10px;
-    border-radius: 5px;
-    color: #AAA;
+
+.bg-primary .btn-default,.bg-primary input,.bg-primary select,
+.bg-primary-darker .btn-default,.bg-primary-darker input,.bg-primary-darker select{
+    background: #333;
+    border-color: #222;
+    color: #EEE;
 }
 
 .pagination-container{
@@ -357,10 +364,6 @@ header .navbar-nav > li > a{
     /* padding: 10px; */
 }
 
-.bg-primary{
-    background: #111;
-    color: white;
-}
 .bg-secondary-darker, div.section{
     background: #277D91;
     border-color: #055B70;
@@ -387,7 +390,7 @@ header .navbar-nav > li > a{
 }
 
 .res-16by9{
-    padding-bottom: 40%;
+    padding-bottom: 56.25%;
 }
 
 .res-1by1{

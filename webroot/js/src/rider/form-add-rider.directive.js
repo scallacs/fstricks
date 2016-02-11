@@ -8,7 +8,8 @@ angular
                     profilePicture: '=profilePicture',
                     saveMethod: '=saveMethod',
                     defaultRider: '&rider',
-                    findSimilarRiders: '=similarRiders'
+                    findSimilarRiders: '=similarRiders',
+                    formGroupClass: '=formGroupClass'
                 },
                 controller: function($scope, RiderEntity, ServerConfigEntity) {
                     $scope.save = save;

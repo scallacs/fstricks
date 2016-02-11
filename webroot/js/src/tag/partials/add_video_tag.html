@@ -1,231 +1,247 @@
-<div class="full-player" player-container></div>
 <div class="list-tricks" trick-list></div>
 
-<div class="clearfix">
-    <div class="panel-add-video-tag">
-        <div ng-show="showCreateRiderForm">
-            <h3>Create rider</h3>
-            <div form-add-rider 
-                 profile-picture="false"  
-                 save-method="'add'"
-                 similar-riders="true"></div>
-        </div>
+<div class="clearfix  bg-primary">
 
-        <form id="FormAddVideoTag"
-              class="form" 
-              name="formAddVideoTag" 
-              novalidate 
-              ng-show="!showCreateRiderForm"
-              ng-submit="addVideoTag(editionTag)"
-              server-form>
+    <div class="col-md-6 clearfix nopadding">
+        <div class="panel-add-video-tag">
+            <div ng-show="showCreateRiderForm">
+                <h3 class="page-title">
+                    Create rider
+                </h3>
+                <div form-add-rider 
+                     profile-picture="false"  
+                     save-method="'add'"
+                     similar-riders="true"
+                     form-group-class="'col-xs-12 col-sm-6 col-md-12'"></div>
+            </div>
 
-            <fieldset >
-                <div class="form-group">
-                    <div
-                        class="margin-top"
-                        ng-model="editionTag.range"
-                        ui-slider="{range: true}" 
-                        min="0" 
-                        max="{{playerData.data.duration}}" 
-                        step="{{slider.step}}"
-                        use-decimals
-                        >
-                    </div>
-                </div>
-                <div class="clearfix">
-                    <div class="form-group col-sm-5 clearfix">
+            <div 
+                ng-show="!showCreateRiderForm">
 
-                        <label class="control-label col-xs-3">Start time</label>
-                        <div class="col-xs-9">
-                            <div class="btn-group">
-                                <button id="ButtonBeginTimeMinus"
-                                        type="button" 
-                                        class="btn btn-default" 
-                                        ng-click="addStartRange(-slider.step)">
-                                    <span class="glyphicon glyphicon-minus"></span>
-                                </button>
-                                <span class="btn btn-default disabled" >{{editionTag.range[0]| secondsToHours}}</span> 
-                                <button id="ButtonBeginTimePlus"
-                                        type="button" class="btn btn-default" ng-click="addStartRange(slider.step)">
-                                    <span class="glyphicon glyphicon-plus"></span>
-                                </button>
-                            </div>
-                            <button type="button" class="btn btn-primary" ng-click="setStartRangeNow()">
-                                Start Now
-                            </button>
-                        </div>
-                    </div>
+                <h3 class="page-title">
+                    Edit tricks
+                </h3>
 
-                    <div class="form-group col-sm-7 clearfix">
-                        <label class="control-label  col-xs-3">End time</label>
-                        <div class="col-xs-9">
-                            <div class="btn-group">
-                                <button id="ButtonEndTimeMinus"
-                                        type="button" 
-                                        class="btn btn-default" 
-                                        ng-click="addEndRange(-slider.step)">
-                                    <span class="glyphicon glyphicon-minus"></span>
-                                </button>
-                                <span class="btn btn-default disabled">{{editionTag.range[1]| secondsToHours}}</span>
-                                <button  id="ButtonEndTimePlus"
-                                         type="button"  
-                                         class="btn btn-default" 
-                                         ng-click="addEndRange(slider.step)">
-                                    <span class="glyphicon glyphicon-plus"></span>
-                                </button>
-                            </div>
-                            <button  type="button"  class="btn btn-primary" ng-click="setEndRangeNow()">
-                                End Now  
-                            </button>
-                        </div>
-                    </div>
-                    <!--
-                    <div class="col-sm-2">
-                        <label class="control-label col-xs-3">Duration</label>
-                        <div class="col-xs-9">
-                            <span class="text-info btn btn-info disabled">
-                                {{editionTag.range[1] - editionTag.range[0]| number:1}} seconds
-                            </span>
-                        </div>
-                    </div>-->
-                </div>
-                <div class="clearfix">
-                    <div class="form-group col-sm-5 clearfix">
-                        <label class="control-label  col-xs-3">Sport</label>
-                        <div class="col-xs-9">
-                            <ui-select 
-                                ng-model="editionTag.category" 
-                                theme="bootstrap"
-                                reset-search-input="false"
-                                on-select="onSelectCategory($item, $model)"
-                                on-remove="onRemoveCategory($item, $model)"
-                                required>
-                                <ui-select-match placeholder="Sport and category">{{$select.selected.sport_name}} {{$select.selected.category_name}} </ui-select-match>
-                                <ui-select-choices
-                                    repeat="category in suggestedCategories"
-                                    refresh="refreshSuggestedCategories($select.search)"
-                                    refresh-delay="0">
-                                    <div class="clearfix">
-                                        <div class="col-xs-6">
-                                            <span class="">{{category.sport_name}}</span>
-                                        </div>
-                                        <div class="col-xs-6">
-                                            <span class="">{{category.category_name}}</span>
-                                        </div>
+                <form id="FormAddVideoTag"
+                      class="form" 
+                      name="formAddVideoTag" 
+                      novalidate 
+                      ng-submit="addVideoTag(editionTag)"
+                      server-form>
+
+                    <fieldset >
+                        <div class="clearfix">
+                            <div class="form-group col-md-12 col-sm-6 clearfix">
+
+                                <label class="control-label col-xs-3">Start time</label>
+                                <div class="col-xs-9">
+                                    <div class="btn-group">
+                                        <button id="ButtonBeginTimeMinus"
+                                                type="button" 
+                                                class="btn btn-default" 
+                                                ng-click="addStartRange(-slider.step)">
+                                            <span class="glyphicon glyphicon-minus"></span>
+                                        </button>
+                                        <span class="btn btn-default disabled" >{{editionTag.range[0]| secondsToHours}}</span> 
+                                        <button id="ButtonBeginTimePlus"
+                                                type="button" class="btn btn-default" ng-click="addStartRange(slider.step)">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
                                     </div>
-                                </ui-select-choices>
-                            </ui-select>
-                        </div>
-                    </div>
-                    <div class="form-group col-sm-7 clearfix">
-                        <label class="control-label col-xs-3">Trick</label>
-                        <div class="col-xs-9">
-                            <ui-select 
-                                ng-model="editionTag.tag" 
-                                theme="bootstrap"
-                                ng-disabled="!editionTag.category"
-                                reset-search-input="false"
-                                on-select="onSelectTrick($item, $model)"
-                                on-remove="onRemoveTrick($item, $model)"
-                                required>
-                                <ui-select-match placeholder="Trick name">
-                                    <span class="text-bold">{{$select.selected.name}} </span>
-                                    <span class="text-muted" ng-if="$select.selected.sport_name">
-                                        ({{$select.selected.sport_name}} - {{$select.selected.category_name}})
+                                    <button type="button" class="btn btn-warning" ng-click="setStartRangeNow()">
+                                        Now
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12 col-sm-6 clearfix">
+                                <label class="control-label  col-xs-3">End time</label>
+                                <div class="col-xs-9">
+                                    <div class="btn-group">
+                                        <button id="ButtonEndTimeMinus"
+                                                type="button" 
+                                                class="btn btn-default" 
+                                                ng-click="addEndRange(-slider.step)">
+                                            <span class="glyphicon glyphicon-minus"></span>
+                                        </button>
+                                        <span class="btn btn-default disabled">{{editionTag.range[1]| secondsToHours}}</span>
+                                        <button  id="ButtonEndTimePlus"
+                                                 type="button"  
+                                                 class="btn btn-default" 
+                                                 ng-click="addEndRange(slider.step)">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                    </div>
+                                    <button  type="button"  class="btn btn-warning" ng-click="setEndRangeNow()">
+                                        Now  
+                                    </button>
+                                </div>
+                            </div>
+                            <!--
+                            <div class="col-md-12 col-sm-2">
+                                <label class="control-label col-xs-3">Duration</label>
+                                <div class="col-xs-9">
+                                    <span class="text-info btn btn-info disabled">
+                                        {{editionTag.range[1] - editionTag.range[0]| number:1}} seconds
                                     </span>
-                                </ui-select-match>
-                                <ui-select-choices
-                                    repeat="tag in suggestedTags"
-                                    refresh="refreshSuggestedTags($select.search)"
-                                    refresh-delay="500">
-                                    <div class="clearfix">
-                                        <div class="col-xs-10" style="text-transform: capitalize;"  >
-                                            <span class="text-bold">{{tag.name}}</span> <br/>
-                                            <span class="">{{tag.sport_name}}</span> - 
-                                            <span class="">{{tag.category_name}}</span>
-                                        </div>
-                                        <div class="col-xs-2" style="overflow: hidden;" >
-                                            <span class="text-big" ng-if="!tag.is_new">{{tag.count_ref}}</span>
-                                            <span class="text-big text-warning" ng-if="tag.is_new">New!</span>
-                                        </div>
-                                    </div>
-                                </ui-select-choices>
-                            </ui-select>
+                                </div>
+                            </div>-->
                         </div>
-                    </div>
-                </div>
-                <div class="form-group clearfix">
-                    <div class="form-group col-sm-5 clearfix">
-                        <label class="control-label col-xs-3">Rider</label>
-                        <div  class="col-xs-9">
-                            <ui-select 
-                                ng-model="editionTag.rider" 
-                                theme="bootstrap"
-                                reset-search-input="false"
-                                on-select="onSelectRider($item, $model)"
-                                on-remove="onRemoveRider($item, $model)"
-                                >
-                                <ui-select-match placeholder="Rider..." class="text-capitalize">
-                                    <img ng-src="{{$select.selected.picture_round_xs}}" alt=""/>  
-                                    <span class="text-bold">{{$select.selected.display_name}} </span> 
-                                    <span class="text-muted">({{$select.selected.nationality}})</span> 
-                                </ui-select-match>
-                                <ui-select-choices
-                                    repeat="rider in suggestedRiders"
-                                    refresh="refreshSuggestedRiders($select.search)"
-                                    refresh-delay="500">
-                                    <div class="clearfix" style="text-transform: capitalize;">
-                                        <img ng-src="{{rider.picture_round_xs}}" alt=""/>  
-                                        <span class="text-bold">{{rider.display_name}}</span>  
-                                        <span class="">({{rider.nationality}})</span> 
-                                        <!--<a class="text-sm" href="http://www.facebook.com/" target="_blank" >(View on facebook)</a>-->
-                                    </div>
-                                </ui-select-choices>
-                            </ui-select>
+                        <div class="clearfix">
+                            <div class="form-group col-md-12 col-sm-6 clearfix">
+                                <label class="control-label  col-xs-3">Sport</label>
+                                <div class="col-xs-9">
+                                    <ui-select 
+                                        ng-model="editionTag.category" 
+                                        theme="bootstrap"
+                                        reset-search-input="false"
+                                        on-select="onSelectCategory($item, $model)"
+                                        on-remove="onRemoveCategory($item, $model)"
+                                        required>
+                                        <ui-select-match placeholder="Sport and category">{{$select.selected.sport_name}} {{$select.selected.category_name}} </ui-select-match>
+                                        <ui-select-choices
+                                            repeat="category in suggestedCategories"
+                                            refresh="refreshSuggestedCategories($select.search)"
+                                            refresh-delay="0">
+                                            <div class="clearfix">
+                                                <div class="col-xs-6">
+                                                    <span class="">{{category.sport_name}}</span>
+                                                </div>
+                                                <div class="col-xs-6">
+                                                    <span class="">{{category.category_name}}</span>
+                                                </div>
+                                            </div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-12 col-sm-6 clearfix">
+                                <label class="control-label col-xs-3">Trick</label>
+                                <div class="col-xs-9">
+                                    <ui-select 
+                                        ng-model="editionTag.tag" 
+                                        theme="bootstrap"
+                                        ng-disabled="!editionTag.category"
+                                        reset-search-input="false"
+                                        on-select="onSelectTrick($item, $model)"
+                                        on-remove="onRemoveTrick($item, $model)"
+                                        required>
+                                        <ui-select-match placeholder="Trick name">
+                                            <span class="text-bold">{{$select.selected.name}} </span>
+                                            <span class="text-muted" ng-if="$select.selected.sport_name">
+                                                ({{$select.selected.sport_name}} - {{$select.selected.category_name}})
+                                            </span>
+                                        </ui-select-match>
+                                        <ui-select-choices
+                                            repeat="tag in suggestedTags"
+                                            refresh="refreshSuggestedTags($select.search)"
+                                            refresh-delay="500">
+                                            <div class="clearfix">
+                                                <div class="col-xs-10" style="text-transform: capitalize;"  >
+                                                    <span class="text-bold">{{tag.name}}</span> <br/>
+                                                    <span class="">{{tag.sport_name}}</span> - 
+                                                    <span class="">{{tag.category_name}}</span>
+                                                </div>
+                                                <div class="col-xs-2" style="overflow: hidden;" >
+                                                    <span class="text-big" ng-if="!tag.is_new">{{tag.count_ref}}</span>
+                                                    <span class="text-big text-warning" ng-if="tag.is_new">New!</span>
+                                                </div>
+                                            </div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-2 col-sm-offset-0 col-xs-9 col-xs-offset-3" >
-                        <button type="button" 
-                                ng-show="suggestedRiders.length === 0"
-                                class="btn btn-default"
-                                ng-click="showCreateRiderForm = true">
-                            <span class="glyphicon glyphicon-plus-sign"></span>
-                            Add a rider 
-                        </button>
-                    </div>
-                </div>
-                <div ng-if="similarTags.length > 0" class=" form-group">
-                    <div class="alert alert-danger"> 
-                        <p class="text-center">
-                            <span class="glyphicon glyphicon-warning-sign"></span> 
-                            You cannot create this tag, a similar one already exists. 
-                        </p>
-                    </div>
-                    <div ng-repeat="videoTag in similarTags">
-                        <div video-tag-item video-tag="videoTag"></div>
-                    </div>
-                </div>
-                <div class="text-center form-group">
-                    <button  type="button"  class="btn btn-info" ng-click="playEditionTag()">
-                        <span class="glyphicon glyphicon-play"></span> Preview
-                    </button>
-                    <button type="submit"
-                            ng-disabled="!formAddVideoTag.$valid || similarTags.length > 0"
-                            class="btn btn-success" 
-                            >
-                        <span ng-if="editionTag.id">
-                            <span class="glyphicon glyphicon-save"></span> 
-                            Save
-                        </span>
-                        <span ng-if="!editionTag.id">
-                            <span class="glyphicon glyphicon-plus-sign"></span> 
-                            Add
-                        </span>
-                    </button>
-                </div>
-            </fieldset>
-            <div mc-messages></div>
-        </form>
+                        <div class="form-group clearfix">
+                            <div class="form-group col-md-12 col-sm-6 clearfix">
+                                <label class="control-label col-xs-3">Rider</label>
+                                <div  class="col-xs-8">
+                                    <ui-select 
+                                        ng-model="editionTag.rider" 
+                                        theme="bootstrap"
+                                        reset-search-input="false"
+                                        on-select="onSelectRider($item, $model)"
+                                        on-remove="onRemoveRider($item, $model)"
+                                        >
+                                        <ui-select-match placeholder="Rider..." class="text-capitalize">
+                                            <img ng-src="{{$select.selected.picture_round_xs}}" alt=""/>  
+                                            <span class="text-bold">{{$select.selected.display_name}} </span> 
+                                            <span class="text-muted">({{$select.selected.nationality}})</span> 
+                                        </ui-select-match>
+                                        <ui-select-choices
+                                            repeat="rider in suggestedRiders"
+                                            refresh="refreshSuggestedRiders($select.search)"
+                                            refresh-delay="500">
+                                            <div class="clearfix" style="text-transform: capitalize;">
+                                                <img ng-src="{{rider.picture_round_xs}}" alt=""/>  
+                                                <span class="text-bold">{{rider.display_name}}</span>  
+                                                <span class="">({{rider.nationality}})</span> 
+                                                <!--<a class="text-sm" href="http://www.facebook.com/" target="_blank" >(View on facebook)</a>-->
+                                            </div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </div>
+                                <div  class="col-xs-1">
+                                        <button type="button" 
+                                                ng-show="suggestedRiders.length === 0"
+                                                class="btn btn-default"
+                                                ng-click="showCreateRiderForm = true">
+                                            <span class="glyphicon glyphicon-plus-sign"></span>
+                                        </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="similarTags.length > 0" class=" form-group">
+                            <div class="alert alert-danger"> 
+                                <p class="text-center">
+                                    <span class="glyphicon glyphicon-warning-sign"></span> 
+                                    You cannot create this tag, a similar one already exists. 
+                                </p>
+                            </div>
+                            <div ng-repeat="videoTag in similarTags">
+                                <div video-tag-item video-tag="videoTag"></div>
+                            </div>
+                        </div>
+                        <div class="text-center form-group">
+                            <!--
+                            <button  type="button"  class="btn btn-info" ng-click="playEditionTag()">
+                                <span class="glyphicon glyphicon-play"></span> Preview
+                            </button>-->
+                            <button type="submit"
+                                    ng-disabled="!formAddVideoTag.$valid || similarTags.length > 0"
+                                    class="btn btn-success btn-lg btn-block" 
+                                    >
+                                <span ng-if="editionTag.id">
+                                    <span class="glyphicon glyphicon-save"></span> 
+                                    Save
+                                </span>
+                                <span ng-if="!editionTag.id">
+                                    <span class="glyphicon glyphicon-plus-sign"></span> 
+                                    Add
+                                </span>
+                            </button>
+                        </div>
+                    </fieldset>
+                </form>
+
+                <div mc-messages></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 nopadding">
+        <div class="full-player" player-container></div>
+        <div class="form-group">
+            <div
+                class="margin-top"
+                ng-model="editionTag.range"
+                ui-slider="{range: true}" 
+                min="0" 
+                max="{{playerData.data.duration}}" 
+                step="{{slider.step}}"
+                use-decimals
+                >
+            </div>
+        </div>
     </div>
 </div>
 <div class="container padding-sm">

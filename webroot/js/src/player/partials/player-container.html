@@ -1,5 +1,5 @@
-<div>
-    <div ng-show="playerData.currentTag == null && videoTagData.data.length === 0 && !videoTagData.loading" 
+<div ng-show="!SharedData.loadingState && !videoTagData.loading">
+    <div ng-show="playerData.currentTag == null && videoTagData.data.length === 0" 
          class="pick-video-message">
         <p>
             Oups, there is no tricks registered yet... 
