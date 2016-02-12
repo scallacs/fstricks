@@ -4,8 +4,13 @@
     infinite-scroll-disabled='videoTagData.disabled || videoTagData.loading' 
     infinite-scroll-distance='1'>
 
-    <!-- TODO add + item -->
-    
+    <div class="row" ng-if="playerData.editionMode">
+        <button class="btn btn-success btn-block btn-add-tag" ng-click="addNewTag()">
+            <span class="glyphicon glyphicon-plus-sign"></span> 
+            Add a trick
+        </button>
+    </div>
+
     <div ng-repeat="videoTag in videoTagData.data" ng-if="$index % 2 == 0" class="row">
         <div class="col-sm-6 nopadding">
             <div video-tag-item 

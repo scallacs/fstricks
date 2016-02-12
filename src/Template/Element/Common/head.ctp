@@ -70,6 +70,7 @@
 <?= $this->Html->script('src/player/app.player.module'); ?>
 <?= $this->Html->script('src/player/player-nav.directive'); ?>
 <?= $this->Html->script('src/player/player-container.directive'); ?>
+<?= $this->Html->script('src/player/player-bar.directive'); ?>
 <?= $this->Html->script('src/player/youtube.directive'); ?>
 
 <?= $this->Html->script('src/tag/app.tag.module'); ?>

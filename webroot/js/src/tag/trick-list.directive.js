@@ -9,6 +9,12 @@ function trickList() {
         templateUrl: 'js/src/tag/partials/player-trick-list.html',
         controller: function($scope, PlayerData) {
             $scope.playerData = PlayerData;
+            
+            $scope.addNewTag = addNewTag;
+            
+            function addNewTag(){
+                $scope.$emit('add-new-tag');
+            }
         },
         link: function(scope, elem, attr, form) {
 

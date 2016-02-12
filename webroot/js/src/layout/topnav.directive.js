@@ -8,9 +8,8 @@ function topnav() {
     return {
         templateUrl: 'js/src/layout/topnav.html',
         controller: function($scope, AuthenticationService,
-                $location, SportEntity, SharedData, TagEntity, VideoTagData, PlayerData) {
+                $state, SportEntity, SharedData, TagEntity, VideoTagData, PlayerData) {
             // create a message to display in our view
-            $scope.isAuthed = AuthenticationService.isAuthed();
             $scope.searchTags = [];
             $scope.search = {tag: null};
             $scope.currentSport = null;
@@ -75,14 +74,14 @@ function topnav() {
                     if (newVal == oldVal) {
                         return;
                     }
-                    $location.path('/view/' + newVal.sport_name + '/' + newVal.category_name + '/' + newVal.slug);
+                    $state.go('videoplayer.tag', {tagId:newVal.id});
                 });
             }
 
           
             function logout() {
                 AuthenticationService.logout();
-                $location.path("/users/login");
+                $state.go("login");
                 $scope.isAuthed = AuthenticationService.isAuthed();
             }
             /**

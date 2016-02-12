@@ -5956,7 +5956,7 @@ button.close {
   z-index: 1060;
   display: none;
   max-width: 276px;
-  padding: 1px;
+  /* padding: 1px; */
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   font-weight: normal;
@@ -5964,9 +5964,9 @@ button.close {
   text-align: left;
   background-color: #ffffff;
   -webkit-background-clip: padding-box;
-          background-clip: padding-box;
-  border: 1px solid #cccccc;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  background-clip: padding-box;
+  /* border: 1px solid #cccccc; */
+  /* border: 1px solid rgba(0, 0, 0, 0.2); */
   border-radius: 6px;
   -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
@@ -5993,7 +5993,7 @@ button.close {
   border-radius: 5px 5px 0 0;
 }
 .popover-content {
-  padding: 9px 14px;
+  /* padding: 9px 14px; */
 }
 .popover > .arrow,
 .popover > .arrow:after {

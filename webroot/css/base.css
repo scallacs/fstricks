@@ -73,7 +73,9 @@ h3, h2, h1{
     /* margin: 10px auto; */
     /* width: 97%; */
 }
-
+.btn-add-tag{
+    font-size: 2.5em;
+}
 .bg-primary-darker{
     background: #000;
     color: #AAA;
@@ -228,7 +230,6 @@ header .navbar-header ul{
     margin-bottom: 0px;
 }
 header .header-title{
-    color: white;
     font-size: 2em;
     padding-right: 10px;
     font-weight: bold;
@@ -236,6 +237,10 @@ header .header-title{
     font-family: Helvetica;
     padding-top: 5px;
     /* padding-left: 10px; */
+}
+header .header-title a{
+    color: white;
+    text-decoration: none;
 }
 header .navbar-header{
     /* height: 50px; */
@@ -274,6 +279,35 @@ header .navbar-nav > li > a{
 .message.success{}
 
 
+/* ------------------------------------------------------------ */
+/* PLAYER BAR  */
+/* ------------------------------------------------------------ */
+.player-bar{
+    position: relative;
+    background: #333;
+    padding: 0px;
+    margin: 0px;
+    border-top: 1px solid #111;
+    border-bottom: 1px solid #111;
+    height: 17px;
+    border-radius: 5px;
+}
+
+.player-bar-tag{
+    background: orange;
+    height: 15px;
+    position: absolute;
+    min-width: 3px;
+    border-radius: 5px;
+} 
+.player-bar-tag:hover{
+    cursor: pointer;
+    background: orangered;
+}
+.popover-video-tag{
+    border-radius: 5px;
+    padding: 5px;
+}
 /* ------------------------------------------------------------ */
 /* ITEM  */
 /* ------------------------------------------------------------ */
@@ -473,10 +507,8 @@ header .navbar-nav > li > a{
     margin-bottom: 5px;
 }
 
-.current-tag  .item-add-tag{
-    font-size: 30px;
-    font-weight: bold;
-}
+
+
 /******************************/
 /* FACEBOOK */
 .btn-facebook-share {

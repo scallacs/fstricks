@@ -1,10 +1,10 @@
 <div class="clearfix bg-secondary padding-sm-side">
     <div class="navbar-header">
         <div class="header-title pull-left hidden-sm hidden-xs">
-            <span>FS Inspiration</span>
+            <a ui-sref="home">FS Inspiration</a>
         </div>
     </div>
-    <ul class="nav navbar-nav text-capitalize navbar-no-collapse ">
+    <ul id="TopNav" class="nav navbar-nav text-capitalize navbar-no-collapse ">
         <li class="dropdown">
             <a data-toggle="dropdown" ng-if="currentSport"  class="text-big">
                 <b class="caret"></b> 
@@ -24,16 +24,16 @@
             </ul>
         </li>
         <!--<li><a href=""><span class="glyphicon glyphicon-map-marker"></span> Best of</a></li>-->
-        <li ng-if="isAuthed">
+        <li ng-if="authData.isAuthed()">
             <a ui-sref="addvideo"><span class="glyphicon glyphicon-plus-sign"></span></a>
         </li>
-        <li ng-if="!isAuthed">
+        <li ng-if="!authData.isAuthed()">
             <a ui-sref="login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
         </li>
-        <li ng-if="!isAuthed">
+        <li ng-if="!authData.isAuthed()">
             <a ui-sref="signup">Sign up</a>
         </li>
-        <li ng-if="isAuthed" class="dropdown">
+        <li ng-if="authData.isAuthed()" class="dropdown">
             <a class="" data-toggle="dropdown" >
                 <span class="glyphicon glyphicon-cog"></span>
             </a>
@@ -67,7 +67,7 @@
                     repeat="tag in searchTags"
                     refresh="refreshSearchedTags($select.search)"
                     refresh-delay="500">
-                    <div class="clearfix">
+                    <div class="clearfix" ui-sref="videoplayer.tag({tagId:tag.id})">
                         <div class="col-xs-10" style="text-transform: capitalize;"  >
                             <span class="text-bold">{{tag.name}}</span> <br/>
                             <span class="">{{tag.sport_name}}</span> - 

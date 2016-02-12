@@ -15,10 +15,12 @@ angular.module('app', [
         .run(Run);
 
 
-function MainController($scope, PlayerData, VideoTagData, SharedData) {
+function MainController($scope, PlayerData, VideoTagData, SharedData, AuthenticationService) {
     $scope.playerData = PlayerData;
     $scope.videoTagData = VideoTagData;
     $scope.SharedData = SharedData;
+
+    $scope.authData = AuthenticationService.authData;
 }
 
 

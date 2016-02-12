@@ -14,8 +14,12 @@
                     </div>
                 </div>
                 <div class="col-xs-7"  ng-click="view(videoTag)">
-                    <p class="item-title text-capitalize">
+                    <p class="item-title text-capitalize" ng-if="videoTag.tag_name">
                         {{videoTag.tag_name}}
+                    </p>
+                    <p class="item-title text-success" ng-if="!videoTag.tag_name && videoTag.mode === 'edition'">
+                        <span class="glyphicon glyphicon-edit"></span> 
+                        Add a the trick name
                     </p>
                     <div class="item-user-xs">
                         <span class="thumbnail-round-xs">
@@ -25,16 +29,21 @@
                             class="item-user-name text-info text-capitalize">
                             {{videoTag.rider_name}}
                         </a>
-                        <a ng-if="!playerData.editionMode && !videoTag.rider_name" 
+                        <a ng-if="videoTag.mode !== 'edition' && !videoTag.rider_name" 
                            class="item-user-name text-danger"
                            ui-sref="addtag({videoId:videoTag.video_id, tagId: videoTag.id})"
+                           >
+                            Add the rider
+                        </a>
+                        <a ng-if="videoTag.mode === 'edition' && !videoTag.rider_name" 
+                           class="item-user-name text-danger"
                            >
                             Add the rider
                         </a>
                     </div>
                 </div>
                 <div class="col-xs-2">
-                    <div class="dropdown" ng-if="!playerData.editionMode">
+                    <div class="dropdown" ng-if="videoTag.mode !== 'edition'">
                         <button class="btn btn-primary" title="Share" data-toggle="dropdown">
                             <span class="glyphicon glyphicon-share"></span> 
                         </button>
@@ -71,13 +80,16 @@
                     </p>
                 </div>
                 <div class="col-xs-7">
-                    <div class="text-danger padding-sm" 
-                         ng-if="playerData.editionMode && videoTag.id === playerData.currentTag.id" >
-                        <span ng-if="videoTag.id"><span class="glyphicon glyphicon-edit"></span> Editing...</span>
-                    </div>
                     <div class="padding-sm" 
-                         ng-if="playerData.editionMode && videoTag.id !== playerData.currentTag.id" >
-                        {{videoTag.begin | secondsToHours}} to {{videoTag.end | secondsToHours}} 
+                         ng-if="playerData.editionMode" >
+                        {{videoTag.begin | secondsToHours}} to {{videoTag.end | secondsToHours}}
+                        <!--
+                        <span 
+                            ng-if="videoTag.mode === 'edition' && (videoTag.id === PlayerData.currentTag.id || videoTag.id === null)" >
+                            &nbsp; <span class="glyphicon glyphicon-edit"></span> 
+                            Editing...
+                        </span>
+                        -->
                     </div>
                     <div ng-if="!playerData.editionMode" >
 
@@ -108,7 +120,7 @@
                     </div>
                 </div>
                 <div class="col-xs-2">
-                    <div class="dropdown" ng-if="!playerData.editionMode">
+                    <div class="dropdown" ng-if="videoTag.mode !==  'edition'">
                         <button class="btn btn-primary" data-toggle="dropdown">
                             <b class="caret"></b>
                         </button>
@@ -133,7 +145,7 @@
                                 </a>
                             </li>
                             <li >
-                                <a ui-sref="addtag({videoId:VideoTag.video_id, tagId:videoTag.id})">
+                                <a ui-sref="addtag({videoId:videoTag.video_id, tagId:videoTag.id})">
                                     <span class="glyphicon glyphicon-edit"></span> 
                                     Edit
                                 </a>

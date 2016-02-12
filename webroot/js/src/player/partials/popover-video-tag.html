@@ -1,0 +1,28 @@
+<div class="bg-primary clearfix popover-video-tag">
+    <div class="col-xs-3" ng-if="tag.sport_name">
+        <div class="item-sport">
+            <p>
+                <img ng-src="{{tag.sport_name| imageUrl}}" 
+                     title="{{tag.sport_name}}"
+                     alt="{{tag.sport_name}}"/>
+            </p>
+            <p class="item-category">
+                {{tag.category_name}}
+            </p>
+        </div>
+    </div>
+    <div class="col-xs-9">
+        <p class="text-center text-bold text-capitalize">
+            {{tag.tag_name}}
+        </p>
+        <p ng-if="tag.rider_name" 
+           class="item-user-name text-info text-capitalize">
+            {{tag.rider_name}}
+        </p>
+        <p class="text-center">
+            <span class="item-points">
+                {{tag.count_points}}
+            </span>
+        </p>
+    </div>
+</div>

@@ -97,6 +97,7 @@ class VideoTagsTable extends Table {
                     'id' => 'VideoTags.id',
                     'provider_id' => 'Videos.provider_id',
                     'video_url' => 'Videos.video_url',
+                    'video_duration' => 'Videos.duration',
                     'video_id' => 'Videos.id',
                     'begin' => 'VideoTags.begin',
                     'end' => 'VideoTags.end'

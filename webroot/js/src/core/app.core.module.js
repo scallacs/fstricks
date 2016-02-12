@@ -45,7 +45,6 @@ function PlayerData(VideoTagData, $q) {
             height: '100%',
             id: null
         },
-        url: url,
         view: view,
         replay: replay,
         reset: reset,
@@ -57,22 +56,17 @@ function PlayerData(VideoTagData, $q) {
         playVideoRange: playVideoRange,
         setPlayer: setPlayer,
         onCurrentTimeUpdate: function() {
-        }
+
+        },
+        updateCurrentTag: updateCurrentTag
     };
-    
+
     return obj;
-    
+
     function setPlayer(player) {
         this.player = player;
         this.deferred.resolve();
     }
-    function url(newUrl) {
-        if (newUrl !== this.data.video_url) {
-            this.data.video_url = newUrl;
-            this.loadVideo(newUrl);
-        }
-    }
-
     function playVideoRange(data) {
         return this.deferred.promise.then(function() {
             var info = {
@@ -80,7 +74,6 @@ function PlayerData(VideoTagData, $q) {
                 startSeconds: data.begin,
                 endSeconds: data.end
             };
-//            console.log(info);
             obj.player.loadVideoById(info);
         });
     }
@@ -93,6 +86,7 @@ function PlayerData(VideoTagData, $q) {
         console.log("PlayerData._view: " + videoTag.id);
 //        console.log(videoTag);
         if (videoTag === null) {
+            console.log("Try to view a null videoTag");
             obj.currentTag = null;
             return;
         }
@@ -129,12 +123,17 @@ function PlayerData(VideoTagData, $q) {
         this.editionMode = false;
         this.onCurrentTimeUpdate = function() {
         };
-
     }
 
-    function play() {
+    function play(newUrl) {
         return this.deferred.promise.then(function() {
-            obj.player.playVideo();
+            if (newUrl !== obj.data.video_url) {
+                obj.data.video_url = newUrl;
+                obj.loadVideo(newUrl);
+            }
+            else {
+                obj.player.playVideo();
+            }
         });
     }
 
@@ -158,11 +157,31 @@ function PlayerData(VideoTagData, $q) {
     function loadVideo(url) {
         return this.deferred.promise.then(function() {
             console.log('Load video in playerData: ' + url);
-            //console.log(obj);
             obj.data.video_url = url;
             obj.player.loadVideoById({videoId: url});
         });
     }
+
+
+    function updateCurrentTag(newVal) {
+//        console.log(PlayerData.currentTag);
+        var current = PlayerData.currentTag;
+        if (angular.isDefined(current) && current !== null) {
+            if (current.mode === 'edition') {
+                return;
+            }
+            if (current.begin <= newVal && current.end >= newVal) {
+                current.time_to_play = 0;
+                return;
+            }
+            else if (current.begin > newVal) {
+                current.time_to_play = Math.round(current.begin - newVal, 0);
+                return;
+            }
+        }
+        PlayerData.currentTag = VideoTagData.findNextTagToPlay(newVal);
+    }
+
 }
 
 function VideoTagData(VideoTagEntity) {
@@ -225,7 +244,8 @@ function VideoTagData(VideoTagEntity) {
         },
         cachePage: {},
         loadNextPage: function() {
-            var promise = this.loadPage(this.currentPage).then(function(tags) {
+            var promise = this.loadPage(this.currentPage);
+            promise.then(function(tags) {
                 if (tags.length < obj.limit) {
                     console.log('disabling video tag data loader');
                     obj.disabled = true;
@@ -501,11 +521,11 @@ function VideoTagEntity($resource) {
     });
 }
 
-AuthenticationService.$inject = ['$http', '$cookies', '$rootScope', 'UserEntity', '$location'];
-function AuthenticationService($http, $cookies, $rootScope, UserEntity, $location) {
+AuthenticationService.$inject = ['$http', '$cookies', '$rootScope', 'UserEntity', '$state'];
+function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state) {
 
-    var currentUser = null;
     var service = {};
+
     service.login = login;
     service.logout = logout;
     service.setCredentials = setCredentials;
@@ -515,34 +535,41 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $locatio
     service.socialLogin = socialLogin;
     service.signup = signup;
     service.requireLogin = requireLogin;
+    service.authData = {
+        user: null,
+        isAuthed: function() {
+            return service.isAuthed();
+        }
+    };
 
     return service;
 
+    function isAuthed() {
+        return service.getCurrentUser() !== null;
+    }
+
     function getCurrentUser() {
-        if (currentUser === false) {
+        if (service.authData.user === false) {
             return null;
         }
-        if (currentUser !== null) {
-            return currentUser;
+        if (service.authData.user !== null) {
+            return service.authData.user;
         }
 
         var globals = $cookies.getObject('globals');
         if (!globals) {
             return null;
         }
-        var user = globals.currentUser;
-        console.log("Getting current user: " + user.email);
-        return user;
-    }
-    function isAuthed() {
-        return getCurrentUser() !== null;
+        service.authData.user = globals.currentUser;
+        console.log("Getting current user: " + service.authData.email);
+        return service.authData.user;
     }
 
     function login(username, password) {
         var promise = UserEntity.login({email: username, password: password, id: null}, function(response) {
             if (response.success) {
                 response.data.provider = null;
-                setCredentials(response.data);
+                service.setCredentials(response.data);
             }
         }).$promise;
         return promise;
@@ -552,7 +579,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $locatio
         return UserEntity.signup(data, function(response) {
             console.log(response);
             if (response.success) {
-                setCredentials(response.data);
+                service.setCredentials(response.data);
             }
         }).$promise;
     }
@@ -563,15 +590,15 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $locatio
             console.log(response);
             if (response.success) {
                 response.data.provider = provider;
-                setCredentials(response.data);
+                service.setCredentials(response.data);
             }
             callback(response.success, response);
         }).$promise;
     }
 
     function setCredentials(data) {
-        currentUser = data;
-        $rootScope.globals = {currentUser: currentUser};
+        service.authData.user = data;
+        $rootScope.globals = {currentUser: data};
         $http.defaults.headers.common['Authorization'] = 'Bearer ' + data.token;
         $cookies.remove('globals');
         $cookies.putObject('globals', $rootScope.globals);
@@ -584,7 +611,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $locatio
     }
 
     function clearCredentials() {
-        currentUser = false;
+        service.authData.user = false;
         $rootScope.globals = {};
         $cookies.remove('globals');
         $http.defaults.headers.common.Authorization = 'Basic';
@@ -594,7 +621,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $locatio
     function requireLogin() {
         if (!isAuthed()) {
             console.log("User needs to be logged in to access this content");
-            $location.path('/login');
+            $state.go('login');
         }
     }
 

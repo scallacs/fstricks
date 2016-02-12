@@ -8,6 +8,7 @@ function ConfigRoute($stateProvider) {
     
     $stateProvider
             .state('faq', {
+                url: '/faq',
                 templateUrl: baseUrl + 'faq.html',
                 controller: 'PagesController',
                 data: {
@@ -15,6 +16,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('contact', {
+                url: '/contact',
                 templateUrl: baseUrl + '/contact.html',
                 controller: 'PagesController',
                 data: {
@@ -22,6 +24,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('gtu', {
+                url: '/gtu',
                 templateUrl: baseUrl + '/gtu.html',
                 controller: 'PagesController',
                 data: {
@@ -29,7 +32,16 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('privacy_policy', {
+                url: '/privacy-policy',
                 templateUrl: baseUrl + '/privacy_policy.html',
+                controller: 'PagesController',
+                data: {
+                    requireLogin: false
+                }
+            })
+            .state('edition_rules', {
+                url: '/edition-rules',
+                templateUrl: baseUrl + '/edition_rules.html',
                 controller: 'PagesController',
                 data: {
                     requireLogin: false

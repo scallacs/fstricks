@@ -1,7 +1,7 @@
 <div class="list-tricks" trick-list></div>
+<div ng-if="video.duration" player-bar video-tags="videoTagData.data" duration="video.duration"></div>
 
 <div class="clearfix  bg-primary">
-
     <div class="col-md-6 clearfix nopadding">
         <div class="panel-add-video-tag">
             <div ng-show="showCreateRiderForm">
@@ -18,12 +18,9 @@
             <div 
                 ng-show="!showCreateRiderForm">
 
-                <h3 class="page-title">
-                    Edit tricks
-                </h3>
 
                 <form id="FormAddVideoTag"
-                      class="form" 
+                      class="form padding-sm" 
                       name="formAddVideoTag" 
                       novalidate 
                       ng-submit="addVideoTag(editionTag)"
@@ -42,7 +39,7 @@
                                                 ng-click="addStartRange(-slider.step)">
                                             <span class="glyphicon glyphicon-minus"></span>
                                         </button>
-                                        <span class="btn btn-default disabled" >{{editionTag.range[0]| secondsToHours}}</span> 
+                                        <span class="btn btn-default disabled" >{{editionTag.range[0] | secondsToHours}}</span> 
                                         <button id="ButtonBeginTimePlus"
                                                 type="button" class="btn btn-default" ng-click="addStartRange(slider.step)">
                                             <span class="glyphicon glyphicon-plus"></span>
@@ -183,7 +180,6 @@
                                 </div>
                                 <div  class="col-xs-1">
                                         <button type="button" 
-                                                ng-show="suggestedRiders.length === 0"
                                                 class="btn btn-default"
                                                 ng-click="showCreateRiderForm = true">
                                             <span class="glyphicon glyphicon-plus-sign"></span>
@@ -244,13 +240,6 @@
         </div>
     </div>
 </div>
-<div class="container padding-sm">
-    <div class="alert alert-info">                    
-        <p class="text-info">
-            <span class="glyphicon glyphicon-info-sign"></span> 
-            Be sure to check that your trick is valid before submitting it. 
-            It must be from the beginning to the end of the trick. Avoid to add extra content. <br/>
-            Write the trick name correctly, try to use the suggested tag.<br/>
-        </p>
-    </div>
-</div>
+<p class="text-center padding-sm ">
+    <a ui-sref="edition_rules">Check out edition rules before adding new tricks</a>
+</p>

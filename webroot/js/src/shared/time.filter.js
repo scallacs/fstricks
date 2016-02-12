@@ -6,7 +6,8 @@ angular.module('shared')
                 var seconds = seconds % 3600 % 60;
                 var decades = parseInt((seconds - parseInt(seconds)) * 10);
                 seconds = parseInt(seconds);
-                return (hours > 0 ? (hours < 10 ? '0' : '') + hours + ':' : '') + (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds
+                return (hours > 0 ? ((hours < 10 ? '0' : '') + hours + ':') : '') + 
+                        (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds
                         + '.' + decades;
             }
         })

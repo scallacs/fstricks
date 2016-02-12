@@ -16,8 +16,8 @@ function Config($stateProvider) {
                         'template': '<div player-nav></div>'
                     },
                     '': {
-                        templateUrl: baseUrl + 'add_video_tag.html',
-                        controller: 'AddVideoTagController',
+                        templateUrl: baseUrl + 'add-video-tag.html',
+                        controller: 'AddVideoTagController'
                     }
                 },
                 data: {
@@ -56,6 +56,7 @@ function AddVideoTagController($scope, $filter,
         messageCenterService, RiderEntity, VideoTagData, VideoTagEntity) {
 
     PlayerData.showEditionMode();
+    PlayerData.onCurrentTimeUpdate = onCurrentTimeUpdate;
 
     // -------------------------------------------------------------------------
     // Properties: TODO match with server side
@@ -67,28 +68,8 @@ function AddVideoTagController($scope, $filter,
     };
     $scope.showCreateRiderForm = false;
 
-    $scope.editionTag = {
-        mode: 'edition',
-        id: null,
-        begin: 0,
-        end: MIN_TAG_DURATION,
-        video_url: null,
-        tag_name: null,
-        tag_slug: null,
-        tag_id: null,
-        tag: {},
-        sport_name: null,
-        category_name: null,
-        sport_id: null,
-        category_id: null,
-        rider_name: null,
-        rider_picture: null,
-        rider_id: null,
-        provider_id: "youtube",
-        count_points: 0,
-        // ---
-        range: [0, 0]
-    };
+    $scope.video = {video_url: null};
+    $scope.editionTag = {};
     $scope.similarTags = [];
     $scope.isFormLoading = false;
     $scope.sports = SharedData.sports;
@@ -113,7 +94,6 @@ function AddVideoTagController($scope, $filter,
     $scope.onSelectRider = onSelectRider;
     $scope.onRemoveRider = onRemoveRider;
 
-    $scope.playEditionTag = playEditionTag;
     $scope.addStartRange = addStartRange;
     $scope.addEndRange = addEndRange;
     $scope.setStartRangeNow = setStartRangeNow;
@@ -121,35 +101,39 @@ function AddVideoTagController($scope, $filter,
 
     init();
 
-    $scope.$on('view-video-tag', function(event, tag){
+    $scope.$on('view-video-tag', function(event, tag) {
         editVideoTag(tag);
     });
-    
+
+    $scope.$on('add-new-tag', function(event) {
+        console.log('add-new-tag event');
+        PlayerData.showListTricks = false;
+        addNewTag();
+    });
+    $scope.$on('rider-selected', onRiderSelectedEvent);
+    $scope.$watch('editionTag.range', watchEditionTagRange);
+
 
     function init() {
         PlayerData.showListTricks = false;
-        PlayerData.currentTag = $scope.editionTag;
+        VideoTagData.reset();
         VideoTagData.setFilter('video_id', $stateParams.videoId);
 
-        $scope.$watch('editionTag.range', watchEditionTagRange);
-        $scope.$on('rider-selected', onRiderSelectedEvent);
-
         VideoEntity.view({id: $stateParams.videoId}, function(video) {
-            $scope.editionTag.range[1] = MIN_TAG_DURATION;
-            $scope.editionTag.video_url = video.video_url;
+            $scope.video = video;
             PlayerData.data.duration = video.duration;
-            PlayerData.url(video.video_url);
-            PlayerData.play();
-            SharedData.pageLoader(false);
-
             // When data are loaded we set in the editor the tag id to edit
             // TODO change
             if ($stateParams.tagId) {
                 VideoTagData.loadNextPage().then(function(data) {
+                    console.log(data);
                     // Find tag id 
                     for (var i = 0; i < data.length; i++) {
                         if (data[i].id == $stateParams.tagId) {
-                            PlayerData.view(data[i]);
+                            editVideoTag(data[i]);
+                            PlayerData.view(data[i]).then(function() {
+                                SharedData.pageLoader(false);
+                            });
                             return;
                         }
                     }
@@ -157,12 +141,27 @@ function AddVideoTagController($scope, $filter,
             }
             else {
                 VideoTagData.loadNextPage();
+                PlayerData.play(video.video_url).then(function() {
+                    addNewTag();
+                    SharedData.pageLoader(false);
+                });
+
             }
+
         });
 
 
     }
 
+    function addNewTag() {
+        resetEditionTag();
+        console.log($scope.editionTag);
+        PlayerData.currentTag = $scope.editionTag;
+    }
+
+    function onCurrentTimeUpdate(newVal) {
+        //PlayerData.updateCurrentTag();
+    }
 
     function watchEditionTagRange(newValue, oldValue) {
         if (newValue == undefined) {
@@ -246,19 +245,19 @@ function AddVideoTagController($scope, $filter,
         var postData = toPostData(data);
 
         if (data.id) {
-            VideoTagEntity.edit(postData, function(response) {
+            $scope.formAddVideoTag.submit(VideoTagEntity.edit(postData).$promise).$promise.then(function(response) {
                 $scope.isFormLoading = false;
                 if (response.success) {
                     messageCenterService.add('success', response.message, {
                         timeout: 3000,
                         status: messageCenterService.status.shown
                     });
-                    resetEditionTag($scope.editionTag);
+                    resetEditionTag();
                 }
             });
         }
         else {
-            VideoTagEntity.add(postData, function(response) {
+            $scope.formAddVideoTag.submit(VideoTagEntity.add(postData).$promise).then(function(response) {
                 $scope.isFormLoading = false;
                 if (response.success) {
                     messageCenterService.add('success', response.message, {
@@ -280,6 +279,7 @@ function AddVideoTagController($scope, $filter,
     }
 
     function playEditionTag() {
+        console.log("Playing edition tag");
         PlayerData.view($scope.editionTag);
     }
 
@@ -417,9 +417,33 @@ function AddVideoTagController($scope, $filter,
         }
         return postData;
     }
+
     function resetEditionTag() {
-        $scope.editionTag.id = null;
-        $scope.editionTag.tag = {};
+        var defaultDuration = (MAX_TAG_DURATION - MIN_TAG_DURATION) / 2;
+        $scope.editionTag = {
+            mode: 'edition',
+            id: null,
+            begin: 0,
+            end: defaultDuration,
+            video_url: $scope.video.video_url,
+            tag_name: null,
+            tag_slug: null,
+            tag_id: null,
+            tag: {},
+            sport_name: null,
+            category_name: null,
+            sport_id: null,
+            category_id: null,
+            rider_name: null,
+            rider_picture: null,
+            rider_id: null,
+            provider_id: "youtube",
+            count_points: 0,
+            // ---
+            range: [0, 0]
+        };
+
+        $scope.editionTag.range[1] = defaultDuration;
     }
 }
 

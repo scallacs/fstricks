@@ -42,6 +42,7 @@ angular.module('app.player')
                     PlayerData.deferred.reject(error.data);
                 },
                 onReady: function() {
+                    console.log("onYouTubePlayerReady()");
                     scope.$emit('onYouTubePlayerReady', player);
                     PlayerData.setPlayer(player);
                 },
@@ -54,7 +55,7 @@ angular.module('app.player')
                             scope.$apply(function() {
                                 scope.playerData.data.currentTime = newTime;
                             });
-                        }, 100); // 100 means repeat in 100 ms
+                        }, 200); // 100 means repeat in 100 ms
                     }
 
                     switch (event.data) {

@@ -122,9 +122,9 @@ function UserLoginController($scope, $state) {
 
 }
 
-SignupController.$inject = ['$scope', '$location', 'SharedData',
+SignupController.$inject = ['$scope', '$state', 'SharedData',
     'messageCenterService', 'AuthenticationService']
-function SignupController($scope, $location, SharedData,
+function SignupController($scope, $state, SharedData,
         messageCenterService, AuthenticationService) {
 
     $scope.signup = signup;
@@ -137,7 +137,7 @@ function SignupController($scope, $location, SharedData,
             if (response.success) {
                 $scope.$parent.isAuthed = true;
                 messageCenterService.add('success', response.message, {status: messageCenterService.status.shown});
-                $location.path('/');
+                $state.go('home');
             }
             else {
                 messageCenterService.add('danger', response.message, {status: messageCenterService.status.shown});

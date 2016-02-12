@@ -1,0 +1,9 @@
+<div class="player-bar">
+    <div ng-repeat="tag in videoTags" 
+         class="player-bar-tag"
+         uib-popover-template="options.popoverTemplateUrl"
+         data-tag="tag"
+         popover-trigger="mouseenter"
+         ng-click="view(tag)" 
+         ng-style="computeStyle(tag)"></div>
+</div>

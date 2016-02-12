@@ -27,7 +27,7 @@ function ConfigRoute($stateProvider) {
                         template: '<h2 class="page-title">Add a video</h2>'
                     },
                     '': {
-                        templateUrl: baseUrl + 'add_video.html',
+                        templateUrl: baseUrl + 'add-video.html',
                         controller: 'AddVideoController'
                     }
                 },
@@ -64,7 +64,8 @@ function ConfigRoute($stateProvider) {
                 url: '/video/:videoId',
                 views: {
                     videoPlayerExtra: {
-                        controller: 'ViewVideoController'
+                        controller: 'ViewVideoController',
+                        template: '<div player-bar video-tags="videoTags" duration="videoDuration"></div>'
                     }
                 }
             })
@@ -84,11 +85,11 @@ function ConfigRoute($stateProvider) {
                     }
                 }
             });
-        }
+}
 
 
 
-function AddVideoController($scope, YoutubeVideoInfo, $location,
+function AddVideoController($scope, YoutubeVideoInfo, $state,
         VideoEntity, VideoTagEntity, ServerConfigEntity, messageCenterService, SharedData, AuthenticationService, PlayerData) {
 
     var videosInCache = {};
@@ -123,16 +124,14 @@ function AddVideoController($scope, YoutubeVideoInfo, $location,
         if (YoutubeVideoInfo.extractVideoIdFromUrl(data.video_url)) {
             data.video_url = YoutubeVideoInfo.extractVideoIdFromUrl(data.video_url);
         }
-        VideoEntity.addOrGet(data, function(response) {
+        var promise = $scope.addVideoForm.submit(VideoEntity.addOrGet(data).$promise);
+        promise.then(function(response) {
             if (response.success) {
-                $location.path('/tag/add/' + response.data.id);
+                $state.go('addtag', {videoId: response.data.id});
             }
             else {
                 messageCenterService.add('warning', response.message, {status: messageCenterService.status.shown});
             }
-            $scope.isFormLoading = false;
-        }, function() {
-            $scope.isFormLoading = false;
         });
     }
 
@@ -165,14 +164,18 @@ function AddVideoController($scope, YoutubeVideoInfo, $location,
 
 }
 
-function PlayerController(VideoTagData, PlayerData) {
+function PlayerController($scope, PlayerData) {
     PlayerData.showViewMode();
     PlayerData.showListTricks = true;
+    
+    $scope.$on('view-video-tag', function(event, tag){
+        PlayerData.view(tag);
+    });
 }
 function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData) {
     PlayerData.showListTricks = true;
     VideoTagData.setFilters({tag_id: $stateParams.tagId, order: 'best'});
-    VideoTagData.loadNextPage().finally(function(){
+    VideoTagData.loadNextPage().finally(function() {
         SharedData.pageLoader(false);
     });
 }
@@ -180,48 +183,39 @@ function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData)
 //    console.log("View sport: " + $stateParams.sportName);
     PlayerData.showListTricks = true;
     VideoTagData.setFilters({sport_name: $stateParams.sportName, order: 'best'});
-    VideoTagData.loadNextPage().finally(function(){
+    VideoTagData.loadNextPage().finally(function() {
         SharedData.pageLoader(false);
     });
 }
 function ViewBestController(VideoTagData, PlayerData, SharedData) {
     PlayerData.showListTricks = true;
     VideoTagData.setFilters({order: 'best'});
-    VideoTagData.loadNextPage().finally(function(){
+    VideoTagData.loadNextPage().finally(function() {
         SharedData.pageLoader(false);
     });
 }
 
-function ViewVideoController(VideoTagData, PlayerData, $stateParams, SharedData) {
+function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, SharedData) {
 
     PlayerData.onCurrentTimeUpdate = onCurrentTimeUpdate;
+    PlayerData.showListTricks = false;
 
     VideoTagData.setFilters({video_id: $stateParams.videoId, order: 'begin_time'});
-    VideoTagData.loadPage(1).then(autoPlayVideo).finally(function(){
+    VideoTagData.loadPage(1).then(autoPlayVideo).finally(function() {
         SharedData.pageLoader(false);
     });
+
     // TODO only for first page
 
     function onCurrentTimeUpdate(newVal) {
-        var current = PlayerData.currentTag;
-        // Still current trick 
-        //console.log(current);
-        if (current !== null && current.begin <= newVal && current.end >= newVal) {
-            current.time_to_play = 0;
-        }
-        else if (current !== null && current.begin > newVal) {
-            current.time_to_play = Math.round(current.begin - newVal, 0);
-        }
-        // Search next one
-        else {
-            PlayerData.currentTag = VideoTagData.findNextTagToPlay(newVal);
-        }
+        PlayerData.updateCurrentTag();
     }
 
     function autoPlayVideo(response) {
         if (response.length > 0) {
-            PlayerData.url(response[0].video_url);
-            PlayerData.play();
+            PlayerData.play(response[0].video_url);
+            $scope.videoDuration = response[0].video_duration;
+            $scope.videoTags = VideoTagData.data;
 //                YoutubeVideoInfo.snippet(response[0].video_url, function(data) {
 //                    //console.log(data);
 //                    if (data !== null) {
