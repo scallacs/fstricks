@@ -1,4 +1,4 @@
-<div class="bg-primary clearfix popover-video-tag">
+<div class="bg-primary clearfix popover-video-tag text-center">
     <div class="col-xs-3" ng-if="tag.sport_name">
         <div class="item-sport">
             <p>
@@ -12,14 +12,14 @@
         </div>
     </div>
     <div class="col-xs-9">
-        <p class="text-center text-bold text-capitalize">
+        <p class="text-bold text-capitalize">
             {{tag.tag_name}}
         </p>
         <p ng-if="tag.rider_name" 
            class="item-user-name text-info text-capitalize">
             {{tag.rider_name}}
         </p>
-        <p class="text-center">
+        <p ng-if="tag.count_points">
             <span class="item-points">
                 {{tag.count_points}}
             </span>

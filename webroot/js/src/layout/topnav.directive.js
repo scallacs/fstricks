@@ -20,9 +20,6 @@ function topnav() {
 
             $scope.showVideoPlayer = false;
 
-            $scope.getCurrentPlayerTime = function() {
-                return 0;
-            };
 
             // -------------------------------------------------------------------------
             // Youtube player
@@ -35,11 +32,6 @@ function topnav() {
 
 
             function init() {
-                $scope.$on('onYouTubePlayerReady', function(event, player) {
-                    $scope.getCurrentPlayerTime = function() {
-                        return player.getCurrentTime();
-                    };
-                });
                 $scope.$on('showVideoPlayer', function(newVal) {
                     if (newVal === false) {
                         PlayerData.showViewMode();

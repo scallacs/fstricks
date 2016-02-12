@@ -11,12 +11,13 @@ function playerBar() {
             duration: '=duration'
         },
         templateUrl: 'js/src/player/partials/player-bar.html',
-        controller: function($scope) {
+        controller: function($scope, PlayerData) {
             $scope.options = {
                 popoverTemplateUrl:  'js/src/player/partials/popover-video-tag.html'
             };
             $scope.view = view;
             $scope.computeStyle = computeStyle;
+            $scope.playerData = PlayerData;
             
             function view(tag){
                 $scope.$emit('view-video-tag', tag);

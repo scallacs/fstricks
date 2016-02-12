@@ -55,11 +55,14 @@ class TagsController extends AppController {
 
     /**
      * @queryType GET
+     * term
+     * ? count_ref_min
      * 
      * Return a list of the most famous tag begining by the search term $term
      * @param string $term
      */
     public function suggest($term = '') {
+        $countRef = \App\Lib\DataUtil::getPositiveInt($this->request->query, 'count_ref_min', 1);
         $query = $this->Tags->find('all')
                 ->select([
                     'name' => 'Tags.name',
@@ -72,7 +75,7 @@ class TagsController extends AppController {
                     'sport_name' => 'Sports.name'])
                 ->where([
                     'Tags.name LIKE' => '%' . $term . '%',
-                    'Tags.count_ref > 0'
+                    'Tags.count_ref >= ' . $countRef
                 ])
                 ->contain(['Categories', 'Sports'])
                 ->limit(20)

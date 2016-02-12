@@ -283,6 +283,7 @@ header .navbar-nav > li > a{
 /* PLAYER BAR  */
 /* ------------------------------------------------------------ */
 .player-bar{
+    top: 0px;
     position: relative;
     background: #333;
     padding: 0px;
@@ -292,17 +293,21 @@ header .navbar-nav > li > a{
     height: 17px;
     border-radius: 5px;
 }
-
+.player-bar-tag.active{
+    background: orangered;
+}
 .player-bar-tag{
     background: orange;
     height: 15px;
     position: absolute;
     min-width: 3px;
     border-radius: 5px;
+    box-shadow: -2px 0px 2px black;
 } 
 .player-bar-tag:hover{
     cursor: pointer;
     background: orangered;
+    z-index: 2;
 }
 .popover-video-tag{
     border-radius: 5px;

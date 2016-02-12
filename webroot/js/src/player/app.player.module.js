@@ -65,7 +65,7 @@ function ConfigRoute($stateProvider) {
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewVideoController',
-                        template: '<div player-bar video-tags="videoTags" duration="videoDuration"></div>'
+                        template: '<div player-bar video-tags="videoTags" duration="videoDuration" player-bar-top></div>'
                     }
                 }
             })

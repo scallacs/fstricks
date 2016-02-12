@@ -55,6 +55,7 @@ function PlayerData(VideoTagData, $q) {
         loadVideo: loadVideo,
         playVideoRange: playVideoRange,
         setPlayer: setPlayer,
+        getCurrentTime: getCurrentTime,
         onCurrentTimeUpdate: function() {
 
         },
@@ -113,6 +114,7 @@ function PlayerData(VideoTagData, $q) {
     function reset() {
         console.log("RESETING DATA");
         VideoTagData.reset();
+        obj.deferred = $q.defer();
         this.currentTag = null;
         this.data.video_url = null;
         this.data.id = 0;
@@ -182,12 +184,15 @@ function PlayerData(VideoTagData, $q) {
         PlayerData.currentTag = VideoTagData.findNextTagToPlay(newVal);
     }
 
+    function getCurrentTime(){
+        return obj.player.getCurrentTime();
+    }
 }
 
 function VideoTagData(VideoTagEntity) {
-    var filters = {};
 
     var obj = {
+        filters: {},
         data: [],
         limit: 20, // TODO synchro server
         current: 0, // Index of the current tag 
@@ -198,17 +203,17 @@ function VideoTagData(VideoTagEntity) {
             this.data = [];
             this.disabled = false;
             this.cachePage = {};
-            filters = {};
+            obj.filters = {};
         },
         setFilter: function(name, value) {
-            filters[name] = value;
+            obj.filters[name] = value;
         },
         setFilters: function(value) {
             this.reset();
-            filters = value;
+            obj.filters = value;
         },
         setOrder: function(value) {
-            filters.order = value;
+            obj.filters.order = value;
         },
         add: function(tag) {
             this.data.push(tag);
@@ -255,14 +260,16 @@ function VideoTagData(VideoTagEntity) {
             return promise;
         },
         loadPage: function(page) {
+            console.log('Loading page : ' + page + ' with filter: ');
+            console.log(obj.filters);
             if (this.cachePage[page]) {
                 return this.cachePage[page];
             }
 //            if (this.disabled) {
 //                // TODO 
 //            }
-            filters.page = page;
-            this.cachePage[page] = VideoTagEntity.search(filters, function(tags) {
+            obj.filters.page = page;
+            this.cachePage[page] = VideoTagEntity.search(obj.filters, function(tags) {
                 console.log('Loading page ' + obj.currentPage + ': ' + tags.length + ' tag(s)');
                 for (var i = 0; i < tags.length; i++) {
                     obj.data.push(tags[i]);

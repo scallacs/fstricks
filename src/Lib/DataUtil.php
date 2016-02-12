@@ -7,6 +7,9 @@ class DataUtil{
         return isset($data[$key]) ? $data[$key] : $default;
 
     }
+    static function getPositiveInt($data, $key, $default = 0){
+        return isset($data[$key]) && is_numeric($data[$key]) && $data[$key] >= 0 ? (int)($data[$key]) : $default;
+    }
     static function getString($data, $key, $default = ''){
         return isset($data[$key]) ? trim($data[$key]) : $default;
     }
