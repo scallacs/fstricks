@@ -2,75 +2,89 @@
     <h3 class="container section-tile">Select your video</h3>
 </div>
 -->
-<div class="container">
-    <div class="panel panel-primary">
-        <div class="panel-body">
-            <form id="FormAddVideo" 
-                  class="form" 
-                  name="addVideoForm" 
-                  ng-submit="add(data)"
-                  server-form 
-                  novalidate>
-                <fieldset>
-                    <div class="col-xs-4">
-                        <div class="form-group clearfix has-feedback"
-                             ng-class="{ 'has-error': addVideoForm.provider_id.$invalid }">
-                            <select 
+<div class="container margin-top">
+    <div class="col-lg-6">
+        <div class="panel panel-primary bg-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Add a video</h3>
+            </div>
+            <div class="panel-body">
+                <form id="FormAddVideo" 
+                      class="form" 
+                      name="addVideoForm" 
+                      ng-submit="add(data)"
+                      server-form 
+                      novalidate>
+                    <fieldset>
+                        <div class="col-xs-4">
+                            <div class="form-group clearfix has-feedback"
+                                 ng-class="{ 'has-error': addVideoForm.provider_id.$invalid }">
+                                <select 
                                     id="FormFieldProviderId"
                                     ng-model="data.provider_id" 
                                     class="form-control"
-                                    ng-disabled="playerProviders.length <= 1"
-                                    ng-options="provider.name as provider.name for provider in playerProviders"
+                                    ng-options="provider.code as provider.name for provider in playerProviders"
                                     servererror
                                     required
                                     >
-                            </select>
-                            <span class="ion-person form-control-feedback"></span>
-                            <div class="help-block text-danger"
-                                 ng-if="addVideoForm.provider_id.$dirty" 
-                                 ng-messages="addVideoForm.provider_id.$error">
-                                <div ng-message="required">Pick a valid provider.</div>
-                                <div ng-message="server">{{addVideoForm.provider_id.$error.server}}</div>
+                                </select>
+                                <span class="ion-person form-control-feedback"></span>
+                                <div class="help-block text-danger"
+                                     ng-if="addVideoForm.provider_id.$dirty" 
+                                     ng-messages="addVideoForm.provider_id.$error">
+                                    <div ng-message="required">Pick a valid provider.</div>
+                                    <div ng-message="server">{{addVideoForm.provider_id.$error.server}}</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-xs-8">
-                        <div class="form-group clearfix has-feedback" 
-                             ng-class="{ 'has-error': addVideoForm.video_url.$invalid }">
-                            <input type="text" 
-                                    id="FormFieldVideoUrl"
-                                   class="form-control"
-                                   ng-model="data.video_url"
-                                   name="video_url"
-                                   placeholder="paste here the video id or video url"
-                                   servererror
-                                   rule-youtube-video-id
-                                   required/>
-                            <span class="ion-person form-control-feedback"></span>
-                            <div class="help-block text-danger"
-                                 ng-if="addVideoForm.video_url.$dirty" 
-                                 ng-messages="addVideoForm.video_url.$error">
-                                <div ng-message="required">You must enter a valid youtube link.</div>
-                                <div ng-message="youtubeVideoId">You must enter a valid youtube link.</div>
-                                <div ng-message="server">{{addVideoForm.video_url.$error.server}}</div>
+                        <div class="col-xs-8">
+                            <div class="form-group clearfix has-feedback" 
+                                 ng-class="{ 'has-error': addVideoForm.video_url.$invalid }">
+                                <input type="text" 
+                                       id="FormFieldVideoUrl"
+                                       class="form-control"
+                                       ng-model="data.video_url"
+                                       name="video_url"
+                                       placeholder="paste here the video id or video url"
+                                       ng-minlength="11"
+                                       servererror
+                                       rule-youtube-video-id
+                                       required/>
+                                <span class="ion-person form-control-feedback"></span>
+                                <div class="help-block text-danger"
+                                     ng-if="addVideoForm.video_url.$dirty" 
+                                     ng-messages="addVideoForm.video_url.$error">
+                                    <div ng-message="required">You must enter a valid youtube link.</div>
+                                    <div ng-message="youtubeVideoId">You must enter a valid youtube link.</div>
+                                    <div ng-message="server">{{addVideoForm.video_url.$error.server}}</div>
+                                    <div ng-message="minlength">A youtube video id has 11 caracters</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div mc-messages></div>
+                        <div mc-messages></div>
 
-                    <div class="text-center form-group">
-                        <button type="submit" 
-                                class="btn btn-primary"
-                                ng-disabled="!addVideoForm.$valid">
-                            Next 
-                        </button>
-                    </div>
-                </fieldset>
-            </form>
+                        <div class="text-center form-group">
+                            <button type="submit" 
+                                    class="btn btn-primary"
+                                    ng-disabled="!addVideoForm.$valid">
+                                Next 
+                            </button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="panel panel-primary bg-primary"">
+            <div class="panel-heading">
+                <h3 class="panel-title">History</h3>
+            </div>
 
-            <div ng-if="recentVideos.length > 0">
-                <h3>History</h3>
-                <div class="padding-sm">
+            <div class="panel-body">
+                <div page-loader is-loading="isHistoryLoading"></div>
+
+                <div ng-if="recentVideos.length > 0" >
                     <ul class="list-unstyled">
                         <li dir-paginate="video in recentVideos | itemsPerPage: videoPerPage"
                             total-items="totalVideos"
@@ -85,8 +99,17 @@
                          class="pagination-container">
                     </div>
                 </div>
+                <div ng-if="recentVideos === false">
+                    <p>
+                        Loading your history...
+                    </p>
+                </div>
+                <div ng-if="recentVideos.length === 0">
+                    <p>
+                        Add your first video now !
+                    </p>
+                </div>
             </div>
         </div>
-
     </div>
 </div>

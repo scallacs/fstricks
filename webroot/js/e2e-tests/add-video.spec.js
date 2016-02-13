@@ -3,6 +3,7 @@ var Application = require('./pages.js');
 describe('Add video: ', function() {
 
     var validYoutubeId = "Ofc9hh0NWe8";
+    var validYoutubeIdFull = "https://www.youtube.com/watch?v=Ur1Nrz23sSI";
     var form, submitBtn;
 
     var application = new Application();

@@ -22,7 +22,6 @@ function PlayerData(VideoTagData, $q) {
     var obj = {
         deferred: $q.defer(),
         player: null,
-        currentTag: null,
         visible: true,
         showListTricks: true,
         editionMode: false,
@@ -88,10 +87,10 @@ function PlayerData(VideoTagData, $q) {
 //        console.log(videoTag);
         if (videoTag === null) {
             console.log("Try to view a null videoTag");
-            obj.currentTag = null;
+            VideoTagData.currentTag = null;
             return;
         }
-        obj.currentTag = videoTag;
+        VideoTagData.currentTag = videoTag;
         obj.data.id = videoTag.id;
         obj.data.begin = videoTag.begin;
         obj.showListTricks = false;
@@ -152,6 +151,7 @@ function PlayerData(VideoTagData, $q) {
 
     function stop() {
         return this.deferred.promise.then(function() {
+            obj.data.video_url = null
             obj.player.stopVideo();
         });
     }
@@ -166,9 +166,10 @@ function PlayerData(VideoTagData, $q) {
 
 
     function updateCurrentTag(newVal) {
-//        console.log(PlayerData.currentTag);
-        var current = PlayerData.currentTag;
+//        console.log(VideoTagData.currentTag);
+        var current = VideoTagData.currentTag;
         if (angular.isDefined(current) && current !== null) {
+            //console.log("current tag is defined: " + newVal + " in ? " + current.id + " [" + current.begin+", "+current.end+"]");
             if (current.mode === 'edition') {
                 return;
             }
@@ -181,7 +182,8 @@ function PlayerData(VideoTagData, $q) {
                 return;
             }
         }
-        PlayerData.currentTag = VideoTagData.findNextTagToPlay(newVal);
+        console.log("Searching for next tag...");
+        VideoTagData.currentTag = VideoTagData.findNextTagToPlay(newVal);
     }
 
     function getCurrentTime(){
@@ -193,12 +195,13 @@ function VideoTagData(VideoTagEntity) {
 
     var obj = {
         filters: {},
+        currentTag: null,
         data: [],
         limit: 20, // TODO synchro server
-        current: 0, // Index of the current tag 
         disabled: true,
         currentPage: 1,
         reset: function() {
+            this.currentTag = null;
             this.currentPage = 1;
             this.data = [];
             this.disabled = false;
@@ -219,33 +222,43 @@ function VideoTagData(VideoTagEntity) {
             this.data.push(tag);
         },
         next: function() {
-            if (this.hasNext()) {
-                this.current++;
-                return this.data[this.current];
-            }
-            return null;
+            return this.data[Math.min(this.data.length -1,this._getCurrentIndice() + 1)];
         },
         hasPrev: function() {
-            return this.current > 0;
+            return this.data.length > 0 && obj.currentTag !== null && obj.currentTag.id !== this.data[0].id;
         },
         hasNext: function() {
-            return this.current < this.data.length - 1;
+            //console.log(obj.currentTag.id+ ' != ' + this.data[this.data.length - 1].id);
+            return this.data.length > 0 && obj.currentTag !== null && obj.currentTag.id !== this.data[this.data.length - 1].id;
         },
         prev: function() {
-            if (this.hasPrev()) {
-                this.current--;
-                return this.data[this.current];
-            }
-            return null;
+            return this.data[Math.max(0,this._getCurrentIndice() - 1)];
         },
         findNextTagToPlay: function(playerTime) {
+            return this._findTagToPlay(playerTime, 1);
+        },
+        findPreviousTagToPlay: function(playerTime) {
+            return this._findTagToPlay(playerTime, -1);
+        },
+        _findTagToPlay: function(playerTime, m) {
             for (var i = 0; i < this.data.length; i++) {
-                if (this.data[i].begin > playerTime) {
-                    this.current = i;
+                if (m*this.data[i].begin > m*playerTime) {
+                    console.log("Found next tag: " + this.data[i].id);
                     return this.data[i];
                 }
             }
             return null;
+        },
+        _getCurrentIndice: function(){
+            if (obj.currentTag === null){
+                return 0;
+            }
+            for (var i = 0; i < this.data.length; i++) {
+                if (this.data[i].id === obj.currentTag.id) {
+                    return i;
+                }
+            }
+            return 0;
         },
         cachePage: {},
         loadNextPage: function() {

@@ -134,7 +134,7 @@ function AddVideoTagController($scope, $filter,
         PlayerData.showListTricks = false;
         resetEditionTag();
         console.log($scope.editionTag);
-        PlayerData.currentTag = $scope.editionTag;
+        VideoTagData.currentTag = $scope.editionTag;
     }
     
     function playEditionTag() {

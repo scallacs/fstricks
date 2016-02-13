@@ -1,9 +1,9 @@
 <div class="item item-video-tag bg-primary" 
-     ng-class="{ 'active': playerData.currentTag.id === videoTag.id}" >
+     ng-class="{ 'active': videoTagData.currentTag.id === videoTag.id}" >
     <div class="item-heading row clickable">
 
         <div>
-            <div class="row clickable">
+            <div class="clickable">
                 <div class="col-xs-3">
                     <div class="item-sport">
                         <span ng-if="videoTag.sport_name">
@@ -73,7 +73,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="">
                 <div class="col-xs-3">
                     <p class="item-category">
                         {{videoTag.category_name}}
@@ -85,7 +85,7 @@
                         {{videoTag.begin | secondsToHours}} to {{videoTag.end | secondsToHours}}
                         <!--
                         <span 
-                            ng-if="videoTag.mode === 'edition' && (videoTag.id === PlayerData.currentTag.id || videoTag.id === null)" >
+                            ng-if="videoTag.mode === 'edition' && (videoTag.id === VideoTagData.currentTag.id || videoTag.id === null)" >
                             &nbsp; <span class="glyphicon glyphicon-edit"></span> 
                             Editing...
                         </span>
@@ -102,7 +102,7 @@
                         <div  ng-controller="VideoTagPointsController" 
                               ng-show="videoTag.time_to_play == null || videoTag.time_to_play == 0">
                             <button type="button" class="btn btn-primary"  ng-click="down(videoTag)" 
-                                    ng-disabled="playerData.currentTag.id !== videoTag.id || videoTag.user_rate === 'loading'"
+                                    ng-disabled="videoTagData.currentTag.id !== videoTag.id || videoTag.user_rate === 'loading'"
                                     ng-class="videoTag.user_rate === 'down' ? 'active' : ''">
                                 <span class="glyphicon glyphicon-arrow-down"></span>
                             </button>
@@ -112,7 +112,7 @@
                             <button type="button" 
                                     class="btn btn-primary" 
                                     ng-click="up(videoTag)" 
-                                    ng-disabled="playerData.currentTag.id !== videoTag.id || videoTag.user_rate === 'loading'"
+                                    ng-disabled="videoTagData.currentTag.id !== videoTag.id || videoTag.user_rate === 'loading'"
                                     ng-class="videoTag.user_rate === 'up' ? 'active' : ''">
                                 <span class="glyphicon glyphicon-arrow-up"></span>
                             </button>

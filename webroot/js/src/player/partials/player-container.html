@@ -1,5 +1,10 @@
-<div ng-show="!SharedData.loadingState && !videoTagData.loading">
-    <div ng-show="playerData.currentTag == null && videoTagData.data.length === 0" 
+<div
+    ng-style="resizeWithOffset()" 
+    resize 
+    notifier="notifyServiceOnChage(params)"
+    ng-show="!SharedData.loadingState && !videoTagData.loading">
+    
+    <div ng-show="videoTagData.currentTag == null && videoTagData.data.length === 0" 
          class="pick-video-message">
         <p>
             Oups, there is no tricks registered yet... 
@@ -8,7 +13,7 @@
             <a ui-sref="addvideo"> Add tricks now</a>
         </p>
     </div>
-    <div ng-show="playerData.currentTag != null || videoTagData.data.length > 0">
+    <div ng-show="videoTagData.currentTag != null || videoTagData.data.length > 0">
         <div class="nopadding player-container"  ng-show="playerData.data.video_url"  >
             <div class="iframe-wrapper res-16by9">   
                 <youtube

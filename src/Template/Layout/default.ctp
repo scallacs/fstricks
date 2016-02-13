@@ -16,7 +16,7 @@
 
         <div id="container" style="position: relative;" class="clearfix">
             
-            <div page-loader></div>
+            <div page-loader is-loading="SharedData.loadingState"></div>
             
             <div id="content">
                 <div ui-view></div>

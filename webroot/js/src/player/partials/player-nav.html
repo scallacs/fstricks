@@ -2,9 +2,9 @@
 <table class="table-current-trick" >
     <tbody>
         <tr>
-            <td  ng-if="playerData.currentTag"
+            <td  ng-if="videoTagData.currentTag"
                  ng-click="prevTrick()"
-                 ng-class="{disabled: videoTagData.current == 0}"
+                 ng-class="{disabled: !videoTagData.hasPrev()}"
                  class="toggle-list-tricks player-prev-trick" >
                 <a  href="" 
                     class="text-big">
@@ -12,14 +12,14 @@
                 </a>
             </td>
             <td class="current-tag" 
-                ng-if="playerData.currentTag">
-                <div video-tag-item video-tag="playerData.currentTag"></div>
+                ng-if="videoTagData.currentTag">
+                <div video-tag-item video-tag="videoTagData.currentTag"></div>
             </td>
             <td
-                ng-if="playerData.currentTag"
+                ng-if="videoTagData.currentTag"
                 class="toggle-list-tricks" 
                 ng-click="nextTrick()"
-                ng-class="{disabled: videoTagData.current >= videoTagData.data.length - 1}">
+                ng-class="{disabled: !videoTagData.hasNext()}">
                 <a href="" class="text-big">
                     <span class="glyphicon glyphicon-arrow-right"></span>
                 </a>

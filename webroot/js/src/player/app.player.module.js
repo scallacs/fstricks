@@ -24,7 +24,7 @@ function ConfigRoute($stateProvider) {
                 url: '/video/add',
                 views: {
                     viewNavRight: {
-                        template: '<h2 class="page-title">Add a video</h2>'
+                        template: ''//<h2 class="page-title">Add a video</h2>'
                     },
                     '': {
                         templateUrl: baseUrl + 'add-video.html',
@@ -65,7 +65,7 @@ function ConfigRoute($stateProvider) {
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewVideoController',
-                        template: '<div player-bar video-tags="videoTags" duration="videoDuration" player-bar-top></div>'
+                        templateUrl: baseUrl + 'view-video.html'
                     }
                 }
             })
@@ -84,6 +84,14 @@ function ConfigRoute($stateProvider) {
                         controller: 'ViewBestController'
                     }
                 }
+            })
+            .state('videoplayer.home', {
+                url: '/',
+                views: {
+                    videoPlayerExtra: {
+                        controller: 'ViewBestController'
+                    }
+                }
             });
 }
 
@@ -97,10 +105,17 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
     $scope.playerProviders = [];
     $scope.add = add;
     $scope.isFormLoading = false;
-
     $scope.videoPerPage = 5;
     $scope.totalVideos = 0; // todo
-
+    $scope.isHistoryLoading = false;
+    
+    /**
+     * false means we still didnt get respnse from the server
+     * [] when received
+     */
+    $scope.recentVideos = false;
+    
+    
     $scope.pageChanged = function(newPage) {
         loadRecentlyTagged(newPage);
     };
@@ -108,21 +123,24 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
     init();
 
     ServerConfigEntity.rules().then(function(rules) {
-        $scope.data.provider_id = rules.videos.provider_id.values[0];
         $scope.playerProviders = rules.videos.provider_id.values;
+        $scope.data.provider_id = rules.videos.provider_id.values[0].code;
+        console.log("Default provider: " + rules.videos.provider_id.values[0].code);
     });
 
     function init() {
-        $scope.feedback = null;
         SharedData.pageLoader(false);
         loadRecentlyTagged(1);
     }
 
     function add(data) {
         messageCenterService.removeShown();
-        $scope.isFormLoading = true;
         if (YoutubeVideoInfo.extractVideoIdFromUrl(data.video_url)) {
             data.video_url = YoutubeVideoInfo.extractVideoIdFromUrl(data.video_url);
+        }
+        if (data.video_url.length != 11){
+            $scope.addVideoForm.video_url.$error.server = "Invalid vide id. It must be 11 caracters";
+            return;
         }
         var promise = $scope.addVideoForm.submit(VideoEntity.addOrGet(data).$promise);
         promise.then(function(response) {
@@ -141,6 +159,7 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
             $scope.recentVideos = videosInCache[page];
             return;
         }
+        $scope.isHistoryLoading = true;
         VideoTagEntity.recentlyTagged({page: page, total_number: (page <= 1 ? 1 : null)}, function(response) {
             if (response.total != null) {
                 $scope.totalVideos = response.total;
@@ -159,6 +178,8 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
 //            console.log(response);
             $scope.recentVideos = items;
             videosInCache[page] = items;
+        }).$promise.finally(function(){
+            $scope.isHistoryLoading = false;
         });
     }
 
@@ -173,6 +194,7 @@ function PlayerController($scope, PlayerData) {
     });
 }
 function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData) {
+    PlayerData.stop();
     PlayerData.showListTricks = true;
     VideoTagData.setFilters({tag_id: $stateParams.tagId, order: 'best'});
     VideoTagData.loadNextPage().finally(function() {
@@ -181,6 +203,7 @@ function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData) {
 }
 function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData) {
 //    console.log("View sport: " + $stateParams.sportName);
+    PlayerData.stop();
     PlayerData.showListTricks = true;
     VideoTagData.setFilters({sport_name: $stateParams.sportName, order: 'best'});
     VideoTagData.loadNextPage().finally(function() {
@@ -188,6 +211,7 @@ function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData)
     });
 }
 function ViewBestController(VideoTagData, PlayerData, SharedData) {
+    PlayerData.stop();
     PlayerData.showListTricks = true;
     VideoTagData.setFilters({order: 'best'});
     VideoTagData.loadNextPage().finally(function() {
@@ -197,8 +221,12 @@ function ViewBestController(VideoTagData, PlayerData, SharedData) {
 
 function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, SharedData) {
 
+    PlayerData.stop();
     PlayerData.onCurrentTimeUpdate = onCurrentTimeUpdate;
     PlayerData.showListTricks = false;
+    $scope.video = {
+        id: $stateParams.videoId
+    };
 
     VideoTagData.setFilters({video_id: $stateParams.videoId, order: 'begin_time'});
     VideoTagData.loadPage(1).then(autoPlayVideo).finally(function() {
@@ -208,7 +236,7 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
     // TODO only for first page
 
     function onCurrentTimeUpdate(newVal) {
-        PlayerData.updateCurrentTag();
+        PlayerData.updateCurrentTag(newVal);
     }
 
     function autoPlayVideo(response) {

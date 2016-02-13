@@ -1,5 +1,5 @@
 
-        <div class="list-tricks" trick-list></div>
+<div class="list-tricks" trick-list></div>
 
 <div class="clearfix  bg-primary">
     <div class="col-md-6 clearfix nopadding">
@@ -39,7 +39,7 @@
                                                 ng-click="addStartRange(-slider.step)">
                                             <span class="glyphicon glyphicon-minus"></span>
                                         </button>
-                                        <span class="btn btn-default disabled" >{{editionTag.range[0] | secondsToHours}}</span> 
+                                        <span class="btn btn-default disabled" >{{editionTag.range[0]| secondsToHours}}</span> 
                                         <button id="ButtonBeginTimePlus"
                                                 type="button" class="btn btn-default" ng-click="addStartRange(slider.step)">
                                             <span class="glyphicon glyphicon-plus"></span>
@@ -179,11 +179,11 @@
                                     </ui-select>
                                 </div>
                                 <div  class="col-xs-1">
-                                        <button type="button" 
-                                                class="btn btn-default"
-                                                ng-click="showCreateRiderForm = true">
-                                            <span class="glyphicon glyphicon-plus-sign"></span>
-                                        </button>
+                                    <button type="button" 
+                                            class="btn btn-default"
+                                            ng-click="showCreateRiderForm = true">
+                                        <span class="glyphicon glyphicon-plus-sign"></span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -199,23 +199,26 @@
                             </div>
                         </div>
                         <div class="text-center form-group">
-                            <!--
-                            <button  type="button"  class="btn btn-info" ng-click="playEditionTag()">
-                                <span class="glyphicon glyphicon-play"></span> Preview
-                            </button>-->
-                            <button type="submit"
-                                    ng-disabled="!formAddVideoTag.$valid || similarTags.length > 0"
-                                    class="btn btn-success btn-lg btn-block" 
-                                    >
-                                <span ng-if="editionTag.id">
-                                    <span class="glyphicon glyphicon-save"></span> 
-                                    Save
-                                </span>
-                                <span ng-if="!editionTag.id">
-                                    <span class="glyphicon glyphicon-plus-sign"></span> 
-                                    Add
-                                </span>
-                            </button>
+                            <div class="col-xs-4">
+                                <button  type="button"  class="btn btn-info btn-lg btn-block" ng-click="playEditionTag()">
+                                    <span class="glyphicon glyphicon-repeat"></span> Preview
+                                </button>
+                            </div>
+                            <div class="col-xs-8">
+                                <button type="submit"
+                                        ng-disabled="!formAddVideoTag.$valid || similarTags.length > 0"
+                                        class="btn btn-success btn-lg btn-block" 
+                                        >
+                                    <span ng-if="editionTag.id">
+                                        <span class="glyphicon glyphicon-save"></span> 
+                                        Save
+                                    </span>
+                                    <span ng-if="!editionTag.id">
+                                        <span class="glyphicon glyphicon-plus-sign"></span> 
+                                        Add
+                                    </span>
+                                </button>
+                            </div>
                         </div>
                     </fieldset>
                 </form>

@@ -97,18 +97,11 @@ function SettingsController($scope, SharedData, messageCenterService, Authentica
     function removeAccount(password) {
         $scope.isFormDeleteAccountLoading = true;
         messageCenterService.removeShown();
-        UserEntity.removeAccount({password: password}, function(response) {
+        $scope.formDeleteAccount.submit(UserEntity.removeAccount({password: password}).$promise).then(function(response) {
             if (response.success) {
-                messageCenterService.add('success', response.message, {status: messageCenterService.status.next});
+                messageCenterService.removeShown();
                 $scope.$parent.logout();
             }
-            else {
-                messageCenterService.add('danger', response.message, {status: messageCenterService.status.shown});
-            }
-            $scope.isFormDeleteAccountLoading = false;
-        }, function() {
-
-            $scope.isFormDeleteAccountLoading = false;
         });
     }
 }
@@ -117,7 +110,7 @@ function UserLoginController($scope, $state) {
 
     $scope.$on("user-login-success", function() {
         console.log("On user-login-success");
-        $state.go('home');
+        $state.go('videoplayer.home');
     });
 
 }
@@ -135,9 +128,8 @@ function SignupController($scope, $state, SharedData,
 
         function successCallback(response) {
             if (response.success) {
-                $scope.$parent.isAuthed = true;
-                messageCenterService.add('success', response.message, {status: messageCenterService.status.shown});
-                $state.go('home');
+//                messageCenterService.add('success', response.message, {status: messageCenterService.status.shown});
+                $state.go('videoplayer.home');
             }
             else {
                 messageCenterService.add('danger', response.message, {status: messageCenterService.status.shown});

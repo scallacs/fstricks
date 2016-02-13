@@ -168,6 +168,7 @@ class VideoTagsTable extends Table {
                 ->notEmpty('tag_id');
 
 
+
         return $validator;
     }
 

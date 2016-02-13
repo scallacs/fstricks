@@ -10,6 +10,17 @@ h3, h2, h1{
     padding: 10px 10px;
 }
 
+.http-error{
+    margin-top : 20px;
+    padding: 5% 10%;
+    border-radius: 5px;
+}
+.http-error .http-error-code{
+    font-size: 3em;
+}
+.http-error .http-error-message{
+    font-size: 3em;
+}
 
 .form-loader{
     padding-right: 10px;
@@ -30,10 +41,6 @@ h3, h2, h1{
 .table-current-trick .current-tag{
     background: #000;
 }
-.table-current-trick td.disabled{
-
-}
-
 .table-current-trick td.disabled a{
     color: #777;
 }
@@ -78,11 +85,14 @@ h3, h2, h1{
 }
 .bg-primary-darker{
     background: #000;
-    color: #AAA;
+    color: #CCC;
 }
 .bg-primary{
     background: #111;
-    color: #AAA;
+    color: #CCC;
+}
+.bg-primary hr{
+    border-color: #444;
 }
 .bg-primary legend,
 .bg-primary-darker legend{
@@ -97,7 +107,11 @@ h3, h2, h1{
     border-color: #222;
     color: #EEE;
 }
-
+.bg-primary .form-control[disabled], 
+.bg-primary .form-control[readonly], 
+.bg-primary fieldset[disabled] .form-control{
+    background: #555;
+}
 .pagination-container{
     text-align: center;
     width: 100%;
@@ -288,9 +302,9 @@ header .navbar-nav > li > a{
     background: #333;
     padding: 0px;
     margin: 0px;
-    border-top: 1px solid #111;
-    border-bottom: 1px solid #111;
-    height: 17px;
+    /* border-top: 1px solid #111; */
+    /* border-bottom: 1px solid #111; */
+    height: 15px;
     border-radius: 5px;
 }
 .player-bar-tag.active{
@@ -302,7 +316,7 @@ header .navbar-nav > li > a{
     position: absolute;
     min-width: 3px;
     border-radius: 5px;
-    box-shadow: -2px 0px 2px black;
+    /* box-shadow: -2px 0px 2px black; */
 } 
 .player-bar-tag:hover{
     cursor: pointer;
@@ -312,6 +326,9 @@ header .navbar-nav > li > a{
 .popover-video-tag{
     border-radius: 5px;
     padding: 5px;
+}
+.player-bar .popover{
+    opacity: 0.8;
 }
 /* ------------------------------------------------------------ */
 /* ITEM  */
@@ -443,16 +460,16 @@ header .navbar-nav > li > a{
 .nopadding.player-container {}
 
 .iframe-wrapper{
-    width: 100%;
-    position: relative;
+    /* width: 100%; */
+    /* position: relative; */
 }
 
 .iframe-wrapper iframe{
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    /* top: 0; */
+    /* left: 0; */
+    /* width: 100%; */
+    /* height: 100%; */
 }
 .outer{
     position: relative;

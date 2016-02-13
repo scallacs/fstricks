@@ -47,9 +47,8 @@ class VideosTable extends Table {
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id'
         ]);
-        $this->belongsTo('VideoProviders', [
-            'foreignKey' => 'provider_id'
-        ]);
+        
+                
         $this->hasMany('VideoTags', [
             'foreignKey' => 'video_id'
         ]);
@@ -72,14 +71,20 @@ class VideosTable extends Table {
                 ->add('id', 'valid', ['rule' => 'numeric'])
                 ->allowEmpty('id', 'create');
 
+     
         $validator
-            ->add('provider_id', 'providerValid', [
-                'rule' => ['inList', JsonConfigHelper::rules("videos", "provider_id", "values")],
-                'message' => 'Invalid provider. Please choose available provider from the list'
-            ])
-            ->requirePresence('provider_id', 'create')
-            ->notEmpty('provider_id');
-
+                ->requirePresence('provider_id', 'create')
+                ->notEmpty('provider_id')
+                ->add('provider_id', 'valid', ['rule' => function ($value){
+                    $data = JsonConfigHelper::rules("videos", "provider_id", "values");
+                    foreach ($data as $d){
+                        if ($d['code'] == $value){
+                            return true;
+                        }
+                    }
+                    return false;
+                }]);
+        
         $validator
                 ->requirePresence('user_id', 'create')
                 ->notEmpty('user_id');

@@ -21,11 +21,13 @@ function playerNav() {
 
             function nextTrick() {
                 if (VideoTagData.hasNext()) {
+                    console.log("Next trick");
                     PlayerData.view(VideoTagData.next());
                 }
             }
             function prevTrick() {
                 if (VideoTagData.hasPrev()) {
+                    console.log("Prev trick");
                     PlayerData.view(VideoTagData.prev());
                 }
             }

@@ -11,7 +11,7 @@ angular.module('app', [
 ])
         .config(ConfigRouting)
         .config(ConfigInterceptor)
-        .controller('MainController', MainController, VideoTagData)
+        .controller('MainController', MainController)
         .run(Run);
 
 
@@ -39,10 +39,9 @@ function Run($rootScope, AuthenticationService, loginModal, $state, messageCente
                         return $state.go(toState.name, toParams);
                     })
                     .catch(function() {
-                        return $state.go('home');
+                        return $state.go('videoplayer.home');
                     });
         }
-        console.log(toState);
         SharedData.pageLoader(toState.data.pageLoader);
     });
 
@@ -50,16 +49,13 @@ function Run($rootScope, AuthenticationService, loginModal, $state, messageCente
 
 function ConfigRouting($stateProvider) {
     'use strict';
-//
-    $stateProvider
-            .state('home', {
-                url: '/',
-                // ...
-                data: {
-                    requireLogin: false
-                }
-            });
-
+    $stateProvider.state("otherwise", {
+        url: "*path",
+        templateUrl: "js/src/views/error-not-found.html",
+        data: {
+            requireLogin: false
+        }
+    });
 }
 function ConfigInterceptor($httpProvider) {
     'use strict';
@@ -93,7 +89,7 @@ function ConfigInterceptor($httpProvider) {
                                 deferred.resolve($http(rejection.config));
                             })
                             .catch(function() {
-                                $state.go('home');
+                                $state.go('videoplayer.home');
                                 deferred.reject(rejection);
                             });
                     return;
