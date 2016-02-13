@@ -115,6 +115,42 @@ class VideoTagsControllerTest extends MyIntegrationTestCase
     
 
     /**
+     * Test that a user cannot modify the video tag execpt the rider ? 
+     *
+     * @return void
+     */
+    public function testEditVideoTag()
+    {   
+        $this->logUser();
+        $riderId = 1;
+        $tagId = 1;
+        $videoTagsTable = \Cake\ORM\TableRegistry::get('VideoTags');
+        $videoTagOrigin = $videoTagsTable->get($tagId);
+        
+        $data = [
+            'begin' => $videoTagOrigin->begin + 1,
+            'end' => $videoTagOrigin->end + 1,
+            'video_id' => $videoTagOrigin->video_id + 1,
+            'user_id' => $videoTagOrigin->user_id + 1,
+            'tag_id' => $videoTagOrigin->tag_id + 1
+        ];
+        $this->post('/VideoTags/edit/'.$tagId.'.json', $data);
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        debug($result);
+        $this->assertTrue($result['success'], "Rider should be edited properly.");
+        
+        $videoTag = $videoTagsTable->get($tagId);
+        $this->assertEquals($videoTagOrigin->begin, $videoTag->begin);
+        $this->assertEquals($videoTagOrigin->end, $videoTag->end);
+        $this->assertEquals($videoTagOrigin->video_id, $videoTag->video_id);
+        $this->assertEquals($videoTagOrigin->tag_id, $videoTag->tag_id);
+        $this->assertEquals($videoTagOrigin->user_id, $videoTag->user_id);
+        
+    }
+
+
+    /**
      * Test add method
      *
      * @return void
@@ -122,10 +158,10 @@ class VideoTagsControllerTest extends MyIntegrationTestCase
     public function testEditRider()
     {   
         $this->logUser();
-        $riderId = 1;
+        $riderId = 2;
         $tagId = 1;
         $data = [
-            'rider_id' => $riderId
+            'rider_id' => $riderId,
         ];
         $this->post('/VideoTags/edit/'.$tagId.'.json', $data);
         $this->assertResponseOk();
@@ -136,6 +172,26 @@ class VideoTagsControllerTest extends MyIntegrationTestCase
         $videoTagsTable = \Cake\ORM\TableRegistry::get('VideoTags');
         $videoTag = $videoTagsTable->get($tagId);
         $this->assertEquals($riderId, $videoTag->rider_id);
+    }
+    /**
+     * Test add method
+     *
+     * @return void
+     */
+    public function testEditInvalidTag()
+    {   
+        $this->logUser();
+        $riderId = 1;
+        $tagId = 983928382;
+        $data = [
+            'rider_id' => $riderId,
+        ];
+        $this->post('/VideoTags/edit/'.$tagId.'.json', $data);
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        debug($result);
+        $this->assertFalse($result['success'], "Rider should be edited properly.");
+        
     }
 
     /**

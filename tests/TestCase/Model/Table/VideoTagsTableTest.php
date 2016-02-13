@@ -73,4 +73,12 @@ class VideoTagsTableTest extends TestCase
         $this->assertFalse((bool) $this->VideoTags->save($video));
         
     }
+    
+    /**
+     * Test adding a begin or end time bigger than the video duration
+     * TODO
+     */
+    public function testInvalidTimeRange(){
+        // TODO
+    }
 }
