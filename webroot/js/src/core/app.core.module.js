@@ -25,6 +25,13 @@ function PlayerData(VideoTagData, $q) {
         visible: true,
         showListTricks: true,
         editionMode: false,
+        looping: false, // True if we want to loop on the current tag
+        stopLooping: function() {
+            this.looping = false;
+            var savedTime = this.getCurrentTime();
+            this.seekTo(VideoTagData.currentTag.end + 0.1);
+            this.seekTo(savedTime);
+        },
         showEditionMode: function() {
             this.reset();
             this.editionMode = true;
@@ -87,13 +94,14 @@ function PlayerData(VideoTagData, $q) {
 //        console.log(videoTag);
         if (videoTag === null) {
             console.log("Try to view a null videoTag");
-            VideoTagData.currentTag = null;
+            VideoTagData.setCurrentTag(null);
             return;
         }
-        VideoTagData.currentTag = videoTag;
+        VideoTagData.setCurrentTag(videoTag);
         obj.data.id = videoTag.id;
         obj.data.begin = videoTag.begin;
         obj.showListTricks = false;
+        obj.looping = true;
 
         if (videoTag.video_url === obj.data.video_url &&
                 videoTag.end === obj.data.end) {
@@ -114,7 +122,6 @@ function PlayerData(VideoTagData, $q) {
         console.log("RESETING DATA");
         VideoTagData.reset();
         obj.deferred = $q.defer();
-        this.currentTag = null;
         this.data.video_url = null;
         this.data.id = 0;
         this.data.begin = 0;
@@ -122,6 +129,7 @@ function PlayerData(VideoTagData, $q) {
         this.data.currentTime = 0;
         this.showListTricks = true;
         this.editionMode = false;
+        this.looping = false;
         this.onCurrentTimeUpdate = function() {
         };
     }
@@ -183,10 +191,10 @@ function PlayerData(VideoTagData, $q) {
             }
         }
         console.log("Searching for next tag...");
-        VideoTagData.currentTag = VideoTagData.findNextTagToPlay(newVal);
+        VideoTagData.setCurrentTag(VideoTagData.findNextTagToPlay(newVal));
     }
 
-    function getCurrentTime(){
+    function getCurrentTime() {
         return obj.player.getCurrentTime();
     }
 }
@@ -200,6 +208,9 @@ function VideoTagData(VideoTagEntity) {
         limit: 20, // TODO synchro server
         disabled: true,
         currentPage: 1,
+        setCurrentTag: function(tag) {
+            this.currentTag = tag;
+        },
         reset: function() {
             this.currentTag = null;
             this.currentPage = 1;
@@ -222,7 +233,7 @@ function VideoTagData(VideoTagEntity) {
             this.data.push(tag);
         },
         next: function() {
-            return this.data[Math.min(this.data.length -1,this._getCurrentIndice() + 1)];
+            return this.data[Math.min(this.data.length - 1, this._getCurrentIndice() + 1)];
         },
         hasPrev: function() {
             return this.data.length > 0 && obj.currentTag !== null && obj.currentTag.id !== this.data[0].id;
@@ -232,7 +243,7 @@ function VideoTagData(VideoTagEntity) {
             return this.data.length > 0 && obj.currentTag !== null && obj.currentTag.id !== this.data[this.data.length - 1].id;
         },
         prev: function() {
-            return this.data[Math.max(0,this._getCurrentIndice() - 1)];
+            return this.data[Math.max(0, this._getCurrentIndice() - 1)];
         },
         findNextTagToPlay: function(playerTime) {
             return this._findTagToPlay(playerTime, 1);
@@ -242,15 +253,15 @@ function VideoTagData(VideoTagEntity) {
         },
         _findTagToPlay: function(playerTime, m) {
             for (var i = 0; i < this.data.length; i++) {
-                if (m*this.data[i].begin > m*playerTime) {
+                if (m * this.data[i].begin > m * playerTime) {
                     console.log("Found next tag: " + this.data[i].id);
                     return this.data[i];
                 }
             }
             return null;
         },
-        _getCurrentIndice: function(){
-            if (obj.currentTag === null){
+        _getCurrentIndice: function() {
+            if (obj.currentTag === null) {
                 return 0;
             }
             for (var i = 0; i < this.data.length; i++) {

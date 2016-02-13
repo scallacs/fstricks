@@ -45,8 +45,12 @@ function serverForm(messageCenterService) {
                     if (!results.success) {
                         form.setValidationErrors(results.validationErrors);
                     }
-                    messageCenterService.add(results.success ? 'success' : 'warning',
-                            results.message, {status: messageCenterService.status.shown});
+                    var statusText = results.success ? 'success' : 'warning';
+//                    messageCenterService.add(statusText,
+//                            '<span class="glyphicon glyphicon-'+statusText+'"/></span> ' + results.message, 
+//                            {status: messageCenterService.status.shown});
+                    messageCenterService.add(statusText, results.message, 
+                            {status: messageCenterService.status.shown});
                 }
             };
 

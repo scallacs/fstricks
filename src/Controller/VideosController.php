@@ -47,7 +47,8 @@ class VideosController extends AppController {
             }
                 ]
             ]);
-        } catch (Cake\Datasource\Exception\RecordNotFoundException $ex) {
+        } 
+        catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
             throw new \Cake\Network\Exception\NotFoundException();
         }
 

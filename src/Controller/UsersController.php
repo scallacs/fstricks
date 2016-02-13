@@ -56,7 +56,7 @@ class UsersController extends AppController {
      */
 
     /**
-     * Save user tags
+     * 
      */
     public function profile($id = null) {
         if ($id === null) {

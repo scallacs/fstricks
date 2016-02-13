@@ -35,6 +35,7 @@ function AddVideoTagController($scope, $filter,
     // Properties: TODO match with server side
     var MIN_TAG_DURATION = 2;
     var MAX_TAG_DURATION = 40;
+    var SIMILAR_TAG_LIMIT_RATION = 0.6;
 
     $scope.slider = {
         step: 0.5
@@ -126,7 +127,7 @@ function AddVideoTagController($scope, $filter,
     function onCurrentTimeUpdate(newVal) {
         //PlayerData.updateCurrentTag();
     }
-    
+
     // ----------------------------------------------------------------------- */
     //  EDITION FUNCTIONS 
     // ----------------------------------------------------------------------- */
@@ -134,9 +135,9 @@ function AddVideoTagController($scope, $filter,
         PlayerData.showListTricks = false;
         resetEditionTag();
         console.log($scope.editionTag);
-        VideoTagData.currentTag = $scope.editionTag;
+        VideoTagData.setCurrentTag($scope.editionTag);
     }
-    
+
     function playEditionTag() {
         console.log("Playing edition tag");
         PlayerData.view($scope.editionTag);
@@ -152,7 +153,7 @@ function AddVideoTagController($scope, $filter,
             $scope.formAddVideoTag.submit(VideoTagEntity.edit(postData).$promise).then(function(response) {
                 if (response.success) {
                     // TODO copy modification in the list ? 
-                    resetEditionTag();
+                    //resetEditionTag();
                 }
             });
         }
@@ -182,6 +183,7 @@ function AddVideoTagController($scope, $filter,
             sport_name: videoTag.sport_name,
             category_name: videoTag.category_name,
         };
+        console.log(videoTag);
         if (videoTag.rider_id) {
             videoTag.rider = {
                 id: videoTag.rider_id,
@@ -195,7 +197,7 @@ function AddVideoTagController($scope, $filter,
 
 
     function findSimilarTags(range) {
-        var SIMILAR_TAG_LIMIT_RATION = 0.6;                // TODO global variable
+        console.log('Finding similar tags...');
         var similarTags = [];
         angular.forEach(VideoTagData.data, function(tag) {
             // Contain
@@ -279,13 +281,13 @@ function AddVideoTagController($scope, $filter,
             playEditionTag();
         }
         else if (newValue[1] !== oldValue[1]) {
-            PlayerData.seekTo(newValue[1]);
-            PlayerData.pause();
             adaptRange(newValue[1], 1);
             $scope.editionTag.end = $scope.editionTag.range[1];
+            PlayerData.seekTo(newValue[1]);
+            PlayerData.pause();
         }
         // If we want to create a new tag
-        if ($scope.edtionTag && !$scope.edtionTag.id) {
+        if (PlayerData.editionMode && !VideoTagData.currentTag.id) {
             $scope.similarTags = findSimilarTags($scope.editionTag.range);
         }
     }

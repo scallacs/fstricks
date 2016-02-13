@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
@@ -20,8 +21,8 @@ use Cake\ORM\Entity;
  * @property int $count_points
  * @property \App\Model\Entity\VideoTagPoint[] $video_tag_points
  */
-class VideoTag extends Entity
-{
+class VideoTag extends Entity {
+
     const STATUS_VALIDATED = 'validated';
     const STATUS_BLOCKED = 'blocked';
     const STATUS_PENDING = 'pending';
@@ -42,7 +43,8 @@ class VideoTag extends Entity
         'created' => false,
         'count_points' => false,
         'status' => false,
+        'rider_id' => true,
         '*' => true,
     ];
-    
+
 }

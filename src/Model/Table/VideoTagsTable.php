@@ -20,9 +20,9 @@ class VideoTagsTable extends Table {
 
     const MIN_TAG_DURATION = 2;
     const MAX_TAG_DURATION = 40;
-    const SIMILARITY_RATIO_THRESHOLD = 0.6;    
+    const SIMILARITY_RATIO_THRESHOLD = 0.6;
     const SIMILARITY_PRECISION_SECONDS = 2;
-    
+
     /**
      * Initialize method
      *
@@ -62,57 +62,58 @@ class VideoTagsTable extends Table {
      * @param query | null $queryTags
      * @return query
      */
-    public function findAndJoin($queryVideo = null, $queryTags = null, $queryRiders = null){
-        if ($queryVideo === null){
-            $queryVideo = function($q){
+    public function findAndJoin($queryVideo = null, $queryTags = null, $queryRiders = null) {
+        if ($queryVideo === null) {
+            $queryVideo = function($q) {
                 return $q;
             };
         }
-        if ($queryTags === null){
-            $queryTags = function($q){
-                        return $q
-                            ->select([
-                                'category_name' => 'Categories.name',
-                                'sport_name' => 'Sports.name',
-                                'tag_name' => 'Tags.name',
-                            ])
-                            ->contain(['Sports', 'Categories']);
-                    };
+        if ($queryTags === null) {
+            $queryTags = function($q) {
+                return $q
+                                ->select([
+                                    'category_name' => 'Categories.name',
+                                    'sport_name' => 'Sports.name',
+                                    'tag_name' => 'Tags.name',
+                                ])
+                                ->contain(['Sports', 'Categories']);
+            };
         }
-        if ($queryRiders === null){
-            $queryRiders = function($q){
+        if ($queryRiders === null) {
+            $queryRiders = function($q) {
                 return $q->select([
                             'rider_name' => 'CONCAT(Riders.firstname, \' \', Riders.lastname)',
                             'rider_picture' => 'Riders.picture',
-                            'rider_nationality' => 'Riders.nationality'
-                        ]);
+                            'rider_nationality' => 'Riders.nationality',
+                            'rider_id' => 'Riders.id'
+                ]);
             };
         }
         return $this->find('all')
-                ->select([
-                    'tag_slug' => 'Tags.slug',
-                    'tag_name' => 'Tags.name',
-                    'tag_id' => 'Tags.id',
-                    'count_points' => 'VideoTags.count_points',
-                    'id' => 'VideoTags.id',
-                    'provider_id' => 'Videos.provider_id',
-                    'video_url' => 'Videos.video_url',
-                    'video_duration' => 'Videos.duration',
-                    'video_id' => 'Videos.id',
-                    'begin' => 'VideoTags.begin',
-                    'end' => 'VideoTags.end'
-                    ])
-                ->where([
-                    'VideoTags.status' => VideoTag::STATUS_VALIDATED,
-                    'VideoTags.count_points >=' => 'VideoTags.count_report_errors'
-                ])
-                ->contain([
-                    'Videos' => $queryVideo, 
-                    'Tags' => $queryTags,
-                    'Riders' => $queryRiders
-                ]);
+                        ->select([
+                            'tag_slug' => 'Tags.slug',
+                            'tag_name' => 'Tags.name',
+                            'tag_id' => 'Tags.id',
+                            'count_points' => 'VideoTags.count_points',
+                            'id' => 'VideoTags.id',
+                            'provider_id' => 'Videos.provider_id',
+                            'video_url' => 'Videos.video_url',
+                            'video_duration' => 'Videos.duration',
+                            'video_id' => 'Videos.id',
+                            'begin' => 'VideoTags.begin',
+                            'end' => 'VideoTags.end'
+                        ])
+                        ->where([
+                            'VideoTags.status' => VideoTag::STATUS_VALIDATED,
+                            'VideoTags.count_points >=' => 'VideoTags.count_report_errors'
+                        ])
+                        ->contain([
+                            'Videos' => $queryVideo,
+                            'Tags' => $queryTags,
+                            'Riders' => $queryRiders
+        ]);
     }
-    
+
     /**
      * Default validation rules.
      *
@@ -132,15 +133,15 @@ class VideoTagsTable extends Table {
         $validator
                 ->add('end', 'trick_duration', [
                     'rule' => function ($value, $context) {
-                        if (isset($context['data']['begin'])){
-                            $duration = $value - $context['data']['begin'];
-                            return $duration >= self::MIN_TAG_DURATION &&
-                                    $duration <= self::MAX_TAG_DURATION;
-                        }
-                        return true;
-                    },
-                    'message' => 'The trick duration must be between '. self::MIN_TAG_DURATION . ' and '. 
-                            self::MAX_TAG_DURATION.' seconds.'
+                if (isset($context['data']['begin'])) {
+                    $duration = $value - $context['data']['begin'];
+                    return $duration >= self::MIN_TAG_DURATION &&
+                            $duration <= self::MAX_TAG_DURATION;
+                }
+                return true;
+            },
+                    'message' => 'The trick duration must be between ' . self::MIN_TAG_DURATION . ' and ' .
+                    self::MAX_TAG_DURATION . ' seconds.'
                 ])
 //                ->add('end', 'similar_tags', [
 //                    'rule' => function ($value, $context) {
@@ -172,27 +173,26 @@ class VideoTagsTable extends Table {
         return $validator;
     }
 
-
-    function findSimilarTags($videoId, $begin, $end){
+    function findSimilarTags($videoId, $begin, $end) {
         $beginMin = $begin + self::SIMILARITY_PRECISION_SECONDS;
         $endMin = $begin - self::SIMILARITY_PRECISION_SECONDS;
         $beginMax = $begin - self::SIMILARITY_PRECISION_SECONDS;
         $endMax = $end + self::SIMILARITY_PRECISION_SECONDS;
         return $this->find('all')
-                ->where([
-                    'video_id' => $videoId,
-                    'OR' => [
+                        ->where([
+                            'video_id' => $videoId,
+                            'OR' => [
 //                        // Similar start or end
 //                        ['VideoTags.begin >=' => $beginMin, 'VideoTags.begin <= ' => $beginMax], 
 //                        ['VideoTags.end >=' => $endMin, 'VideoTags.begin <= ' => $endMax],
-                        // Include inside bigger tag
-                        ['VideoTags.begin <= ' => $beginMin, 'VideoTags.end >= ' => $endMin],
-                        // Contain bigger tag
-                        ['VideoTags.begin >= ' => $beginMax, 'VideoTags.end <= ' => $endMax]
-                    ]
-                ]);
+                                // Include inside bigger tag
+                                ['VideoTags.begin <= ' => $beginMin, 'VideoTags.end >= ' => $endMin],
+                                // Contain bigger tag
+                                ['VideoTags.begin >= ' => $beginMax, 'VideoTags.end <= ' => $endMax]
+                            ]
+        ]);
     }
-    
+
     /**
      * Returns a rules checker object that will be used for validating
      * application integrity.
@@ -204,15 +204,20 @@ class VideoTagsTable extends Table {
         $rules->add($rules->existsIn(['video_id'], 'Videos'));
         $rules->add($rules->existsIn(['tag_id'], 'Tags'));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
-        
+        $rules->add($rules->existsIn(['rider_id'], 'Riders'));
+
         // Checking similar tags
-        $rules->add(function($entity, $scope){
-            if (isset($entity->video_id) && isset($entity->end) && isset($entity->begin) && $entity->end > $entity->begin){
-                return !$this->exists([ 
-                            'VideoTags.video_id' => $entity->video_id,
-                            'VideoTags.status' => VideoTag::STATUS_VALIDATED,
-                            '(LEAST('.$entity->end.', end) - GREATEST('.$entity->begin.', begin))/(end - begin) > '.self::SIMILARITY_RATIO_THRESHOLD,
-                        ]);
+        $rules->add(function($entity, $scope) {
+            if ($entity->isNew() || $entity->dirty('begin') || $entity->dirty('end')) {
+                $conditions = [
+                    'VideoTags.video_id' => $entity->video_id,
+                    'VideoTags.status' => VideoTag::STATUS_VALIDATED,
+                    '(LEAST(' . $entity->end . ', end) - GREATEST(' . $entity->begin . ', begin))/(end - begin) > ' . self::SIMILARITY_RATIO_THRESHOLD,
+                ];
+                if (!$entity->isNew()){
+                    $conditions['VideoTags.id !='] = $entity->id;
+                }
+                return !$this->exists($conditions);
             }
             return true;
         });
@@ -224,8 +229,8 @@ class VideoTagsTable extends Table {
      * @param \Cake\ORM\Entity $entity
      * @param \App\Model\Table\ArrayObject $options
      */
-    public function beforeSave($event, $entity, $options){
-        if ($entity->isNew() && empty($entity->status)){
+    public function beforeSave($event, $entity, $options) {
+        if ($entity->isNew() && empty($entity->status)) {
             $entity->status = VideoTag::STATUS_VALIDATED;
         }
     }

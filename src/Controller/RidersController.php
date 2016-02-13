@@ -25,15 +25,16 @@ class RidersController extends AppController {
      */
     public function profile($profileId = null) {
         ResultMessage::setWrapper(false);
-        $query = $this->Riders->find()->limit(1);
         if ($profileId === null && $this->Auth->user('id')) {
-            $query->where(['Riders.user_id' => $this->Auth->user('id')]);
+            $query = $this->Riders->find()
+                    ->limit(1)
+                    ->where(['Riders.user_id' => $this->Auth->user('id')]);
+            $data = $query->first();
         } else if (!empty($profileId)) {
-            $query->where(['Riders.id' => $profileId]);
+            $data = $this->Riders->get($profileId);
         } else {
             throw new \Cake\Network\Exception\UnauthorizedException();
         }
-        $data = $query->first();
         ResultMessage::overwriteData($data);
     }
 
@@ -149,7 +150,7 @@ class RidersController extends AppController {
                 $term = DataUtil::getLowerString($data, 'q');
                 $terms = explode(' ', $term);
                 $conditions = [];
-                foreach ($terms as $term){
+                foreach ($terms as $term) {
                     $conditions[] = 'CONCAT(Riders.firstname, \' \', Riders.lastname) LIKE "%' . trim($term) . '%"';
                 }
                 $query->where([
@@ -170,7 +171,7 @@ class RidersController extends AppController {
                 'data' => $query->all(),
                 'next' => null
             ]);
-        } 
+        }
     }
 
 }

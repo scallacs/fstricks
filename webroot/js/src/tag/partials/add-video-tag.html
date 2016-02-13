@@ -188,6 +188,7 @@
                             </div>
                         </div>
                         <div ng-if="similarTags.length > 0" class=" form-group">
+                            <hr/>
                             <div class="alert alert-danger"> 
                                 <p class="text-center">
                                     <span class="glyphicon glyphicon-warning-sign"></span> 
@@ -197,14 +198,20 @@
                             <div ng-repeat="videoTag in similarTags">
                                 <div video-tag-item video-tag="videoTag"></div>
                             </div>
+                            <hr/>
                         </div>
                         <div class="text-center form-group">
-                            <div class="col-xs-4">
-                                <button  type="button"  class="btn btn-info btn-lg btn-block" ng-click="playEditionTag()">
-                                    <span class="glyphicon glyphicon-repeat"></span> Preview
+                            <div class="col-xs-5">
+                                <button ng-if="!playerData.looping" type="button"  
+                                        class="btn btn-info btn-lg btn-block" ng-click="playEditionTag()">
+                                    <span class="glyphicon glyphicon-repeat"></span> Loop
+                                </button>
+                                <button ng-if="playerData.looping" type="button"  
+                                        class="btn btn-info btn-lg btn-block" ng-click="playerData.stopLooping()">
+                                    <span class="glyphicon glyphicon-stop"></span> Stop loop
                                 </button>
                             </div>
-                            <div class="col-xs-8">
+                            <div class="col-xs-7">
                                 <button type="submit"
                                         ng-disabled="!formAddVideoTag.$valid || similarTags.length > 0"
                                         class="btn btn-success btn-lg btn-block" 

@@ -85,7 +85,8 @@ class VideoTagsController extends AppController {
             $users = $this->VideoTags->Users->find('list', ['limit' => 200]);
             $this->set(compact('videoTag', 'videos', 'tags', 'users'));
             $this->set('_serialize', ['videoTag']);
-        } catch (Cake\Datasource\Exception\RecordNotFoundException $ex) {
+        } 
+        catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
             throw new \Cake\Network\Exception\NotFoundException();
         }
     }
