@@ -533,7 +533,11 @@ header .navbar-nav > li > a{
     margin-bottom: 5px;
 }
 
-
+/******************************/
+/* ITEM VIDEO TAG */
+.item-video-tag-remaining{
+    padding-top: 5px;
+}
 
 /******************************/
 /* FACEBOOK */
