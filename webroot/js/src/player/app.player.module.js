@@ -4,16 +4,17 @@ angular.module('app.player', [
     'app.core',
     'shared.youtube',
     'shared',
-    'angularUtils.directives.dirPagination'
+    'angularUtils.directives.dirPagination',
+    'infinite-scroll'
 ])
         .config(ConfigRoute)
         .controller('AddVideoController', AddVideoController)
         .controller('VideoTagPointsController', VideoTagPointsController)
         .controller('PlayerController', PlayerController)
-        .controller('ViewBestController', ViewBestController)
         .controller('ViewVideoController', ViewVideoController)
         .controller('ViewTagController', ViewTagController)
-        .controller('ViewSportController', ViewSportController);
+        .controller('ViewSportController', ViewSportController)
+        .controller('ViewSearchController', ViewSearchController);
 
 ConfigRoute.$inject = ['$stateProvider'];
 function ConfigRoute($stateProvider) {
@@ -81,7 +82,15 @@ function ConfigRoute($stateProvider) {
                 url: '/best',
                 views: {
                     videoPlayerExtra: {
-                        controller: 'ViewBestController'
+                        controller: 'ViewSearchController'
+                    }
+                }
+            })
+            .state('videoplayer.search', {
+                url: '/search?tag_name',
+                views: {
+                    videoPlayerExtra: {
+                        controller: 'ViewSearchController'
                     }
                 }
             })
@@ -89,7 +98,7 @@ function ConfigRoute($stateProvider) {
                 url: '/',
                 views: {
                     videoPlayerExtra: {
-                        controller: 'ViewBestController'
+                        controller: 'ViewSearchController'
                     }
                 }
             });
@@ -108,14 +117,14 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
     $scope.videoPerPage = 5;
     $scope.totalVideos = 0; // todo
     $scope.isHistoryLoading = false;
-    
+
     /**
      * false means we still didnt get respnse from the server
      * [] when received
      */
     $scope.recentVideos = false;
-    
-    
+
+
     $scope.pageChanged = function(newPage) {
         loadRecentlyTagged(newPage);
     };
@@ -138,7 +147,7 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
         if (YoutubeVideoInfo.extractVideoIdFromUrl(data.video_url)) {
             data.video_url = YoutubeVideoInfo.extractVideoIdFromUrl(data.video_url);
         }
-        if (data.video_url.length != 11){
+        if (data.video_url.length != 11) {
             $scope.addVideoForm.video_url.$error.server = "Invalid vide id. It must be 11 caracters";
             return;
         }
@@ -178,7 +187,7 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
 //            console.log(response);
             $scope.recentVideos = items;
             videosInCache[page] = items;
-        }).$promise.finally(function(){
+        }).$promise.finally(function() {
             $scope.isHistoryLoading = false;
         });
     }
@@ -188,16 +197,17 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
 function PlayerController($scope, PlayerData) {
     PlayerData.showViewMode();
     PlayerData.showListTricks = true;
-    
-    $scope.$on('view-video-tag', function(event, tag){
+
+    $scope.$on('view-video-tag', function(event, tag) {
+        event.stopPropagation();
         PlayerData.view(tag);
     });
 }
 function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData) {
     PlayerData.stop();
     PlayerData.showListTricks = true;
-    VideoTagData.setFilters({tag_id: $stateParams.tagId, order: 'best'});
-    VideoTagData.loadNextPage().finally(function() {
+    VideoTagData.setFilters({tag_id: $stateParams.tagId, order: $stateParams.order});
+    VideoTagData.startLoading().finally(function() {
         SharedData.pageLoader(false);
     });
 }
@@ -205,16 +215,20 @@ function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData)
 //    console.log("View sport: " + $stateParams.sportName);
     PlayerData.stop();
     PlayerData.showListTricks = true;
-    VideoTagData.setFilters({sport_name: $stateParams.sportName, order: 'best'});
-    VideoTagData.loadNextPage().finally(function() {
+    VideoTagData.setFilters({sport_name: $stateParams.sportName, order: $stateParams.order});
+    VideoTagData.startLoading().finally(function() {
         SharedData.pageLoader(false);
     });
 }
-function ViewBestController(VideoTagData, PlayerData, SharedData) {
+
+function ViewSearchController(VideoTagData, PlayerData, SharedData, $stateParams) {
     PlayerData.stop();
     PlayerData.showListTricks = true;
-    VideoTagData.setFilters({order: 'best'});
-    VideoTagData.loadNextPage().finally(function() {
+//    console.log($stateParams);
+    VideoTagData.reset();
+    VideoTagData.setOrder($stateParams.order);
+    VideoTagData.setFilter('tag_name', $stateParams.tag_name);
+    VideoTagData.startLoading().finally(function() {
         SharedData.pageLoader(false);
     });
 }

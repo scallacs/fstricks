@@ -54,7 +54,7 @@ function AddVideoTagController($scope, $filter,
     // -------------------------------------------------------------------------
     // Functions
     $scope.playEditionTag = playEditionTag;
-    $scope.addVideoTag = addVideoTag;
+    $scope.saveVideoTag = saveVideoTag;
     $scope.editVideoTag = editVideoTag;
     $scope.refreshSuggestedTags = refreshSuggestedTags;
     $scope.onSelectTrick = onSelectTrick;
@@ -76,6 +76,10 @@ function AddVideoTagController($scope, $filter,
     init();
 
     $scope.$on('view-video-tag', function(event, tag) {
+        event.stopPropagation();
+        editVideoTag(tag);
+    });
+    $scope.$on('view-video-tag-broadcast', function(event, tag) {
         editVideoTag(tag);
     });
 
@@ -95,7 +99,7 @@ function AddVideoTagController($scope, $filter,
             // When data are loaded we set in the editor the tag id to edit
             // TODO change
             if ($stateParams.tagId) {
-                VideoTagData.loadNextPage().then(function(data) {
+                VideoTagData.startLoading().then(function(data) {
                     console.log(data);
                     // Find tag id 
                     for (var i = 0; i < data.length; i++) {
@@ -110,7 +114,7 @@ function AddVideoTagController($scope, $filter,
                 });
             }
             else {
-                VideoTagData.loadNextPage();
+                VideoTagData.startLoading();
                 PlayerData.play(video.video_url).then(function() {
                     addNewTag();
                     SharedData.pageLoader(false);
@@ -134,7 +138,6 @@ function AddVideoTagController($scope, $filter,
     function addNewTag() {
         PlayerData.showListTricks = false;
         resetEditionTag();
-        console.log($scope.editionTag);
         VideoTagData.setCurrentTag($scope.editionTag);
     }
 
@@ -143,20 +146,20 @@ function AddVideoTagController($scope, $filter,
         PlayerData.view($scope.editionTag);
     }
 
-    function addVideoTag(data) {
-        messageCenterService.removeShown();
-        $scope.isFormLoading = true;
-
+    function saveVideoTag(data) {
         var postData = toPostData(data);
-
         if (data.id > 0) {
             $scope.formAddVideoTag.submit(VideoTagEntity.edit(postData).$promise).then(function(response) {
                 if (response.success) {
-                    // TODO copy modification in the list ? 
-                    //resetEditionTag();
+                    // Copy modifications back in tag
+                    var original = $scope.editionTag.original_tag;
+                    $scope.editionTag.original_tag = null;
+                    angular.copy($scope.editionTag, original);
+                    PlayerData.view(original);
                 }
             });
         }
+        // Create a new tag
         else {
             $scope.formAddVideoTag.submit(VideoTagEntity.add(postData).$promise).then(function(response) {
                 if (response.success) {
@@ -170,29 +173,45 @@ function AddVideoTagController($scope, $filter,
         }
     }
 
+    /**
+     * When editing a existing video tag 
+     * @param {type} videoTag
+     * @returns {undefined}
+     */
     function editVideoTag(videoTag) {
-        videoTag.range = [videoTag.begin, videoTag.end];
-        videoTag.category = {
-            id: videoTag.category_id,
-            category_name: videoTag.category_name,
-            sport_name: videoTag.sport_name
+        var newTag = angular.copy(videoTag);
+        newTag.original_tag = videoTag;
+        newTag.range = [newTag.begin, newTag.end];
+        newTag.category = {
+            id: newTag.category_id,
+            category_name: newTag.category_name,
+            sport_name: newTag.sport_name
         };
-        videoTag.tag = {
-            id: videoTag.tag_id,
-            name: videoTag.tag_name,
-            sport_name: videoTag.sport_name,
-            category_name: videoTag.category_name,
+        newTag.tag = {
+            id: newTag.tag_id,
+            name: newTag.tag_name,
+            sport_name: newTag.sport_name,
+            category_name: newTag.category_name
         };
-        console.log(videoTag);
-        if (videoTag.rider_id) {
-            videoTag.rider = {
-                id: videoTag.rider_id,
-                display_name: videoTag.rider_name,
-                nationality: videoTag.rider_nationality
+        console.log(newTag);
+        if (newTag.rider_id) {
+            newTag.rider = {
+                id: newTag.rider_id,
+                display_name: newTag.rider_name,
+                nationality: newTag.rider_nationality
             };
         }
-        //console.log(videoTag);
-        $scope.editionTag = videoTag;
+        // Set video tag 
+        //console.log(newTag);
+        $scope.editionTag = newTag;
+        playEditionTag();
+        console.log(newTag);
+        if (!newTag.id) {
+            $scope.similarTags = findSimilarTags(newTag.range);
+        }
+        else{
+            $scope.similarTags = [];
+        }
     }
 
 
@@ -287,7 +306,7 @@ function AddVideoTagController($scope, $filter,
             PlayerData.pause();
         }
         // If we want to create a new tag
-        if (PlayerData.editionMode && !VideoTagData.currentTag.id) {
+        if (VideoTagData.currentTag !== null && !VideoTagData.currentTag.id) {
             $scope.similarTags = findSimilarTags($scope.editionTag.range);
         }
     }

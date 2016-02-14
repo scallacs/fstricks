@@ -45,6 +45,8 @@ class RidersTableTest extends TestCase
     }
 
 
+    
+    
     /**
      * Test adding with accents and upper case
      * @return void

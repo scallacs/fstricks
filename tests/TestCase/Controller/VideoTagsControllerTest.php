@@ -59,6 +59,28 @@ class VideoTagsControllerTest extends MyIntegrationTestCase {
     }
 
     /**
+     * 
+     *  - sport_id
+     *  - category_id
+     *  - tag_id
+     *  - video_id
+     *  - rider_id
+     * - trick_name
+     */
+    public function testSearchParams() {
+        $this->get('/VideoTags/search.json?tag_name=frontside');
+        $this->assertResponseOk();
+        $this->get('/VideoTags/search.json?rider_id=1');
+        $this->assertResponseOk();
+        $this->get('/VideoTags/search.json?sport_id=1');
+        $this->assertResponseOk();
+        $this->get('/VideoTags/search.json?tag_id=1');
+        $this->assertResponseOk();
+        $this->get('/VideoTags/search.json?trick-slug=frontside-360');
+        $this->assertResponseOk();
+    }
+
+    /**
      * Test add method
      *
      * @return void

@@ -7,15 +7,15 @@ function videoTagItem(PlayerData) {
         restrict: 'EA',
         templateUrl: 'js/src/tag/partials/video-tag-item.html',
         scope: {
-            playerData: '=playerData',
             videoTag: '=videoTag',
             editionMode: '@'
         },
-        controller: function($scope, $uibModal, PlayerData) {
+        controller: function($scope, $uibModal, PlayerData, VideoTagData) {
 
             $scope.openReportErrorModal = openReportErrorModal;
             $scope.view = view;
             $scope.playerData = PlayerData;
+            $scope.videoTagData = VideoTagData;
 
             function openReportErrorModal(videoTag) {
                 var modal = $uibModal.open({

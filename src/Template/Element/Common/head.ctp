@@ -62,6 +62,7 @@
 
 <?= $this->Html->script('src/layout/app.layout.module'); ?>
 <?= $this->Html->script('src/layout/topnav.directive'); ?>
+<?= $this->Html->script('src/layout/top-search.directive'); ?>
 
 <?= $this->Html->script('src/rider/app.rider.module'); ?>
 <?= $this->Html->script('src/rider/form-add-rider.directive'); ?>
@@ -87,7 +88,7 @@
 <?= $this->Html->script("node_modules/satellizer/satellizer.min.js"); ?>                     <!-- Can be lighter -->
 <?= $this->Html->script("bower_components/message-center/message-center.js"); ?>         
 <?= $this->Html->script("node_modules/angular-utils-pagination/dirPagination.js"); ?>         <!-- Use mimified -->
-<?= $this->Html->script("node_modules/ng-infinite-scroll/build/ng-infinite-scroll.min.js"); ?>
+<?= $this->Html->script("node_modules/ng-infinite-scroll/build/ng-infinite-scroll.js"); ?>
 <?= $this->Html->script("node_modules/ng-flow/dist/ng-flow-standalone.min"); ?>
 
 

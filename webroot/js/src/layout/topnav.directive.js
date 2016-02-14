@@ -6,20 +6,13 @@ angular.module('app.layout')
  */
 function topnav() {
     return {
-        templateUrl: 'js/src/layout/topnav.html',
+        templateUrl: 'js/src/layout/partials/topnav.html',
         controller: function($scope, AuthenticationService,
                 $state, SportEntity, SharedData, TagEntity, VideoTagData, PlayerData) {
             // create a message to display in our view
-            $scope.searchTags = [];
-            $scope.search = {tag: null};
             $scope.currentSport = null;
-            $scope.isViewLoading = true;
-            $scope.refreshSearchedTags = refreshSearchedTags;
             $scope.logout = logout;
             $scope.setCurrentSport = setCurrentSport;
-
-            $scope.showVideoPlayer = false;
-
 
             // -------------------------------------------------------------------------
             // Youtube player
@@ -32,19 +25,10 @@ function topnav() {
 
 
             function init() {
-                $scope.$on('showVideoPlayer', function(newVal) {
-                    if (newVal === false) {
-                        PlayerData.showViewMode();
-                    }
-                });
-                PlayerData.showViewMode();
-
                 SportEntity.index({}, loadSportCallback);
             }
 
             function loadSportCallback(response) {
-               console.log(response);
-               
                 SharedData.sports = response;
                 SharedData.categories = [];
                 for (var i = 0; i < response.length; i++) {
@@ -61,45 +45,24 @@ function topnav() {
                     }
                 }
                 $scope.sports = SharedData.sports;
-                $scope.$watch('search.tag', function(newVal, oldVal) {
-//            console.log(newVal);
-                    if (newVal == oldVal) {
-                        return;
-                    }
-                    $state.go('videoplayer.tag', {tagId:newVal.id});
-                });
+//                $scope.$watch('search.tag', function(newVal, oldVal) {
+//                    if (newVal == oldVal) {
+//                        return;
+//                    }
+//                    $state.go('videoplayer.tag', {tagId: newVal.id});
+//                });
             }
 
-          
             function logout() {
                 AuthenticationService.logout();
                 $state.go("login");
                 $scope.isAuthed = AuthenticationService.isAuthed();
-            }
-            /**
-             * Header search bar function
-             * @param {type} trick
-             * @returns {undefined}
-             */
-            function refreshSearchedTags(trick) {
-                if (trick.length >= 2) {
-                    TagEntity.suggest({
-                        id: trick,
-//                category_id: category.category_id,
-//                sport_id: category.sport_id
-                    }, function(results) {
-                        $scope.searchTags = results;
-                    });
-                }
             }
 
             function setCurrentSport(sport) {
                 $scope.currentSport = sport;
                 SharedData.currentSport = sport;
             }
-        },
-        link: function(scope, elem, attr, form) {
-
         }
     };
 

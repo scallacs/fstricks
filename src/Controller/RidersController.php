@@ -147,15 +147,8 @@ class RidersController extends AppController {
                     ->order(['Riders.level DESC'])
                     ->limit(20);
             if (isset($data['q'])) {
-                $term = DataUtil::getLowerString($data, 'q');
-                $terms = explode(' ', $term);
-                $conditions = [];
-                foreach ($terms as $term) {
-                    $conditions[] = 'CONCAT(Riders.firstname, \' \', Riders.lastname) LIKE "%' . trim($term) . '%"';
-                }
-                $query->where([
-                    $conditions,
-                ]);
+                \App\Model\Table\TableUtil::multipleWordSearch($query, $data['q'],  
+                        'CONCAT(Riders.firstname, \' \', Riders.lastname)');
             } else if (isset($data['firstname']) ||
                     isset($data['lastname'])) {
 

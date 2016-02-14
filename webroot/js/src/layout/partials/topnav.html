@@ -49,41 +49,5 @@
         </li>
     </ul>
 </div>
-<div class="bg-secondary padding-sm-side">
-    <form class="navbar-form" role="search">
-        <div  class="input-group">
-            <ui-select 
-                id="SearchBar"
-                ng-model="search.tag" 
-                theme="bootstrap"
-                reset-search-input="false">
-                <ui-select-match placeholder="Trick name" style="text-transform: capitalize;" >
-                    <span class="text-bold">{{$select.selected.name}} </span>
-                    <span class="">
-                        ({{$select.selected.sport_name}} - {{$select.selected.category_name}})
-                    </span>
-                </ui-select-match>
-                <ui-select-choices
-                    repeat="tag in searchTags"
-                    refresh="refreshSearchedTags($select.search)"
-                    refresh-delay="500">
-                    <div class="clearfix" ui-sref="videoplayer.tag({tagId:tag.id})">
-                        <div class="col-xs-10" style="text-transform: capitalize;"  >
-                            <span class="text-bold">{{tag.name}}</span> <br/>
-                            <span class="">{{tag.sport_name}}</span> - 
-                            <span class="">{{tag.category_name}}</span>
-                        </div>
-                        <div class="col-xs-2" style="overflow: hidden;" >
-                            <span class="text-big">{{tag.count_ref}}</span>
-                        </div>
-                    </div>
-                </ui-select-choices>
-            </ui-select>              
-            <div class="input-group-btn" style="width:1%">
-                <button class="btn btn-default" type="submit">
-                    <span class="glyphicon glyphicon-search"></span>
-                </button>
-            </div>
-        </div>
-    </form>
+<div class="bg-secondary padding-sm-side" top-search>
 </div>

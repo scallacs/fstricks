@@ -15,12 +15,33 @@ angular.module('app', [
         .run(Run);
 
 
-function MainController($scope, PlayerData, VideoTagData, SharedData, AuthenticationService) {
+function MainController($scope, PlayerData, VideoTagData, SharedData, AuthenticationService, $state) {
     $scope.playerData = PlayerData;
     $scope.videoTagData = VideoTagData;
     $scope.SharedData = SharedData;
 
     $scope.authData = AuthenticationService.authData;
+
+    $scope.$on('view-video-tag', function(event, tag) {
+        console.log('MainController: Event view-video-tag');
+        $scope.$broadcast('view-video-tag-broadcast', tag);
+    });
+
+    $scope.$on('on-search-item-selected', function(event, data) {
+        // immediate search
+        if (data.type === 'partial') {
+            console.log("Start partial seach");
+            $state.go('videoplayer.search', {
+                tag_name: data.search
+            });
+        }
+        else if (data.type === 'rider') {
+            $state.go('videoplayer.rider', {riderId: data.id});
+        }
+        else if (data.type === 'tag') {
+            $state.go('videoplayer.tag', {tagId: data.id});
+        }
+    });
 }
 
 

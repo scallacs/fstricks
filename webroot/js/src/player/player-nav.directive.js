@@ -11,7 +11,7 @@ function playerNav() {
             $scope.toggleListTricks = toggleListTricks;
             $scope.nextTrick = nextTrick;
             $scope.prevTrick = prevTrick;
-            
+
             $scope.playerData = PlayerData;
             $scope.videoTagData = VideoTagData;
 
@@ -22,13 +22,21 @@ function playerNav() {
             function nextTrick() {
                 if (VideoTagData.hasNext()) {
                     console.log("Next trick");
-                    PlayerData.view(VideoTagData.next());
+                    var tag = VideoTagData.next();
+                    if (tag !== null) {
+                        $scope.$emit('view-video-tag', tag);
+                        PlayerData.view(tag);
+                    }
                 }
             }
             function prevTrick() {
                 if (VideoTagData.hasPrev()) {
                     console.log("Prev trick");
-                    PlayerData.view(VideoTagData.prev());
+                    var tag = VideoTagData.prev();
+                    if (tag !== null) {
+                        $scope.$emit('view-video-tag', tag);
+                        PlayerData.view(tag);
+                    }
                 }
             }
         },

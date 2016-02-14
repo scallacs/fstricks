@@ -208,6 +208,10 @@ function VideoTagData(VideoTagEntity) {
         limit: 20, // TODO synchro server
         disabled: true,
         currentPage: 1,
+        startLoading : function(){
+            this.disabled = false;
+            return this.loadPage(1);
+        },
         setCurrentTag: function(tag) {
             this.currentTag = tag;
         },
@@ -215,7 +219,7 @@ function VideoTagData(VideoTagEntity) {
             this.currentTag = null;
             this.currentPage = 1;
             this.data = [];
-            this.disabled = false;
+            this.disabled = true;
             this.cachePage = {};
             obj.filters = {};
         },
@@ -273,18 +277,22 @@ function VideoTagData(VideoTagEntity) {
         },
         cachePage: {},
         loadNextPage: function() {
+            obj.disabled = true;
             var promise = this.loadPage(this.currentPage);
+            obj.currentPage += 1;
             promise.then(function(tags) {
                 if (tags.length < obj.limit) {
                     console.log('disabling video tag data loader');
                     obj.disabled = true;
                 }
-                obj.currentPage += 1;
+                else {
+                    obj.disabled = false;
+                }
             });
             return promise;
         },
         loadPage: function(page) {
-            console.log('Loading page : ' + page + ' with filter: ');
+            console.log('Request page ' + page + ' with filter: ');
             console.log(obj.filters);
             if (this.cachePage[page]) {
                 return this.cachePage[page];
@@ -294,7 +302,7 @@ function VideoTagData(VideoTagEntity) {
 //            }
             obj.filters.page = page;
             this.cachePage[page] = VideoTagEntity.search(obj.filters, function(tags) {
-                console.log('Loading page ' + obj.currentPage + ': ' + tags.length + ' tag(s)');
+                console.log('Loading page ' + page + ' response: ' + tags.length + ' tag(s)');
                 for (var i = 0; i < tags.length; i++) {
                     obj.data.push(tags[i]);
                 }

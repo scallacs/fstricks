@@ -52,9 +52,9 @@ class VideoTagsController extends AppController {
             $videoTag->user_id = $this->Auth->user('id');
 
             if ($this->VideoTags->save($videoTag)) {
-                ResultMessage::setMessage(__('The video tag has been saved.'), true);
+                ResultMessage::setMessage(__(ResultMessage::MESSAGE_SAVED));
             } else {
-                ResultMessage::setMessage(__('The video tag could not be saved. Please, try again.'), false);
+                ResultMessage::addValidationErrorsModel($videoTag, true);
             }
         }
     }

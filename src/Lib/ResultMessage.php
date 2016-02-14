@@ -4,6 +4,8 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
+ * 
+ * TODO lighters
  */
 
 namespace App\Lib;
@@ -14,7 +16,9 @@ namespace App\Lib;
  * @author stephane
  */
 class ResultMessage {
-    //put your code here
+    
+    const MESSAGE_SAVED = 'Everything is saved!';
+    const MESSAGE_VALIDATION_ERRORS = 'Your form has some errors, please correct required fields.';
 
     /**
      * True if the Json message is sent insinde a wrapper with meta data
@@ -110,8 +114,11 @@ class ResultMessage {
         self::$redirectUrl = false;
     }
 
-    public static function addValidationErrorsModel(\Cake\ORM\Entity $entity) {
+    public static function addValidationErrorsModel(\Cake\ORM\Entity $entity, $autoMessage = false) {
         self::$validationErrors[$entity->source()] = $entity->errors();
+        if ($autoMessage){
+            self::setMessage(__(self::MESSAGE_VALIDATION_ERRORS), false);
+        }
     }
 
     public static function setRedirectUrl($url) {

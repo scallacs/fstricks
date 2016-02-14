@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use App\Lib\ResultMessage;
+use App\Lib\DataUtil;
 
 /**
  * VideoTags Controller
@@ -112,6 +113,8 @@ class VideoTagsController extends AppController {
      *  - tag_id
      *  - video_id
      *  - rider_id
+     * - trick_slug
+     *  - tag_name: "LIKE"
      *  - page: page number
      */
     public function search() {
@@ -148,7 +151,7 @@ class VideoTagsController extends AppController {
                 }
             }
 
-            if (!empty($this->request->query['sport_id']) && is_numeric($this->request->query['sport_id'])) {
+            if (DataUtil::isPositiveInt($this->request->query, 'sport_id')) {
                 $query->where(['Tags.sport_id' => $this->request->query['sport_id']]);
             } else if (!empty($this->request->query['sport_name'])) {
                 // Get id from name
@@ -159,7 +162,7 @@ class VideoTagsController extends AppController {
                     $query->where(['Tags.sport_id' => $sport['id']]);
                 }
             }
-            if (!empty($this->request->query['category_id']) && is_numeric($this->request->query['category_id'])) {
+            if (DataUtil::isPositiveInt($this->request->query, 'category_id')) {
                 $query->where(['Tags.category_id' => $this->request->query['category_id']]);
             } else if (!empty($this->request->query['category_name']) && isset($sportName)) {
                 $categoryName = \App\Lib\DataUtil::lowername($this->request->query['category_name']);
@@ -170,17 +173,21 @@ class VideoTagsController extends AppController {
                 }
             }
 
-            if (!empty($this->request->query['tag_id']) && is_numeric($this->request->query['tag_id'])) {
+            if (DataUtil::isPositiveInt($this->request->query, 'tag_id')) {
                 $query->where(['VideoTags.tag_id' => $this->request->query['tag_id']]);
             }
-            if (!empty($this->request->query['trick_name'])) {
-                $query->where(['Tags.slug' => $this->request->query['trick_name']]);
+            if (!empty($this->request->query['trick_slug'])) {
+                $query->where(['Tags.slug' => $this->request->query['trick_slug']]);
             }
-            if (!empty($this->request->query['video_id']) && is_numeric($this->request->query['video_id'])) {
+            if (DataUtil::isPositiveInt($this->request->query, 'video_id')) {
                 $query->where(['VideoTags.video_id' => (int) $this->request->query['video_id']]);
             }
-            if (!empty($this->request->query['rider_id']) && is_numeric($this->request->query['rider_id'])) {
+            if (DataUtil::isPositiveInt($this->request->query, 'rider_id')) {
                 $query->where(['VideoTags.rider_id' => (int) $this->request->query['rider_id']]);
+            }
+            if (!empty($this->request->query['tag_name'])) {
+                $str = $this->request->query['tag_name'];
+                \App\Model\Table\TableUtil::multipleWordSearch($query, $str, 'Tags.name');
             }
 //        if (!empty($this->request->query['with_total'])){
 //            $data = [

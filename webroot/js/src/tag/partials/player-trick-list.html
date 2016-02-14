@@ -1,8 +1,10 @@
 <div
     ng-show="playerData.showListTricks"
     infinite-scroll='videoTagData.loadNextPage()' 
-    infinite-scroll-disabled='videoTagData.disabled || videoTagData.loading' 
-    infinite-scroll-distance='1'>
+    infinite-scroll-disabled='videoTagData.disabled' 
+    infinite-scroll-distance='0.1'
+    infinite-scroll-immediate-check="false"
+    >
 
     <div class="row" ng-if="playerData.editionMode">
         <button class="btn btn-success btn-block btn-add-tag" ng-click="addNewTag()">
@@ -22,6 +24,7 @@
                  video-tag="videoTagData.data[$index+1]" 
                  player-data="playerData"></div>
         </div>
+        <div style='clear: both;'></div>
     </div>
 
     <div ng-show='videoTagData.loading' class="text-center padding-sm">

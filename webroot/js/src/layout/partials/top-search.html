@@ -1,0 +1,37 @@
+<form class="navbar-form" role="search">
+    <div  class="input-group">
+        <ui-select 
+            id="SearchBar"
+            ng-model="data.search"
+            theme="bootstrap"
+            on-select="onSelect($item, $model)"
+            reset-search-input="false">
+            <ui-select-match placeholder="Search tricks or riders">
+                <span class="text-bold text-capitalize" >{{$select.selected.title}} </span> 
+                <span>({{$select.selected.sub_title}}) </span>
+            </ui-select-match>
+            <ui-select-choices
+                repeat="data in results"
+                refresh="refresh($select.search)"
+                refresh-delay="500">
+                <div class="clearfix">
+                    <div class="col-xs-2" ng-if="data.picture">
+                        <img src="{{data.picture}}"/>
+                    </div>
+                    <div class="col-xs-8" >
+                        <span class="text-bold text-capitalize">{{data.title}}</span> <br/>
+                        <span class="">{{data.sub_title}}</span>
+                    </div>
+                    <div class="col-xs-2" style="overflow: hidden;" ng-if="data.points !== false">
+                        <span class="text-big">{{data.points}}</span>
+                    </div>
+                </div>
+            </ui-select-choices>
+        </ui-select>              
+        <div class="input-group-btn" style="width:1%">
+            <button class="btn btn-default" type="submit">
+                <span class="glyphicon glyphicon-search"></span>
+            </button>
+        </div>
+    </div>
+</form>
