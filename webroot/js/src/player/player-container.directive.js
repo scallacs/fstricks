@@ -15,11 +15,12 @@ function playerContainer($window) {
             // Player container must not be taller thant the window size
             var w = angular.element($window);
             var header = angular.element('header');
-            var playerBar = angular.element('div[player-bar]');
+            //var playerBar = angular.element('div[player-bar]').height();
+            var playerBarHeight = 16;
             scope.$watch(function() {
                 return {h: w.height()};
             }, function(newValue, oldValue) {
-                var offsetH = header.height() + playerBar.height();
+                var offsetH = header.height() + playerBarHeight;
                 scope.windowHeight = newValue.h;
 //                console.log(scope.windowHeight);
                 

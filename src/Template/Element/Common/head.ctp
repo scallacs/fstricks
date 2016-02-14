@@ -67,6 +67,7 @@
 <?= $this->Html->script('src/rider/app.rider.module'); ?>
 <?= $this->Html->script('src/rider/form-add-rider.directive'); ?>
 <?= $this->Html->script('src/rider/rider-item.directive'); ?>
+<?= $this->Html->script('src/rider/rider-box.directive'); ?>
 
 <?= $this->Html->script('src/player/app.player.module'); ?>
 <?= $this->Html->script('src/player/player-nav.directive'); ?>

@@ -25,7 +25,8 @@
                         <span class="thumbnail-round-xs">
                             <img ng-if="videoTag.rider_picture_round_xs" ng-src="videoTag.rider_picture_round_xs"/>
                         </span>
-                        <a  ng-if="videoTag.rider_name" 
+                        <a  ui-sref="videoplayer.rider({riderId: videoTag.rider_id})"
+                            ng-if="videoTag.rider_name" 
                             class="item-user-name text-info text-capitalize">
                             {{videoTag.rider_name}}
                         </a>

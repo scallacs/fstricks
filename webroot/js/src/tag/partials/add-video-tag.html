@@ -45,7 +45,7 @@
                                             <span class="glyphicon glyphicon-plus"></span>
                                         </button>
                                     </div>
-                                    <button type="button" class="btn btn-warning" ng-click="setStartRangeNow()">
+                                    <button type="button" class="btn btn-primary" ng-click="setStartRangeNow()">
                                         Now
                                     </button>
                                 </div>
@@ -69,7 +69,7 @@
                                             <span class="glyphicon glyphicon-plus"></span>
                                         </button>
                                     </div>
-                                    <button  type="button"  class="btn btn-warning" ng-click="setEndRangeNow()">
+                                    <button  type="button"  class="btn btn-primary" ng-click="setEndRangeNow()">
                                         Now  
                                     </button>
                                 </div>
@@ -200,32 +200,37 @@
                             </div>
                             <hr/>
                         </div>
-                        <div class="text-center form-group">
-                            <div class="col-xs-5">
-                                <button ng-if="!playerData.looping" type="button"  
-                                        class="btn btn-info btn-lg btn-block" ng-click="playEditionTag()">
-                                    <span class="glyphicon glyphicon-repeat"></span> Loop
-                                </button>
-                                <button ng-if="playerData.looping" type="button"  
-                                        class="btn btn-info btn-lg btn-block" ng-click="playerData.stopLooping()">
-                                    <span class="glyphicon glyphicon-stop"></span> Stop loop
-                                </button>
-                            </div>
-                            <div class="col-xs-7">
-                                <button type="submit"
-                                        ng-disabled="!formAddVideoTag.$valid || similarTags.length > 0"
-                                        class="btn btn-success btn-lg btn-block" 
-                                        >
-                                    <span ng-if="editionTag.id">
-                                        <span class="glyphicon glyphicon-save"></span> 
-                                        Save
-                                    </span>
-                                    <span ng-if="!editionTag.id">
-                                        <span class="glyphicon glyphicon-plus-sign"></span> 
-                                        Add
-                                    </span>
-                                </button>
-                            </div>
+                        <div class="text-right form-group">
+                            <button ng-if="!playerData.looping" type="button"  
+                                    class="btn btn-primary" ng-click="playEditionTag()">
+                                <span class="glyphicon glyphicon-repeat"></span> Loop
+                            </button>
+                            <button ng-if="playerData.looping" type="button"  
+                                    class="btn btn-primary" ng-click="playerData.stopLooping()">
+                                <span class="glyphicon glyphicon-stop"></span> Stop loop
+                            </button>
+                            <button ng-if="editionTag.id" 
+                                    type="button"
+                                    class="btn btn-danger">
+                                <span class="glyphicon glyphicon-remove"></span> 
+                                Cancel
+                            </button>
+                            &nbsp;
+                            &nbsp;
+                            &nbsp;
+                            <button type="submit"
+                                    ng-disabled="!formAddVideoTag.$valid || similarTags.length > 0"
+                                    class="btn btn-success" 
+                                    >
+                                <span ng-if="editionTag.id">
+                                    <span class="glyphicon glyphicon-save"></span> 
+                                    Save
+                                </span>
+                                <span ng-if="!editionTag.id">
+                                    <span class="glyphicon glyphicon-plus-sign"></span> 
+                                    Add
+                                </span>
+                            </button>
                         </div>
                     </fieldset>
                 </form>

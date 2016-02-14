@@ -102,16 +102,20 @@ h3, h2, h1{
 
 
 .bg-primary .btn-default,.bg-primary input,.bg-primary select,
-.bg-primary-darker .btn-default,.bg-primary-darker input,.bg-primary-darker select{
+.bg-primary-darker .btn-default,.bg-primary-darker input,.bg-primary-darker select,
+.bg-primary .thumbnail{
     background: #333;
     border-color: #222;
     color: #EEE;
 }
+.bg-primary .btn-primary[disabled].active,
 .bg-primary .form-control[disabled], 
 .bg-primary .form-control[readonly], 
 .bg-primary fieldset[disabled] .form-control{
     background: #555;
 }
+
+
 .pagination-container{
     text-align: center;
     width: 100%;

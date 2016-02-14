@@ -32,7 +32,7 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
         if (data.type === 'partial') {
             console.log("Start partial seach");
             $state.go('videoplayer.search', {
-                tag_name: data.search
+                tagName: data.search
             });
         }
         else if (data.type === 'rider') {

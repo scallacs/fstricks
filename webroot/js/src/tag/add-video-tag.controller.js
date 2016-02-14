@@ -357,6 +357,8 @@ function AddVideoTagController($scope, $filter,
 //            console.log(rider);
         $scope.showCreateRiderForm = false;
         if (rider !== null) {
+            console.log(rider);
+            rider.display_name =  rider.firstname + ' ' + rider.lastname;
             $scope.editionTag.rider = rider;
             $scope.editionTag.rider_name = rider.display_name;
             $scope.editionTag.rider_picture = rider.rider_picture;

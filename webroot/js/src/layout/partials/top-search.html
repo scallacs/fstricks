@@ -15,15 +15,15 @@
                 refresh="refresh($select.search)"
                 refresh-delay="500">
                 <div class="clearfix">
-                    <div class="col-xs-2" ng-if="data.picture">
-                        <img src="{{data.picture}}"/>
+                    <div class="col-xs-2">
+                        <img  ng-if="data.picture" src="{{data.picture}}"/>
                     </div>
                     <div class="col-xs-8" >
                         <span class="text-bold text-capitalize">{{data.title}}</span> <br/>
                         <span class="">{{data.sub_title}}</span>
                     </div>
-                    <div class="col-xs-2" style="overflow: hidden;" ng-if="data.points !== false">
-                        <span class="text-big">{{data.points}}</span>
+                    <div class="col-xs-2" style="overflow: hidden;" >
+                        <span class="text-big" ng-if="data.points !== false">{{data.points}}</span>
                     </div>
                 </div>
             </ui-select-choices>

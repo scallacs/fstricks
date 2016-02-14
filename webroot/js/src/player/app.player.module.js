@@ -14,6 +14,7 @@ angular.module('app.player', [
         .controller('ViewVideoController', ViewVideoController)
         .controller('ViewTagController', ViewTagController)
         .controller('ViewSportController', ViewSportController)
+        .controller('ViewRiderController', ViewRiderController)
         .controller('ViewSearchController', ViewSearchController);
 
 ConfigRoute.$inject = ['$stateProvider'];
@@ -87,10 +88,19 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer.search', {
-                url: '/search?tag_name',
+                url: '/search?tagName',
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewSearchController'
+                    }
+                }
+            })
+            .state('videoplayer.rider', {
+                url: '/rider?riderId',
+                views: {
+                    videoPlayerExtra: {
+                        controller: 'ViewRiderController',
+                        templateUrl: baseUrl + 'view-rider.html'
                     }
                 }
             })
@@ -220,6 +230,21 @@ function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData)
         SharedData.pageLoader(false);
     });
 }
+function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, SharedData, RiderEntity) {
+    $scope.rider = {id : $stateParams.riderId};
+
+    PlayerData.stop();
+    PlayerData.showListTricks = true;
+    VideoTagData.setFilters({rider_id: $stateParams.riderId, order: $stateParams.order});
+    VideoTagData.startLoading().finally(function() {
+        SharedData.pageLoader(false);
+    });
+
+    RiderEntity.profile({id: $stateParams.riderId}, function(rider) {
+        console.log(rider);
+        $scope.rider = rider;
+    });
+}
 
 function ViewSearchController(VideoTagData, PlayerData, SharedData, $stateParams) {
     PlayerData.stop();
@@ -227,7 +252,7 @@ function ViewSearchController(VideoTagData, PlayerData, SharedData, $stateParams
 //    console.log($stateParams);
     VideoTagData.reset();
     VideoTagData.setOrder($stateParams.order);
-    VideoTagData.setFilter('tag_name', $stateParams.tag_name);
+    VideoTagData.setFilter('tag_name', $stateParams.tagName);
     VideoTagData.startLoading().finally(function() {
         SharedData.pageLoader(false);
     });

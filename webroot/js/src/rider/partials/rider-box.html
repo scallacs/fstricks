@@ -1,0 +1,28 @@
+<div class="view-rider clearfix">
+    <div class="thumbnail col-sm-4">
+        <img ng-if="rider.picture_portrait" ng-src="{{rider.picture_portrait}}">
+        <img ng-if="!rider.picture_portrait" src="img/icon_avatar.png">
+    </div>
+    <div class="col-sm-8">
+        <h2 class="page-title text-capitalize">{{rider.firstname}} {{rider.lastname}}</h2>
+        <table class="table table-striped">
+            <tr>
+                <td>Nationality</td>
+                <td class="text-bold">{{rider.nationality}}</td>
+                <td>Level</td>
+                <td class="text-bold">{{rider.level}}</td>
+            </tr>
+            <tr>
+                <td>Tagged</td>
+                <td class="text-bold" ng-if="rider.count_tags > 0">
+                    {{rider.count_tags}} time(s) <br/>
+                    <a ui-sref="player.rider({rider_id: rider.id})">view videos</a>
+                </td>
+                <td class="text-bold" ng-if="rider.count_tags === 0">
+                    Never
+                </td>
+                <td colspan="2"></td>
+            </tr>
+        </table>
+    </div>
+</div>
