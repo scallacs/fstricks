@@ -26,6 +26,12 @@ function PlayerData(VideoTagData, $q) {
         showListTricks: true,
         editionMode: false,
         looping: false, // True if we want to loop on the current tag
+        startLooping: function(){
+            if (VideoTagData.currentTag){
+                this.looping = true;
+                this.playVideoRange(VideoTagData.currentTag);
+            }
+        },
         stopLooping: function() {
             this.looping = false;
             var savedTime = this.getCurrentTime();
@@ -62,9 +68,7 @@ function PlayerData(VideoTagData, $q) {
         playVideoRange: playVideoRange,
         setPlayer: setPlayer,
         getCurrentTime: getCurrentTime,
-        onCurrentTimeUpdate: function() {
-
-        },
+        onCurrentTimeUpdate: function() {},
         updateCurrentTag: updateCurrentTag
     };
 
@@ -148,6 +152,9 @@ function PlayerData(VideoTagData, $q) {
 
     function seekTo(val) {
         return this.deferred.promise.then(function() {
+//            if (obj.getCurrentTime() > VideoTagData.currentTag.begin){
+//                obj.looping = false;
+//            }
             obj.player.seekTo(val);
         });
     }
@@ -158,6 +165,7 @@ function PlayerData(VideoTagData, $q) {
     }
 
     function stop() {
+        this.looping = false;
         return this.deferred.promise.then(function() {
             obj.data.video_url = null
             obj.player.stopVideo();

@@ -9,35 +9,21 @@ function playerNav() {
         templateUrl: 'js/src/player/partials/player-nav.html',
         controller: function($scope, PlayerData, VideoTagData) {
             $scope.toggleListTricks = toggleListTricks;
-            $scope.nextTrick = nextTrick;
-            $scope.prevTrick = prevTrick;
-
             $scope.playerData = PlayerData;
             $scope.videoTagData = VideoTagData;
+            $scope.togglePlayerMode = togglePlayerMode;
 
+            function togglePlayerMode(){
+                if (PlayerData.looping){
+                    PlayerData.stopLooping();
+                }
+                else{
+                    PlayerData.startLooping();
+                }
+            }
+            
             function toggleListTricks() {
                 PlayerData.showListTricks = !PlayerData.showListTricks;
-            }
-
-            function nextTrick() {
-                if (VideoTagData.hasNext()) {
-                    console.log("Next trick");
-                    var tag = VideoTagData.next();
-                    if (tag !== null) {
-                        $scope.$emit('view-video-tag', tag);
-                        PlayerData.view(tag);
-                    }
-                }
-            }
-            function prevTrick() {
-                if (VideoTagData.hasPrev()) {
-                    console.log("Prev trick");
-                    var tag = VideoTagData.prev();
-                    if (tag !== null) {
-                        $scope.$emit('view-video-tag', tag);
-                        PlayerData.view(tag);
-                    }
-                }
             }
         },
         link: function(scope, elem, attr, form) {

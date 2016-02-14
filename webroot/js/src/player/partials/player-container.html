@@ -3,7 +3,7 @@
     resize 
     notifier="notifyServiceOnChage(params)"
     ng-show="!SharedData.loadingState && !videoTagData.loading">
-    
+
     <div ng-show="videoTagData.currentTag == null && videoTagData.data.length === 0" 
          class="pick-video-message">
         <p>
@@ -15,9 +15,21 @@
     </div>
     <div ng-show="videoTagData.currentTag != null || videoTagData.data.length > 0">
         <div class="nopadding player-container"  ng-show="playerData.data.video_url"  >
+            <div 
+                ng-show="videoTagData.hasPrev()"
+                class="player-prev-trick" 
+                ng-click="prevTrick()">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+            </div>
             <div class="iframe-wrapper res-16by9">   
                 <youtube
                     player-data="playerData" frameborder="0"></youtube> 
+            </div>
+            <div 
+                ng-show="videoTagData.hasNext()"
+                class="player-next-trick"  
+                ng-click="nextTrick()">
+                <span class="glyphicon glyphicon-arrow-right"></span>
             </div>
         </div>
         <div ng-show="!playerData.data.video_url">

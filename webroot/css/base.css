@@ -300,6 +300,37 @@ header .navbar-nav > li > a{
 /* ------------------------------------------------------------ */
 /* PLAYER BAR  */
 /* ------------------------------------------------------------ */
+
+.toggle-player-mode * ,.toggle-player-mode{
+    cursor: pointer
+}
+.toggle-player-mode.disabled{ 
+    color: #555;
+}
+.player-next-trick, .player-prev-trick{
+    position: absolute;
+    top: 50%;
+    font-size: 3em;
+    z-index: 999;
+    background: #333;
+    opacity: 0.8;
+    border-radius: 10em;
+    cursor: pointer;
+    color: white;
+    padding: 5px 10px;
+    line-height: 1em;
+    margin-top: -0.75em;
+}
+.player-next-trick:hover, .player-prev-trick:hover{
+    background: #111;
+}
+.player-next-trick{
+    right: 10px;
+}
+.player-prev-trick{
+    left: 10px;
+}
+
 .player-bar{
     top: 0px;
     position: relative;

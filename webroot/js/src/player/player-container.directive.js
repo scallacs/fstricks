@@ -10,6 +10,30 @@ function playerContainer($window) {
         controller: function($scope, PlayerData, VideoTagData) {
             $scope.playerData = PlayerData;
             $scope.videoTagData = VideoTagData;
+            $scope.nextTrick = nextTrick;
+            $scope.prevTrick = prevTrick;
+
+            function nextTrick() {
+                if (VideoTagData.hasNext()) {
+                    console.log("Next trick");
+                    var tag = VideoTagData.next();
+                    if (tag !== null) {
+                        $scope.$emit('view-video-tag', tag);
+                        PlayerData.view(tag);
+                    }
+                }
+            }
+            function prevTrick() {
+                if (VideoTagData.hasPrev()) {
+                    console.log("Prev trick");
+                    var tag = VideoTagData.prev();
+                    if (tag !== null) {
+                        $scope.$emit('view-video-tag', tag);
+                        PlayerData.view(tag);
+                    }
+                }
+            }
+
         },
         link: function(scope, element, attr) {
             // Player container must not be taller thant the window size
@@ -23,8 +47,8 @@ function playerContainer($window) {
                 var offsetH = header.height() + playerBarHeight;
                 scope.windowHeight = newValue.h;
 //                console.log(scope.windowHeight);
-                
-                scope.resizeWithOffset = function(){
+
+                scope.resizeWithOffset = function() {
                     var newHeight = (newValue.h - offsetH);
 //                    console.log("New max height : " + newHeight);
                     scope.$eval(attr.notifier);
