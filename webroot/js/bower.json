@@ -1,0 +1,41 @@
+{
+  "name": "fs-tricks",
+  "description": "FS tricks",
+  "main": "",
+  "authors": [
+    "Stéphane Léonard"
+  ],
+  "license": "Trade Secret",
+  "homepage": "https://github.com/scallacs/tricker",
+  "moduleType": [
+    "node"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "bower_components",
+    "./bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "message-center": "~1.2.6",
+    "ui-select": "angular-ui-select#~0.14.2",
+    "angular-ui-router": "~0.2.18",
+    "angular": "1.4.8",
+    "angular-route": "1.4.8",
+    "angular-simple-logger": "0.1.7",
+    "angular-socialshare": "1.4.5",
+    "angular-utils-pagination": "0.9.4",
+    "flow": "flow.js#~2",
+    "lodash": "^4.2.1",
+    "ng-flow": "2.1.4",
+    "satellizer": "0.13.4",
+    "select2": "4.0.1",
+    "ngInfiniteScroll": "1.2.2",
+    "jquery": "~2.2.0",
+    "jquery-timeago": "timeago#~1.5.2"
+  }
+}

@@ -7,7 +7,8 @@ git clone https://github.com/scallacs/tricker.git fstricks
 
 INSTALLATION: 
 composer install
-cd webroot/js && npm install 
+cd webroot/js && bower install # For public
+cd webroot/js && npm install # For dev dependencies
 
 RUNNING TESTS: 
 Backend:
