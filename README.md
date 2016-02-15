@@ -2,6 +2,13 @@
 # @author: Stéphane Léonard
 # @contact: sca.leonard@gmail.com
 
+SOURCES:
+git clone https://github.com/scallacs/tricker.git fstricks
+
+INSTALLATION: 
+composer install
+cd webroot/js && npm install 
+
 RUNNING TESTS: 
 Backend:
     vendor/bin/phpunit tests/TestCase [--filter="name"]

@@ -3,3 +3,8 @@
     RewriteRule    ^$    webroot/    [L]
     RewriteRule    (.*) webroot/$1    [L]
 </IfModule>
+
+AuthUserFile /usr/uj/jurbanek/.htpasswd
+AuthType Basic
+AuthName "My Files"
+Require valid-user
