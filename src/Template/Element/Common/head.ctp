@@ -11,7 +11,7 @@
 </script>
 <?= $this->Html->meta('icon') ?>
 
-<link rel="stylesheet" href="js/bower_components/ui-select/dist/select.min.css">
+<link rel="stylesheet" href="js/components/ui-select/dist/select.min.css">
 
 
 <?= $this->Html->css('bootstrap.css') ?>
@@ -19,11 +19,11 @@
 <?= $this->Html->css('base.css') ?>
 <?= $this->Html->css('jquery-ui.min.css'); ?>  <!-- ONLY ADD SLIDER CODE -->
 
-<?= $this->Html->script('node_modules/jquery/dist/jquery.min.js'); ?> <!-- 2.1.4 -->
-<?= $this->Html->script('node_modules/timeago/jquery.timeago.js'); ?> <!-- 1.0.2 -->
+<?= $this->Html->script('components/jquery/dist/jquery.min.js'); ?> <!-- 2.1.4 -->
+<?= $this->Html->script('components/jquery-timeago/jquery.timeago.js'); ?> <!-- 1.0.2 -->
 <?= $this->Html->script('lib/bootstrap.min.js'); ?>  <!-- Can be remove if using angular ? -->
 
-<?= $this->Html->script("node_modules/lodash/lodash.js"); ?> <!-- Used by the slider ? -->
+<?= $this->Html->script("components/lodash/lodash.js"); ?> <!-- Used by the slider ? -->
 
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"); ?>
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-resource.min.js"); ?>
@@ -31,13 +31,13 @@
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.min.js"); ?>
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-cookies.min.js"); ?>
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-messages.min.js"); ?>
-<?= $this->Html->script("bower_components/angular-ui-router/release/angular-ui-router.min"); ?>
+<?= $this->Html->script("components/angular-ui-router/release/angular-ui-router.min"); ?>
 
-<?= $this->Html->script("node_modules/angular-simple-logger/dist/angular-simple-logger.min.js"); ?> <!-- Use online lib ? -->
+<?= $this->Html->script("components/angular-simple-logger/dist/angular-simple-logger.min.js"); ?> <!-- Use online lib ? -->
 <?= $this->Html->script("lib/ui-bootstrap-custom-tpls-0.14.3.min.js"); ?>
 <?= $this->Html->script("lib/slider.js"); ?>
-<?= $this->Html->script("bower_components/jquery-ui/jquery-ui.min.js"); ?>
-<?= $this->Html->script('bower_components/ui-select/dist/select.min.js'); ?>   
+<?= $this->Html->script("components/jquery-ui/jquery-ui.min.js"); ?>
+<?= $this->Html->script('components/ui-select/dist/select.min.js'); ?>   
 
 <?= $this->Html->script('src/shared/shared.module'); ?>
 <?= $this->Html->script('src/shared/form/shared.form.module'); ?>
@@ -85,12 +85,12 @@
 <?= $this->Html->script('src/app.config.module'); ?>
 <?= $this->Html->script('src/app.module'); ?>
 
-<?= $this->Html->script("node_modules/angular-socialshare/angular-socialshare.min.js"); ?>   <!-- Can be lighter -->
-<?= $this->Html->script("node_modules/satellizer/satellizer.min.js"); ?>                     <!-- Can be lighter -->
-<?= $this->Html->script("bower_components/message-center/message-center.js"); ?>         
-<?= $this->Html->script("node_modules/angular-utils-pagination/dirPagination.js"); ?>         <!-- Use mimified -->
-<?= $this->Html->script("node_modules/ng-infinite-scroll/build/ng-infinite-scroll.js"); ?>
-<?= $this->Html->script("node_modules/ng-flow/dist/ng-flow-standalone.min"); ?>
+<?= $this->Html->script("components/angular-socialshare/angular-socialshare.min.js"); ?>   <!-- Can be lighter -->
+<?= $this->Html->script("components/satellizer/satellizer.min.js"); ?>                     <!-- Can be lighter -->
+<?= $this->Html->script("components/message-center/message-center.js"); ?>         
+<?= $this->Html->script("components/angular-utils-pagination/dirPagination.js"); ?>         <!-- Use mimified -->
+<?= $this->Html->script("components/ngInfiniteScroll/build/ng-infinite-scroll.min.js"); ?>
+<?= $this->Html->script("components/ng-flow/dist/ng-flow-standalone.min"); ?>
 
 
 

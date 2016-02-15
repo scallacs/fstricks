@@ -1,32 +1,21 @@
 {
-    "name": "scallacs-fs-tricks",
-    "description": "FS tricks",
-    "homepage": "",
-    "author": {
-        "name": "Stéphane Léonard",
-        "url": ""
-    },
-    "devDependencies": {
-        "angular-mocks": "1.5.0",
-        "jasmine-core": "^2.4.1",
-        "karma": "^0.13.19",
-        "karma-chrome-launcher": "^0.2.2",
-        "karma-firefox-launcher": "^0.1.7",
-        "karma-jasmine": "^0.3.7",
-        "karma-requirejs": "^0.2.4",
-        "requirejs": "^2.1.22"
-    },
-    "dependencies": {
-        "angular": "1.4.8",
-        "angular-route": "1.4.8",
-        "angular-simple-logger": "0.1.7",
-        "angular-socialshare": "1.4.4",
-        "angular-utils-pagination": "0.9.4",
-        "flow": "0.2.3",
-        "ng-flow": "2.1.4",
-        "lodash": "^4.2.1",
-        "ng-infinite-scroll": "1.2.1",
-        "satellizer": "0.13.4",
-        "select2": "4.0.1"
-    }
+  "name": "scallacs-fs-tricks",
+  "description": "FS tricks",
+  "homepage": "",
+  "author": {
+    "name": "Stéphane Léonard",
+    "url": ""
+  },
+  "devDependencies": {
+    "angular-mocks": "1.5.0",
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.19",
+    "karma-chrome-launcher": "^0.2.2",
+    "karma-firefox-launcher": "^0.1.7",
+    "karma-jasmine": "^0.3.7",
+    "karma-requirejs": "^0.2.4",
+    "requirejs": "^2.1.22"
+  },
+  "dependencies": {
+  }
 }

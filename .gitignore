@@ -6,6 +6,7 @@ CakePHP 3
 /logs/*
 /webroot/js/node_modules/*
 /webroot/js/bower_components/*
+/webroot/js/components/*
 
 CakePHP 2
 
