@@ -19,7 +19,7 @@
     "dependencies": {
         "angular": "1.4.8",
         "angular-route": "1.4.8",
-        "angular-simple-logger": "1.4.8",
+        "angular-simple-logger": "0.1.7",
         "angular-socialshare": "1.4.4",
         "angular-utils-pagination": "0.9.4",
         "flow": "0.2.3",
