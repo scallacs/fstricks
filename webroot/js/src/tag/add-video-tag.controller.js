@@ -164,7 +164,7 @@ function AddVideoTagController($scope, $filter,
             $scope.formAddVideoTag.submit(VideoTagEntity.add(postData).$promise).then(function(response) {
                 if (response.success) {
                     var newTag = angular.copy($scope.editionTag);
-                    newTag.id = response.data.id;
+                    newTag.id = response.data.video_tag_id;
                     VideoTagData.add(newTag);
                     resetEditionTag($scope.editionTag);
                     PlayerData.view(newTag);

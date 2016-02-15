@@ -105,7 +105,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer.rider', {
-                url: '/rider?riderId',
+                url: '/rider/:riderId',
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewRiderController',
@@ -126,7 +126,7 @@ function ConfigRoute($stateProvider) {
 
 
 function AddVideoController($scope, YoutubeVideoInfo, $state,
-        VideoEntity, VideoTagEntity, ServerConfigEntity, messageCenterService, SharedData, AuthenticationService, PlayerData) {
+        VideoEntity, VideoTagEntity, ServerConfigEntity, messageCenterService, SharedData, PlayerData) {
 
     var videosInCache = {};
     $scope.data = {provider_id: null, video_url: null};

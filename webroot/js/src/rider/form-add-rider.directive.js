@@ -49,7 +49,9 @@ angular
                     });
 
                     $scope.$watch('rider.firstname + rider.lastname', function() {
-                        if ($scope.rider && $scope.findSimilarRiders && $scope.rider.lastname.length >= 2 && $scope.rider.firstname.length) {
+                        if ($scope.rider && $scope.findSimilarRiders 
+                                && $scope.rider.lastname && $scope.rider.firstname
+                                && $scope.rider.lastname.length >= 2 && $scope.rider.firstname.length) {
                             searchSimilars($scope.rider.firstname, $scope.rider.lastname);
                         }
                     });
