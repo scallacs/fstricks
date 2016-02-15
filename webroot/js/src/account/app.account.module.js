@@ -80,8 +80,8 @@ function ConfigSocialApi($authProvider, Config) {
 //    });
 }
 
-SettingsController.$inject = ['$scope', 'SharedData', 'messageCenterService', 'AuthenticationService', 'UserEntity']
-function SettingsController($scope, SharedData, messageCenterService, AuthenticationService, UserEntity) {
+SettingsController.$inject = ['$scope', 'messageCenterService', 'AuthenticationService', 'UserEntity']
+function SettingsController($scope, messageCenterService, AuthenticationService, UserEntity) {
 
     $scope.data = {};
     $scope.password = '';
@@ -115,10 +115,8 @@ function UserLoginController($scope, $state) {
 
 }
 
-SignupController.$inject = ['$scope', '$state', 'SharedData',
-    'messageCenterService', 'AuthenticationService']
-function SignupController($scope, $state, SharedData,
-        messageCenterService, AuthenticationService) {
+SignupController.$inject = ['$scope', '$state', 'AuthenticationService']
+function SignupController($scope, $state, AuthenticationService) {
 
     $scope.signup = signup;
 
@@ -128,12 +126,7 @@ function SignupController($scope, $state, SharedData,
 
         function successCallback(response) {
             if (response.success) {
-//                messageCenterService.add('success', response.message, {status: messageCenterService.status.shown});
                 $state.go('videoplayer.home');
-            }
-            else {
-                messageCenterService.add('danger', response.message, {status: messageCenterService.status.shown});
-                formManager.setErrors(response.validationErrors.Users);
             }
         }
     }

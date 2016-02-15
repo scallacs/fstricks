@@ -52,6 +52,7 @@ class RidersController extends AppController {
             if ($this->Riders->save($rider)) {
                 ResultMessage::setData('rider_id', $rider->id);
                 ResultMessage::setData('rider_display_name', $rider->display_name);
+                ResultMessage::setData('level_string', $rider->level_string);
                 ResultMessage::setMessage("Rider profile has been saved", true);
                 return;
             }
@@ -82,6 +83,7 @@ class RidersController extends AppController {
                 ResultMessage::setData('rider_id', $rider->id);
                 ResultMessage::setData('picture_original', $rider->picture_original);
                 ResultMessage::setData('picture_portrait', $rider->picture_portrait);
+                ResultMessage::setData('level_string', $rider->level_string);
                 ResultMessage::setMessage("Rider profile has been saved", true);
                 return;
             }
@@ -142,9 +144,11 @@ class RidersController extends AppController {
                         'lastname' => 'Riders.lastname',
                         'nationality' => 'Riders.nationality',
                         'slug' => 'Riders.slug',
+                        'count_tags' => 'Riders.count_tags',
+                        'level', 'Riders.level',
                         'id' => 'Riders.id',
                     ])
-                    ->order(['Riders.level DESC'])
+                    ->order(['Riders.count_tags DESC','Riders.level DESC'])
                     ->limit(20);
             if (isset($data['q'])) {
                 \App\Model\Table\TableUtil::multipleWordSearch($query, $data['q'],  

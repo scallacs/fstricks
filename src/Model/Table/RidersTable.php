@@ -52,13 +52,19 @@ class RidersTable extends Table {
                         'png_compression_level' => 9
                     ],
                     'portrait' => [     // Define a second thumbnail
-                        'w' => 100,
-                        'h' => 300
-                    ],
+                        'w' => 200,
+                        'h' => 400,
+//                        'crop' => true, 
+                        'png_compression_level' => 9
+                    ]
                 ],
                 'thumbnailMethod' => 'Gd'  // Options are Imagick, Gd or Gmagick
             ]
         ]);
+
+
+        $listener = new \App\Event\UpdatePictureListener();
+        $this->eventManager()->on($listener);
     }
 
     /**
@@ -79,14 +85,14 @@ class RidersTable extends Table {
                 ->requirePresence('nationality', 'create')
                 ->add('nationality', 'custom', [
                     'rule' => function ($value, $context) {
-                        $countries = JsonConfigHelper::countries();
-                        foreach ($countries as $county){
-                            if ($county['code'] === $value){
-                                return true;
-                            }
-                        }
-                        return false;
-                    },
+                $countries = JsonConfigHelper::countries();
+                foreach ($countries as $county) {
+                    if ($county['code'] === $value) {
+                        return true;
+                    }
+                }
+                return false;
+            },
                     'message' => 'Choose a valid nationality'
         ]);
 
@@ -119,15 +125,15 @@ class RidersTable extends Table {
                 ->notEmpty('lastname');
 
         $validator
-                ->add('level', 'valid', ['rule' => function ($value){
-                    $levels = JsonConfigHelper::rules("riders", "level", "values");
-                    foreach ($levels as $level){
-                        if ($level['code'] == $value){
-                            return true;
-                        }
+                ->add('level', 'valid', ['rule' => function ($value) {
+                $levels = JsonConfigHelper::rules("riders", "level", "values");
+                foreach ($levels as $level) {
+                    if ($level['code'] == $value) {
+                        return true;
                     }
-                    return false;
-                }])
+                }
+                return false;
+            }])
                 ->requirePresence('level', 'create')
                 ->notEmpty('level');
 
@@ -156,13 +162,19 @@ class RidersTable extends Table {
      * @param \App\Model\Table\ArrayObject $options
      */
     public function beforeSave($event, $entity, $options) {
-        // TODO move from here
+        // TODO move from here. Set in entity ? 
         if ($entity->isNew()) {
             $entity->firstname = \App\Lib\DataUtil::lowername($entity->firstname);
             $entity->lastname = \App\Lib\DataUtil::lowername($entity->lastname);
         }
+//        else if (!empty($entity->picture)){
+//            $config = $this->behaviors()->get('Proffer')->config();
+//            // remove old picture 
+//            $path = new \Proffer\Lib\ProfferPath($this, $entity, 'picture', $config['picture']);
+//            $path->deleteFiles($path->getFolder(), false);
+//        }
         $entity->nationality = \App\Lib\DataUtil::lowername($entity->nationality);
-        $entity->slug = \Cake\Utility\Inflector::slug($entity->firstname . '-' . $entity->lastname.'-'.$entity->nationality);
+        $entity->slug = \Cake\Utility\Inflector::slug($entity->firstname . '-' . $entity->lastname . '-' . $entity->nationality);
     }
 
 }

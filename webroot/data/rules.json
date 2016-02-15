@@ -18,7 +18,7 @@
         "level": {
             "values": [
                 {"code": 1, "name": "beginner", "order": 1},
-                {"code": 2, "name": "confirm", "order": 2},
+                {"code": 2, "name": "advanced", "order": 2},
                 {"code": 3, "name": "pro", "order": 3}
             ]
         }

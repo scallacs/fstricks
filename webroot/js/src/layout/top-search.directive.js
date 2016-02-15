@@ -54,7 +54,7 @@ function topSearch(RiderEntity, TagEntity, VideoTagData, $state) {
                 return {
                     rider: function(data){
                         data.title = data.firstname + ' ' + data.lastname;
-                        data.sub_title = data.nationality + ' ' + data.level;
+                        data.sub_title = data.level_string + ' (' + data.nationality + ')';
                         data.points = data.count_tags;
                         data.type = 'rider';
                         return data;

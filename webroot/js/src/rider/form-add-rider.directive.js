@@ -1,6 +1,6 @@
 angular
         .module('app.rider')
-        .directive('formAddRider', function() {
+        .directive('formAddRider', function(Upload, $timeout) {
             return {
                 restrict: 'EA',
                 templateUrl: 'js/src/rider/partials/form-add-rider.html',
@@ -15,26 +15,27 @@ angular
                     $scope.save = save;
                     $scope.cancel = cancel;
                     $scope.selectExistingRider = selectExistingRider;
-                    $scope.onUploadSuccess = onUploadSuccess;
-                    $scope.onUploadError = onUploadError;
-                    $scope.convertToInt = function(id){return parseInt(id, 10);};
                     
+                    $scope.convertToInt = function(id) {
+                        return parseInt(id, 10);
+                    };
+
                     $scope.similarRiders = [];
                     $scope.nationalities = [];
                     $scope.levels = [];
                     $scope.uploader = {
-                        flow: null,
-                        init: {
+                        options: {
                             target: 'riders/save.json',
-                            singleFile: true,
-                            testChunks: false,
-                            fileParameterName: 'picture',
-                            chunkSize: 1024 * 1024 * 5,
-                            query: function() {
-                                return $scope.rider;
-                            }
-                        }
+                            maxFiles: "'.pdf,.jpg,.png'",
+                            pattern: 'picture',
+                            minSize: '100KB',
+                            maxSize: '5MB',
+                            minHeight: '50',
+                            resize: {width: 1000, height: 1000}
+                        },
+                        picture: null
                     };
+
 
                     if (!angular.isDefined($scope.findSimilarRiders)) {
                         $scope.findSimilarRiders = false;
@@ -48,25 +49,35 @@ angular
                     });
 
                     $scope.$watch('rider.firstname + rider.lastname', function() {
-                        console.log($scope.rider);
                         if ($scope.rider && $scope.findSimilarRiders && $scope.rider.lastname.length >= 2 && $scope.rider.firstname.length) {
                             searchSimilars($scope.rider.firstname, $scope.rider.lastname);
                         }
                     });
 
-                    function save(rider) {
-                        var flow = $scope.uploader.flow;
-                        if ($scope.profilePicture && flow.files.length === 1) {
-                            $scope.addRiderForm.pending(true);
-                            console.log("Uploading file...");
-                            flow.upload();
+                    function save(rider, picture) {
+                        var promise;
+                        if ($scope.profilePicture && picture) {
+                            console.log("Uploading profile picture: " + picture);
+                            picture.upload = Upload.upload({
+                                url: 'riders/' + $scope.saveMethod + '.json',
+                                data: {picture: picture, firstname: rider.firstname, lastname: rider.lastname, level: rider.level}
+                            });
+                            picture.upload.then(function(response) {
+
+                            }, function(response) {
+                                
+                            }, function(evt) {
+                                // Math.min is to fix IE which reports 200% sometimes
+                                picture.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                                console.log("Progress: " + this.progress);
+                            });
+                            promise = picture.upload;
                         }
                         else {
-                            console.log("Adding rider, file not changed. Method: " + $scope.saveMethod);
-                            $scope.addRiderForm.submit(RiderEntity[$scope.saveMethod](rider).$promise).then(function(result) {
-                                handleServerResponse(result);
-                            });
+                            console.log("Picture not changed. Method: " + $scope.saveMethod);
+                            promise = RiderEntity[$scope.saveMethod](rider).$promise;
                         }
+                        $scope.addRiderForm.submit(promise).then(handleServerResponse);
                     }
                     function cancel() {
                         emitRider(null);
@@ -108,33 +119,19 @@ angular
                         }
                     }
 
-                    function onUploadSuccess($file, $message, $flow) {
-                        var result = angular.fromJson($message);
-                        $scope.addRiderForm.pending(false);
-                        if (!result.success) {
-                            console.log('Setting form errors:');
-                            $scope.addRiderForm.setValidationErrors(result.validationErrors.Riders);
+                function handleServerResponse(result) {
+                        if (angular.isDefined('statusText')) {
+                            result = result.data;
                         }
-                        handleServerResponse(result);
-                    }
-
-                    function onUploadError($file, $message, $flow) {
-                        // TODO error message
-                        $scope.addRiderForm.pending(false);
-                    }
-
-                    function onUploadComplete() {
-                        $scope.addRiderForm.pending(false);
-                    }
-
-                    function handleServerResponse(result) {
+                        console.log('Handling server response');
+                        console.log(result);
                         if (result.success) {
                             console.log('Saving rider profile success');
                             var rider = angular.copy($scope.rider);
                             rider.id = result.data.rider_id;
-//                    rider.display_name = result.data.rider_display_name;
                             rider.picture_portrait = result.data.picture_portrait;
                             rider.picture_original = result.data.picture_original;
+                            rider.level_string = result.data.level_string;
                             emitRider(rider);
                         }
                     }
@@ -148,15 +145,11 @@ angular
 
                     function initRider() {
                         if (!angular.isDefined($scope.defaultRider)) {
-                            console.log("Init rider");
-                            $scope.rider = {firstname: '', lastname: '', nationality: 'fr', level: '1'};
+                            $scope.rider = {firstname: '', lastname: '', nationality: 'fr', level: '1', count_tags: 0};
                         }
                         else {
-                            console.log("Using default rider");
                             $scope.rider = angular.copy($scope.defaultRider());
                         }
-                        console.log("Init form add rider");
-                        console.log($scope.rider);
                     }
                 }
             };

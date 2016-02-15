@@ -51,12 +51,16 @@ function Run($rootScope, AuthenticationService, loginModal, $state, messageCente
 
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
         var requireLogin = toState.data.requireLogin;
-
+        
         if (requireLogin && !AuthenticationService.isAuthed()) {
             console.log('DENY USER ACCESS FOR THIS LOCATION');
             event.preventDefault();
+
+            var wasLoading = SharedData.loadingState;
+            SharedData.pageLoader(false);
             loginModal()
                     .then(function() {
+                        SharedData.pageLoader(wasLoading);
                         return $state.go(toState.name, toParams);
                     })
                     .catch(function() {

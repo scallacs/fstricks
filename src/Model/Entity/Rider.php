@@ -27,7 +27,8 @@ class Rider extends Entity
         'picture_portrait', 
         'picture_square', 
         'picture_original',
-        'display_name'
+        'display_name',
+        'level_string'
     ];
 
     /**
@@ -44,6 +45,23 @@ class Rider extends Entity
         'id' => false
     ];
     
+    protected static $mapLevels = null;
+            
+    public function _getLevelString(){
+        if (self::$mapLevels === null){
+            self::initMapLevels();
+        }
+        return self::$mapLevels[$this->level];
+    }
+    
+    protected static function initMapLevels(){
+        $map = \App\Lib\JsonConfigHelper::rules('riders', 'level', 'values');
+        foreach ($map as $v){
+            self::$mapLevels[$v['code']] = $v['name'];
+        }
+    }
+
+
     public function _getDisplayName(){
         return $this->firstname.' '.$this->lastname;
     }

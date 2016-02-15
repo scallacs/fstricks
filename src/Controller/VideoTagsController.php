@@ -176,6 +176,9 @@ class VideoTagsController extends AppController {
             if (DataUtil::isPositiveInt($this->request->query, 'tag_id')) {
                 $query->where(['VideoTags.tag_id' => $this->request->query['tag_id']]);
             }
+            if (DataUtil::isPositiveInt($this->request->query, 'video_tag_id')) {
+                $query->where(['VideoTags.id' => $this->request->query['video_tag_id']]);
+            }
             if (!empty($this->request->query['trick_slug'])) {
                 $query->where(['Tags.slug' => $this->request->query['trick_slug']]);
             }

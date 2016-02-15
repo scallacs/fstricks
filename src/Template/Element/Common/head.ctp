@@ -40,6 +40,7 @@
 <?= $this->Html->script('components/ui-select/dist/select.min.js'); ?>   
 
 <?= $this->Html->script('src/shared/shared.module'); ?>
+<?= $this->Html->script('src/shared/directives/copy-this-link.directive'); ?>
 <?= $this->Html->script('src/shared/form/shared.form.module'); ?>
 <?= $this->Html->script('src/shared/form/servererror.directive'); ?>
 <?= $this->Html->script('src/shared/form/server-form.directive'); ?>
@@ -64,6 +65,8 @@
 <?= $this->Html->script('src/layout/topnav.directive'); ?>
 <?= $this->Html->script('src/layout/top-search.directive'); ?>
 
+<?= $this->Html->script("components/ng-file-upload/ng-file-upload-shim.min.js"); ?>
+<?= $this->Html->script("components/ng-file-upload/ng-file-upload.min.js"); ?>
 <?= $this->Html->script('src/rider/app.rider.module'); ?>
 <?= $this->Html->script('src/rider/form-add-rider.directive'); ?>
 <?= $this->Html->script('src/rider/rider-item.directive'); ?>
@@ -90,8 +93,6 @@
 <?= $this->Html->script("components/message-center/message-center.js"); ?>         
 <?= $this->Html->script("components/angular-utils-pagination/dirPagination.js"); ?>         <!-- Use mimified -->
 <?= $this->Html->script("components/ngInfiniteScroll/build/ng-infinite-scroll.min.js"); ?>
-<?= $this->Html->script("components/ng-flow/dist/ng-flow-standalone.min"); ?>
-
 
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />

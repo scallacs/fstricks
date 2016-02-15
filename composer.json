@@ -16,7 +16,8 @@
         "holt59/cakephp3-bootstrap-helpers" : "^3.0",
         "admad/cakephp-hybridauth": "~3.0",
         "facebook/php-sdk-v4": "^5.1",
-        "davidyell/proffer": "~0.6"
+        "davidyell/proffer": "~0.6",
+        "flowjs/flow-php-server": "^1.0"
     },
     "require-dev": {
         "psy/psysh": "@stable",

@@ -1,5 +1,5 @@
 angular
-        .module('app.rider', ['flow', 'ngRoute', 'ngMessages', 'ui.router'])
+        .module('app.rider', ['ngFileUpload', 'ngRoute', 'ngMessages', 'ui.router'])
         .config(ConfigRouting)
         .controller('RiderProfileController', RiderProfileController);
 
@@ -38,43 +38,42 @@ function ConfigRouting($stateProvider) {
                 data: {
                     requireLogin: true
                 }
-            })
-            .state('riderprofile', {
-                url: '/profile/:riderId',
-                templateUrl: baseUrl + 'profile.html',
-                controller: 'RiderProfileController',
-                data: {
-                    requireLogin: false,
-                    pageLoader: true
-                }
             });
-            
+
 }
 
 function RiderProfileController($scope, $stateParams, AuthenticationService, SharedData, RiderEntity, $state) {
     // =========================================================================
     // Properties
     $scope.isCurrentUserProfile = false;
-    $scope.rider = {id: null};
+    $scope.rider = false;
     $scope.hasRiderProfile = hasRiderProfile;
-    
+
     $scope.$on("rider-selected", function(event, rider) {
         if (rider !== null) {
             $scope.rider = rider;
         }
-        $state.go('myriderprofile.view').then(function(){
+        $state.go('myriderprofile.view').then(function() {
             SharedData.pageLoader(false);
         });
     });
-    
+
     init();
-    
+
     // =========================================================================
     // Init
     function loadProfile(riderId) {
+        SharedData.pageLoader(true);
         RiderEntity.profile({id: riderId}, function(rider) {
-            $scope.rider = rider;
-        }).$promise.finally(function(){
+            if (angular.isDefined(rider.id)) {
+                console.log("Profile loaded: ");
+                console.log(rider);
+                $scope.rider = rider;
+            }
+            else {
+                $scope.rider = {id: null};
+            }
+        }).$promise.finally(function() {
             SharedData.pageLoader(false);
         });
     }
@@ -85,7 +84,7 @@ function RiderProfileController($scope, $stateParams, AuthenticationService, Sha
 
     // =========================================================================
     function hasRiderProfile() {
-        return $scope.rider.id !== null;
+        return $scope.rider !== false && $scope.rider.id !== null;
     }
     $scope.isEditabled = function() {
         return !hasRiderProfile() || $scope.rider.user_id === AuthenticationService.getCurrentUser().id;

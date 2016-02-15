@@ -42,6 +42,9 @@ function serverForm(messageCenterService) {
                 }
                 function successCallback(results) {
                     console.log(results);
+                    if (angular.isDefined(results.status) && angular.isDefined(results.statusText)){
+                        results = results.data;
+                    }
                     if (!results.success) {
                         form.setValidationErrors(results.validationErrors);
                     }

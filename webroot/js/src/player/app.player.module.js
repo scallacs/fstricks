@@ -15,7 +15,8 @@ angular.module('app.player', [
         .controller('ViewTagController', ViewTagController)
         .controller('ViewSportController', ViewSportController)
         .controller('ViewRiderController', ViewRiderController)
-        .controller('ViewSearchController', ViewSearchController);
+        .controller('ViewSearchController', ViewSearchController)
+        .controller('ViewRealizationController', ViewRealizationController);
 
 ConfigRoute.$inject = ['$stateProvider'];
 function ConfigRoute($stateProvider) {
@@ -39,7 +40,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer', {
-                url: '/player?order&sport_name&tag_id',
+                url: '/player?order',
                 views: {
                     viewNavRight: {
                         'template': '<div player-nav></div>'
@@ -76,6 +77,14 @@ function ConfigRoute($stateProvider) {
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewTagController'
+                    }
+                }
+            })
+            .state('videoplayer.realization', {
+                url: '/realization/:videoTagId',
+                views: {
+                    videoPlayerExtra: {
+                        controller: 'ViewRealizationController'
                     }
                 }
             })
@@ -204,20 +213,47 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
 
 }
 
-function PlayerController($scope, PlayerData) {
+function PlayerController($scope, PlayerData, $stateParams, $state) {
     PlayerData.showViewMode();
     PlayerData.showListTricks = true;
 
     $scope.$on('view-video-tag', function(event, tag) {
         event.stopPropagation();
+//        $state.transitionTo($state.$current, {realization: tag.id}, {notify: false, reload: false});
         PlayerData.view(tag);
     });
+
+//    if (angular.isDefined($stateParams.realization)) {
+//        console.log('Realization for player: ' + $stateParams.realization);
+//    }
 }
+
+function ViewRealizationController(VideoTagData, $stateParams, PlayerData, SharedData, $state){
+    PlayerData.stop();
+    PlayerData.showListTricks = false;
+    VideoTagData.setFilters({video_tag_id: $stateParams.videoTagId});
+    VideoTagData.startLoading().then(function(results){
+        if (results.length === 1){
+            PlayerData.view(results[0]);
+        }
+        else{
+            $state.go('error-not-found');
+        }
+    }).finally(function() {
+        SharedData.pageLoader(false);
+    });
+};
+
 function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData) {
     PlayerData.stop();
     PlayerData.showListTricks = true;
     VideoTagData.setFilters({tag_id: $stateParams.tagId, order: $stateParams.order});
-    VideoTagData.startLoading().finally(function() {
+    VideoTagData.startLoading().then(function(results){
+        if (results.length === 1){
+            PlayerData.showListTricks = false;
+            PlayerData.view(results[0]);
+        }
+    }).finally(function() {
         SharedData.pageLoader(false);
     });
 }
@@ -231,7 +267,7 @@ function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData)
     });
 }
 function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, SharedData, RiderEntity) {
-    $scope.rider = {id : $stateParams.riderId};
+    $scope.rider = {id: $stateParams.riderId};
 
     PlayerData.stop();
     PlayerData.showListTricks = true;
