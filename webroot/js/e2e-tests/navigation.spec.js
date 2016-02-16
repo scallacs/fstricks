@@ -1,7 +1,12 @@
-describe('Protractor Demo App', function() {
+var Application = require('./pages.js');
 
+describe('Test navigating', function() {
+
+    var app = new Application();
+    var nav = app.topNav();
+    
     beforeEach(function() {
-        browser.get('http://localhost:8082/Tricker/#');
+        browser.get(app.webroot);
     });
 
 //    it('should have a title', function() {
@@ -13,4 +18,13 @@ describe('Protractor Demo App', function() {
         expect(form.isPresent()).toBe(true);
     });
     
+    
+    it("Should have a login button when user is not logged in", function(){
+        expect(nav.getLink("login").isPresent()).toBe(true);
+    });
+    it("Should be possible to navigate to the log in page", function(){
+        nav.getLink("login").click(function(){
+            expect(app.hasLocation("login")).toBe(true);
+        });
+    });
 });

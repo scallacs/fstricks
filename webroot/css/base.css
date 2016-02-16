@@ -311,7 +311,7 @@ header .navbar-nav > li > a{
     position: absolute;
     top: 50%;
     font-size: 3em;
-    z-index: 999;
+    z-index: 998;
     background: #333;
     opacity: 0.8;
     border-radius: 10em;

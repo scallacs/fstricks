@@ -6,23 +6,17 @@ describe('Add video: ', function() {
     var validYoutubeIdFull = "https://www.youtube.com/watch?v=Ur1Nrz23sSI";
     var form, submitBtn;
 
-    var application = new Application();
+    var app = new Application();
 
     beforeEach(function() {
-        application.login().then(function() {
-            browser.get('http://localhost:8082/Tricker/#/video/add');
-            expect(browser.getLocationAbsUrl()).toContain('/video/add');
+        app.login().then(function() {
+            app.get('/video/add');
+            brower.waitForAngular();
             form = element(by.id('FormAddVideo'));
+            expect(form.isPresent()).toBe(true);
             submitBtn = form.element(by.css('button[type="submit"]'));
+            expect(submitBtn.isPresent()).toBe(true);
         });
-    });
-
-//    it('should have a title', function() {
-//        expect(browser.getTitle()).toEqual('Freestyle Tricks');
-//    });
-
-    it('should display the form', function() {
-        expect(form.isPresent()).toBe(true);
     });
 
     it('should trigger a video error when wrong id', function() {

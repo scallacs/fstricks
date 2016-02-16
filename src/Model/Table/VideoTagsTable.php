@@ -101,7 +101,8 @@ class VideoTagsTable extends Table {
                             'video_duration' => 'Videos.duration',
                             'video_id' => 'Videos.id',
                             'begin' => 'VideoTags.begin',
-                            'end' => 'VideoTags.end'
+                            'end' => 'VideoTags.end',
+                            'user_id' => 'VideoTags.user_id'
                         ])
                         ->where([
                             'VideoTags.status' => VideoTag::STATUS_VALIDATED,

@@ -9,6 +9,9 @@
 
     </head>
     <body ng-app="app" ng-controller="MainController as main">
+
+    <toaster-container toaster-options="{'close-button': true}"></toaster-container>
+
         <!--<base href="#/Tricker/"/>-->
 
         <?= $this->Element('Common/header_ajs'); ?>

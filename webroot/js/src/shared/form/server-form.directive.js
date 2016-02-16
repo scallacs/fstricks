@@ -4,32 +4,37 @@ angular.module('shared.form')
  * Server form. Extend ng form functionnalities.
  * Add a loader when the form is waiting for a server response.
  */
-serverForm.$inject = ['messageCenterService'];
-function serverForm(messageCenterService) {
+serverForm.$inject = ['toaster'];
+function serverForm(toaster) {
     var loader = $('<img class="form-loader" src="' + WEBROOT_FULL + '/img/ajax_loader.gif" alt="Loading..."/>');
     return {
         require: 'form',
         link: function(scope, elem, attr, form) {
             form._pending = false;
+            form._submitBtnSelector = null;
 
             form.pending = function(val) {
                 form._pending = val;
+                if (form._submitBtnSelector === null) {
+                    form._submitBtnSelector = 'button[type="submit"],input[type="submit"]';
+                }
+                
                 if (val) {
                     elem.find('fieldset').attr('disabled', 'disabled');
-                    elem.find('button[type="submit"],input[type="submit"]').prepend(loader.clone());
+                    elem.find(form._submitBtnSelector).prepend(loader.clone());
                 }
                 else {
                     elem.find('fieldset').removeAttr('disabled');
-                    elem.find('button[type="submit"],input[type="submit"]').find('.form-loader').remove();
+                    elem.find(form._submitBtnSelector).find('.form-loader').remove();
                 }
             };
 
-            form.submit = function(promise) {
+            form.submit = function(promise, selector) {
+                form._submitBtnSelector = angular.isDefined(selector) ? selector : null;
 //                console.log("Call server form submit");
                 if (form._pending) {
                     return;
                 }
-                messageCenterService.removeShown();
                 form.pending(true);
                 promise
                         .then(successCallback)
@@ -42,24 +47,20 @@ function serverForm(messageCenterService) {
                 }
                 function successCallback(results) {
                     console.log(results);
-                    if (angular.isDefined(results.status) && angular.isDefined(results.statusText)){
+                    if (angular.isDefined(results.status) && angular.isDefined(results.statusText)) {
                         results = results.data;
                     }
                     if (!results.success) {
                         form.setValidationErrors(results.validationErrors);
                     }
                     var statusText = results.success ? 'success' : 'warning';
-//                    messageCenterService.add(statusText,
-//                            '<span class="glyphicon glyphicon-'+statusText+'"/></span> ' + results.message, 
-//                            {status: messageCenterService.status.shown});
-                    messageCenterService.add(statusText, results.message, 
-                            {status: messageCenterService.status.shown});
+                    toaster.pop(statusText, results.message);
                 }
             };
 
             form.setValidationErrors = function(models) {
                 console.log(models);
-                angular.forEach(models, function(errors){
+                angular.forEach(models, function(errors) {
                     _setValidationErrors(errors);
                 });
             };
@@ -80,7 +81,8 @@ function serverForm(messageCenterService) {
                         console.log(form.$name + "." + field + ": " + errorString);
                     }
                 });
-            };
+            }
+            ;
         }
     };
 

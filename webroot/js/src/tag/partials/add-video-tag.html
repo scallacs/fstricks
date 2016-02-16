@@ -36,16 +36,22 @@
                                         <button id="ButtonBeginTimeMinus"
                                                 type="button" 
                                                 class="btn btn-default" 
+                                                ng-disabled="!editionTag.isFieldEditabled('begin')"
                                                 ng-click="addStartRange(-slider.step)">
                                             <span class="glyphicon glyphicon-minus"></span>
                                         </button>
-                                        <span class="btn btn-default disabled" >{{editionTag.range[0]| secondsToHours}}</span> 
+                                        <span class="btn btn-default disabled" >{{editionTag._extra.range[0]| secondsToHours}}</span> 
                                         <button id="ButtonBeginTimePlus"
-                                                type="button" class="btn btn-default" ng-click="addStartRange(slider.step)">
+                                                ng-disabled="!editionTag.isFieldEditabled('begin')"
+                                                type="button" 
+                                                class="btn btn-default" 
+                                                ng-click="addStartRange(slider.step)">
                                             <span class="glyphicon glyphicon-plus"></span>
                                         </button>
                                     </div>
-                                    <button type="button" class="btn btn-primary" ng-click="setStartRangeNow()">
+                                    <button type="button" class="btn btn-primary" 
+                                            ng-disabled="!editionTag.isFieldEditabled('begin')"
+                                            ng-click="setStartRangeNow()">
                                         Now
                                     </button>
                                 </div>
@@ -58,18 +64,23 @@
                                         <button id="ButtonEndTimeMinus"
                                                 type="button" 
                                                 class="btn btn-default" 
+                                                ng-disabled="!editionTag.isFieldEditabled('end')"
                                                 ng-click="addEndRange(-slider.step)">
                                             <span class="glyphicon glyphicon-minus"></span>
                                         </button>
-                                        <span class="btn btn-default disabled">{{editionTag.range[1]| secondsToHours}}</span>
+                                        <span class="btn btn-default disabled">{{editionTag._extra.range[1]| secondsToHours}}</span>
                                         <button  id="ButtonEndTimePlus"
                                                  type="button"  
+                                                 ng-disabled="!editionTag.isFieldEditabled('end')"
                                                  class="btn btn-default" 
                                                  ng-click="addEndRange(slider.step)">
                                             <span class="glyphicon glyphicon-plus"></span>
                                         </button>
                                     </div>
-                                    <button  type="button"  class="btn btn-primary" ng-click="setEndRangeNow()">
+                                    <button  type="button"  
+                                             class="btn btn-primary" 
+                                             ng-disabled="!editionTag.isFieldEditabled('end')"
+                                             ng-click="setEndRangeNow()">
                                         Now  
                                     </button>
                                 </div>
@@ -89,10 +100,11 @@
                                 <label class="control-label  col-xs-3">Sport</label>
                                 <div class="col-xs-9">
                                     <ui-select 
-                                        ng-model="editionTag.category" 
+                                        ng-model="editionTag._extra.category" 
+                                        ng-disabled="!editionTag.isFieldEditabled('category')"
                                         theme="bootstrap"
                                         reset-search-input="false"
-                                        on-select="onSelectCategory($item, $model)"
+                                        on-select="editionTag.resetTag()"
                                         on-remove="onRemoveCategory($item, $model)"
                                         required>
                                         <ui-select-match placeholder="Sport and category">{{$select.selected.sport_name}} {{$select.selected.category_name}} </ui-select-match>
@@ -116,11 +128,10 @@
                                 <label class="control-label col-xs-3">Trick</label>
                                 <div class="col-xs-9">
                                     <ui-select 
-                                        ng-model="editionTag.tag" 
+                                        ng-model="editionTag._extra.tag" 
                                         theme="bootstrap"
-                                        ng-disabled="!editionTag.category"
+                                        ng-disabled="!editionTag.hasCategory() || !editionTag.isFieldEditabled('tag')"
                                         reset-search-input="false"
-                                        on-select="onSelectTrick($item, $model)"
                                         on-remove="onRemoveTrick($item, $model)"
                                         required>
                                         <ui-select-match placeholder="Trick name">
@@ -154,16 +165,16 @@
                                 <label class="control-label col-xs-3">Rider</label>
                                 <div  class="col-xs-8">
                                     <ui-select 
-                                        ng-model="editionTag.rider" 
+                                        ng-model="editionTag._extra.rider" 
                                         theme="bootstrap"
+                                        ng-disabled="!editionTag.isFieldEditabled('rider')"
                                         reset-search-input="false"
-                                        on-select="onSelectRider($item, $model)"
                                         on-remove="onRemoveRider($item, $model)"
                                         >
                                         <ui-select-match placeholder="Rider..." class="text-capitalize">
                                             <img ng-src="{{$select.selected.picture_round_xs}}" alt=""/>  
                                             <span class="text-bold">{{$select.selected.display_name}} </span> 
-                                            <span class="text-muted">({{$select.selected.nationality}})</span> 
+                                            <span class="text-muted" ng-if="$select.selected.nationality">({{$select.selected.nationality}})</span> 
                                         </ui-select-match>
                                         <ui-select-choices
                                             repeat="rider in suggestedRiders"
@@ -181,6 +192,7 @@
                                 <div  class="col-xs-1">
                                     <button type="button" 
                                             class="btn btn-default"
+                                            ng-disabled="!editionTag.isFieldEditabled('rider')"
                                             ng-click="showCreateRiderForm = true">
                                         <span class="glyphicon glyphicon-plus-sign"></span>
                                     </button>
@@ -209,11 +221,20 @@
                                     class="btn btn-primary" ng-click="playerData.stopLooping()">
                                 <span class="glyphicon glyphicon-stop"></span> Stop loop
                             </button>
-                            <button ng-if="editionTag.id" 
+                            <button ng-if="!editionTag.isNew()" 
                                     type="button"
-                                    class="btn btn-danger">
+                                    ng-click="cancel()"
+                                    class="btn btn-warning">
                                 <span class="glyphicon glyphicon-remove"></span> 
                                 Cancel
+                            </button>
+                            <button ng-if="editionTag.allowedToRemove()" 
+                                    type="button"
+                                    ng-click="deleteTag(editionTag)"
+                                    class="btn btn-danger"
+                                    name="button_remove">
+                                <span class="glyphicon glyphicon-remove-sign"></span> 
+                                Remove
                             </button>
                             &nbsp;
                             &nbsp;
@@ -222,11 +243,11 @@
                                     ng-disabled="!formAddVideoTag.$valid || similarTags.length > 0"
                                     class="btn btn-success" 
                                     >
-                                <span ng-if="editionTag.id">
+                                <span ng-if="!editionTag.isNew()">
                                     <span class="glyphicon glyphicon-save"></span> 
                                     Save
                                 </span>
-                                <span ng-if="!editionTag.id">
+                                <span ng-if="editionTag.isNew()">
                                     <span class="glyphicon glyphicon-plus-sign"></span> 
                                     Add
                                 </span>
@@ -235,7 +256,7 @@
                     </fieldset>
                 </form>
 
-                <div mc-messages></div>
+
             </div>
         </div>
     </div>
@@ -245,7 +266,7 @@
         <div class="form-group">
             <div
                 class="margin-top"
-                ng-model="editionTag.range"
+                ng-model="editionTag._extra.range"
                 ui-slider="{range: true}" 
                 min="0" 
                 max="{{playerData.data.duration}}" 

@@ -40,6 +40,26 @@ class VideoTagsController extends AppController {
     }
 
     /**
+     * A user can only delete a video tag that he created
+     * @param type $id
+     */
+    public function delete($id = null) {
+        if ($id === null) {
+            ResultMessage::setSuccess(false);
+            return;
+        }
+        $success = $this->VideoTags->deleteAll([
+            'id' => $id,
+            'user_id' => $this->Auth->user('id')
+        ]);
+        if ($success) {
+            ResultMessage::setMessage('This trick has beed successfully removed', $success);
+        } else {
+            ResultMessage::setMessage('Sorry but you are not allowed to remove it', $success);
+        }
+    }
+
+    /**
      * Add method
      *
      * @return void Redirects on successful add, renders view otherwise.
@@ -49,30 +69,29 @@ class VideoTagsController extends AppController {
         $videoTag = $this->VideoTags->newEntity();
         if ($this->request->is('post')) {
             $data = $this->request->data;
-
+            
+            $tagId = null;
             // Creating a new tag if needed !
-            $createTag = isset($data['tag']);
-            if ($createTag) {
+            if (isset($data['tag'])) {
                 // Create tag 
                 $tagTable = \Cake\ORM\TableRegistry::get('Tags');
                 $tagEntity = $tagTable->newEntity($data['tag']);
                 $tagEntity->user_id = $this->Auth->user('id');
-                if (!$tagTable->save($tagEntity)) {
-                    ResultMessage::addValidationErrorsModel($tagEntity);
+                $tagEntity = $tagTable->createOrGet($tagEntity, $this->Auth->user('id'));
+                if (!$tagEntity) {
                     ResultMessage::setMessage(__('Cannot create this trick'), false);
                     return;
-                } else {
-                    ResultMessage::addStepSuccess("Adding a the new trick");
                 }
+                $tagId = $tagEntity->id;
                 unset($data['tag']);
             }
 
             $videoTag = $this->VideoTags->patchEntity($videoTag, $data);
             $videoTag->user_id = $this->Auth->user('id');
-            if ($createTag) {
-                $videoTag->tag_id = $tagEntity->id;
+            if ($tagId !== null){
+                $videoTag->tag_id = $tagId;
             }
-
+            
             if ($this->VideoTags->save($videoTag)) {
                 ResultMessage::setMessage(__('Your trick has been saved.'), true);
                 ResultMessage::setData('video_tag_id', $videoTag->id);

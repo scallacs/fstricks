@@ -7,7 +7,8 @@ angular.module('app', [
     'app.account',
     'app.rider',
     'app.tag',
-    'app.page'
+    'app.page',
+    'toaster'
 ])
         .config(ConfigRouting)
         .config(ConfigInterceptor)
@@ -45,27 +46,35 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
 }
 
 
-function Run($rootScope, AuthenticationService, loginModal, $state, messageCenterService, SharedData) {
-
-    messageCenterService.removeShown();
+function Run($rootScope, AuthenticationService, loginModal, $state, SharedData) {
 
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
+        console.log('$stateChangeStart: ' + event);
         var requireLogin = toState.data.requireLogin;
-        
+
         if (requireLogin && !AuthenticationService.isAuthed()) {
             console.log('DENY USER ACCESS FOR THIS LOCATION');
             event.preventDefault();
 
             var wasLoading = SharedData.loadingState;
             SharedData.pageLoader(false);
-            loginModal()
+            loginModal.open().result
                     .then(function() {
-                        SharedData.pageLoader(wasLoading);
-                        return $state.go(toState.name, toParams);
+                        if (loginModal.isset()) {
+                            console.log("Login success, continuing");
+                            SharedData.pageLoader(wasLoading);
+                            return $state.go(toState.name, toParams);
+                        }
                     })
                     .catch(function() {
-                        return $state.go('videoplayer.home');
+                        if (loginModal.isset()) {
+                            console.log("Closing modal with catch");
+                            return $state.go('videoplayer.home');
+                        }
                     });
+        }
+        else {
+            loginModal.dismiss();
         }
         SharedData.pageLoader(toState.data.pageLoader);
     });
@@ -109,7 +118,7 @@ function ConfigInterceptor($httpProvider) {
                 var deferred = $q.defer();
                 if (status === 401) {
                     $injector.get('AuthenticationService').logout();
-                    loginModal()
+                    loginModal.open().result
                             .then(function() {
                                 deferred.resolve($http(rejection.config));
                             })

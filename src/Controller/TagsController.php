@@ -24,30 +24,30 @@ class TagsController extends AppController {
         // TODO rewrite query from video tag point of view ? 
         $videoTagsTable = \Cake\ORM\TableRegistry::get('VideoTags');
         $sportsTable = \Cake\ORM\TableRegistry::get('Sports');
-       
-        $conditions = [];
-        
-        if ($sportName !== null){
 
-            $sport = $sportsTable->findFromNameCached($sportName); 
-            if ($sport === null){
+        $conditions = [];
+
+        if ($sportName !== null) {
+
+            $sport = $sportsTable->findFromNameCached($sportName);
+            if ($sport === null) {
                 return;
             }
             $conditions['Tags.sport_id'] = $sport['id'];
-            
-            if ($category !== null){
-                $category = $sportsTable->findFromCategoryCached($sportName, $category); 
-                if ($category === null){
+
+            if ($category !== null) {
+                $category = $sportsTable->findFromCategoryCached($sportName, $category);
+                if ($category === null) {
                     return;
                 }
                 $conditions['Tags.category_id'] = $category['id'];
-                
-                if ($trick !== null){
+
+                if ($trick !== null) {
                     $conditions['Tags.slug'] = \App\Lib\DataUtil::lowernamenumeric($trick);
                 }
             }
         }
-        
+
         $query = $videoTagsTable->findAndJoin()
                 ->where($conditions);
         ResultMessage::overwriteData($query->all());
@@ -63,6 +63,8 @@ class TagsController extends AppController {
      */
     public function suggest($term = '') {
         $countRef = \App\Lib\DataUtil::getPositiveInt($this->request->query, 'count_ref_min', 1);
+        $sportId = \App\Lib\DataUtil::getPositiveInt($this->request->query, 'sport_id', null);
+        $categoryId = \App\Lib\DataUtil::getPositiveInt($this->request->query, 'category_id', null);
         $query = $this->Tags->find('all')
                 ->select([
                     'name' => 'Tags.name',
@@ -80,10 +82,10 @@ class TagsController extends AppController {
                 ->contain(['Categories', 'Sports'])
                 ->limit(20)
                 ->order(['Tags.count_ref DESC']);
-        if (!empty($this->request->query['sport_id'])) {
+        if ($sportId !== null) {
             $query->where(['Tags.sport_id' => $this->request->query['sport_id']]);
         }
-        if (!empty($this->request->query['category_id'])) {
+        if ($categoryId !== null) {
             $query->where(['Tags.category_id' => $this->request->query['category_id']]);
         }
         ResultMessage::overwriteData($query->all());

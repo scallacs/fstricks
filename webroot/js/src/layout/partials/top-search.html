@@ -13,16 +13,17 @@
             <ui-select-choices
                 repeat="data in results"
                 refresh="refresh($select.search)"
-                refresh-delay="500">
+                refresh-delay="400">
                 <div class="clearfix">
-                    <div class="col-xs-2">
-                        <img  ng-if="data.picture" src="{{data.picture}}"/>
+                    <div class="hidden-xs col-sm-2">
+                        <img ng-if="data.picture" src="{{data.picture}}"/>
+                        <span ng-if="data.category">{{data.category}}</span>
                     </div>
-                    <div class="col-xs-8" >
+                    <div class="col-xs-9 col-sm-8" >
                         <span class="text-bold text-capitalize">{{data.title}}</span> <br/>
                         <span class="">{{data.sub_title}}</span>
                     </div>
-                    <div class="col-xs-2" style="overflow: hidden;" >
+                    <div class="col-xs-3 col-sm-2 text-center" style="overflow: hidden;" >
                         <span class="text-big" ng-if="data.points !== false">{{data.points}}</span>
                     </div>
                 </div>

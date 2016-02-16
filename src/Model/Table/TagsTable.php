@@ -10,6 +10,8 @@ use Cake\Validation\Validator;
 use Cake\ORM\Entity;
 use App\Lib\JsonConfigHelper;
 
+use App\Lib\ResultMessage;
+
 /**
  * Tags Model
  *
@@ -52,7 +54,7 @@ class TagsTable extends Table {
                 ->add('id', 'valid', ['rule' => 'numeric'])
                 ->allowEmpty('id', 'create');
 
-        
+
         $validator
                 ->requirePresence('name', 'create')
                 ->notEmpty('name')
@@ -67,12 +69,12 @@ class TagsTable extends Table {
                     ],
                     'allowedChars' => [
                         'rule' => function($value, $context) {
-                            return !preg_match(JsonConfigHelper::rules('tags', 'name', 'regex'), $value);
-                        },
+                    return !preg_match(JsonConfigHelper::rules('tags', 'name', 'regex'), $value);
+                },
                         'message' => 'Only alpha numeric chars with accents.'
                     ]
         ]);
-                        
+
         // TODO add rule sport and category exists
         $validator
                 ->requirePresence('sport_id', 'create')
@@ -86,6 +88,36 @@ class TagsTable extends Table {
                 ->notEmpty('user_id');
 
         return $validator;
+    }
+
+    public function findByName($name, $categoryId) {
+        return $this->find()
+                        ->where([
+                            'Tags.name' => $name,
+                            'Tags.category_id' => $categoryId
+                        ])
+                        ->limit(1)
+                        ->first();
+    }
+
+    public function createOrGet($entity, $userId) {
+        $entity->user_id = $userId;
+        if ($this->save($entity)) {
+            return $entity;
+        }
+        $errors = $entity->errors();
+
+        if (count($errors) === 1 && isset($errors['name']['_isUnique'])) {
+            $entity = $this->findByName($entity->name, $entity->category_id);
+            if ($entity) {
+                return $entity;
+            }
+        } 
+        else {
+            ResultMessage::addValidationErrorsModel($entity);
+            ResultMessage::setMessage(__('Cannot create this trick'), false);
+        }
+        return false;
     }
 
     public function buildRules(RulesChecker $rules) {

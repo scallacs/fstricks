@@ -1,65 +1,101 @@
+var Application = require('./pages.js');
+
 describe('Account login', function() {
 
     var validCredential = {username: "stef@tricker.com", password: "test"};
     var invalidCredential = {username: "invalid@tricker.com", password: "test"};
     var form, submitBtn, inputEmail, inputPassword;
 
-    beforeEach(function() {
-        browser.get('http://localhost:8082/Tricker/#/login');
+    var app = new Application();
+    var nav = app.topNav();
+
+    function initInputs() {
         form = element(by.id('LoginForm'));
         submitBtn = form.element(by.css('button[type="submit"]'));
         inputEmail = form.element(by.model("user.email"));
         inputPassword = form.element(by.model("user.password"));
-    });
-    
-    function tryLogin(crendentials){
+    }
+
+    function tryLogin(crendentials) {
+        expect(form.isPresent()).toBe(true);
         inputEmail.sendKeys(crendentials.username);
         expect(inputEmail.isPresent()).toBe(true);
         inputPassword.sendKeys(crendentials.password);
         expect(inputPassword.isPresent()).toBe(true);
-        return submitBtn.click().then(function() {
-            browser.waitForAngular();
-        });
+        expect(submitBtn.isEnabled()).toBe(true);
+        return submitBtn.click();
     }
 
-    it('should have the form', function() {
-        expect(form.isPresent()).toBe(true);
+    beforeEach(function() {
+
     });
 
-    it('btn should be enabled when form is correctly filled', function() {
-       
-        tryLogin(validCredential).then(function() {
+
+    describe('modal login: ', function() {
+        it('should work', function() {
+            app.getState('addvideo');
             browser.waitForAngular();
-            expect(browser.getLocationAbsUrl()).not.toContain('/login');
+            initInputs();
+            tryLogin(invalidCredential).then(function() {
+                browser.waitForAngular();
+                app.assertLocation('addvideo');
+                expect(nav.isAuthNav()).toBe(false);
+            });
         });
     });
 
-    it('user should be informe if its crendential are not valid', function() {
-        tryLogin(invalidCredential).then(function() {
+    describe('with wrong credential', function() {
+        beforeEach(function() {
+            app.getState('login');
             browser.waitForAngular();
-            expect(browser.getLocationAbsUrl()).toContain('/login');
+            initInputs();
+            tryLogin(invalidCredential);
         });
-        
-    });
-    
-    it('Navigation should not contain login and signup links anymore', function() {
-        tryLogin(validCredential).then(function() {
-            browser.waitForAngular();
-            var loginLink = element(by.id('TopNav')).elment(by.css('a[ui-sref="login"]'));
-            expect(loginLink.isPresent()).toBe(false);
-            var signupLink = element(by.id('TopNav')).elment(by.css('a[ui-sref="signup"]'));
-            expect(signupLink.isPresent()).toBe(false);
-            expect(browser.getLocationAbsUrl()).toContain('/login');
+
+        it('user cannot login with wrong credential', function() {
+            app.assertLocation('login');
         });
-        
     });
-    
+
+    describe('navigating ', function() {
+
+        it('should be able to click on sigup link inside the form', function() {
+            var signupLink = form.element(by.css('a[ui-sref="signup"]'));
+            expect(signupLink.isPresent()).toBe(true);
+            signupLink.click(function() {
+                app.assertLocation('signup');
+            });
+        });
+    });
+
+    describe('with good credential: ', function() {
+        var loginPromise;
+        beforeAll(function() {
+            app.getState('login');
+            initInputs();
+            loginPromise = tryLogin(validCredential);
+        });
+
+        it('login should work and be redirected to another page', function() {
+            loginPromise.then(function() {
+                app.assertNotLocation('login');
+            });
+        });
+        it('Navigation should not contain login and signup links anymore', function() {
+            loginPromise.then(function() {
+                browser.waitForAngular();
+                expect(nav.isAuthNav()).toBe(false);
+            });
+        });
+    });
+
+
     // TODO
 //    it('should be able to login with facebook', function() {
 //        element(by.css("button.btn-facebook")).click().then(function() {
 //            browser.waitForAngular();
 //            expect(browser.getLocationAbsUrl()).not.toContain('/login');
 //        });
-//    });
+//    });   
 
 });

@@ -6,6 +6,9 @@ angular
                 templateUrl:'js/src/rider/partials/rider-box.html',
                 scope: {
                     rider: '=rider'
+                },
+                controller: function($scope, PlayerData){
+                    $scope.playerData = PlayerData;
                 }
             };
         });

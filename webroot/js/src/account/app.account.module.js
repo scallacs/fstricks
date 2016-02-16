@@ -3,7 +3,6 @@ angular.module('app.account', [
     'ui.router',
     'ngMessages',
     'satellizer',
-    'MessageCenterModule',
     'app.config',
     'app.core',
     'shared.form'])
@@ -80,8 +79,8 @@ function ConfigSocialApi($authProvider, Config) {
 //    });
 }
 
-SettingsController.$inject = ['$scope', 'messageCenterService', 'AuthenticationService', 'UserEntity']
-function SettingsController($scope, messageCenterService, AuthenticationService, UserEntity) {
+SettingsController.$inject = ['$scope', 'AuthenticationService', 'UserEntity']
+function SettingsController($scope, AuthenticationService, UserEntity) {
 
     $scope.data = {};
     $scope.password = '';
@@ -96,10 +95,8 @@ function SettingsController($scope, messageCenterService, AuthenticationService,
 
     function removeAccount(password) {
         $scope.isFormDeleteAccountLoading = true;
-        messageCenterService.removeShown();
         $scope.formDeleteAccount.submit(UserEntity.removeAccount({password: password}).$promise).then(function(response) {
             if (response.success) {
-                messageCenterService.removeShown();
                 $scope.$parent.logout();
             }
         });
@@ -133,14 +130,30 @@ function SignupController($scope, $state, AuthenticationService) {
 }
 
 function loginModal($uibModal) {
+    var instance = null;
 
-    return function() {
-        var instance = $uibModal.open({
-            templateUrl: 'js/src/account/partials/login_modal.html',
-            controller: 'LoginModalController',
-            controllerAs: 'LoginModalController'
-        });
-        return instance.result;
+    return {
+        isset: function(){ return instance !== null; },
+        open: function() {
+            if (instance !== null) {
+                return instance;
+            }
+            console.log("LoginModal: Open");
+            instance = $uibModal.open({
+                templateUrl: 'js/src/account/partials/login_modal.html',
+                controller: 'LoginModalController',
+                controllerAs: 'LoginModalController'
+            });
+            return instance;
+        },
+        dismiss: function() {
+            if (instance !== null) {
+                console.log("LoginModal: Closing");
+                var copy = instance;
+                instance = null;
+                copy.dismiss();
+            }
+        }
     };
 }
 

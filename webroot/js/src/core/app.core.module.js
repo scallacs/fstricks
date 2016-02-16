@@ -26,8 +26,8 @@ function PlayerData(VideoTagData, $q) {
         showListTricks: true,
         editionMode: false,
         looping: false, // True if we want to loop on the current tag
-        startLooping: function(){
-            if (VideoTagData.currentTag){
+        startLooping: function() {
+            if (VideoTagData.currentTag) {
                 this.looping = true;
                 this.playVideoRange(VideoTagData.currentTag);
             }
@@ -68,7 +68,8 @@ function PlayerData(VideoTagData, $q) {
         playVideoRange: playVideoRange,
         setPlayer: setPlayer,
         getCurrentTime: getCurrentTime,
-        onCurrentTimeUpdate: function() {},
+        onCurrentTimeUpdate: function() {
+        },
         updateCurrentTag: updateCurrentTag
     };
 
@@ -94,7 +95,7 @@ function PlayerData(VideoTagData, $q) {
         });
     }
     function _view(videoTag) {
-        console.log("PlayerData._view: " + videoTag.id);
+        //console.log("PlayerData._view: " + videoTag.id);
 //        console.log(videoTag);
         if (videoTag === null) {
             console.log("Try to view a null videoTag");
@@ -207,7 +208,7 @@ function PlayerData(VideoTagData, $q) {
     }
 }
 
-function VideoTagData(VideoTagEntity) {
+function VideoTagData(VideoTagEntity, $q) {
 
     var obj = {
         filters: {},
@@ -216,7 +217,14 @@ function VideoTagData(VideoTagEntity) {
         limit: 20, // TODO synchro server
         disabled: true,
         currentPage: 1,
-        startLoading : function(){
+        delete: function(id) {
+            for (var i = 0; i < this.data.length; i++) {
+                if (this.data[i].id === id) {
+                    this.data.splice(i, 1);
+                }
+            }
+        },
+        startLoading: function() {
             this.disabled = false;
             return this.loadPage(1);
         },
@@ -284,6 +292,26 @@ function VideoTagData(VideoTagEntity) {
             return 0;
         },
         cachePage: {},
+        loadAll: function() {
+            var deferred = $q.defer();
+
+            this.loadNextPage()
+                    .then(successCallback)
+                    .catch(function() {
+                        deferred.reject(0);
+                    });
+
+            function successCallback(results) {
+                if (obj.disabled) {
+                    deferred.resolve(results);
+                }
+                else {
+                    obj.loadNextPage().then(successCallback);
+                }
+            }
+
+            return deferred.promise;
+        },
         loadNextPage: function() {
             obj.disabled = true;
             var promise = this.loadPage(this.currentPage);
@@ -548,6 +576,11 @@ function VideoTagEntity($resource) {
         edit: {
             method: 'POST',
             params: {action: 'edit'},
+            isArray: false
+        },
+        delete: {
+            method: 'POST',
+            params: {action: 'delete'},
             isArray: false
         },
         search: {

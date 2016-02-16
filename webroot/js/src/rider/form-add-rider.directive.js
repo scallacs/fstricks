@@ -15,7 +15,7 @@ angular
                     $scope.save = save;
                     $scope.cancel = cancel;
                     $scope.selectExistingRider = selectExistingRider;
-                    
+
                     $scope.convertToInt = function(id) {
                         return parseInt(id, 10);
                     };
@@ -49,7 +49,7 @@ angular
                     });
 
                     $scope.$watch('rider.firstname + rider.lastname', function() {
-                        if ($scope.rider && $scope.findSimilarRiders 
+                        if ($scope.rider && $scope.findSimilarRiders
                                 && $scope.rider.lastname && $scope.rider.firstname
                                 && $scope.rider.lastname.length >= 2 && $scope.rider.firstname.length) {
                             searchSimilars($scope.rider.firstname, $scope.rider.lastname);
@@ -67,7 +67,7 @@ angular
                             picture.upload.then(function(response) {
 
                             }, function(response) {
-                                
+
                             }, function(evt) {
                                 // Math.min is to fix IE which reports 200% sometimes
                                 picture.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
@@ -89,6 +89,9 @@ angular
                     }
 
                     function emitRider(rider) {
+                        if (rider !== null) {
+                            rider.display_name = rider.firstname + ' ' + rider.lastname;
+                        }
                         $scope.initRider();
                         console.log('Emitting rider: ' + rider);
                         $scope.$emit("rider-selected", rider);
@@ -121,8 +124,8 @@ angular
                         }
                     }
 
-                function handleServerResponse(result) {
-                        if (angular.isDefined('statusText')) {
+                    function handleServerResponse(result) {
+                        if (angular.isDefined(result.statusText)) {
                             result = result.data;
                         }
                         console.log('Handling server response');

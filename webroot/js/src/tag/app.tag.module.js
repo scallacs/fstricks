@@ -60,24 +60,21 @@ function SearchTagController($scope, TagEntity) {
 }
 
 function ModalReportErrorController($scope, $uibModalInstance, ErrorReportEntity,
-        videoTag, messageCenterService) {
+        videoTag) {
 
     $scope.videoTag = videoTag;
     $scope.feedback = null;
     $scope.errorReport = {};
 
     $scope.ok = function() {
-        messageCenterService.removeShown();
         $uibModalInstance.close($scope.videoTag);
     };
 
     $scope.cancel = function() {
-        messageCenterService.removeShown();
         $uibModalInstance.dismiss('cancel');
     };
 
     $scope.sendReport = function(errorReport) {
-        messageCenterService.removeShown();
         errorReport.video_tag_id = videoTag.id;
         $scope.formReportVideoTagError
                 .submit(ErrorReportEntity.post(errorReport).$promise)

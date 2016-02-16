@@ -59,7 +59,8 @@ function ConfigRoute($stateProvider) {
                 url: '/sport/:sportName',
                 views: {
                     videoPlayerExtra: {
-                        controller: 'ViewSportController'
+                        controller: 'ViewSportController',
+                        templateUrl: baseUrl + 'pick-video.html'
                     }
                 }
             })
@@ -76,7 +77,8 @@ function ConfigRoute($stateProvider) {
                 url: '/trick/:tagId',
                 views: {
                     videoPlayerExtra: {
-                        controller: 'ViewTagController'
+                        controller: 'ViewTagController',
+                        templateUrl: baseUrl + 'pick-video.html'
                     }
                 }
             })
@@ -92,7 +94,8 @@ function ConfigRoute($stateProvider) {
                 url: '/best',
                 views: {
                     videoPlayerExtra: {
-                        controller: 'ViewSearchController'
+                        controller: 'ViewSearchController',
+                        templateUrl: baseUrl + 'pick-video.html'
                     }
                 }
             })
@@ -100,7 +103,8 @@ function ConfigRoute($stateProvider) {
                 url: '/search?tagName',
                 views: {
                     videoPlayerExtra: {
-                        controller: 'ViewSearchController'
+                        controller: 'ViewSearchController',
+                        templateUrl: baseUrl + 'pick-video.html'
                     }
                 }
             })
@@ -126,7 +130,7 @@ function ConfigRoute($stateProvider) {
 
 
 function AddVideoController($scope, YoutubeVideoInfo, $state,
-        VideoEntity, VideoTagEntity, ServerConfigEntity, messageCenterService, SharedData, PlayerData) {
+        VideoEntity, VideoTagEntity, ServerConfigEntity, SharedData) {
 
     var videosInCache = {};
     $scope.data = {provider_id: null, video_url: null};
@@ -162,7 +166,6 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
     }
 
     function add(data) {
-        messageCenterService.removeShown();
         if (YoutubeVideoInfo.extractVideoIdFromUrl(data.video_url)) {
             data.video_url = YoutubeVideoInfo.extractVideoIdFromUrl(data.video_url);
         }
@@ -174,9 +177,6 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
         promise.then(function(response) {
             if (response.success) {
                 $state.go('addtag', {videoId: response.data.id});
-            }
-            else {
-                messageCenterService.add('warning', response.message, {status: messageCenterService.status.shown});
             }
         });
     }
@@ -270,7 +270,7 @@ function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, Sha
     $scope.rider = {id: $stateParams.riderId};
 
     PlayerData.stop();
-    PlayerData.showListTricks = true;
+    PlayerData.showListTricks = false;
     VideoTagData.setFilters({rider_id: $stateParams.riderId, order: $stateParams.order});
     VideoTagData.startLoading().finally(function() {
         SharedData.pageLoader(false);

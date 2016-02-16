@@ -12,6 +12,7 @@
 <?= $this->Html->meta('icon') ?>
 
 <link rel="stylesheet" href="js/components/ui-select/dist/select.min.css">
+<link rel="stylesheet" href="js/components/AngularJS-Toaster/toaster.min.css">
 
 
 <?= $this->Html->css('bootstrap.css') ?>
@@ -23,7 +24,7 @@
 <?= $this->Html->script('components/jquery-timeago/jquery.timeago.js'); ?> <!-- 1.0.2 -->
 <?= $this->Html->script('lib/bootstrap.min.js'); ?>  <!-- Can be remove if using angular ? -->
 
-<?= $this->Html->script("components/lodash/lodash.js"); ?> <!-- Used by the slider ? -->
+<?= $this->Html->script("components/lodash/dist/lodash.min.js"); ?> <!-- Used by the slider ? -->
 
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"); ?>
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-resource.min.js"); ?>
@@ -32,6 +33,8 @@
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-cookies.min.js"); ?>
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-messages.min.js"); ?>
 <?= $this->Html->script("components/angular-ui-router/release/angular-ui-router.min"); ?>
+
+<?= $this->Html->script("components/AngularJS-Toaster/toaster.min");?>
 
 <?= $this->Html->script("components/angular-simple-logger/dist/angular-simple-logger.min.js"); ?> <!-- Use online lib ? -->
 <?= $this->Html->script("lib/ui-bootstrap-custom-tpls-0.14.3.min.js"); ?>
@@ -90,7 +93,6 @@
 
 <?= $this->Html->script("components/angular-socialshare/angular-socialshare.min.js"); ?>   <!-- Can be lighter -->
 <?= $this->Html->script("components/satellizer/satellizer.min.js"); ?>                     <!-- Can be lighter -->
-<?= $this->Html->script("components/message-center/message-center.js"); ?>         
 <?= $this->Html->script("components/angular-utils-pagination/dirPagination.js"); ?>         <!-- Use mimified -->
 <?= $this->Html->script("components/ngInfiniteScroll/build/ng-infinite-scroll.min.js"); ?>
 
