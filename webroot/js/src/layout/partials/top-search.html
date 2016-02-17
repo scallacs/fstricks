@@ -8,7 +8,7 @@
             reset-search-input="false">
             <ui-select-match placeholder="Search tricks or riders">
                 <span class="text-bold text-capitalize" >{{$select.selected.title}} </span> 
-                <span>({{$select.selected.sub_title}}) </span>
+                <span> - {{$select.selected.sub_title}} </span>
             </ui-select-match>
             <ui-select-choices
                 repeat="data in results"

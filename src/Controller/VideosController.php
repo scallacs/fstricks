@@ -98,7 +98,7 @@ class VideosController extends AppController {
                 $video->user_id = $this->Auth->user('id');
 
                 if ($this->Videos->save($video)) {
-                    ResultMessage::setMessage(__('The video has been saved.'), true);
+                    ResultMessage::setMessage(__('This video has been added, thanks!'), true);
                     ResultMessage::overwriteData([
                         'video_url' => $video->video_url,
                         'id' => $video->id,
@@ -106,7 +106,7 @@ class VideosController extends AppController {
                         'duration' => $video->duration
                     ]);
                 } else {
-                    ResultMessage::setMessage(__('The video could not be saved. Please, try again.'), false);
+                    ResultMessage::setMessage(__('This video could not added. Are you sure it\'s a valid one ?'), false);
                     ResultMessage::addValidationErrorsModel($video);
                 }
             }
@@ -128,7 +128,7 @@ class VideosController extends AppController {
                 return $this->add();
             }
             ResultMessage::overwriteData($video);
-            ResultMessage::setMessage("The video is already existing", true);
+            ResultMessage::setMessage(__('This video has been added, thanks!'), true);
         }
     }
 

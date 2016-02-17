@@ -102,11 +102,12 @@ class VideoTagsTable extends Table {
                             'video_id' => 'Videos.id',
                             'begin' => 'VideoTags.begin',
                             'end' => 'VideoTags.end',
-                            'user_id' => 'VideoTags.user_id'
+                            'user_id' => 'VideoTags.user_id',
+                            'status' => 'VideoTags.status'
                         ])
                         ->where([
-                            'VideoTags.status' => VideoTag::STATUS_VALIDATED,
-                            'VideoTags.count_points >=' => 'VideoTags.count_report_errors'
+//                            'VideoTags.status' => VideoTag::STATUS_VALIDATED,
+//                            'VideoTags.count_points >=' => 'VideoTags.count_report_errors'
                         ])
                         ->contain([
                             'Videos' => $queryVideo,
@@ -144,15 +145,6 @@ class VideoTagsTable extends Table {
                     'message' => 'The trick duration must be between ' . self::MIN_TAG_DURATION . ' and ' .
                     self::MAX_TAG_DURATION . ' seconds.'
                 ])
-//                ->add('end', 'similar_tags', [
-//                    'rule' => function ($value, $context) {
-//                        // Check if there are similar tag for the same video
-//                        if (isset($context['data']['video_id'])){
-//
-//                        }
-//                    },
-//                    'message' => 'There is already a tag for this trick.'
-//                ])
                 ->add('end', 'valid', ['rule' => 'decimal'])
                 ->requirePresence('end', 'create')
                 ->notEmpty('end');
@@ -232,7 +224,7 @@ class VideoTagsTable extends Table {
      */
     public function beforeSave($event, $entity, $options) {
         if ($entity->isNew() && empty($entity->status)) {
-            $entity->status = VideoTag::STATUS_VALIDATED;
+            $entity->status = VideoTag::STATUS_PENDING;
         }
     }
 

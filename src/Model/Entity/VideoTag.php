@@ -47,4 +47,8 @@ class VideoTag extends Entity {
         '*' => true,
     ];
 
+    
+    public function isEditabled(){
+        return $this->status === self::STATUS_PENDING;
+    }
 }

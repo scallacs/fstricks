@@ -17,7 +17,23 @@
 
             <div 
                 ng-show="!showCreateRiderForm">
-
+                <p 
+                    ng-if="!editionTag.isEditabled()"
+                    class="padding-sm margin-top text-center text-bold text-danger">
+                    <span class="glyphicon glyphicon-warning-sign"></span>
+                    This trick cannot be modified because 
+                    <span ng-if="editionTag.isValidated()">
+                        it's already validated. Report an error if there is a problem! 
+                    </span>
+                    <span ng-if="!editionTag.isValidated()">
+                        <span ng-if="editionTag.isOwner()">
+                            you're not the creator.
+                        </span>
+                        <span ng-if="!editionTag.isOwner()">
+                            this trick has beed blocked for now.
+                        </span>
+                    </span>
+                </p>
 
                 <form id="FormAddVideoTag"
                       class="form padding-sm" 
@@ -212,7 +228,8 @@
                             </div>
                             <hr/>
                         </div>
-                        <div class="text-right form-group">
+                        <div class="text-right form-group"
+                             ng-if="editionTag.isEditabled()">
                             <button ng-if="!playerData.looping" type="button"  
                                     class="btn btn-primary" ng-click="playEditionTag()">
                                 <span class="glyphicon glyphicon-repeat"></span> Loop
@@ -221,13 +238,9 @@
                                     class="btn btn-primary" ng-click="playerData.stopLooping()">
                                 <span class="glyphicon glyphicon-stop"></span> Stop loop
                             </button>
-                            <button ng-if="!editionTag.isNew()" 
-                                    type="button"
-                                    ng-click="cancel()"
-                                    class="btn btn-warning">
-                                <span class="glyphicon glyphicon-remove"></span> 
-                                Cancel
-                            </button>
+                            &nbsp;
+                            &nbsp;
+                            &nbsp;
                             <button ng-if="editionTag.allowedToRemove()" 
                                     type="button"
                                     ng-click="deleteTag(editionTag)"
@@ -239,13 +252,21 @@
                             &nbsp;
                             &nbsp;
                             &nbsp;
+                            <button ng-if="!editionTag.isNew() && editionTag.isDirty()" 
+                                    type="button"
+                                    ng-click="cancel()"
+                                    class="btn btn-warning">
+                                <span class="glyphicon glyphicon-remove"></span> 
+                                Cancel changes
+                            </button>
                             <button type="submit"
-                                    ng-disabled="!formAddVideoTag.$valid || similarTags.length > 0"
+                                    ng-disabled="!editionTag.isDirty() || !formAddVideoTag.$valid || similarTags.length > 0"
                                     class="btn btn-success" 
                                     >
                                 <span ng-if="!editionTag.isNew()">
                                     <span class="glyphicon glyphicon-save"></span> 
-                                    Save
+                                    <span ng-if="!editionTag.isDirty()"> Nothing to save</span> 
+                                    <span ng-if="editionTag.isDirty()"> Save changes</span> 
                                 </span>
                                 <span ng-if="editionTag.isNew()">
                                     <span class="glyphicon glyphicon-plus-sign"></span> 
@@ -256,6 +277,13 @@
                     </fieldset>
                 </form>
 
+                <div  ng-if="!editionTag.isNew()">
+                    <hr/>
+                    <button class="btn btn-success btn-block btn-add-tag" ng-click="addNewTag()">
+                        <span class="glyphicon glyphicon-plus-sign"></span> 
+                        Add a new trick
+                    </button>
+                </div>
 
             </div>
         </div>

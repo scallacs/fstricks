@@ -19,39 +19,39 @@ class TagsController extends AppController {
 
     // -------------------------------------------------------------------------
     // API
-    public function view($sportName = null, $category = null, $trick = null) {
-        ResultMessage::setWrapper(false);
-        // TODO rewrite query from video tag point of view ? 
-        $videoTagsTable = \Cake\ORM\TableRegistry::get('VideoTags');
-        $sportsTable = \Cake\ORM\TableRegistry::get('Sports');
-
-        $conditions = [];
-
-        if ($sportName !== null) {
-
-            $sport = $sportsTable->findFromNameCached($sportName);
-            if ($sport === null) {
-                return;
-            }
-            $conditions['Tags.sport_id'] = $sport['id'];
-
-            if ($category !== null) {
-                $category = $sportsTable->findFromCategoryCached($sportName, $category);
-                if ($category === null) {
-                    return;
-                }
-                $conditions['Tags.category_id'] = $category['id'];
-
-                if ($trick !== null) {
-                    $conditions['Tags.slug'] = \App\Lib\DataUtil::lowernamenumeric($trick);
-                }
-            }
-        }
-
-        $query = $videoTagsTable->findAndJoin()
-                ->where($conditions);
-        ResultMessage::overwriteData($query->all());
-    }
+//    public function view($sportName = null, $category = null, $trick = null) {
+//        ResultMessage::setWrapper(false);
+//        // TODO rewrite query from video tag point of view ? 
+//        $videoTagsTable = \Cake\ORM\TableRegistry::get('VideoTags');
+//        $sportsTable = \Cake\ORM\TableRegistry::get('Sports');
+//
+//        $conditions = [];
+//
+//        if ($sportName !== null) {
+//
+//            $sport = $sportsTable->findFromNameCached($sportName);
+//            if ($sport === null) {
+//                return;
+//            }
+//            $conditions['Tags.sport_id'] = $sport['id'];
+//
+//            if ($category !== null) {
+//                $category = $sportsTable->findFromCategoryCached($sportName, $category);
+//                if ($category === null) {
+//                    return;
+//                }
+//                $conditions['Tags.category_id'] = $category['id'];
+//
+//                if ($trick !== null) {
+//                    $conditions['Tags.slug'] = \App\Lib\DataUtil::lowernamenumeric($trick);
+//                }
+//            }
+//        }
+//
+//        $query = $videoTagsTable->findAndJoin()
+//                ->where($conditions);
+//        ResultMessage::overwriteData($query->all());
+//    }
 
     /**
      * @queryType GET

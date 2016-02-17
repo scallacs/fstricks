@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Controller\AppController;
 use App\Lib\ResultMessage;
 use App\Lib\DataUtil;
+use App\Model\Entity\VideoTag;
 
 /**
  * VideoTags Controller
@@ -32,7 +33,7 @@ class VideoTagsController extends AppController {
      */
     public function view($id = null) {
         $videoTag = $this->VideoTags->findAndJoin()
-                ->where(['VideoTags.id' => $id])
+                ->where(['VideoTags.id' => $id, 'VideoTags.status !=' => VideoTag::STATUS_BLOCKED])
                 ->limit(1)
                 ->first();
         ResultMessage::overwriteData($videoTag);
@@ -50,7 +51,8 @@ class VideoTagsController extends AppController {
         }
         $success = $this->VideoTags->deleteAll([
             'id' => $id,
-            'user_id' => $this->Auth->user('id')
+            'user_id' => $this->Auth->user('id'),
+            'status !=' => VideoTag::STATUS_VALIDATED
         ]);
         if ($success) {
             ResultMessage::setMessage('This trick has beed successfully removed', $success);
@@ -109,6 +111,10 @@ class VideoTagsController extends AppController {
                     $this->request->is('post') && !empty($this->request->data)) {
 
                 $videoTag = $this->VideoTags->get($id);
+                if (!$videoTag->isEditabled()){
+                    ResultMessage::setMessage(__('Sorry but you are not allowed to modified this trick.'), false);
+                    return;
+                }
                 $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data, [
                     'fieldList' => ['rider_id']
                 ]);
@@ -207,6 +213,13 @@ class VideoTagsController extends AppController {
             if (DataUtil::isPositiveInt($this->request->query, 'rider_id')) {
                 $query->where(['VideoTags.rider_id' => (int) $this->request->query['rider_id']]);
             }
+            if (!empty($this->request->query['with_pending'])) {
+                $query->where(['VideoTags.status IN' => [VideoTag::STATUS_PENDING, VideoTag::STATUS_VALIDATED]]);
+            }
+            else{
+                $query->where(['VideoTags.status ' => VideoTag::STATUS_VALIDATED]);
+            }
+            
             if (!empty($this->request->query['tag_name'])) {
                 $str = $this->request->query['tag_name'];
                 \App\Model\Table\TableUtil::multipleWordSearch($query, $str, 'Tags.name');

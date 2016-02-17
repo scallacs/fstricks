@@ -32,23 +32,42 @@ function EditionTag() {
         allowedToRemove: allowedToRemove,
         resetOriginal: resetOriginal,
         setEditabled: setEditabled,
-        save: save
+        save: save,
+        isEditabled: isEditabled,
+        setStatus: setStatus,
+        isDirty: isDirty,
+        isValidated: isValidated,
+        isOwner: isOwner
     };
-
+    function isOwner(){
+        return this._user_id === this._video_tag.user_id;
+    }
+    function isValidated(){
+        return 'validated' === this._video_tag.status;
+    }
+    function isDirty(){
+        var a = this._video_tag;
+        var b = this._original;
+        return a.begin !== b.begin || a.end !== b.end 
+                || a.tag_id !== b.tag_id || a.rider_id !== b.rider_id 
+                || a.category_id !== b.category_id || a.video_id !== b.video_id;
+    }
+    
+    function setStatus(val){
+        this._video_tag.status = val;
+    }
     function resetOriginal() {
         this.fromVideoTag(this._original);
     }
 
     function allowedToRemove() {
-        return !this.isNew() && this._video_tag.user_id === this._user_id;
+        return !this.isNew() && !this.isValidated() && this.isOwner();
     }
 
     function save() {
         angular.copy(this._video_tag, this._original);
     }
     function resetTag() {
-        console.log("resetTag: ");
-        console.log(this._video_tag);
         this._extra.tag = null;
         return this;
     }
@@ -171,9 +190,27 @@ function EditionTag() {
         this.setEditabled();
     }
 
+    function isEditabled(){
+        if (this._editabled === true || this._editabled === false){
+            return this._editabled;
+        }
+        angular.forEach(this._editabled, function(val){
+            if (val === true){
+                return true;
+            }
+        });
+        return false;
+    }
+
     function setEditabled() {
         if (this.isNew()) {
-            this._editabled = null;
+            this._editabled = true;
+        }
+        else if (this._video_tag.status !== 'pending'){
+            this._editabled = false;
+        }
+        else if (this._video_tag.user_id === this._user_id){
+            this._editabled = true;
         }
         else {
             this._editabled = {
@@ -190,7 +227,8 @@ function EditionTag() {
         return !angular.isDefined(this._video_tag.id) || this._video_tag.id === null;
     }
     function isFieldEditabled(fieldname) {
-        return this.isNew() || (!angular.isDefined(this._editabled[fieldname]) || this._editabled[fieldname]);
+        return this._editabled === true
+                || (angular.isDefined(this._editabled[fieldname]) && this._editabled[fieldname]);
     }
 
     function toPostData() {
@@ -316,6 +354,7 @@ function AddVideoTagController($scope, $filter,
     function init() {
         PlayerData.showListTricks = false;
         VideoTagData.reset();
+        VideoTagData.setFilter('with_pending', true);
         VideoTagData.setFilter('video_id', $stateParams.videoId);
 
         VideoEntity.view({id: $stateParams.videoId}, function(video) {
@@ -324,7 +363,6 @@ function AddVideoTagController($scope, $filter,
             // When data are loaded we set in the editor the tag id to edit
             if ($stateParams.tagId) {
                 VideoTagData.loadAll().then(function(data) {
-                    console.log(data);
                     for (var i = 0; i < data.length; i++) {
                         if (data[i].id == $stateParams.tagId) {
                             console.log("Tag to edit found!");
@@ -405,6 +443,7 @@ function AddVideoTagController($scope, $filter,
                 if (response.success) {
                     console.log("Creating a new tag!'");
                     editionTag.setId(response.data.video_tag_id);
+                    editionTag.setStatus('pending');
                     var newTag = editionTag.toVideoTag();
                     VideoTagData.add(newTag);
                     PlayerData.view(newTag);

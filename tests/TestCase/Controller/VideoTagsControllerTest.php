@@ -32,13 +32,13 @@ class VideoTagsControllerTest extends MyIntegrationTestCase {
      *
      * @return void
      */
-    public function testView() {
-        $id = 1;
-        $this->get("/VideoTags/view/$id.json");
-
-        $this->assertResponseOk();
-        $result = json_decode($this->_response->body());
-    }
+//    public function testView() {
+//        $id = 1;
+//        $this->get("/VideoTags/view/$id.json");
+//
+//        $this->assertResponseOk();
+//        $result = json_decode($this->_response->body());
+//    }
 
     /**
      * Test add method
