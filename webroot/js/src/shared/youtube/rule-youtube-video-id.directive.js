@@ -4,28 +4,35 @@ angular.module('shared.youtube')
             return {
                 require: 'ngModel',
                 link: function(scope, elm, attrs, ngModel) {
-
                     ngModel.$asyncValidators.youtubeVideoId = function(videoId, viewValue) {
                         if (ngModel.$isEmpty(videoId)) {
                             // consider empty model valid
                             return $q.when();
                         }
                         var def = $q.defer();
-                        if (YoutubeVideoInfo.extractVideoIdFromUrl(videoId)) {
-                            videoId = YoutubeVideoInfo.extractVideoIdFromUrl(videoId);
+
+                        var youtubeInfo = new YoutubeVideoInfo();
+
+                        if (youtubeInfo.extractVideoIdFromUrl(videoId)) {
+                            videoId = youtubeInfo.extractVideoIdFromUrl(videoId);
                         }
                         if (videoId.length !== YoutubeIdLength) {
                             return def.reject();
                         }
 
-                        YoutubeVideoInfo.exists(videoId, function(exists) {
-                            if (exists) {
-//                                scope.$emit('videoIdValidated', {videoId: videoId});
+                        youtubeInfo.addVideo(videoId).addPart('id')
+                                .load()
+                                .catch(function() {
+                                    def.reject();
+                                }).then(function(data) {
+                            if (angular.isDefined(data) && data.items.length > 0) {
                                 def.resolve();
-                            } else {
+                            }
+                            else {
                                 def.reject();
                             }
                         });
+
                         return def.promise;
                     };
                 }

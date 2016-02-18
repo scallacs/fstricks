@@ -1,161 +1,158 @@
-<div class="item item-video-tag bg-primary" 
+<div class="item item-video-tag bg-primary clickable clearfix" 
      ng-class="{ 'active': videoTagData.currentTag.id === videoTag.id}" >
-    <div class="item-heading row clickable">
 
-        <div>
-            <div class="clickable">
-                <div class="col-xs-3">
-                    <div class="item-sport">
-                        <span ng-if="videoTag.sport_name">
-                            <img ng-src="{{videoTag.sport_name| imageUrl}}" 
-                                 title="{{videoTag.sport_name}}"
-                                 alt="{{videoTag.sport_name}}"/>
-                        </span>
-                    </div>
+    <div class="item-category" ng-if="false">
+        {{videoTag.category_name}}
+    </div>
+    <div class="item-sport">
+        <span ng-if="videoTag.sport_name">
+            <img ng-src="{{videoTag.sport_name| imageUrl}}" 
+                 title="{{videoTag.sport_name}}"
+                 alt="{{videoTag.sport_name}}"/>
+        </span>
+    </div>
+    <div class="col-xs-3 item-thumbnail">
+        <img src="{{videoTag.thumbnail}}"/>
+    </div>
+    <div class="col-xs-9">
+        <div class="clickable">
+            <div class="col-xs-10"  ng-click="view(videoTag)">
+                <p class="item-title text-capitalize" ng-if="videoTag.tag_name">
+                    {{videoTag.tag_name}}
+                </p>
+                <p class="item-title text-success" ng-if="!videoTag.tag_name && videoTag.mode === 'edition'">
+                    <span class="glyphicon glyphicon-edit"></span> 
+                    Provide the trick name
+                </p>
+                <div class="item-user-xs">
+                    <span class="thumbnail-round-xs">
+                        <img ng-if="videoTag.rider_picture_round_xs" ng-src="videoTag.rider_picture_round_xs"/>
+                    </span>
+                    <a  ui-sref="videoplayer.rider({riderId: videoTag.rider_id})"
+                        ng-if="videoTag.rider_name" 
+                        class="item-user-name text-info text-capitalize">
+                        {{videoTag.rider_name}}
+                    </a>
+                    <a ng-if="videoTag.mode !== 'edition' && !videoTag.rider_name" 
+                       class="item-user-name text-danger"
+                       ui-sref="addtag({videoId:videoTag.video_id, tagId: videoTag.id})"
+                       >
+                        Add the rider
+                    </a>
+                    <a ng-if="videoTag.mode === 'edition' && !videoTag.rider_name" 
+                       class="item-user-name text-danger"
+                       >
+                        Add the rider
+                    </a>
                 </div>
-                <div class="col-xs-7"  ng-click="view(videoTag)">
-                    <p class="item-title text-capitalize" ng-if="videoTag.tag_name">
-                        {{videoTag.tag_name}}
-                    </p>
-                    <p class="item-title text-success" ng-if="!videoTag.tag_name && videoTag.mode === 'edition'">
-                        <span class="glyphicon glyphicon-edit"></span> 
-                        Provide the trick name
-                    </p>
-                    <div class="item-user-xs">
-                        <span class="thumbnail-round-xs">
-                            <img ng-if="videoTag.rider_picture_round_xs" ng-src="videoTag.rider_picture_round_xs"/>
-                        </span>
-                        <a  ui-sref="videoplayer.rider({riderId: videoTag.rider_id})"
-                            ng-if="videoTag.rider_name" 
-                            class="item-user-name text-info text-capitalize">
-                            {{videoTag.rider_name}}
-                        </a>
-                        <a ng-if="videoTag.mode !== 'edition' && !videoTag.rider_name" 
-                           class="item-user-name text-danger"
-                           ui-sref="addtag({videoId:videoTag.video_id, tagId: videoTag.id})"
-                           >
-                            Add the rider
-                        </a>
-                        <a ng-if="videoTag.mode === 'edition' && !videoTag.rider_name" 
-                           class="item-user-name text-danger"
-                           >
-                            Add the rider
-                        </a>
-                    </div>
+            </div>
+            <div class="col-xs-2">
+                <div class="dropdown" ng-if="videoTag.mode !== 'edition'">
+                    <button class="btn btn-primary" title="Share" data-toggle="dropdown">
+                        <span class="glyphicon glyphicon-share"></span> 
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li class="text-bold">
+                            <a copy-this-link ui-sref="videoplayer.realization({videoTagId:videoTag.id})"> Copy this link </a>
+                        </li>
+                        <li class="text-bold">
+                            <a href=""> Social sharing coming soon ...</a>
+                        </li>
+                        <!--
+                        <li>
+                            <div facebook 
+                                 class="btn-facebook-share" 
+                                 data-title='Share this trick'
+                                 data-picture-url='http://i.imgur.com/WACv9Cl.jpg' 
+                                 ng-url="{{WEBROOT_FULL}}/view/{{videoTag.id}}"
+                                 data-shares='shares'>{{ shares}}
+                            </div>
+                        </li>
+                        <li>
+                            <a twitter 
+                               data-count='horizontal' 
+                               data-url='{{url}}'  
+                               data-size="medium" 
+                               data-text='{{text}}' >Twitter</a>
+                        </li>
+                        -->
+                    </ul>
                 </div>
-                <div class="col-xs-2">
-                    <div class="dropdown" ng-if="videoTag.mode !== 'edition'">
-                        <button class="btn btn-primary" title="Share" data-toggle="dropdown">
-                            <span class="glyphicon glyphicon-share"></span> 
+            </div>
+        </div>
+        <div class="">
+            <div class="col-xs-10">
+                <div class="padding-sm" 
+                     ng-if="playerData.editionMode" >
+                    {{videoTag.begin| secondsToHours}} to {{videoTag.end| secondsToHours}}
+                    <!--
+                    <span 
+                        ng-if="videoTag.mode === 'edition' && (videoTag.id === VideoTagData.currentTag.id || videoTag.id === null)" >
+                        &nbsp; <span class="glyphicon glyphicon-edit"></span> 
+                        Editing...
+                    </span>
+                    -->
+                </div>
+                <div ng-if="!playerData.editionMode" >
+
+                    <p class="text-muted item-video-tag-remaining"  ng-show="videoTag.time_to_play > 0">
+                        <span>
+                            playing in {{videoTag.time_to_play}} seconds.
+                        </span>
+                    </p>
+
+                    <div  ng-controller="VideoTagPointsController" 
+                          ng-show="videoTag.time_to_play == null || videoTag.time_to_play == 0">
+                        <button type="button" class="btn btn-primary"  ng-click="down(videoTag)" 
+                                ng-disabled="videoTagData.currentTag.id !== videoTag.id || videoTag.user_rate === 'loading'"
+                                ng-class="videoTag.user_rate === 'down' ? 'active' : ''">
+                            <span class="glyphicon glyphicon-arrow-down"></span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                            <li class="text-bold">
-                                <a copy-this-link ui-sref="videoplayer.realization({videoTagId:videoTag.id})"> Copy this link </a>
-                            </li>
-                            <li class="text-bold">
-                                <a href=""> Social sharing coming soon ...</a>
-                            </li>
-                            <!--
-                            <li>
-                                <div facebook 
-                                     class="btn-facebook-share" 
-                                     data-title='Share this trick'
-                                     data-picture-url='http://i.imgur.com/WACv9Cl.jpg' 
-                                     ng-url="{{WEBROOT_FULL}}/view/{{videoTag.id}}"
-                                     data-shares='shares'>{{ shares}}
-                                </div>
-                            </li>
-                            <li>
-                                <a twitter 
-                                   data-count='horizontal' 
-                                   data-url='{{url}}'  
-                                   data-size="medium" 
-                                   data-text='{{text}}' >Twitter</a>
-                            </li>
-                            -->
-                        </ul>
+                        <span class="item-points">
+                            {{videoTag.count_points}}
+                        </span>
+                        <button type="button" 
+                                class="btn btn-primary" 
+                                ng-click="up(videoTag)" 
+                                ng-disabled="videoTagData.currentTag.id !== videoTag.id || videoTag.user_rate === 'loading'"
+                                ng-class="videoTag.user_rate === 'up' ? 'active' : ''">
+                            <span class="glyphicon glyphicon-arrow-up"></span>
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="">
-                <div class="col-xs-3">
-                    <p class="item-category">
-                        {{videoTag.category_name}}
-                    </p>
-                </div>
-                <div class="col-xs-7">
-                    <div class="padding-sm" 
-                         ng-if="playerData.editionMode" >
-                        {{videoTag.begin | secondsToHours}} to {{videoTag.end | secondsToHours}}
-                        <!--
-                        <span 
-                            ng-if="videoTag.mode === 'edition' && (videoTag.id === VideoTagData.currentTag.id || videoTag.id === null)" >
-                            &nbsp; <span class="glyphicon glyphicon-edit"></span> 
-                            Editing...
-                        </span>
-                        -->
-                    </div>
-                    <div ng-if="!playerData.editionMode" >
-
-                        <p class="text-muted item-video-tag-remaining"  ng-show="videoTag.time_to_play > 0">
-                            <span>
-                                playing in {{videoTag.time_to_play}} seconds.
-                            </span>
-                        </p>
-
-                        <div  ng-controller="VideoTagPointsController" 
-                              ng-show="videoTag.time_to_play == null || videoTag.time_to_play == 0">
-                            <button type="button" class="btn btn-primary"  ng-click="down(videoTag)" 
-                                    ng-disabled="videoTagData.currentTag.id !== videoTag.id || videoTag.user_rate === 'loading'"
-                                    ng-class="videoTag.user_rate === 'down' ? 'active' : ''">
-                                <span class="glyphicon glyphicon-arrow-down"></span>
-                            </button>
-                            <span class="item-points">
-                                {{videoTag.count_points}}
-                            </span>
-                            <button type="button" 
-                                    class="btn btn-primary" 
-                                    ng-click="up(videoTag)" 
-                                    ng-disabled="videoTagData.currentTag.id !== videoTag.id || videoTag.user_rate === 'loading'"
-                                    ng-class="videoTag.user_rate === 'up' ? 'active' : ''">
-                                <span class="glyphicon glyphicon-arrow-up"></span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-2">
-                    <div class="dropdown" ng-if="videoTag.mode !==  'edition'">
-                        <button class="btn btn-primary" data-toggle="dropdown">
-                            <b class="caret"></b>
-                        </button>
-                        <ul class="dropdown-menu nav-stacked nav-pills dropdown-menu-right">
-                            <li >
-                                <a ui-sref="videoplayer.video({videoId:videoTag.video_id})">
-                                    <span class="glyphicon glyphicon-play-circle"></span>  
-                                    View full video
-                                </a>
-                            </li>           
-                            <li>
-                                <a  ui-sref="videoplayer.tag({tagId:videoTag.tag_id})">
-                                    <span class="glyphicon glyphicon-eye-open"></span>  
-                                    View all videos for this trick
-                                </a>
-                            </li>           
-                            <!--<li class="divider"></li>-->
-                            <li>
-                                <a href="" ng-click="openReportErrorModal(videoTag)">
-                                    <span class="glyphicon glyphicon-warning-sign"></span> 
-                                    Report an error
-                                </a>
-                            </li>
-                            <li>
-                                <a ui-sref="addtag({videoId:videoTag.video_id, tagId:videoTag.id})">
-                                    <span class="glyphicon glyphicon-edit"></span> 
-                                    Edit
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+            <div class="col-xs-2">
+                <div class="dropdown" ng-if="videoTag.mode !==  'edition'">
+                    <button class="btn btn-primary" data-toggle="dropdown">
+                        <b class="caret"></b>
+                    </button>
+                    <ul class="dropdown-menu nav-stacked nav-pills dropdown-menu-right">
+                        <li >
+                            <a ui-sref="videoplayer.video({videoId:videoTag.video_id})">
+                                <span class="glyphicon glyphicon-play-circle"></span>  
+                                View full video
+                            </a>
+                        </li>           
+                        <li>
+                            <a  ui-sref="videoplayer.tag({tagId:videoTag.tag_id})">
+                                <span class="glyphicon glyphicon-eye-open"></span>  
+                                View all videos for this trick
+                            </a>
+                        </li>           
+                        <!--<li class="divider"></li>-->
+                        <li>
+                            <a href="" ng-click="openReportErrorModal(videoTag)">
+                                <span class="glyphicon glyphicon-warning-sign"></span> 
+                                Report an error
+                            </a>
+                        </li>
+                        <li>
+                            <a ui-sref="addtag({videoId:videoTag.video_id, tagId:videoTag.id})">
+                                <span class="glyphicon glyphicon-edit"></span> 
+                                Edit
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>

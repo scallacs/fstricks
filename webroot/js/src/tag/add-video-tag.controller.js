@@ -46,6 +46,9 @@ function EditionTag() {
         return 'validated' === this._video_tag.status;
     }
     function isDirty(){
+        if (!angular.isDefined(this._original) || this._original === null){
+            return true;
+        }
         var a = this._video_tag;
         var b = this._original;
         return a.begin !== b.begin || a.end !== b.end 

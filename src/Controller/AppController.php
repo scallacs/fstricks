@@ -45,11 +45,8 @@ class AppController extends Controller {
      */
     public function initialize() {
         parent::initialize();
-        $this->loadComponent('Flash');
-
         $this->loadComponent('Auth', [
             'authenticate' => [
-                //'ADmad/HybridAuth.HybridAuth',
                 'Form' => [
                     'fields' => [
                         'username' => 'email',
@@ -68,11 +65,9 @@ class AppController extends Controller {
             'loginAction' => [
                 'controller' => 'Users',
                 'action' => 'login'
-            ]
+            ],
+            'authorize' => 'Controller'
         ]);
-
-
-        $this->Auth->allow(['display', 'login']);
     }
 
     public function isAuthorized($user) {

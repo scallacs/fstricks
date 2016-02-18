@@ -390,7 +390,6 @@ function getSportByName() {
 
 }
 
-// loadingState
 function SharedData() {
     var data = {
         loadingState: true,
@@ -601,7 +600,6 @@ function VideoTagEntity($resource) {
     });
 }
 
-AuthenticationService.$inject = ['$http', '$cookies', '$rootScope', 'UserEntity', '$state'];
 function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state) {
 
     var service = {};
@@ -706,8 +704,6 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state) 
     }
 
 }
-
-
 
 function ServerConfigEntity($resource) {
     var resource = $resource('data/:action.json', {action: '@action'}, {

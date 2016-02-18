@@ -20,6 +20,7 @@ angular.module('shared')
         })
         .filter('timeago', function() {
             return function(timestamp) {
+                if (!angular.isDefined(timestamp)) return '';
                 return jQuery.timeago(timestamp);
             };
         });

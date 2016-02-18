@@ -38,6 +38,8 @@ function videoTagItem(PlayerData) {
         },
         link: function($scope, element) {
             $scope.editionMode = angular.isDefined($scope.editionMode) ? $scope.playerData.editionMode : false;
+            
+            $scope.videoTag.thumbnail = 'https://i.ytimg.com/vi/'+$scope.videoTag.video_url+'/default.jpg';
         }
     };
 }

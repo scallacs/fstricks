@@ -12,9 +12,9 @@ function topSearch(RiderEntity, TagEntity, SharedData) {
                 picture: false,
                 points: false,
                 title: null,
-                sub_title: 'any sports',
+                sub_title: null,
                 type: 'partial',
-                category: 'Rider'
+                category: 'Trick'
             };
             $scope.data = {};
             $scope.results = [];
@@ -32,14 +32,19 @@ function topSearch(RiderEntity, TagEntity, SharedData) {
                 $scope.results = [];
                 search = search.trim();
                 if (search.length >= 2) {
+                    var searchData = {id: search};
+                    if (SharedData.currentSport){
+                        searchData.sport_id = SharedData.currentSport.id;
+                        partialSearch.sub_title = SharedData.currentSport.name;
+                    }
+                    else{
+                        partialSearch.sub_title = 'any sports';
+                    }
+                    
                     partialSearch.search = search;
                     partialSearch.title = "* " + search + " *";
                     $scope.results.push(partialSearch);
                     
-                    var searchData = {id: search};
-                    if (SharedData.currentSport){
-                        searchData.sport_id = SharedData.currentSport.id;
-                    }
                     
                     TagEntity.suggest(searchData, function(results){
                         for (var i = 0; i < results.length; i++){

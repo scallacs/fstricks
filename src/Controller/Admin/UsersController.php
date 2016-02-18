@@ -1,11 +1,8 @@
 <?php
 
-namespace App\Controller;
-
-use App\Controller\AppController;
+namespace App\Controller\Admin;
 use App\Lib\ResultMessage;
 use Cake\Utility\Security;
-use Cake\Network\Http\Client;
 
 /**
  * Users Controller
@@ -15,7 +12,8 @@ use Cake\Network\Http\Client;
 class UsersController extends AppController {
 
     public function beforeFilter(\Cake\Event\Event $event) {
-        $this->Auth->allow(['add', 'token', 'profile']);
+        parent::beforeFilter($event);
+//        $this->Auth->allow();
     }
 
     /* ========================================================================
