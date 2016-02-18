@@ -21,17 +21,12 @@
                     ng-if="!editionTag.isEditabled()"
                     class="padding-sm margin-top text-center text-bold text-danger">
                     <span class="glyphicon glyphicon-warning-sign"></span>
-                    This trick cannot be modified because 
+                    This trick cannot be modified  
                     <span ng-if="editionTag.isValidated()">
-                        it's already validated. Report an error if there is a problem! 
+                        brecause it's already validated. Report an error if there is a problem! 
                     </span>
-                    <span ng-if="!editionTag.isValidated()">
-                        <span ng-if="editionTag.isOwner()">
-                            you're not the creator.
-                        </span>
-                        <span ng-if="!editionTag.isOwner()">
-                            this trick has beed blocked for now.
-                        </span>
+                    <span ng-if="!editionTag.isValidated() && !editionTag.isOwner()">
+                        because you're not the creator.
                     </span>
                 </p>
 

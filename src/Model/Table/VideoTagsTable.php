@@ -73,7 +73,9 @@ class VideoTagsTable extends Table {
                 return $q
                                 ->select([
                                     'category_name' => 'Categories.name',
+                                    'category_id' => 'Categories.id',
                                     'sport_name' => 'Sports.name',
+                                    'sport_id' => 'Sports.id',
                                     'tag_name' => 'Tags.name',
                                 ])
                                 ->contain(['Sports', 'Categories']);

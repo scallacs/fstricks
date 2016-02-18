@@ -60,6 +60,26 @@
                                     <div ng-message="minlength">A youtube video id has 11 caracters</div>
                                 </div>
                             </div>
+                            <div class="form-group clearfix has-feedback" 
+                                 ng-class="{ 'has-error': addVideoForm.video_url.$invalid }">
+                                <input type="text" 
+                                       id="FormFieldVideoUrl"
+                                       class="form-control"
+                                       ng-model="data.video_url"
+                                       name="video_url"
+                                       placeholder="paste here the video id or video url"
+                                       servererror
+                                       rule-vimeo-video-id
+                                       required/>
+                                <span class="ion-person form-control-feedback"></span>
+                                <div class="help-block text-danger"
+                                     ng-if="addVideoForm.video_url.$dirty" 
+                                     ng-messages="addVideoForm.video_url.$error">
+                                    <div ng-message="required">You must enter a valid vimeo link.</div>
+                                    <div ng-message="vimeoVideoId">You must enter a valid vimeo link.</div>
+                                    <div ng-message="server">{{addVideoForm.video_url.$error.server}}</div>
+                                </div>
+                            </div>
                         </div>
                         
 
@@ -89,8 +109,8 @@
                         <li dir-paginate="video in recentVideos | itemsPerPage: videoPerPage"
                             total-items="totalVideos"
                             >
-                        <youtube-item data-info="video.provider_data" data-id="video.id" ng-if="video.provider_data">
-                        </youtube-item>
+                        <video-item video="video.provider_data" data-id="video.id" ng-if="video.provider_data">
+                        </video-item>
                         </li>
                     </ul>
 

@@ -1,5 +1,5 @@
 angular.module('shared.youtube')
-        .factory('YoutubeItem', function($q) {
+        .factory('YoutubeItem', function() {
 
             function YoutubeItem(item) {
                 this._item = item;
@@ -7,13 +7,17 @@ angular.module('shared.youtube')
 
             YoutubeItem.prototype = {
                 duration: duration,
-                thumbnailUrl: thumbnailUrl,
+                thumbnail: thumbnail,
                 snippet: snippet,
                 contentDetails: contentDetails,
                 title: title,
                 description: description,
-                publishedAt: publishedAt
+                publishedAt: publishedAt,
+                provider: provider
             };
+            function provider(){
+                return 'Youtube';
+            }
             function contentDetails() {
                 return this._item.contentDetails;
             }
@@ -23,8 +27,8 @@ angular.module('shared.youtube')
             function duration() {
                 return this._item.snippet.contentDetails.duration;
             }
-            function thumbnailUrl(size) {
-                this._item.snippet.thumbnails[size].url;
+            function thumbnail(size) {
+                return this._item.snippet.thumbnails[size].url;
             }
             function title() {
                 return this.snippet().title;
@@ -36,11 +40,14 @@ angular.module('shared.youtube')
                 return this.snippet().publishedAt;
             }
 
+            return {
+                create: function(item){
+                    return new YoutubeItem(item);
+                }
+            };
         })
-        .factory('YoutubeVideoInfo', function($q, $http) {
-            var API_KEY = "AIzaSyDYwPzLevXauI-kTSVXTLroLyHEONuF9Rw";
-
-
+        .factory('YoutubeVideoInfo', function($q, $http, Config) {
+            var API_KEY = Config.api.google;
             function YoutubeVideoInfo() {
                 this._query = null;
                 this._parts = [];
@@ -115,6 +122,7 @@ angular.module('shared.youtube')
             }
 
             function extractVideoIdFromUrl(url) {
+                if (!url) return false;
                 var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
                 var match = url.match(regExp);
                 return (match && match[7].length == 11) ? match[7] : false;

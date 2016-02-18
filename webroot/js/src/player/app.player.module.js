@@ -3,6 +3,7 @@ angular.module('app.player', [
     'ngMessages',
     'app.core',
     'shared.youtube',
+    'shared.vimeo',
     'shared',
     'angularUtils.directives.dirPagination',
     'infinite-scroll'
@@ -16,7 +17,8 @@ angular.module('app.player', [
         .controller('ViewSportController', ViewSportController)
         .controller('ViewRiderController', ViewRiderController)
         .controller('ViewSearchController', ViewSearchController)
-        .controller('ViewRealizationController', ViewRealizationController);
+        .controller('ViewRealizationController', ViewRealizationController)
+        .controller('ViewPlaylistController', ViewPlaylistController);
 
 ConfigRoute.$inject = ['$stateProvider'];
 function ConfigRoute($stateProvider) {
@@ -99,6 +101,15 @@ function ConfigRoute($stateProvider) {
                     }
                 }
             })
+            .state('videoplayer.playlist', {
+                url: '/playlist?ids',
+                views: {
+                    videoPlayerExtra: {
+                        controller: 'ViewPlaylistController',
+                        templateUrl: baseUrl + 'pick-video.html'
+                    }
+                }
+            })
             .state('videoplayer.search', {
                 url: '/search?tagName',
                 views: {
@@ -128,7 +139,7 @@ function ConfigRoute($stateProvider) {
 }
 
 function AddVideoController($scope, YoutubeVideoInfo, $state,
-        VideoEntity, VideoTagEntity, ServerConfigEntity, SharedData) {
+        VideoEntity, VideoTagEntity, ServerConfigEntity, SharedData, YoutubeItem) {
 
     var youtubeVideoInfo = new YoutubeVideoInfo();
     var videosInCache = {};
@@ -199,7 +210,7 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
             angular.forEach(items, function(video) {
                 youtubeInfo.setVideos([video.video_url]).load().then(function(data){
                     console.log(data);
-                    video.provider_data = data.items[0];
+                    video.provider_data = YoutubeItem.create(data.items[0]);
                 });
             });
             
@@ -294,6 +305,17 @@ function ViewSearchController(VideoTagData, PlayerData, SharedData, $stateParams
         SharedData.pageLoader(false);
     });
 }
+
+function ViewPlaylistController(VideoTagData, PlayerData, SharedData, $stateParams) {
+    PlayerData.stop();
+    PlayerData.showListTricks = true;
+    VideoTagData.reset();
+    VideoTagData.setFilter('video_tag_ids', $stateParams.ids);
+    VideoTagData.startLoading().finally(function() {
+        SharedData.pageLoader(false);
+    });
+}
+
 
 function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, SharedData) {
 

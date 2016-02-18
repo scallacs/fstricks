@@ -1,4 +1,4 @@
-angular.module('shared', ['ui.bootstrap'])
+angular.module('shared', ['app.config', 'ui.bootstrap'])
     .filter('imageUrl', imageUrl)
     .filter('propsFilter', propsFilter);
 

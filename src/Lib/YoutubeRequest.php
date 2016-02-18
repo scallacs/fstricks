@@ -8,6 +8,8 @@ namespace App\Lib;
  */
 class YoutubeRequest {
 
+    private static $instance = null;
+    
     /**
      * @var string
      */
@@ -87,6 +89,22 @@ class YoutubeRequest {
         $client->setDefer(false);
     }
 
+
+    public static function instance() {
+        if (self::$instance === null) {
+            self::$instance = new YoutubeRequest(array('key' => \Cake\Core\Configure::read('Youtube.key')));
+        }
+        return self::$instance;
+    }
+    
+    public function exists($id){
+        $youtubeInfo = $this->getVideoInfo($id);
+        if (empty($youtubeInfo)) return false;
+        if (!$youtubeInfo->status->embeddable) return false;
+        if ($youtubeInfo->status->privacyStatus !== 'public' && $youtubeInfo->status->privacyStatus !== 'unlistead') return false;
+        return true;
+    }
+
     /**
      * Constructor
      * $youtube = new Youtube(array('key' => 'KEY HERE'))
@@ -94,7 +112,7 @@ class YoutubeRequest {
      * @param array $params
      * @throws \Exception
      */
-    public function __construct($params) {
+    protected function __construct($params) {
         if (is_array($params) && array_key_exists('key', $params)) {
             $this->youtube_key = $params['key'];
         } else {
@@ -107,9 +125,10 @@ class YoutubeRequest {
         return isset($vars['v']) ? $vars['v'] : $url;
     }
 
-    public function clearVideoInfo(){
+    public function clearVideoInfo() {
         $this->videoInfo = [];
     }
+
     /**
      * @param $vId
      * @return \StdClass
@@ -133,7 +152,7 @@ class YoutubeRequest {
 
     public function duration($videoId) {
         $data = $this->getVideoInfo($videoId);
-        if (!isset($data)){
+        if (!isset($data)) {
             return 0;
         }
         return $this->toSeconds($data->contentDetails->duration);
@@ -159,7 +178,7 @@ class YoutubeRequest {
 
         $hours = $parts[0][0] + $minutes_overflow;
 
-        return ($hours*3600) + ($minutes*60) + $seconds;
+        return ($hours * 3600) + ($minutes * 60) + $seconds;
     }
 
     /**

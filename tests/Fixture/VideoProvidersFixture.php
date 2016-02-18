@@ -29,5 +29,8 @@ class VideoProvidersFixture extends TestFixture
         [
             'name' => 'youtube'
         ],
+        [
+            'name' => 'vimeo'
+        ],
     ];
 }

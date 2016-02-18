@@ -111,8 +111,10 @@ h3, h2, h1{
 .bg-primary .btn-primary[disabled].active,
 .bg-primary .form-control[disabled], 
 .bg-primary .form-control[readonly], 
-.bg-primary fieldset[disabled] .form-control{
+.bg-primary fieldset[disabled] .form-control,
+.bg-primary fieldset[disabled] .btn{
     background: #555;
+    border: 1px solid #666;
 }
 
 

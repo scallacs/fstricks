@@ -26,7 +26,8 @@
     "videos": {
         "provider_id": {
             "values": [ 
-                {"code": "youtube", "name": "Youtube"}
+                {"code": "youtube", "name": "Youtube"},
+                {"code": "vimeo", "name": "Vimeo"}
             ]
         }
     }

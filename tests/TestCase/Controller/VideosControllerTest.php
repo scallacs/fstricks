@@ -41,22 +41,37 @@ class VideosControllerTest extends MyIntegrationTestCase {
     }
 
     /**
-     * Test add method
+     * Test add method for each provider
      *
      * @return void
      */
-    public function testAdd() {
+    public function testAddProviders() {
         // Set session data
         $this->logUser();
 
         $data = [
-            'provider_id' => $this->providers[0],
-            'video_url' => '6mEHw5q6Yfs'
+            [
+                'provider_id' => 'youtube',
+                'urls' => ['6mEHw5q6Yfs']
+            ],
+            [
+                'provider_id' => 'vimeo',
+                'urls' => ['36973502']
+            ]
         ];
-        $this->post('/Videos/add.json', $data);
-        $this->assertResponseOk();
-        $result = json_decode($this->_response->body());
-        $this->assertTrue($result->success);
+        foreach ($data as $d) {
+            foreach ($d['urls'] as $url) {
+                \App\Lib\ResultMessage::reset();
+                $this->post('/Videos/add.json', [
+                    'provider_id' => $d['provider_id'],
+                    'video_url' => $url
+                ]);
+                $this->assertResponseOk();
+                $result = json_decode($this->_response->body());
+                $this->assertTrue($result->success, 
+                        'Adding a video ' . $url . ' with ' . $d['provider_id'] . ' should be possible');
+            }
+        }
     }
 
     public function testAddDuplicateVideo() {

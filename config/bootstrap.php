@@ -226,7 +226,11 @@ Plugin::load('Bootstrap') ; // instead of Plugin::load('Bootstrap3') ;
 
 
 Configure::write('Company.name','Freestyle Tricks');
-Configure::write('Youtube.key', 'AIzaSyC851NBlFCigGum0qdk04GHGVYF_tqd-M4');
+Configure::write('Youtube', ['key' => 'AIzaSyC851NBlFCigGum0qdk04GHGVYF_tqd-M4']);
+Configure::write('Vimeo', [
+    'id' => 'f941f4c31738338a894c2b547ab6a9d1255d63d1',
+    'key' => 'rR8YpMiWxBtkvk6QHjKbj8MK+4EpWJXevpCQTUgsy5RtYgoskrcCbvZUoju1MRzhZXZBpETrX1XvS4Nrr8EW2evFf76/Kz2fNiYsCDL/8tRu1YYbCU666kkoaWMZbr5a'
+]);
 Configure::write('Facebook', ['key' => '079e8ce1830a2177f3a10b939615a7f6', 'id' => '1536208040040285']);
 
 

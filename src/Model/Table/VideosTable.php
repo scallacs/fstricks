@@ -20,8 +20,6 @@ use App\Lib\JsonConfigHelper;
  * @property \Cake\ORM\Association\HasMany $Videos
  */
 class VideosTable extends Table {
-
-    private $youtube = null;
     
     /**
      * Initialize method
@@ -56,8 +54,6 @@ class VideosTable extends Table {
 //            'foreignKey' => 'video_id'
 //        ]);
         
-
-        $this->youtube = new YoutubeRequest(array('key' => \Cake\Core\Configure::read('Youtube.key')));
     }
 
     /**
@@ -89,41 +85,18 @@ class VideosTable extends Table {
                 ->requirePresence('user_id', 'create')
                 ->notEmpty('user_id');
 
+        
+        $validator->provider('videoUrlProvider', new \App\Model\Validation\Providers\VideoUrlProvider());
         $validator
                 ->requirePresence('video_url', 'create')
                 ->notEmpty('video_url')
                 ->add('video_url', 'custom', [
-                    'rule' => function ($value, $context) {
-                return $this->videoExists($value);
-            },
-                    'message' => 'The video id is invalid'
+                    'rule' => 'url',
+                    'message' => 'The video id is invalid',
+                    'provider' => 'videoUrlProvider'
         ]);
 
         return $validator;
-    }
-
-    public function videoInfo($url, $provider = 'youtube') {
-        switch ($provider) {
-            case 'youtube':
-                return $this->youtube->getVideoInfo(YoutubeRequest::urlToId($url));
-                break;
-        }
-        return false;
-    }
-
-    public function videoExists($url, $provider = 'youtube') {
-        // TODO youtube key as global variable
-        try {
-            $video = $this->videoInfo($url, $provider);
-            if (!isset($video->status)) {
-                return false;
-            }
-            $status = $video->status;
-            return isset($status->embeddable) && $status->embeddable && isset($status->privacyStatus) && $status->privacyStatus === 'public';
-        } catch (Exception $e) {
-            
-        }
-        return false;
     }
 
     /**
@@ -148,7 +121,7 @@ class VideosTable extends Table {
     public function beforeSave($event, $entity, $options){
         if ($entity->isNew() && empty($entity->status)){
             $entity->status = Video::STATUS_PUBLIC;
-            $entity->duration = $this->youtube->duration($entity->video_url);
+            $entity->duration = $entity->getProviderDuration();
         }
     }
     
@@ -159,7 +132,7 @@ class VideosTable extends Table {
     public function updateVideoDuration(){
         $videos = $this->find('all')->where(['Videos.duration' => 0]);
         foreach ($videos as $video){
-            $video->duration = $this->youtube->duration($video->video_url);
+            $video->duration = YoutubeRequest::instance()->duration($video->video_url);
             $this->save($video);
         }
         return true;

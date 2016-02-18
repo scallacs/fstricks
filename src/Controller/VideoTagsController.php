@@ -98,6 +98,7 @@ class VideoTagsController extends AppController {
                 ResultMessage::setMessage(__('Your trick has been saved.'), true);
                 ResultMessage::setData('video_tag_id', $videoTag->id);
                 ResultMessage::setData('tag_id', $videoTag->tag_id);
+                ResultMessage::setData('status', $videoTag->status);
             } else {
                 ResultMessage::setMessage(__('Your trick could not be saved, please check your inputs.'), false);
                 ResultMessage::addValidationErrorsModel($videoTag);
@@ -200,6 +201,10 @@ class VideoTagsController extends AppController {
 
             if (DataUtil::isPositiveInt($this->request->query, 'tag_id')) {
                 $query->where(['VideoTags.tag_id' => $this->request->query['tag_id']]);
+            }
+            if (!empty($this->request->query['video_tag_ids'])) {
+                $ids = explode(',', $this->request->query['video_tag_ids']);
+                $query->where(['VideoTags.id IN' => $ids]);
             }
             if (DataUtil::isPositiveInt($this->request->query, 'video_tag_id')) {
                 $query->where(['VideoTags.id' => $this->request->query['video_tag_id']]);

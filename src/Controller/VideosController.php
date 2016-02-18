@@ -96,7 +96,6 @@ class VideosController extends AppController {
             if ($this->request->is('post')) {
                 $video = $this->Videos->patchEntity($video, $this->request->data);
                 $video->user_id = $this->Auth->user('id');
-
                 if ($this->Videos->save($video)) {
                     ResultMessage::setMessage(__('This video has been added, thanks!'), true);
                     ResultMessage::overwriteData([
@@ -134,6 +133,8 @@ class VideosController extends AppController {
 
     /**
      * 
+     * TODO add test
+     * 
       status => object(stdClass) {
       uploadStatus => 'processed'
       privacyStatus => 'public'
@@ -150,11 +151,8 @@ class VideosController extends AppController {
         ResultMessage::overwriteData(['success' => true]);
         switch ($provider) {
             case 'youtube':
-                $youtubeInfo = $this->Videos->videoInfo($videoUrl, $provider);
-                if (!$youtubeInfo ||
-                        ( $youtubeInfo->status->privacyStatus !== 'public' &&
-                        $youtubeInfo->status->privacyStatus !== 'unlistead') ||
-                        !$youtubeInfo->status->embeddable) {
+                $exists = \App\Lib\YoutubeRequest::instance()->exists($videoUrl);
+                if ($exists) {
                     $this->Videos->updateAll([
                         'status' => \App\Model\Entity\Video::STATUS_PRIVATE
                             ], [

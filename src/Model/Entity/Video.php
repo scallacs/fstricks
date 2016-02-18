@@ -38,4 +38,16 @@ class Video extends Entity
         'duration' => false
     ];
     
+    
+    /**
+     * 
+     * @return type
+     */
+    public function getProviderDuration(){
+        try {
+            return \App\Lib\VideoRequestFactory::instance($this->provider_id)->duration($this->video_url);
+        } catch (Exception $ex) {
+            return 0;
+        }
+    }
 }

@@ -76,7 +76,7 @@ function EditionTag() {
     }
 
     function hasCategory() {
-        return this._extra.category !== null && this._extra.category.id !== null;
+        return this._extra.category !== null && this._extra.category.category_id !== null;
     }
 
     function getId() {
@@ -186,9 +186,10 @@ function EditionTag() {
             category_name: this._video_tag.category_name
         };
         this._extra.category = {
-            id: this._video_tag.category_id,
+            category_id: this._video_tag.category_id,
             category_name: this._video_tag.category_name,
-            sport_name: this._video_tag.sport_name
+            sport_name: this._video_tag.sport_name,
+            sport_id: this._video_tag.sport_id,
         };
         this.setEditabled();
     }
@@ -212,7 +213,7 @@ function EditionTag() {
         else if (this._video_tag.status !== 'pending'){
             this._editabled = false;
         }
-        else if (this._video_tag.user_id === this._user_id){
+        else if (this.isOwner()){
             this._editabled = true;
         }
         else {
@@ -442,11 +443,12 @@ function AddVideoTagController($scope, $filter,
         }
         // Create a new tag
         else {
+            console.log(editionTag);
             $scope.formAddVideoTag.submit(VideoTagEntity.add(postData).$promise).then(function(response) {
                 if (response.success) {
                     console.log("Creating a new tag!'");
+                    editionTag.setStatus(response.data.status);
                     editionTag.setId(response.data.video_tag_id);
-                    editionTag.setStatus('pending');
                     var newTag = editionTag.toVideoTag();
                     VideoTagData.add(newTag);
                     PlayerData.view(newTag);

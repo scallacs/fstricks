@@ -17,7 +17,8 @@
         "admad/cakephp-hybridauth": "~3.0",
         "facebook/php-sdk-v4": "^5.1",
         "davidyell/proffer": "~0.6",
-        "flowjs/flow-php-server": "^1.0"
+        "flowjs/flow-php-server": "^1.0",
+        "vimeo/vimeo-api": "^1.2"
     },
     "require-dev": {
         "psy/psysh": "@stable",
