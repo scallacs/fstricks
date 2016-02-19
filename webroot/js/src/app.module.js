@@ -90,6 +90,13 @@ function ConfigRouting($stateProvider) {
             requireLogin: false
         }
     });
+    $stateProvider.state("notfound", {
+        url: "*path",
+        templateUrl: "js/src/views/error-not-found.html",
+        data: {
+            requireLogin: false
+        }
+    });
 }
 function ConfigInterceptor($httpProvider) {
     'use strict';

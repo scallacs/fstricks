@@ -39,24 +39,24 @@ function EditionTag() {
         isValidated: isValidated,
         isOwner: isOwner
     };
-    function isOwner(){
+    function isOwner() {
         return this._user_id === this._video_tag.user_id;
     }
-    function isValidated(){
+    function isValidated() {
         return 'validated' === this._video_tag.status;
     }
-    function isDirty(){
-        if (!angular.isDefined(this._original) || this._original === null){
+    function isDirty() {
+        if (!angular.isDefined(this._original) || this._original === null) {
             return true;
         }
         var a = this._video_tag;
         var b = this._original;
-        return a.begin !== b.begin || a.end !== b.end 
-                || a.tag_id !== b.tag_id || a.rider_id !== b.rider_id 
+        return a.begin !== b.begin || a.end !== b.end
+                || a.tag_id !== b.tag_id || a.rider_id !== b.rider_id
                 || a.category_id !== b.category_id || a.video_id !== b.video_id;
     }
-    
-    function setStatus(val){
+
+    function setStatus(val) {
         this._video_tag.status = val;
     }
     function resetOriginal() {
@@ -92,6 +92,7 @@ function EditionTag() {
     function setVideo(data) {
         this._video_tag.video_url = data.video_url;
         this._video_tag.video_id = data.id;
+        this._video_tag.provider_id = data.provider_id;
         return this;
     }
 
@@ -194,12 +195,12 @@ function EditionTag() {
         this.setEditabled();
     }
 
-    function isEditabled(){
-        if (this._editabled === true || this._editabled === false){
+    function isEditabled() {
+        if (this._editabled === true || this._editabled === false) {
             return this._editabled;
         }
-        angular.forEach(this._editabled, function(val){
-            if (val === true){
+        angular.forEach(this._editabled, function(val) {
+            if (val === true) {
                 return true;
             }
         });
@@ -210,10 +211,10 @@ function EditionTag() {
         if (this.isNew()) {
             this._editabled = true;
         }
-        else if (this._video_tag.status !== 'pending'){
+        else if (this._video_tag.status !== 'pending') {
             this._editabled = false;
         }
-        else if (this.isOwner()){
+        else if (this.isOwner()) {
             this._editabled = true;
         }
         else {
@@ -283,7 +284,7 @@ function EditionTag() {
  */
 function AddVideoTagController($scope, $filter,
         $stateParams, VideoEntity, VideoTagEntity, TagEntity, SharedData, PlayerData,
-        RiderEntity, VideoTagData, VideoTagEntity, EditionTag, AuthenticationService) {
+        RiderEntity, VideoTagData, VideoTagEntity, EditionTag, AuthenticationService, $state) {
 
     PlayerData.showEditionMode();
 
@@ -301,7 +302,6 @@ function AddVideoTagController($scope, $filter,
     $scope.video = {video_url: null};
 
     $scope.similarTags = [];
-    $scope.isFormLoading = false;
     $scope.sports = SharedData.sports;
     $scope.suggestedTags = [];
     $scope.suggestedCategories = [];
@@ -360,7 +360,6 @@ function AddVideoTagController($scope, $filter,
         VideoTagData.reset();
         VideoTagData.setFilter('with_pending', true);
         VideoTagData.setFilter('video_id', $stateParams.videoId);
-
         VideoEntity.view({id: $stateParams.videoId}, function(video) {
             $scope.video = video;
             PlayerData.data.duration = video.duration;
@@ -384,14 +383,17 @@ function AddVideoTagController($scope, $filter,
             }
             else {
                 VideoTagData.startLoading();
-                PlayerData.play(video.video_url).then(function() {
+                PlayerData.loadVideo({provider: video.provider_id, video_url: video.video_url}).then(function() {
                     addNewTag();
                 }).finally(function() {
                     SharedData.pageLoader(false);
                 });
 
             }
-
+        }, function(error) {
+            console.log("Error viewing this tag");
+            console.log(error);
+            $state.go('notfound');
         });
 
 
@@ -426,7 +428,7 @@ function AddVideoTagController($scope, $filter,
     }
 
     function playEditionTag() {
-        PlayerData.view(editionTag._video_tag);
+        PlayerData.playVideoTag(editionTag._video_tag);
     }
 
     function saveVideoTag(editionTag) {
@@ -437,7 +439,7 @@ function AddVideoTagController($scope, $filter,
                 if (response.success) {
                     // Copy modifications back in tag
                     editionTag.save();
-                    PlayerData.view(original);
+                    PlayerData.playVideoTag(original);
                 }
             });
         }
@@ -451,7 +453,7 @@ function AddVideoTagController($scope, $filter,
                     editionTag.setId(response.data.video_tag_id);
                     var newTag = editionTag.toVideoTag();
                     VideoTagData.add(newTag);
-                    PlayerData.view(newTag);
+                    PlayerData.playVideoTag(newTag);
                 }
             });
         }

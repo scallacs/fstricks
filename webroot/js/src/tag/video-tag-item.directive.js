@@ -32,14 +32,19 @@ function videoTagItem(PlayerData) {
 
             function view(videoTag) {
                 $scope.$emit("view-video-tag", videoTag);
-                PlayerData.view(videoTag);
+                PlayerData.playVideoTag(videoTag);
             }
 
         },
         link: function($scope, element) {
             $scope.editionMode = angular.isDefined($scope.editionMode) ? $scope.playerData.editionMode : false;
             
-            $scope.videoTag.thumbnail = 'https://i.ytimg.com/vi/'+$scope.videoTag.video_url+'/default.jpg';
+            if ($scope.videoTag.provider_id === 'youtube'){
+                $scope.videoTag.thumbnail = 'https://i.ytimg.com/vi/'+$scope.videoTag.video_url+'/default.jpg';
+            }
+            else if ($scope.videoTag.provider_id === 'vimeo'){
+                $scope.videoTag.thumbnail = "https://i.vimeocdn.com/video/"+$scope.videoTag.video_url+".jpg";
+            }
         }
     };
 }

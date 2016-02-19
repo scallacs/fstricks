@@ -6,13 +6,13 @@
 
 <script>
     const WEBROOT = '<?= $this->request->webroot; ?>';
-    const WEBROOT_FULL = '<?= \Cake\Routing\Router::url('/', true); ?>';
-                    
-</script>
+            const WEBROOT_FULL = '<?= \Cake\Routing\Router::url('/', true); ?>';</script>
 <?= $this->Html->meta('icon') ?>
 
 <link rel="stylesheet" href="js/components/ui-select/dist/select.min.css">
 <link rel="stylesheet" href="js/components/AngularJS-Toaster/toaster.min.css">
+
+<!--<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">-->
 
 
 <?= $this->Html->css('bootstrap.css') ?>
@@ -28,13 +28,20 @@
 
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"); ?>
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-resource.min.js"); ?>
-<?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-animate.min.js"); ?>
+<?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"); ?>
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.min.js"); ?>
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-cookies.min.js"); ?>
-<?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-messages.min.js"); ?>
+<?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"); ?>
+
+<?= $this->Html->script("https://f.vimeocdn.com/js/froogaloop2.min.js"); ?>
+
+<!--
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+-->
 <?= $this->Html->script("components/angular-ui-router/release/angular-ui-router.min"); ?>
 
-<?= $this->Html->script("components/AngularJS-Toaster/toaster.min");?>
+<?= $this->Html->script("components/AngularJS-Toaster/toaster.min"); ?>
 
 <?= $this->Html->script("components/angular-simple-logger/dist/angular-simple-logger.min.js"); ?> <!-- Use online lib ? -->
 <?= $this->Html->script("lib/ui-bootstrap-custom-tpls-0.14.3.min.js"); ?>

@@ -1,5 +1,48 @@
 angular.module('app.player')
-        .directive('youtube', function($window, VideoEntity, PlayerData, VideoTagData) {
+        .factory('YoutubeCmdMapper', function() {
+            
+            function YoutubeCmdMapper(player){
+                this._player = player;
+            }
+            YoutubeCmdMapper.prototype = {
+                seekTo: seekTo,
+                getCurrentTime: getCurrentTime,
+                loadVideo: loadVideo,
+                play: play,
+                stop: stop,
+                pause: pause
+            };
+
+            function seekTo(seconds) {
+                this._player.seekTo(seconds);
+            }
+            function play() {
+                this._player.playVideo();
+            }
+            function stop() {
+                this._player.stopVideo();
+            }
+            function pause() {
+                this._player.pauseVideo();
+            }
+            function getCurrentTime() {
+                this._player.getCurrentTime();
+            }
+            function loadVideo(data) {
+                this._player.loadVideoById({
+                    videoId: data.video_url,
+                    startSeconds: data.begin
+                });
+            }
+            
+            return {
+                create: function(player){
+                    return new YoutubeCmdMapper(player);
+                }
+            };
+
+        })
+        .directive('youtube', function($window, VideoEntity, PlayerData, YoutubeCmdMapper) {
 
             var myTimer;
 
@@ -20,8 +63,8 @@ angular.module('app.player')
                         rel: 0,
                         loop: 1
                     },
-                    height: PlayerData.data.height, // TODO remove safely
-                    width: PlayerData.data.width, //PlayerData.data.width,
+                    height: '100%',
+                    width: '100%',
                     videoId: PlayerData.data.video_url,
                     events: {
                         onError: function(error) {
@@ -32,38 +75,29 @@ angular.module('app.player')
                                 case 101: // Video is private
                                 case 150: // Same, video is private
                                     VideoEntity.reportDeadLink({
-                                        id: PlayerData.player.getVideoData()['video_id'],
+                                        id: PlayerData.data.video_url,
                                         provider: 'youtube'
                                     }, function() {
                                         // ignore results
                                     });
                                     break
                             }
-                            PlayerData.deferred.reject(error.data);
+                            PlayerData.errorPlayer('youtube', error.data);
                         },
                         onReady: function() {
                             console.log("onYouTubePlayerReady()");
                             scope.$emit('onYouTubePlayerReady', player);
-                            PlayerData.setPlayer(player);
+                            PlayerData.setPlayer('youtube', YoutubeCmdMapper.create(player));
                         },
                         onStateChange: function(event) {
                             clearInterval(myTimer);
                             switch (event.data) {
-                                case YT.PlayerState.ENDED:
-                                    player.seekTo(VideoTagData.currentTag.begin);
-                                    break;
                                 case YT.PlayerState.PLAYING:
                                     myTimer = setInterval(function() {
                                         var newTime = player.getCurrentTime();
+                                        PlayerData.onPlayProgress(newTime);
                                         PlayerData.onCurrentTimeUpdate(newTime);
-
-                                        if (PlayerData.looping && player.getCurrentTime() > VideoTagData.currentTag.end) {
-                                            player.seekTo(VideoTagData.currentTag.begin);
-                                        }
-
-                                        scope.$apply(function() {
-                                            PlayerData.data.currentTime = newTime;
-                                        });
+                                        PlayerData.data.currentTime = newTime;
                                     }, 200); // 100 means repeat in 100 ms
                                     break
                             }

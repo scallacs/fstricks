@@ -6,7 +6,8 @@ angular.module('app.player', [
     'shared.vimeo',
     'shared',
     'angularUtils.directives.dirPagination',
-    'infinite-scroll'
+    'infinite-scroll',
+    'ui.bootstrap'
 ])
         .config(ConfigRoute)
         .controller('AddVideoController', AddVideoController)
@@ -179,8 +180,9 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
         if (youtubeVideoInfo.extractVideoIdFromUrl(data.video_url)) {
             data.video_url = youtubeVideoInfo.extractVideoIdFromUrl(data.video_url);
         }
-        if (data.video_url.length != 11) {
-            $scope.addVideoForm.video_url.$error.server = "Invalid vide id. It must be 11 caracters";
+        // TODO move somewhere else
+        if (data.provider_id === 'youtube' && data.video_url.length != 11) {
+            $scope.addVideoForm.video_url.$error.server = "Invalid id. It must be 11 caracters";
             return;
         }
         var promise = $scope.addVideoForm.submit(VideoEntity.addOrGet(data).$promise);
@@ -230,7 +232,7 @@ function PlayerController($scope, PlayerData, $stateParams, $state) {
     $scope.$on('view-video-tag', function(event, tag) {
         event.stopPropagation();
 //        $state.transitionTo($state.$current, {realization: tag.id}, {notify: false, reload: false});
-        PlayerData.view(tag);
+        PlayerData.playVideoTag(tag);
     });
 
 //    if (angular.isDefined($stateParams.realization)) {
@@ -244,10 +246,10 @@ function ViewRealizationController(VideoTagData, $stateParams, PlayerData, Share
     VideoTagData.setFilters({video_tag_id: $stateParams.videoTagId});
     VideoTagData.startLoading().then(function(results) {
         if (results.length === 1) {
-            PlayerData.view(results[0]);
+            PlayerData.playVideoTag(results[0]);
         }
         else {
-            $state.go('error-not-found');
+            $state.go('notfound');
         }
     }).finally(function() {
         SharedData.pageLoader(false);
@@ -261,7 +263,7 @@ function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData) {
     VideoTagData.startLoading().then(function(results) {
         if (results.length === 1) {
             PlayerData.showListTricks = false;
-            PlayerData.view(results[0]);
+            PlayerData.playVideoTag(results[0]);
         }
     }).finally(function() {
         SharedData.pageLoader(false);
@@ -339,7 +341,7 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
 
     function autoPlayVideo(response) {
         if (response.length > 0) {
-            PlayerData.play(response[0].video_url);
+            PlayerData.play(response[0].provider_id, response[0].video_url);
             $scope.videoDuration = response[0].video_duration;
             $scope.videoTags = VideoTagData.data;
 //                YoutubeVideoInfo.snippet(response[0].video_url, function(data) {

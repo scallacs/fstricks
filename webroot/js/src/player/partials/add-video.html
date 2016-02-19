@@ -4,95 +4,102 @@
 -->
 <div class="container margin-top">
     <div class="col-lg-6">
-        <div class="panel panel-primary bg-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title">Add a video</h3>
-            </div>
-            <div class="panel-body">
-                <form id="FormAddVideo" 
-                      class="form" 
-                      name="addVideoForm" 
-                      ng-submit="add(data)"
-                      server-form 
-                      novalidate>
-                    <fieldset>
-                        <div class="col-xs-4">
-                            <div class="form-group clearfix has-feedback"
-                                 ng-class="{ 'has-error': addVideoForm.provider_id.$invalid }">
-                                <select 
-                                    id="FormFieldProviderId"
-                                    ng-model="data.provider_id" 
-                                    class="form-control"
-                                    ng-options="provider.code as provider.name for provider in playerProviders"
-                                    servererror
-                                    required
-                                    >
-                                </select>
-                                <span class="ion-person form-control-feedback"></span>
-                                <div class="help-block text-danger"
-                                     ng-if="addVideoForm.provider_id.$dirty" 
-                                     ng-messages="addVideoForm.provider_id.$error">
-                                    <div ng-message="required">Pick a valid provider.</div>
-                                    <div ng-message="server">{{addVideoForm.provider_id.$error.server}}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-8">
-                            <div class="form-group clearfix has-feedback" 
-                                 ng-class="{ 'has-error': addVideoForm.video_url.$invalid }">
-                                <input type="text" 
-                                       id="FormFieldVideoUrl"
-                                       class="form-control"
-                                       ng-model="data.video_url"
-                                       name="video_url"
-                                       placeholder="paste here the video id or video url"
-                                       ng-minlength="11"
-                                       servererror
-                                       rule-youtube-video-id
-                                       required/>
-                                <span class="ion-person form-control-feedback"></span>
-                                <div class="help-block text-danger"
-                                     ng-if="addVideoForm.video_url.$dirty" 
-                                     ng-messages="addVideoForm.video_url.$error">
-                                    <div ng-message="required">You must enter a valid youtube link.</div>
-                                    <div ng-message="youtubeVideoId">You must enter a valid youtube link.</div>
-                                    <div ng-message="server">{{addVideoForm.video_url.$error.server}}</div>
-                                    <div ng-message="minlength">A youtube video id has 11 caracters</div>
-                                </div>
-                            </div>
-                            <div class="form-group clearfix has-feedback" 
-                                 ng-class="{ 'has-error': addVideoForm.video_url.$invalid }">
-                                <input type="text" 
-                                       id="FormFieldVideoUrl"
-                                       class="form-control"
-                                       ng-model="data.video_url"
-                                       name="video_url"
-                                       placeholder="paste here the video id or video url"
-                                       servererror
-                                       rule-vimeo-video-id
-                                       required/>
-                                <span class="ion-person form-control-feedback"></span>
-                                <div class="help-block text-danger"
-                                     ng-if="addVideoForm.video_url.$dirty" 
-                                     ng-messages="addVideoForm.video_url.$error">
-                                    <div ng-message="required">You must enter a valid vimeo link.</div>
-                                    <div ng-message="vimeoVideoId">You must enter a valid vimeo link.</div>
-                                    <div ng-message="server">{{addVideoForm.video_url.$error.server}}</div>
-                                </div>
-                            </div>
-                        </div>
-                        
+        <div class="bg-primary padding-sm border-radius">
+            <h3 class="page-title">
+                <span class="glyphicon glyphicon-plus-sign"></span> 
+                Add a video
+            </h3>
+            <form id="FormAddVideo" 
+                  class="form" 
+                  name="addVideoForm" 
+                  ng-submit="add(data)"
+                  server-form 
+                  novalidate>
+                <fieldset>
 
-                        <div class="text-center form-group">
-                            <button type="submit" 
-                                    class="btn btn-primary"
-                                    ng-disabled="!addVideoForm.$valid">
-                                Next 
-                            </button>
+                    <uib-tabset >
+                        <uib-tab heading="Youtube"  ng-click="data.provider_id = 'youtube'; data.video_url = ''">
+                            <div class="padding-sm" ng-if="data.provider_id === 'youtube'">
+
+                                <div class="form-group clearfix has-feedback" 
+                                     ng-class="{ 'has-error': addVideoForm.video_url.$invalid }">
+                                    <input type="text" 
+                                           id="FormFieldVideoUrl"
+                                           class="form-control"
+                                           ng-model="data.video_url"
+                                           name="video_url"
+                                           placeholder="paste here the youtube link"
+                                           ng-minlength="11"
+                                           servererror
+                                           rule-youtube-video-id
+                                           required/>
+                                    <span class="ion-person form-control-feedback"></span>
+                                    <div class="help-block text-danger"
+                                         ng-if="addVideoForm.video_url.$dirty" 
+                                         ng-messages="addVideoForm.video_url.$error">
+                                        <div ng-message="required">You must enter a valid youtube link.</div>
+                                        <div ng-message="youtubeVideoId">You must enter a valid youtube link.</div>
+                                        <div ng-message="server">{{addVideoForm.video_url.$error.server}}</div>
+                                        <div ng-message="minlength">A youtube video id has 11 caracters</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </uib-tab>
+                        <uib-tab heading="Vimeo" ng-click="data.provider_id = 'vimeo'; data.video_url = ''">
+                            <div class="padding-sm"  ng-if="data.provider_id === 'vimeo'">
+                                <div class="form-group clearfix has-feedback" 
+                                     ng-class="{ 'has-error': addVideoForm.video_url.$invalid }">
+                                    <input type="text" 
+                                           id="FormFieldVideoUrl"
+                                           class="form-control"
+                                           ng-model="data.video_url"
+                                           name="video_url"
+                                           placeholder="paste here the vimeo link"
+                                           servererror
+                                           ng-minlength="3"
+                                           required/>
+                                    <span class="ion-person form-control-feedback"></span>
+                                    <div class="help-block text-danger"
+                                         ng-if="addVideoForm.video_url.$dirty" 
+                                         ng-messages="addVideoForm.video_url.$error">
+                                        <div ng-message="required">You must enter a valid vimeo link.</div>
+                                        <div ng-message="vimeoVideoId">You must enter a valid vimeo link.</div>
+                                        <div ng-message="server">{{addVideoForm.video_url.$error.server}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </uib-tab>
+                    </uib-tabset>
+                    <!--
+                    <div class="form-group clearfix has-feedback"
+                         ng-class="{ 'has-error': addVideoForm.provider_id.$invalid }">
+                        <select 
+                            id="FormFieldProviderId"
+                            ng-model="data.provider_id" 
+                            class="form-control"
+                            ng-options="provider.code as provider.name for provider in playerProviders"
+                            servererror
+                            required
+                            >
+                        </select>
+                        <span class="ion-person form-control-feedback"></span>
+                        <div class="help-block text-danger"
+                             ng-if="addVideoForm.provider_id.$dirty" 
+                             ng-messages="addVideoForm.provider_id.$error">
+                            <div ng-message="required">Pick a valid provider.</div>
+                            <div ng-message="server">{{addVideoForm.provider_id.$error.server}}</div>
                         </div>
-                    </fieldset>
-                </form>
-            </div>
+                    </div>-->
+
+                    <div class="text-center form-group">
+                        <button type="submit" 
+                                class="btn btn-primary"
+                                ng-disabled="!addVideoForm.$valid">
+                            Next 
+                        </button>
+                    </div>
+                </fieldset>
+            </form>
         </div>
     </div>
     <div class="col-lg-6">

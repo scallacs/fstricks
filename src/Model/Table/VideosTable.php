@@ -92,7 +92,7 @@ class VideosTable extends Table {
                 ->notEmpty('video_url')
                 ->add('video_url', 'custom', [
                     'rule' => 'url',
-                    'message' => 'The video id is invalid',
+                    'message' => 'The video id is invalid or cannot be used due to restriction set by the owner.',
                     'provider' => 'videoUrlProvider'
         ]);
 
@@ -126,7 +126,9 @@ class VideosTable extends Table {
     }
     
     public function search($videoId, $provider) {
-        return $this->find('all')->where(['video_url' => $videoId, 'provider_id' => $provider])->limit(1);
+        return $this->find('all')
+                ->where(['video_url' => $videoId, 'provider_id' => $provider])
+                ->limit(1);
     }
 
     public function updateVideoDuration(){

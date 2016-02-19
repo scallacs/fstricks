@@ -28,7 +28,9 @@ class VideosController extends AppController {
         ResultMessage::setWrapper(false);
         try {
             $video = $this->Videos->get($id, [
-                'conditions' => ['Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC],
+                'conditions' => [
+                    'Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC
+                ],
                 'contain' => [
                     'VideoTags' => function($q) {
                 return $q
@@ -47,8 +49,7 @@ class VideosController extends AppController {
             }
                 ]
             ]);
-        } 
-        catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
+        } catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
             throw new \Cake\Network\Exception\NotFoundException();
         }
 
@@ -57,14 +58,14 @@ class VideosController extends AppController {
 
     public function search() {
         ResultMessage::setWrapper(false);
-        if ($this->request->is('get') ) {
-            $data = $this->request->query;            
+        if ($this->request->is('get')) {
+            $data = $this->request->query;
             if (empty($data['video_url']) || empty($data['provider_id'])) {
                 return;
             }
             $query = $this->Videos->search($data['video_url'], $data['provider_id']);
             $video = $query->first();
-            if (!empty($video)){
+            if (!empty($video)) {
                 ResultMessage::overwriteData($video);
             }
         }

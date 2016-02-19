@@ -20,102 +20,141 @@ angular
 
 function PlayerData(VideoTagData, $q) {
     var obj = {
-        deferred: $q.defer(),
-        player: null,
-        visible: true,
-        showListTricks: true,
-        editionMode: false,
-        looping: false, // True if we want to loop on the current tag
-        startLooping: function() {
-            if (VideoTagData.currentTag) {
-                this.looping = true;
-                this.playVideoRange(VideoTagData.currentTag);
-            }
-        },
-        stopLooping: function() {
-            this.looping = false;
-            var savedTime = this.getCurrentTime();
-            this.seekTo(VideoTagData.currentTag.end + 0.1);
-            this.seekTo(savedTime);
-        },
-        showEditionMode: function() {
-            this.reset();
-            this.editionMode = true;
-        },
-        showViewMode: function() {
-            this.reset();
-            this.editionMode = false;
+        init: function() {
+            this.deferred = {
+                youtube: $q.defer(),
+                vimeo: $q.defer()
+            };
+            this.players = {};
             this.visible = true;
+            this.showListTricks = true;
+            this.editionMode = false;
+            this.looping = false; // True if we want to loop on the current tag
+            this.onCurrentTimeUpdate = function() {
+            };
+            this.data = {
+                begin: 0,
+                end: 0,
+                video_url: null,
+                duration: 0,
+                currentTime: 0,
+                id: null,
+                provider: null
+            };
+            this.onFinish = function() {
+            };
+            this.onPause = function() {
+            };
+            this.onSeek = function() {
+            };
+
         },
-        data: {
-            begin: 0,
-            end: 0,
-            video_url: null,
-            duration: 0,
-            currentTime: 0,
-            width: '100%',
-            height: '100%',
-            id: null
-        },
-        view: view,
-        replay: replay,
+        showEditionMode: showEditionMode,
+        showViewMode: showViewMode,
+        getPromise: getPromise,
+        getPlayer: getPlayer,
+        isProvider: isProvider,
+        setPlayer: setPlayer,
+        errorPlayer: errorPlayer,
         reset: reset,
+        startLooping: startLooping,
+        stopLooping: stopLooping,
+        replay: replay,
+        playVideoTag: playVideoTag,
         play: play,
+        pause: pause,
         stop: stop,
         seekTo: seekTo,
-        pause: pause,
         loadVideo: loadVideo,
-        playVideoRange: playVideoRange,
-        setPlayer: setPlayer,
+        /**
+         * Called when player is 
+         * @return {undefined}
+         */
+        onEnd: onEnd,
+        onPlayProgress: onPlayProgress,
         getCurrentTime: getCurrentTime,
-        onCurrentTimeUpdate: function() {
-        },
         updateCurrentTag: updateCurrentTag
     };
 
+    obj.init();
+
     return obj;
 
-    function setPlayer(player) {
-        this.player = player;
-        this.deferred.resolve();
+    function onEnd() {
+        console.log("onEnd() reached !");
+        if (this.looping) {
+            this.seekTo(this.data.begin);
+        }
     }
-    function playVideoRange(data) {
-        return this.deferred.promise.then(function() {
-            var info = {
-                videoId: data.video_url,
-                startSeconds: data.begin,
-                endSeconds: data.end
-            };
-            obj.player.loadVideoById(info);
-        });
+    function onPlayProgress(currentTime) {
+        if (this.data.end !== null && currentTime >= this.data.end) {
+            this.onEnd();
+        }
     }
-    function view(videoTag) {
-        return this.deferred.promise.then(function() {
+    function startLooping() {
+        if (VideoTagData.currentTag) {
+            this.looping = true;
+        }
+    }
+
+    function stopLooping() {
+        this.looping = false;
+    }
+
+    function showEditionMode() {
+        this.reset();
+        this.editionMode = true;
+    }
+
+    function showViewMode() {
+        this.reset();
+        this.editionMode = false;
+        this.visible = true;
+    }
+
+    function errorPlayer(type, error) {
+        this.deferred[type].reject(error);
+    }
+
+    function isProvider(provider) {
+        return this.data.provider === provider;
+    }   
+
+    function setPlayer(type, player) {
+        console.log("Setting player: " + type);
+        this.players[type] = player;
+        this.deferred[type].resolve();
+    }
+    function getPlayer() {
+        return this.players[this.data.provider];
+    }
+    function playVideoTag(videoTag) {
+        this.data.provider = videoTag.provider_id;
+        return this.getPromise().then(function() {
             _view(videoTag);
         });
     }
     function _view(videoTag) {
         //console.log("PlayerData._view: " + videoTag.id);
 //        console.log(videoTag);
+        VideoTagData.setCurrentTag(videoTag);
         if (videoTag === null) {
             console.log("Try to view a null videoTag");
-            VideoTagData.setCurrentTag(null);
             return;
         }
-        VideoTagData.setCurrentTag(videoTag);
+        obj.data.provider = videoTag.provider_id;
         obj.data.id = videoTag.id;
         obj.data.begin = videoTag.begin;
+        obj.data.end = videoTag.end;
         obj.showListTricks = false;
         obj.looping = true;
 
-        if (videoTag.video_url === obj.data.video_url &&
-                videoTag.end === obj.data.end) {
+        if (videoTag.provider_id === obj.data.provider &&
+                videoTag.video_url === obj.data.video_url) {
             obj.seekTo(videoTag.begin);
         }
         else {
-            obj.data.end = videoTag.end;
-            obj.data.video_url = videoTag.video_url;
-            obj.playVideoRange(videoTag);
+            obj.loadVideo(videoTag);
         }
     }
 
@@ -126,61 +165,66 @@ function PlayerData(VideoTagData, $q) {
     function reset() {
         console.log("RESETING DATA");
         VideoTagData.reset();
-        obj.deferred = $q.defer();
-        this.data.video_url = null;
-        this.data.id = 0;
-        this.data.begin = 0;
-        this.data.end = 0;
-        this.data.currentTime = 0;
-        this.showListTricks = true;
-        this.editionMode = false;
-        this.looping = false;
-        this.onCurrentTimeUpdate = function() {
-        };
+        obj.init();
     }
 
-    function play(newUrl) {
-        return this.deferred.promise.then(function() {
-            if (newUrl !== obj.data.video_url) {
-                obj.data.video_url = newUrl;
-                obj.loadVideo(newUrl);
-            }
-            else {
-                obj.player.playVideo();
-            }
+    function play() {
+        return this.getPromise().then(function() {
+            obj.getPlayer().play();
         });
     }
 
     function seekTo(val) {
-        return this.deferred.promise.then(function() {
-//            if (obj.getCurrentTime() > VideoTagData.currentTag.begin){
-//                obj.looping = false;
-//            }
-            obj.player.seekTo(val);
+        return this.getPromise().then(function() {
+            if ((obj.data.begin !== null && obj.getCurrentTime() < obj.data.begin)
+                    || (obj.data.end !== null && obj.getCurrentTime() > obj.data.end)) {
+                obj.looping = false;
+            }
+            obj.getPlayer().seekTo(val);
         });
     }
     function pause() {
-        return this.deferred.promise.then(function() {
-            obj.player.pauseVideo();
+        return this.getPromise().then(function() {
+            obj.getPlayer().pause();
         });
     }
 
     function stop() {
         this.looping = false;
-        return this.deferred.promise.then(function() {
+        if (this.data.provider === null){
+            return;
+        }
+        return this.getPromise().then(function() {
             obj.data.video_url = null
-            obj.player.stopVideo();
+            obj.getPlayer().stop();
         });
     }
 
-    function loadVideo(url) {
-        return this.deferred.promise.then(function() {
-            console.log('Load video in playerData: ' + url);
-            obj.data.video_url = url;
-            obj.player.loadVideoById({videoId: url});
+    function loadVideo(data) {
+        if (angular.isDefined(data.provider)){
+            this.data.provider = data.provider;
+        }
+        
+        return this.getPromise().then(function() {
+            console.log('Load video in playerData: ' + data.video_url);
+            var toLoad = {
+                video_url: data.video_url,
+            };
+            obj.data.video_url = data.video_url;
+            obj.data.begin = angular.isDefined(data.begin) ? data.begin : 0;
+            toLoad.begin = obj.data.begin;
+
+            obj.data.end = angular.isDefined(data.end) ? data.end : null;
+            toLoad.end =  obj.data.end;
+            
+            obj.getPlayer().loadVideo(toLoad);
         });
     }
 
+    function getPromise() {
+        console.log("Getting promise for: " + this.data.provider);
+        return this.deferred[this.data.provider].promise;
+    }
 
     function updateCurrentTag(newVal) {
 //        console.log(VideoTagData.currentTag);
@@ -204,7 +248,7 @@ function PlayerData(VideoTagData, $q) {
     }
 
     function getCurrentTime() {
-        return obj.player.getCurrentTime();
+        return obj.getPlayer().getCurrentTime();
     }
 }
 

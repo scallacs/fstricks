@@ -19,7 +19,7 @@ function playerContainer($window) {
                     var tag = VideoTagData.next();
                     if (tag !== null) {
                         $scope.$emit('view-video-tag', tag);
-                        PlayerData.view(tag);
+                        PlayerData.playVideoTag(tag);
                     }
                 }
             }
@@ -29,7 +29,7 @@ function playerContainer($window) {
                     var tag = VideoTagData.prev();
                     if (tag !== null) {
                         $scope.$emit('view-video-tag', tag);
-                        PlayerData.view(tag);
+                        PlayerData.playVideoTag(tag);
                     }
                 }
             }

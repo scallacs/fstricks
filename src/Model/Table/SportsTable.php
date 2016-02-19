@@ -65,8 +65,8 @@ class SportsTable extends Table {
         return $this
                         ->find('all')
                         ->where(['status' => SportsTable::STATUS_PUBLIC])
-                        ->contain(['Categories'])
-                        ->cache('sports', 'veryLongCache');
+                        ->contain(['Categories']);
+                        //->cache('sports', 'veryLongCache');
     }
 
     public function findFromNameCached($name) {

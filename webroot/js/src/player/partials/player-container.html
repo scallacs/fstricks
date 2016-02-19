@@ -23,7 +23,16 @@
             </div>
             <div class="iframe-wrapper res-16by9">   
                 <youtube
-                    player-data="playerData" frameborder="0"></youtube> 
+                    ng-if="playerData.isProvider('youtube')"
+                    player-data="playerData" 
+                    frameborder="0">
+                </youtube> 
+                
+                <vimeo-video  
+                    ng-if="playerData.isProvider('vimeo')"
+                    id="vimeoplayer"
+                    player-data="playerData">
+                </vimeo-video>
             </div>
             <div 
                 ng-show="videoTagData.hasNext()"
