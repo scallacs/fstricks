@@ -117,7 +117,7 @@ class VideoTagsController extends AppController {
                     return;
                 }
                 $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data, [
-                    'fieldList' => ['rider_id']
+                    'fieldList' => ['rider_id', 'begin', 'end', 'tag_id']
                 ]);
 //                debug($videoTag);
                 if ($this->VideoTags->save($videoTag)) {

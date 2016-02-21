@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -12,7 +13,6 @@
  * @since         0.10.8
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 /**
  * Configure paths required to find CakePHP + general filepath
  * constants
@@ -73,7 +73,6 @@ try {
 // You can use a file like app_local.php to provide local overrides to your
 // shared configuration.
 //Configure::load('app_local', 'default');
-
 // When debug = false the metadata cache should last
 // for a very very long time, as we don't want
 // to refresh the cache while users are doing requests.
@@ -169,7 +168,6 @@ Request::addDetector('tablet', function ($request) {
  * Inflector::rules('uninflected', ['dontinflectme']);
  * Inflector::rules('transliteration', ['/å/' => 'aa']);
  */
-
 /**
  * Plugins need to be loaded manually, you can either load them one by one or all of them in a single call
  * Uncomment one of the lines below, as you need. make sure you read the documentation on Plugin to use more
@@ -179,7 +177,6 @@ Request::addDetector('tablet', function ($request) {
  * Plugin::load('Migrations'); //Loads a single plugin named Migrations
  *
  */
-
 Plugin::load('Migrations');
 
 // Only try to load DebugKit in development mode
@@ -222,10 +219,10 @@ Log::config('m', [
     'scopes' => ['queriesLog']
 ]);
 
-Plugin::load('Bootstrap') ; // instead of Plugin::load('Bootstrap3') ;
+Plugin::load('Bootstrap'); // instead of Plugin::load('Bootstrap3') ;
 
 
-Configure::write('Company.name','Freestyle Tricks');
+Configure::write('Company.name', 'Freestyle Tricks');
 Configure::write('Youtube', ['key' => 'AIzaSyC851NBlFCigGum0qdk04GHGVYF_tqd-M4']);
 Configure::write('Vimeo', [
     'id' => 'f941f4c31738338a894c2b547ab6a9d1255d63d1',
@@ -233,6 +230,11 @@ Configure::write('Vimeo', [
 ]);
 Configure::write('Facebook', ['key' => '079e8ce1830a2177f3a10b939615a7f6', 'id' => '1536208040040285']);
 
+Configure::write('VideoTagValidation', [
+    "threshold_reject" => 0.7,
+    "threshold_accept" => 0.7,
+    "min_rate" => 5
+]);
 
 Cache::config('veryLongCache', [
     'className' => 'File',
@@ -245,7 +247,4 @@ Plugin::load('Proffer');
 
 ini_set('memory_limit', '256M');
 
-/**
- * Config version. Must be increased for each mofification
- */
 Configure::write('JsonConfigFolder', WWW_ROOT . DS . 'data' . DS);

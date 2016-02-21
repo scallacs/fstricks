@@ -59,7 +59,6 @@ function serverForm(toaster) {
             };
 
             form.setValidationErrors = function(models) {
-                console.log(models);
                 angular.forEach(models, function(errors) {
                     _setValidationErrors(errors);
                 });

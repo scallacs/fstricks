@@ -46,6 +46,10 @@ function PlayerData(VideoTagData, $q) {
             this.onPause = function() {
             };
             this.onSeek = function() {
+                if ((obj.data.begin !== null && obj.getCurrentTime() < obj.data.begin)
+                        || (obj.data.end !== null && obj.getCurrentTime() > obj.data.end)) {
+                    obj.looping = false;
+                }
             };
 
         },
@@ -66,10 +70,7 @@ function PlayerData(VideoTagData, $q) {
         stop: stop,
         seekTo: seekTo,
         loadVideo: loadVideo,
-        /**
-         * Called when player is 
-         * @return {undefined}
-         */
+        hasError: hasError,
         onEnd: onEnd,
         onPlayProgress: onPlayProgress,
         getCurrentTime: getCurrentTime,
@@ -85,6 +86,9 @@ function PlayerData(VideoTagData, $q) {
         if (this.looping) {
             this.seekTo(this.data.begin);
         }
+    }
+    function hasError() {
+        return this.data.provider !== null && !this.players[this.data.provider];
     }
     function onPlayProgress(currentTime) {
         if (this.data.end !== null && currentTime >= this.data.end) {
@@ -113,12 +117,14 @@ function PlayerData(VideoTagData, $q) {
     }
 
     function errorPlayer(type, error) {
+        console.log("Error for player: " + type + " (" + error + ")");
         this.deferred[type].reject(error);
+        this.players[type] = false;
     }
 
     function isProvider(provider) {
         return this.data.provider === provider;
-    }   
+    }
 
     function setPlayer(type, player) {
         console.log("Setting player: " + type);
@@ -176,10 +182,6 @@ function PlayerData(VideoTagData, $q) {
 
     function seekTo(val) {
         return this.getPromise().then(function() {
-            if ((obj.data.begin !== null && obj.getCurrentTime() < obj.data.begin)
-                    || (obj.data.end !== null && obj.getCurrentTime() > obj.data.end)) {
-                obj.looping = false;
-            }
             obj.getPlayer().seekTo(val);
         });
     }
@@ -191,7 +193,7 @@ function PlayerData(VideoTagData, $q) {
 
     function stop() {
         this.looping = false;
-        if (this.data.provider === null){
+        if (this.data.provider === null) {
             return;
         }
         return this.getPromise().then(function() {
@@ -201,10 +203,10 @@ function PlayerData(VideoTagData, $q) {
     }
 
     function loadVideo(data) {
-        if (angular.isDefined(data.provider)){
+        if (angular.isDefined(data.provider)) {
             this.data.provider = data.provider;
         }
-        
+
         return this.getPromise().then(function() {
             console.log('Load video in playerData: ' + data.video_url);
             var toLoad = {
@@ -215,8 +217,8 @@ function PlayerData(VideoTagData, $q) {
             toLoad.begin = obj.data.begin;
 
             obj.data.end = angular.isDefined(data.end) ? data.end : null;
-            toLoad.end =  obj.data.end;
-            
+            toLoad.end = obj.data.end;
+
             obj.getPlayer().loadVideo(toLoad);
         });
     }

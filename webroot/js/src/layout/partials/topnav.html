@@ -17,7 +17,9 @@
             <ul class="dropdown-menu">
                 <li><a ui-sref="videoplayer.best" ng-click="setCurrentSport(null)">All sports</a></li>
                 <li ng-repeat="sport in sports">
-                    <a ui-sref="videoplayer.sport({sportName: sport.name})" ng-click="setCurrentSport(sport)">
+                    <a ui-sref="videoplayer.sport({sportName: sport.name})" 
+                       ng-click="setCurrentSport(sport)">
+                        <img ng-src="{{sport.name| imageUrl}}"> &nbsp;
                         {{sport.name}}
                     </a>
                 </li>

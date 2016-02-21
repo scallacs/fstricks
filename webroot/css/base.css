@@ -25,7 +25,10 @@ h3, h2, h1{
 .http-error .http-error-message{
     font-size: 3em;
 }
-
+.dropdown-menu > li > a img{
+    width: 24px;
+    height: 24px;
+}
 .form-loader{
     padding-right: 10px;
 }
@@ -286,7 +289,7 @@ header .page-title .title{
 
 header .navbar-nav > li > a{
     color: white;
-    border-radius: 0px 0px 5px 5px;
+    /* border-radius: 0px 0px 5px 5px; */
 }
 .max-height{
     height: 500px; 
@@ -460,14 +463,13 @@ header .navbar-nav > li > a{
 }
 
 
-.section{
     /* padding: 10px; */
 }
 
-.bg-secondary-darker, div.section{
-    background: #277D91;
-    border-color: #055B70;
-    color: white;
+@media(min-width: 768px){
+    .section{
+        border-radius: 5px;
+    }
 }
 .bg-secondary{
     background: #388EA2;

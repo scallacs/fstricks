@@ -59,11 +59,9 @@
 <?= $this->Html->script('src/shared/form/ft-unique.factory'); ?>
 
 <?= $this->Html->script('src/shared/youtube/shared.youtube.module'); ?>
-<?= $this->Html->script('src/shared/youtube/rule-youtube-video-id.directive'); ?>
 <?= $this->Html->script('src/shared/youtube/youtube-video-info.factory'); ?>
 
 <?= $this->Html->script('src/shared/vimeo/shared.vimeo.module'); ?>
-<?= $this->Html->script('src/shared/vimeo/rule-vimeo-video-id.directive'); ?>
 <?= $this->Html->script('src/shared/vimeo/vimeo-info.factory'); ?>
 
 <?= $this->Html->script('src/shared/time.filter'); ?>
@@ -92,6 +90,8 @@
 <?= $this->Html->script('src/player/youtube.directive'); ?>
 <?= $this->Html->script('src/player/vimeo.directive'); ?>
 <?= $this->Html->script('src/player/video-item.directive'); ?>
+<?= $this->Html->script('src/player/rule-provider-video-id.directive'); ?>
+<?= $this->Html->script('src/player/provider-video-info.factory'); ?>
 
 <?= $this->Html->script('src/tag/app.tag.module'); ?>
 <?= $this->Html->script('src/tag/trick-list.directive'); ?>

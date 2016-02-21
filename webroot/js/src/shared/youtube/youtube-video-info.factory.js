@@ -15,7 +15,7 @@ angular.module('shared.youtube')
                 publishedAt: publishedAt,
                 provider: provider
             };
-            function provider(){
+            function provider() {
                 return 'Youtube';
             }
             function contentDetails() {
@@ -41,16 +41,16 @@ angular.module('shared.youtube')
             }
 
             return {
-                create: function(item){
+                create: function(item) {
                     return new YoutubeItem(item);
                 }
             };
         })
-        .factory('YoutubeVideoInfo', function($q, $http, Config) {
+        .factory('YoutubeVideoInfo', function($q, Config, YoutubeItem) {
             var API_KEY = Config.api.google;
             function YoutubeVideoInfo() {
                 this._query = null;
-                this._parts = [];
+                this._parts = ['id'];
                 this._videoIds = [];
                 return this;
             }
@@ -61,15 +61,21 @@ angular.module('shared.youtube')
             YoutubeVideoInfo.prototype.addVideo = addVideo;
             YoutubeVideoInfo.prototype.setVideos = setVideos;
             YoutubeVideoInfo.prototype.exists = exists;
-            YoutubeVideoInfo.prototype.extractVideoIdFromUrl = extractVideoIdFromUrl;
-//            YoutubeVideoInfo.prototype.then = then;
             YoutubeVideoInfo.prototype.computeUrl = computeUrl;
 
-            return YoutubeVideoInfo;
+            return {
+                create: function() {
+                    return new YoutubeVideoInfo();
+                },
+                createItem: function(data){
+                    return new YoutubeItem.create(data.items[0]);
+                },
+                extractIdFromUrl: extractIdFromUrl
+            };
 
             function load() {
                 var that = this;
-                
+
                 var defer = $q.defer();
                 // todo change 
                 $.ajax({
@@ -83,18 +89,9 @@ angular.module('shared.youtube')
                 });
                 this._query = defer.promise;
                 return this._query;
-//                $http.defaults.headers.common['Authorization'] = undefined;
-//                this._query = $http({
-//                    type: 'GET',
-//                    url: this.computeUrl(),
-//                    headers: {
-//                        Authorization: undefined
-//                    }
-//                }).then(callbackSuccess);
-//                return this;
 
-                function callbackSuccess(data){
-                    that._items = data;
+                function callbackSuccess(data) {
+                    that._data = data;
                     defer.resolve(data);
                 }
             }
@@ -108,10 +105,6 @@ angular.module('shared.youtube')
                 this._videoIds = ids;
                 return this;
             }
-//
-//            function then(callback) {
-//                return this._query.then(callback);
-//            }
 
             function setParts(parts) {
                 this._parts = parts;
@@ -121,11 +114,12 @@ angular.module('shared.youtube')
                 return this;
             }
 
-            function extractVideoIdFromUrl(url) {
-                if (!url) return false;
+            function extractIdFromUrl(url) {
+                if (!url)
+                    return false;
                 var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
                 var match = url.match(regExp);
-                return (match && match[7].length == 11) ? match[7] : false;
+                return (match && match[7].length === 11) ? match[7] : false;
             }
 
             function computeUrl() {
@@ -138,7 +132,7 @@ angular.module('shared.youtube')
             }
 
             function exists() {
-                return this._data.items.length > 0;
+                return this._data && this._data.items.length > 0;
             }
 //            function convertTime(duration) {
 //                var a = duration.match(/\d+/g);

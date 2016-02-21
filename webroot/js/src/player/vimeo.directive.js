@@ -18,7 +18,7 @@
                     this._player.api('seekTo', seconds);
                 }
                 function getCurrentTime() {
-                    this._player.api.getCurrentTime();
+                    return this._player.api.getCurrentTime();
                 }
                 function loadVideo(data) {
 

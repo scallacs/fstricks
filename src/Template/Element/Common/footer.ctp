@@ -28,6 +28,12 @@
                     <li><a href="#/faq">FAQ</a></li>
                     <li><a href="#/contact">Contact</a></li>
                 </ul>
+
+                <div>
+                    Icons made by 
+                    <a href="http://www.freepik.com" title="Freepik">Freepik</a> from 
+                    <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> 
+                </div>
             </div>
         </div>
     </div>

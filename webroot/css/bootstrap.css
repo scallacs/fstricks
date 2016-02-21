@@ -1579,8 +1579,12 @@ pre code {
 .container {
   margin-right: auto;
   margin-left: auto;
-  padding-left: 15px;
-  padding-right: 15px;
+}
+@media(min-width: 768px){
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
 }
 @media (min-width: 768px) {
   .container {
@@ -3437,18 +3441,18 @@ tbody.collapse.in {
   float: left;
   min-width: 160px;
   padding: 5px 0;
-  margin: 2px 0 0;
+  margin: 0px 0 0;
   list-style: none;
   font-size: 14px;
   text-align: left;
-  background-color: #ffffff;
+  background-color: #222;
   border: 1px solid #cccccc;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 4px;
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   -webkit-background-clip: padding-box;
-          background-clip: padding-box;
+  background-clip: padding-box;
 }
 .dropdown-menu.pull-right {
   right: 0;
@@ -3466,7 +3470,7 @@ tbody.collapse.in {
   clear: both;
   font-weight: normal;
   line-height: 1.42857143;
-  color: #333333;
+  color: white;
   white-space: nowrap;
 }
 .dropdown-menu > li > a:hover,
@@ -4901,12 +4905,12 @@ a.badge:focus {
   }
 }
 .thumbnail {
-  display: block;
+  /* display: block; */
   padding: 4px;
   margin-bottom: 20px;
   line-height: 1.42857143;
   background-color: #ffffff;
-  border: 1px solid #dddddd;
+  /* border: 1px solid #dddddd; */
   border-radius: 4px;
   -webkit-transition: border 0.2s ease-in-out;
   -o-transition: border 0.2s ease-in-out;

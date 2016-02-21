@@ -379,26 +379,32 @@ function AddVideoTagController($scope, $filter,
                         addNewTag();
                     }
                     SharedData.pageLoader(false);
-                });
+                })
+                        .catch(onVideoNotFound);
             }
             else {
                 VideoTagData.startLoading();
-                PlayerData.loadVideo({provider: video.provider_id, video_url: video.video_url}).then(function() {
-                    addNewTag();
-                }).finally(function() {
-                    SharedData.pageLoader(false);
-                });
+                PlayerData.loadVideo({provider: video.provider_id, video_url: video.video_url})
+                        .then(addNewTag)
+                        .finally(function() {
+                            SharedData.pageLoader(false);
+                        })
+                        .catch(onVideoNotFound);
 
             }
-        }, function(error) {
-            console.log("Error viewing this tag");
-            console.log(error);
-            $state.go('notfound');
-        });
+        }, onError);
 
 
     }
 
+    function onVideoNotFound() {
+        
+    }
+    function onError(error) {
+        console.log("Error viewing this tag");
+        console.log(error);
+        $state.go('notfound');
+    }
 
     // ----------------------------------------------------------------------- */
     //  EDITION FUNCTIONS 
@@ -439,7 +445,7 @@ function AddVideoTagController($scope, $filter,
                 if (response.success) {
                     // Copy modifications back in tag
                     editionTag.save();
-                    PlayerData.playVideoTag(original);
+                    PlayerData.playVideoTag(editionTag._original);
                 }
             });
         }
@@ -452,6 +458,7 @@ function AddVideoTagController($scope, $filter,
                     editionTag.setStatus(response.data.status);
                     editionTag.setId(response.data.video_tag_id);
                     var newTag = editionTag.toVideoTag();
+                    editionTag._original = newTag;
                     VideoTagData.add(newTag);
                     PlayerData.playVideoTag(newTag);
                 }
@@ -524,6 +531,7 @@ function AddVideoTagController($scope, $filter,
         editionTag._extra.range = [editionTag._extra.range[0], editionTag._extra.range[1] + value];
     }
     function setStartRangeNow() {
+        console.log("Set current time: " + PlayerData.getCurrentTime());
         editionTag._extra.range[0] = PlayerData.getCurrentTime();
     }
     function setEndRangeNow() {

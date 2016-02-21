@@ -26,7 +26,7 @@ angular.module('app.player')
                 this._player.pauseVideo();
             }
             function getCurrentTime() {
-                this._player.getCurrentTime();
+                return this._player.getCurrentTime();
             }
             function loadVideo(data) {
                 this._player.loadVideoById({

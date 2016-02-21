@@ -139,10 +139,9 @@ function ConfigRoute($stateProvider) {
             });
 }
 
-function AddVideoController($scope, YoutubeVideoInfo, $state,
-        VideoEntity, VideoTagEntity, ServerConfigEntity, SharedData, YoutubeItem) {
+function AddVideoController($scope, ProviderVideoInfo, $state,
+        VideoEntity, VideoTagEntity, ServerConfigEntity, SharedData) {
 
-    var youtubeVideoInfo = new YoutubeVideoInfo();
     var videosInCache = {};
     $scope.data = {provider_id: null, video_url: null};
     $scope.playerProviders = [];
@@ -157,7 +156,6 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
      * [] when received
      */
     $scope.recentVideos = false;
-
 
     $scope.pageChanged = function(newPage) {
         loadRecentlyTagged(newPage);
@@ -177,14 +175,11 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
     }
 
     function add(data) {
-        if (youtubeVideoInfo.extractVideoIdFromUrl(data.video_url)) {
-            data.video_url = youtubeVideoInfo.extractVideoIdFromUrl(data.video_url);
+        var providerInfo = ProviderVideoInfo.get(data.provider_id);
+        if (providerInfo.extractIdFromUrl(data.video_url)) {
+            data.video_url = providerInfo.extractIdFromUrl(data.video_url);
         }
-        // TODO move somewhere else
-        if (data.provider_id === 'youtube' && data.video_url.length != 11) {
-            $scope.addVideoForm.video_url.$error.server = "Invalid id. It must be 11 caracters";
-            return;
-        }
+
         var promise = $scope.addVideoForm.submit(VideoEntity.addOrGet(data).$promise);
         promise.then(function(response) {
             if (response.success) {
@@ -193,7 +188,6 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
         });
     }
 
-
     function loadRecentlyTagged(page) {
         if (videosInCache[page]) {
             $scope.recentVideos = videosInCache[page];
@@ -201,21 +195,24 @@ function AddVideoController($scope, YoutubeVideoInfo, $state,
         }
         $scope.isHistoryLoading = true;
 
-        var youtubeInfo = new YoutubeVideoInfo()
-                .addPart('snippet');
-
         VideoTagEntity.recentlyTagged({page: page, total_number: (page <= 1 ? 1 : null)}, function(response) {
-            if (angular.isDefined(response.total)) {
+            if (angular.isDefined(response.total) && response.total !== null) {
+                console.log("Set total video: " + response.total);
                 $scope.totalVideos = response.total;
             }
             var items = response.data;
             angular.forEach(items, function(video) {
-                youtubeInfo.setVideos([video.video_url]).load().then(function(data){
-                    console.log(data);
-                    video.provider_data = YoutubeItem.create(data.items[0]);
-                });
+                var providerFactory = ProviderVideoInfo.get(video.provider_id);
+                providerFactory
+                        .create()
+                        .addPart('snippet')
+                        .setVideos([video.video_url])
+                        .load()
+                        .then(function(data) {
+                            video.provider_data = providerFactory.createItem(data);
+                        });
             });
-            
+
             $scope.recentVideos = items;
             videosInCache[page] = items;
         }).$promise.finally(function() {
@@ -244,16 +241,20 @@ function ViewRealizationController(VideoTagData, $stateParams, PlayerData, Share
     PlayerData.stop();
     PlayerData.showListTricks = false;
     VideoTagData.setFilters({video_tag_id: $stateParams.videoTagId});
-    VideoTagData.startLoading().then(function(results) {
-        if (results.length === 1) {
-            PlayerData.playVideoTag(results[0]);
-        }
-        else {
-            $state.go('notfound');
-        }
-    }).finally(function() {
-        SharedData.pageLoader(false);
-    });
+    VideoTagData.startLoading()
+            .then(function(results) {
+                if (results.length === 1) {
+                    PlayerData.playVideoTag(results[0]).then(function() {
+                        SharedData.pageLoader(false);
+                    });
+                }
+                else {
+                    $state.go('notfound');
+                }
+            })
+            .catch(function() {
+                SharedData.pageLoader(false);
+            });
 }
 
 function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData) {
@@ -274,6 +275,7 @@ function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData)
 //    console.log("View sport: " + $stateParams.sportName);
     PlayerData.stop();
     PlayerData.showListTricks = true;
+    console.log("Viewing sport: " + $stateParams.sportName);
     VideoTagData.setFilters({sport_name: $stateParams.sportName, order: $stateParams.order});
     VideoTagData.startLoading().finally(function() {
         SharedData.pageLoader(false);
@@ -329,7 +331,7 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
     };
 
     VideoTagData.setFilters({video_id: $stateParams.videoId, order: 'begin_time'});
-    VideoTagData.loadPage(1).then(autoPlayVideo).finally(function() {
+    VideoTagData.loadPage(1).then(autoPlayVideo).catch(function() {
         SharedData.pageLoader(false);
     });
 
@@ -341,7 +343,12 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
 
     function autoPlayVideo(response) {
         if (response.length > 0) {
-            PlayerData.play(response[0].provider_id, response[0].video_url);
+            PlayerData.loadVideo({
+                provider: response[0].provider_id,
+                video_url: response[0].video_url
+            }).then(function() {
+                SharedData.pageLoader(false);
+            });
             $scope.videoDuration = response[0].video_duration;
             $scope.videoTags = VideoTagData.data;
 //                YoutubeVideoInfo.snippet(response[0].video_url, function(data) {

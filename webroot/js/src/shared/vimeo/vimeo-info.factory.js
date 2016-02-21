@@ -17,47 +17,51 @@ angular.module('shared.vimeo')
                 isPublic: isPublic,
                 provider: provider
             };
-            
-            function provider(){
+
+            function provider() {
                 return 'Vimeo';
             }
             function isPublic() {
-                return this._data.privacy.embed === 'public' 
-                        && this._data.privacy.view === 'anybody';
+                return this._item.embed_privacy === 'anywhere';
+//                return this._data.privacy.embed === 'public'
+//                        && this._data.privacy.view === 'anybody';
             }
-            
+
             function duration() {
-                return this._item.snippet.contentDetails.duration;
+//                return this._item.snippet.contentDetails.duration;
+                return this._item.duration;
             }
-            
+
             function thumbnail(size) {
-                
-                this._item.pictures.sizes[mapSize[size]].link;
+                return this._item.thumbnail_small;
+                //this._item.pictures.sizes[mapSize[size]].link;
             }
-            
+
             function title() {
-                return this._item.name;
+                return this._item.title;
+               //return this._item.name;
             }
-            
+
             function description() {
                 return this._item.description;
             }
-            
+
             function publishedAt() {
-                return this._item.created_time;
+                return this._item.upload_date;
+//                return this._item.created_time;
             }
-            
+
             return {
-                create: function(item){
-                    return new VideoItem(item);
+                create: function(item) {
+                    return new VimeoItem(item);
                 }
             };
         })
-        .factory('VimeoInfo', function($http) {
+        .factory('VimeoInfo', function($q, VimeoItem) {
             function VimeoInfo() {
                 this._query = null;
                 this._videoIds = [];
-                this._exists = null;
+                this._data = false;
                 return this;
             }
 
@@ -65,22 +69,46 @@ angular.module('shared.vimeo')
             VimeoInfo.prototype.addVideo = addVideo;
             VimeoInfo.prototype.setVideos = setVideos;
             VimeoInfo.prototype.exists = exists;
-            VimeoInfo.prototype.extractVideoIdFromUrl = extractVideoIdFromUrl;
+            VimeoInfo.prototype.extractIdFromUrl = extractIdFromUrl;
             VimeoInfo.prototype.computeUrl = computeUrl;
+            VimeoInfo.prototype.addPart = function() {
+                return this;
+            };
 
-            return VimeoInfo;
+            return {
+                create: function() {
+                    return new VimeoInfo();
+                },
+                createItem: function(data) {
+                    return new VimeoItem.create(data[0]);
+                },
+                extractIdFromUrl: extractIdFromUrl
+            };
 
             function load() {
                 var that = this;
-                this._query =  $http.get(this.computeUrl())
-                        .success(function(r) {
-                            console.log(r);
-                            that._data = r;
-                        })
-                        .error(function(e) {
-                            console.log(r);
-                        });
+                var defer = $q.defer();
+                // todo change 
+                console.log("Loading vimeo info: " + that.computeUrl());
+                $.ajax({
+                    dataType: 'jsonp',
+                    async: false,
+                    type: 'GET',
+                    url: that.computeUrl(),
+                    success: callbackSuccess,
+                    error: function(error) {
+                        console.log(error);
+                        defer.reject();
+                    }
+                });
+                this._query = defer.promise;
                 return this._query;
+
+                function callbackSuccess(data) {
+                    console.log(data);
+                    that._data = data;
+                    defer.resolve(data);
+                }
             }
 
             function addVideo(id) {
@@ -93,20 +121,22 @@ angular.module('shared.vimeo')
                 return this;
             }
 
-            function extractVideoIdFromUrl(url) {
-                if (!url) return false;
+            function extractIdFromUrl(url) {
+                if (!url)
+                    return false;
                 var regExp = /^.*(vimeo\.com\/)((channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/
                 var match = url.match(regExp);
-                return match[5].length > 1 ? match[5] : false;
+                return (match !== null && match[5].length > 1) ? match[5] : false;
             }
 
             function computeUrl() {
-                var url = "https://api.vimeo.com/videos/" + this._videoIds.join();
+                //var url = "https://api.vimeo.com/videos/" + this._videoIds.join();
+                var url = 'http://vimeo.com/api/v2/video/' + this._videoIds.join() + '.json'
                 return url;
             }
 
             function exists() {
-                return this._exists;
+                return this._data;
             }
         });
 

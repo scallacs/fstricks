@@ -4,12 +4,21 @@
     notifier="notifyServiceOnChage(params)"
     ng-show="!SharedData.loadingState && !videoTagData.loading">
 
-    <div ng-show="videoTagData.currentTag == null && videoTagData.data.length === 0" 
+    <div ng-show="playerData.hasError()" 
+         class="pick-video-message">
+        <p>
+            Oups, we cannot load the player...
+        <p/>
+        <p>
+            Try again later...
+        </p>
+    </div>
+    <div ng-show="!playerData.hasError() && videoTagData.currentTag == null && videoTagData.data.length === 0" 
          class="pick-video-message">
         <p>
             Oups, there is no tricks registered yet... 
         <p/>
-        <p class="text-center">
+        <p>
             <a ui-sref="addvideo"> Add tricks now</a>
         </p>
     </div>
