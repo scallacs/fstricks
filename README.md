@@ -15,6 +15,7 @@ RUNNING TESTS:
 Backend:
     vendor/bin/phpunit tests/TestCase [--filter="name"]
     COVERAGE: vendor/bin/phpunit --coverage-html webroot/coverage tests/TestCase
+    VIEW: webroot/coverage/index.html 
 
 --------------------------------------------------------------------------------
 Frontend

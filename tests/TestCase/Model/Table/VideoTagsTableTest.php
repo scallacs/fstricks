@@ -108,7 +108,7 @@ class VideoTagsTableTest extends TestCase {
                 "Fixure is not properly set. It should have the status 'rejected'");
         $this->assertTrue((bool) $this->VideoTags->save($videoTag), "Should be possible to edit the tag");
         $this->assertEquals($videoTag->status, 
-                \App\Model\Entity\VideoTag::STATUS_PENDING,
+                \App\Model\Entity\VideoTag::STATUS_REJECTED,
                 "It should have the status 'pending' when saving tag");
     }
 

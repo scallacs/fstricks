@@ -1,14 +1,13 @@
 <?php
 
 namespace App\Test\TestCase\Controller;
-
 use App\Controller\VideoTagsController;
-use Cake\TestSuite\IntegrationTestCase;
+use App\Test\Fixture\VideoTagsFixture;
 
 /**
  * App\Controller\VideoTagsController Test Case
  */
-class VideoTagsControllerTest extends MyIntegrationTestCase {
+class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegrationTestCase {
 
     /**
      * Fixtures
@@ -33,13 +32,72 @@ class VideoTagsControllerTest extends MyIntegrationTestCase {
      *
      * @return void
      */
-//    public function testView() {
-//        $id = 1;
-//        $this->get("/VideoTags/view/$id.json");
-//
-//        $this->assertResponseOk();
-//        $result = json_decode($this->_response->body());
-//    }
+    public function testView() {
+        $id = 1;
+        $this->get("/VideoTags/view/$id.json");
+        $this->assertResponseOk();
+    }
+    
+    /**
+     * Test view method
+     *
+     * @return void
+     */
+    public function testDeleteNotOwner() {
+        $this->logUser(2);
+        $this->post("/VideoTags/delete/".VideoTagsFixture::ID_PENDING.".json");
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+//        debug($result);
+        $this->assertFalse($result['success']);
+    }
+    /**
+     * Test view method
+     *
+     * @return void
+     */
+    public function testDeleteOwner() {
+        $this->logUser(1);
+        $this->post("/VideoTags/delete/".VideoTagsFixture::ID_PENDING.".json");
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        $this->assertTrue($result['success']);
+    }
+    /**
+     * Test view method
+     *
+     * @return void
+     */
+    public function testDeleteValidated() {
+        $this->logUser(1);
+        $this->post("/VideoTags/delete/".VideoTagsFixture::ID_VALIDATED.".json");
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        $this->assertFalse($result['success']);
+    }
+    
+    /**
+     */
+    public function testRecentlyTagged() {
+        $this->logUser(1);
+        $this->get("/VideoTags/recentlyTagged.json");
+        $this->assertResponseOk();
+    }
+
+    /**
+     */
+    public function testSimilar() {
+        $this->logUser(1);
+        $this->post("/VideoTags/similar.json", [
+            'VideoTag' => [
+                'begin' => 5,
+                'end' => 10,
+                'video_id' => 1
+            ]
+        ]);
+        $this->assertResponseOk();
+//        $result = json_decode($this->_response->body(), true);
+    }
 
     /**
      * Test add method
@@ -53,6 +111,7 @@ class VideoTagsControllerTest extends MyIntegrationTestCase {
         $result = json_decode($this->_response->body(), true);
         //$this->assertCount($result, 1);
     }
+    
     /**
      * Test add method
      *
@@ -91,6 +150,28 @@ class VideoTagsControllerTest extends MyIntegrationTestCase {
         $this->assertResponseOk();
         $this->get('/VideoTags/search.json?trick-slug=frontside-360');
         $this->assertResponseOk();
+        $this->get('/VideoTags/search.json?order=invalidorder');
+        $this->assertResponseOk();
+        $this->get('/VideoTags/search.json?order=begin_time');
+        $this->assertResponseOk();
+        $this->get('/VideoTags/search.json?order=created');
+        $this->assertResponseOk();
+        $this->get('/VideoTags/search.json?order=modified');
+        $this->assertResponseOk();
+        $this->get('/VideoTags/search.json?order=best');
+        $this->assertResponseOk();
+        $this->get('/VideoTags/search.json?video_tag_id=1');
+        $this->assertResponseOk();
+        $this->get('/VideoTags/search.json?trick_slug=1');
+        $this->assertResponseOk();
+        $this->get('/VideoTags/search.json?video_tag_ids=1,2,3');
+        $this->assertResponseOk();
+        $this->get('/VideoTags/search.json?status=pending,invalidstatus');
+        $this->assertResponseOk();
+        $this->get('/VideoTags/search.json?sport_name=snowboard');
+        $this->assertResponseOk();
+        $this->get('/VideoTags/search.json?sport_name=snowboard&category_name=jib');
+        $this->assertResponseOk();
     }
 
     /**
@@ -103,6 +184,31 @@ class VideoTagsControllerTest extends MyIntegrationTestCase {
         $data = [
             'video_id' => 1,
             'tag_id' => 1,
+            'begin' => 2,
+            'end' => 10
+        ];
+        $this->post('/VideoTags/add.json', $data);
+
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body());
+        $this->assertTrue($result->success);
+    }
+
+
+    /**
+     * Test add method
+     *
+     * @return void
+     */
+    public function testAddWithNewTag() {
+        $this->logUser();
+        $data = [
+            'video_id' => 1,
+            'tag' => [
+                'sport_id' => 1,
+                'category_id' => 1,
+                'name' => 'testtesttesttest'
+            ],
             'begin' => 2,
             'end' => 10
         ];

@@ -126,7 +126,7 @@ class ResultMessage {
     }
 
     public static function setSuccess($value = true) {
-        self::$success = $value;
+        self::$success = (bool)$value;
     }
 
     public static function getSuccess() {
@@ -204,6 +204,7 @@ class ResultMessage {
         self::$redirectUrl = array();
         self::$validationErrors = array();
         self::$token = false;
+        self::$wrapper = true;
     }
 
     public static function toArray() {

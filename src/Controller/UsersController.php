@@ -18,40 +18,6 @@ class UsersController extends AppController {
     }
 
     /* ========================================================================
-     * VIEWS
-     */
-
-    /**
-     * Index method
-     *
-     * @return void
-     */
-    public function index() {
-        $this->set('users', $this->paginate($this->Users));
-        $this->set('_serialize', ['users']);
-    }
-
-    // ??
-    public function history() {
-        
-    }
-
-    /**
-     * View method
-     *
-     * @param string|null $id User id.
-     * @return void
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     */
-    public function view($id = null) {
-        $user = $this->Users->get($id, [
-            'contain' => ['Spots']
-        ]);
-        $this->set('user', $user);
-        $this->set('_serialize', ['user']);
-    }
-
-    /* ========================================================================
      * API
      */
 
@@ -70,73 +36,6 @@ class UsersController extends AppController {
                     ->where(['Users.username' => $id]);
             ResultMessage::overwriteData($data->first());
             ResultMessage::setWrapper(false);
-        }
-    }
-
-    /* ========================================================================
-     * OTHERS
-     */
-
-    // For JSON LOGIN
-    protected function setToken($userId = null) {
-        if ($userId === null) {
-            $userId = $this->Auth->user('id');
-        }
-        $token = \Firebase\JWT\JWT::encode([
-                    'id' => $userId,
-                    'sub' => $userId,
-                    'exp' => time() + 604800,
-                    'iat' => time()
-                        ], Security::salt());
-
-        ResultMessage::setData('id', $userId);
-        ResultMessage::setData('username', $this->Auth->user('username'));
-        ResultMessage::setData('email', $this->Auth->user('email'));
-        ResultMessage::setData('created', $this->Auth->user('created'));
-        ResultMessage::setToken($token);
-    }
-
-    /**
-     * Add method
-     *
-     * @return void Redirects on successful add, renders view otherwise.
-     */
-    public function add() {
-        $user = $this->Users->newEntity();
-        if ($this->request->is('post')) {
-            $user = $this->Users->patchEntity($user, $this->request->data);
-            if ($this->Users->save($user)) {
-                ResultMessage::setMessage('The user has been saved.', true);
-                $this->setToken($user['id']);
-                ResultMessage::setRedirectUrl(['action' => 'index']);
-            } else {
-                ResultMessage::setMessage('The user could not be saved. Please, try again.', false);
-                ResultMessage::addValidationErrorsModel($user);
-            }
-        }
-        ResultMessage::setData('user', $user);
-    }
-
-    /**
-     * Edit method
-     *
-     * @param string|null $id User id.
-     * @return void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     */
-    public function edit() {
-        if (!$this->request->is('post')) {
-            return;
-        }
-        $id = $this->Auth->user('id');
-        $data = $this->request->data;
-        $data['id'] = $id;
-        $user = new \App\Model\Entity\User($data);
-        if ($this->Users->save($user)) {
-            ResultMessage::setMessage(__('The user has been saved.'), true);
-        } else {
-            ResultMessage::setMessage(__('The user could not be saved. Please, try again.'));
-            ResultMessage::setValidationErrors($user->errors());
         }
     }
 
@@ -160,33 +59,8 @@ class UsersController extends AppController {
         ResultMessage::setWrapper(false);
         ResultMessage::setData('exists', $exists);
     }
-
-//    public function social_login() {
-//        if (!empty($this->request->is('post')) && !empty($this->request->data['provider'])) {
-//            $provider = $this->request->data['provider'];
-//
-//            try {
-//                // initialize Hybrid_Auth class with the config file
-//                $hybridauth = new \Hybrid_Auth(\Cake\Core\Configure::read('HybridAuth'));
-//
-//                // try to authenticate with the selected provider
-//                $adapter = $hybridauth->authenticate($provider);
-//
-//                // then grab the user profile
-//                $user_profile = $adapter->getUserProfile();
-//                ResultMessage::overwriteData($user_profile);
-//                $this->Auth->setUser($user_profile);
-//                ResultMessage::setMessage('Your are now log in with ' . $provider, true);
-//            }
-//            // something went wrong?
-//            catch (Exception $e) {
-//                ResultMessage::setMessage('We cannot log you in with ' . $provider, false);
-//            }
-//        } else {
-//            ResultMessage::setMessage("Unknown provider. Please try again", false);
-//        }
-//    }
-
+    
+    
     public function facebook_login() {
         $provider = 'facebook';
         //initialize facebook sdk
@@ -311,5 +185,100 @@ class UsersController extends AppController {
     public function check_token() {
         ResultMessage::setSuccess();
     }
+
+    /* ========================================================================
+     * OTHERS
+     */
+
+    // For JSON LOGIN
+    protected function setToken($userId = null) {
+        if ($userId === null) {
+            $userId = $this->Auth->user('id');
+        }
+        $token = \Firebase\JWT\JWT::encode([
+                    'id' => $userId,
+                    'sub' => $userId,
+                    'exp' => time() + 604800,
+                    'iat' => time()
+                        ], Security::salt());
+
+        ResultMessage::setData('id', $userId);
+        ResultMessage::setData('username', $this->Auth->user('username'));
+        ResultMessage::setData('email', $this->Auth->user('email'));
+        ResultMessage::setData('created', $this->Auth->user('created'));
+        ResultMessage::setToken($token);
+    }
+
+    
+    /**
+     * Add method
+     *
+     * @return void Redirects on successful add, renders view otherwise.
+     */
+//    public function add() {
+//        $user = $this->Users->newEntity();
+//        if ($this->request->is('post')) {
+//            $user = $this->Users->patchEntity($user, $this->request->data);
+//            if ($this->Users->save($user)) {
+//                ResultMessage::setMessage('The user has been saved.', true);
+//                $this->setToken($user['id']);
+//                ResultMessage::setRedirectUrl(['action' => 'index']);
+//            } else {
+//                ResultMessage::setMessage('The user could not be saved. Please, try again.', false);
+//                ResultMessage::addValidationErrorsModel($user);
+//            }
+//        }
+//        ResultMessage::setData('user', $user);
+//    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id User id.
+     * @return void Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
+//    public function edit() {
+//        if (!$this->request->is('post')) {
+//            return;
+//        }
+//        $id = $this->Auth->user('id');
+//        $data = $this->request->data;
+//        $data['id'] = $id;
+//        $user = new \App\Model\Entity\User($data);
+//        if ($this->Users->save($user)) {
+//            ResultMessage::setMessage(__('The user has been saved.'), true);
+//        } else {
+//            ResultMessage::setMessage(__('The user could not be saved. Please, try again.'));
+//            ResultMessage::setValidationErrors($user->errors());
+//        }
+//    }
+
+
+//    public function social_login() {
+//        if (!empty($this->request->is('post')) && !empty($this->request->data['provider'])) {
+//            $provider = $this->request->data['provider'];
+//
+//            try {
+//                // initialize Hybrid_Auth class with the config file
+//                $hybridauth = new \Hybrid_Auth(\Cake\Core\Configure::read('HybridAuth'));
+//
+//                // try to authenticate with the selected provider
+//                $adapter = $hybridauth->authenticate($provider);
+//
+//                // then grab the user profile
+//                $user_profile = $adapter->getUserProfile();
+//                ResultMessage::overwriteData($user_profile);
+//                $this->Auth->setUser($user_profile);
+//                ResultMessage::setMessage('Your are now log in with ' . $provider, true);
+//            }
+//            // something went wrong?
+//            catch (Exception $e) {
+//                ResultMessage::setMessage('We cannot log you in with ' . $provider, false);
+//            }
+//        } else {
+//            ResultMessage::setMessage("Unknown provider. Please try again", false);
+//        }
+//    }
 
 }

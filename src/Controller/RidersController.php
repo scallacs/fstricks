@@ -94,38 +94,6 @@ class RidersController extends AppController {
     }
 
     /**
-     * Search rider thanks to Facebook API
-     * @return type
-     */
-    public function facebook_search() {
-        ResultMessage::setWrapper(false);
-        // If not log in with facebook
-        if (!$this->Auth->user('access_token')) {
-            throw new \Cake\Network\Exception\UnauthorizedException("You must be logged in facebook");
-        }
-        if ($this->request->is('get') && !empty($this->request->query['q']) && strlen($this->request->query['q']) > 2) {
-            $q = $this->request->query['q'];
-            $facebookRequest = new \App\Lib\FacebookRequest([
-                'key' => \Cake\Core\Configure::read('Facebook.key'),
-                'id' => \Cake\Core\Configure::read('Facebook.id'),
-                'token' => $this->Auth->user('access_token')->getValue()
-            ]);
-
-            $data = $facebookRequest->searchPeople($q);
-            if ($data) {
-                ResultMessage::overwriteData($data);
-                return;
-            }
-        }
-
-        ResultMessage::overwriteData([
-            'data' => [],
-            'next' => null
-        ]);
-        return;
-    }
-
-    /**
      * @queryType GET
      * 
      * Return a list of the most famous tag begining by the search term $term
@@ -171,5 +139,39 @@ class RidersController extends AppController {
             ]);
         }
     }
+
+    
+    
+    /**
+     * Search rider thanks to Facebook API
+     * @return type
+     */
+//    public function facebook_search() {
+//        ResultMessage::setWrapper(false);
+//        // If not log in with facebook
+//        if (!$this->Auth->user('access_token')) {
+//            throw new \Cake\Network\Exception\UnauthorizedException("You must be logged in facebook");
+//        }
+//        if ($this->request->is('get') && !empty($this->request->query['q']) && strlen($this->request->query['q']) > 2) {
+//            $q = $this->request->query['q'];
+//            $facebookRequest = new \App\Lib\FacebookRequest([
+//                'key' => \Cake\Core\Configure::read('Facebook.key'),
+//                'id' => \Cake\Core\Configure::read('Facebook.id'),
+//                'token' => $this->Auth->user('access_token')->getValue()
+//            ]);
+//
+//            $data = $facebookRequest->searchPeople($q);
+//            if ($data) {
+//                ResultMessage::overwriteData($data);
+//                return;
+//            }
+//        }
+//
+//        ResultMessage::overwriteData([
+//            'data' => [],
+//            'next' => null
+//        ]);
+//        return;
+//    }
 
 }

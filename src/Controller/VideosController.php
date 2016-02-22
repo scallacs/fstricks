@@ -134,21 +134,16 @@ class VideosController extends AppController {
 
     /**
      * 
-     * TODO add test
-     * 
-      status => object(stdClass) {
-      uploadStatus => 'processed'
-      privacyStatus => 'public'
-      license => 'youtube'
-      embeddable => true
-      publicStatsViewable => true
-      }
+     * TODO add test and change to POST method 
      * @param type $videoUrl
      * @param type $provider
      * @return type
      */
     public function report_dead_link($videoUrl, $provider) {
         ResultMessage::setWrapper(false);
+        if (!$this->request->is('post')){
+            return ;
+        }
         ResultMessage::overwriteData(['success' => true]);
         switch ($provider) {
             case 'youtube':
@@ -162,6 +157,10 @@ class VideosController extends AppController {
                     ]);
                     \Cake\Log\Log::write('info', 'Removing video ' . $videoUrl . ' from ' . $provider);
                 }
+                break;
+            case 'vimeo': 
+                // TODO 
+                    \Cake\Log\Log::write('info', 'Removing video ' . $videoUrl . ' from ' . $provider);
                 break;
         }
     }

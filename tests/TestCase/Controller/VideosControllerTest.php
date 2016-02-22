@@ -190,4 +190,7 @@ class VideosControllerTest extends MyIntegrationTestCase {
         $this->assertArrayHasKey('id', $result);
     }
 
+    public function report_dead_link(){
+        
+    }
 }

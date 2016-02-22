@@ -15,6 +15,11 @@ class MyIntegrationTestCase extends \Cake\TestSuite\IntegrationTestCase{
         ]);
     }
     
+    
+    public function setUp(){
+        parent::setUp();
+        \App\Lib\ResultMessage::reset();
+    }
     public function tearDown() {
         parent::tearDown();
         \App\Lib\ResultMessage::reset();

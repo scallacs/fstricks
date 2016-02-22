@@ -45,7 +45,7 @@ class VideoTagsController extends AppController {
      * @param type $id
      */
     public function delete($id = null) {
-        if ($id === null) {
+        if ($id === null || !$this->request->is('post')) {
             ResultMessage::setSuccess(false);
             return;
         }
@@ -172,7 +172,7 @@ class VideoTagsController extends AppController {
      */
     public function similar() {
         ResultMessage::setWrapper(false);
-        if (empty($this->request->data['VideoTag'])) {
+        if (!$this->request->is('post') || empty($this->request->data['VideoTag'])) {
             return;
         }
         $paginateOptions = [
@@ -336,6 +336,7 @@ class VideoTagsController extends AppController {
                     ->contain(['Videos'])
                     ->distinct(['Videos.id']);
 
+            // TODO use cakephp behavior!
             $data['data'] = $this->paginate($query);
             if (!empty($this->request->query['total_number'])) {
                 if (count($data['data']) < $paginateOptions['limit']) {

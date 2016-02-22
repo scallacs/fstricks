@@ -212,7 +212,10 @@ function PlayerData(VideoTagData, $q) {
         }
         return this.getPromise().then(function() {
             obj.data.video_url = null
-            obj.getPlayer().stop();
+            var player = obj.getPlayer();
+            if (player !== null){
+                player.stop();
+            }
         });
     }
 
@@ -436,6 +439,7 @@ function VideoTagData(VideoTagLoader) {
         },
         reset: function() {
             VideoTagLoader.instance('default').init();
+            this.currentTag = null;
         },
         next: function() {
             return this.getItems()[Math.min(this.getItems().length - 1, this._getCurrentIndice() + 1)];

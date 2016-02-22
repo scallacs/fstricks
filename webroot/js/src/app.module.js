@@ -46,7 +46,7 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
 }
 
 
-function Run($rootScope, AuthenticationService, loginModal, $state, SharedData) {
+function Run($rootScope, AuthenticationService, loginModal, $state, SharedData, PlayerData) {
 
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
         console.log('$stateChangeStart: ' + event);

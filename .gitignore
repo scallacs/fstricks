@@ -8,6 +8,8 @@ CakePHP 3
 /webroot/js/bower_components/*
 /webroot/js/components/*
 /webroot/files/*
+/tests/Fixture/files/tmp
+/webroot/coverage
 
 CakePHP 2
 
