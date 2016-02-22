@@ -4,7 +4,7 @@
  *
  * @author stephane
  */
-class ResultMessageTest extends App\Test\TestCase {
+class ResultMessageTest extends \Cake\TestSuite\TestCase {
 
     // TODO 
     

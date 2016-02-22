@@ -233,7 +233,7 @@ Configure::write('Facebook', ['key' => '079e8ce1830a2177f3a10b939615a7f6', 'id' 
 Configure::write('VideoTagValidation', [
     "threshold_reject" => 0.7,
     "threshold_accept" => 0.7,
-    "min_rate" => 5
+    "min_rate" => 2
 ]);
 
 Cache::config('veryLongCache', [
