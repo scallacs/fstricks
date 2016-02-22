@@ -35,6 +35,12 @@
         <li ng-if="!authData.isAuthed()">
             <a ui-sref="signup">Sign up</a>
         </li>
+        <li ng-if="authData.isAuthed()">
+            <a ui-sref="dashboard"><span class="glyphicon glyphicon-dashboard"></span></a>
+        </li>
+        <li ng-if="authData.isAuthed()">
+            <a ui-sref="videoplayer.validation()"><span class="glyphicon glyphicon-check"></span></a>
+        </li>
         <li ng-if="authData.isAuthed()" class="dropdown">
             <a class="" data-toggle="dropdown" >
                 <span class="glyphicon glyphicon-cog"></span>

@@ -24,6 +24,7 @@ class VideoTagsControllerTest extends MyIntegrationTestCase {
         'app.categories',
         'app.tags',
         'app.video_tag_points',
+        'app.video_tag_accuracy_rates',
         'app.sports'
     ];
 
@@ -40,6 +41,18 @@ class VideoTagsControllerTest extends MyIntegrationTestCase {
 //        $result = json_decode($this->_response->body());
 //    }
 
+    /**
+     * Test add method
+     *
+     * @return void
+     */
+    public function testValidation() {
+        $this->logUser();
+        $this->get('/VideoTags/validation.json');
+        $this->assertResponseOk();
+        $result = json_decode($this->_response->body(), true);
+        //$this->assertCount($result, 1);
+    }
     /**
      * Test add method
      *

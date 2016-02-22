@@ -18,31 +18,34 @@
         <div class="clickable">
             <div class="col-xs-10"  ng-click="view(videoTag)">
                 <p class="item-title text-capitalize" ng-if="videoTag.tag_name">
-                    {{videoTag.tag_name}}
+                    {{videoTag.tag_name}} ({{videoTag.category_name}})
                 </p>
                 <p class="item-title text-success" ng-if="!videoTag.tag_name && videoTag.mode === 'edition'">
                     <span class="glyphicon glyphicon-edit"></span> 
                     Provide the trick name
                 </p>
-                <div class="item-user-xs">
+                <div    class="item-user-xs" 
+                        ng-if="videoTag.rider_name" >
                     <span class="thumbnail-round-xs">
                         <img ng-if="videoTag.rider_picture_round_xs" ng-src="videoTag.rider_picture_round_xs"/>
                     </span>
                     <a  ui-sref="videoplayer.rider({riderId: videoTag.rider_id})"
-                        ng-if="videoTag.rider_name" 
                         class="item-user-name text-info text-capitalize">
                         {{videoTag.rider_name}}
                     </a>
-                    <a ng-if="videoTag.mode !== 'edition' && !videoTag.rider_name" 
+                </div>
+                <div    class="item-user-xs" 
+                        ng-if="!videoTag.rider_name" >
+                            
+                    <a ng-if="videoTag.mode !== 'validated' && videoTag.user_id === authData.user.id" 
                        class="item-user-name text-danger"
-                       ui-sref="addtag({videoId:videoTag.video_id, tagId: videoTag.id})"
                        >
                         Add the rider
                     </a>
-                    <a ng-if="videoTag.mode === 'edition' && !videoTag.rider_name" 
-                       class="item-user-name text-danger"
+                    <a ng-if="!(videoTag.mode !== 'validated' && videoTag.user_id === authData.user.id)" 
+                       class="item-user-name text-muted"
                        >
-                        Add the rider
+                        Unknown rider
                     </a>
                 </div>
             </div>
@@ -83,17 +86,10 @@
         <div class="">
             <div class="col-xs-10">
                 <div class="padding-sm" 
-                     ng-if="playerData.editionMode" >
+                     ng-if="!playerData.isMode('view')" >
                     {{videoTag.begin| secondsToHours}} to {{videoTag.end| secondsToHours}}
-                    <!--
-                    <span 
-                        ng-if="videoTag.mode === 'edition' && (videoTag.id === VideoTagData.currentTag.id || videoTag.id === null)" >
-                        &nbsp; <span class="glyphicon glyphicon-edit"></span> 
-                        Editing...
-                    </span>
-                    -->
                 </div>
-                <div ng-if="!playerData.editionMode" >
+                <div ng-if="playerData.isMode('view')" >
 
                     <p class="text-muted item-video-tag-remaining"  ng-show="videoTag.time_to_play > 0">
                         <span>
@@ -127,7 +123,7 @@
                         <b class="caret"></b>
                     </button>
                     <ul class="dropdown-menu nav-stacked nav-pills dropdown-menu-right">
-                        <li >
+                        <li>
                             <a ui-sref="videoplayer.video({videoId:videoTag.video_id})">
                                 <span class="glyphicon glyphicon-play-circle"></span>  
                                 View full video
@@ -139,14 +135,14 @@
                                 View all videos for this trick
                             </a>
                         </li>           
-                        <!--<li class="divider"></li>-->
                         <li>
                             <a href="" ng-click="openReportErrorModal(videoTag)">
                                 <span class="glyphicon glyphicon-warning-sign"></span> 
                                 Report an error
                             </a>
                         </li>
-                        <li>
+                        <li ng-if="(videoTag.status === 'pending' || videoTag.status === 'rejected') &&
+                            videoTag.user_id === authData.user.id">
                             <a ui-sref="addtag({videoId:videoTag.video_id, tagId:videoTag.id})">
                                 <span class="glyphicon glyphicon-edit"></span> 
                                 Edit

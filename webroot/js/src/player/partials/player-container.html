@@ -1,53 +1,63 @@
 <div
     ng-style="resizeWithOffset()" 
     resize 
-    notifier="notifyServiceOnChage(params)"
-    ng-show="!SharedData.loadingState && !videoTagData.loading">
+    notifier="notifyServiceOnChage(params)">
+    <div ng-show="SharedData.loadingState || videoTagData.loading" class="pick-video-message">
+        <p>
+            Loading...
+        <p/>
+    </div>
+    <div ng-show="!SharedData.loadingState && !videoTagData.loading">
 
-    <div ng-show="playerData.hasError()" 
-         class="pick-video-message">
-        <p>
-            Oups, we cannot load the player...
-        <p/>
-        <p>
-            Try again later...
-        </p>
-    </div>
-    <div ng-show="!playerData.hasError() && videoTagData.currentTag == null && videoTagData.data.length === 0" 
-         class="pick-video-message">
-        <p>
-            Oups, there is no tricks registered yet... 
-        <p/>
-        <p>
-            <a ui-sref="addvideo"> Add tricks now</a>
-        </p>
-    </div>
-    <div ng-show="videoTagData.currentTag != null || videoTagData.data.length > 0">
-        <div class="nopadding player-container"  ng-show="playerData.data.video_url"  >
-            <div 
-                ng-show="videoTagData.hasPrev()"
-                class="player-prev-trick" 
-                ng-click="prevTrick()">
-                <span class="glyphicon glyphicon-arrow-left"></span>
-            </div>
-            <div class="iframe-wrapper res-16by9">   
-                <youtube
-                    ng-if="playerData.isProvider('youtube')"
-                    player-data="playerData" 
-                    frameborder="0">
-                </youtube> 
-                
-                <vimeo-video  
-                    ng-if="playerData.isProvider('vimeo')"
-                    id="vimeoplayer"
-                    player-data="playerData">
-                </vimeo-video>
-            </div>
-            <div 
-                ng-show="videoTagData.hasNext()"
-                class="player-next-trick"  
-                ng-click="nextTrick()">
-                <span class="glyphicon glyphicon-arrow-right"></span>
+        <div ng-show="playerData.hasError()" 
+             class="pick-video-message">
+            <p>
+                Oups, we cannot load the player...
+            <p/>
+            <p>
+                Try again later...
+            </p>
+        </div>
+        <div ng-show="!playerData.hasError()
+                        && videoTagData.currentTag == null && !videoTagData.getLoader().hasData()" 
+             class="pick-video-message">
+            <p ng-if="playerData.isMode('view')">
+                Oups, there is no tricks registered yet... 
+            <p/>
+            <p ng-if="playerData.isMode('validation')">
+                Thanks for your help but there is nothing to validate for now...
+            <p/>
+            <p>
+                <a ui-sref="addvideo"> Add tricks now</a>
+            </p>
+        </div>
+        <div ng-show="videoTagData.currentTag != null || videoTagData.getLoader().hasData()">
+            <div class="nopadding player-container"  ng-show="playerData.data.video_url"  >
+                <div 
+                    ng-show="videoTagData.hasPrev()"
+                    class="player-prev-trick" 
+                    ng-click="prevTrick()">
+                    <span class="glyphicon glyphicon-arrow-left"></span>
+                </div>
+                <div class="iframe-wrapper res-16by9">   
+                    <youtube
+                        ng-if="playerData.isProvider('youtube')"
+                        player-data="playerData" 
+                        frameborder="0">
+                    </youtube> 
+
+                    <vimeo-video  
+                        ng-if="playerData.isProvider('vimeo')"
+                        id="vimeoplayer"
+                        player-data="playerData">
+                    </vimeo-video>
+                </div>
+                <div 
+                    ng-show="videoTagData.hasNext()"
+                    class="player-next-trick"  
+                    ng-click="nextTrick()">
+                    <span class="glyphicon glyphicon-arrow-right"></span>
+                </div>
             </div>
         </div>
     </div>

@@ -71,7 +71,7 @@ class VideoTagsController extends AppController {
         $videoTag = $this->VideoTags->newEntity();
         if ($this->request->is('post')) {
             $data = $this->request->data;
-            
+
             $tagId = null;
             // Creating a new tag if needed !
             if (isset($data['tag'])) {
@@ -90,10 +90,10 @@ class VideoTagsController extends AppController {
 
             $videoTag = $this->VideoTags->patchEntity($videoTag, $data);
             $videoTag->user_id = $this->Auth->user('id');
-            if ($tagId !== null){
+            if ($tagId !== null) {
                 $videoTag->tag_id = $tagId;
             }
-            
+
             if ($this->VideoTags->save($videoTag)) {
                 ResultMessage::setMessage(__('Your trick has been saved.'), true);
                 ResultMessage::setData('video_tag_id', $videoTag->id);
@@ -112,7 +112,7 @@ class VideoTagsController extends AppController {
                     $this->request->is('post') && !empty($this->request->data)) {
 
                 $videoTag = $this->VideoTags->get($id);
-                if (!$videoTag->isEditabled()){
+                if (!$videoTag->isEditabled($this->Auth->user('id'))) {
                     ResultMessage::setMessage(__('Sorry but you are not allowed to modified this trick.'), false);
                     return;
                 }
@@ -130,6 +130,31 @@ class VideoTagsController extends AppController {
         } catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
             throw new \Cake\Network\Exception\NotFoundException();
         }
+    }
+
+    /**
+     * Return the next trick to validate
+     * TODO add order on last status changed
+     */
+    public function validation() {
+        ResultMessage::setWrapper(false);
+        $skipped = [];
+        if (!empty($this->request->query['skipped'])){
+            $skipped = explode(',', $this->request->query['skipped']);
+        }
+        $query = $this->VideoTags->findAndJoin()
+                ->where([
+                    'VideoTags.status' => VideoTag::STATUS_PENDING
+                ])
+                ->notMatching('VideoTagAccuracyRates', function ($q) {
+                    return $q->where(['VideoTagAccuracyRates.user_id' => $this->Auth->user('id')]);
+                })
+//                ->order([''])
+                ->limit(1);
+        if (count($skipped) > 0){
+            $query->where(['VideoTags.id NOT IN' => $skipped]);
+        }
+        ResultMessage::overwriteData($query->all());
     }
 
     /**
@@ -218,13 +243,21 @@ class VideoTagsController extends AppController {
             if (DataUtil::isPositiveInt($this->request->query, 'rider_id')) {
                 $query->where(['VideoTags.rider_id' => (int) $this->request->query['rider_id']]);
             }
-            if (!empty($this->request->query['with_pending'])) {
-                $query->where(['VideoTags.status IN' => [VideoTag::STATUS_PENDING, VideoTag::STATUS_VALIDATED]]);
+
+            if (!empty($this->request->query['status']) && $this->Auth->user('id')) {
+                // TODO limit size of string
+                $status = explode(',', $this->request->query['status']);
+                $query->where([
+                    'VideoTags.status IN' => $status, 
+                    'VideoTags.user_id' => $this->Auth->user('id')
+                ]);
             }
-            else{
+            else if (!empty($this->request->query['with_pending'])) {
+                $query->where(['VideoTags.status IN' => [VideoTag::STATUS_PENDING, VideoTag::STATUS_VALIDATED]]);
+            } else {
                 $query->where(['VideoTags.status ' => VideoTag::STATUS_VALIDATED]);
             }
-            
+
             if (!empty($this->request->query['tag_name'])) {
                 $str = $this->request->query['tag_name'];
                 \App\Model\Table\TableUtil::multipleWordSearch($query, $str, 'Tags.name');
@@ -234,6 +267,7 @@ class VideoTagsController extends AppController {
 //                
 //            ]
 //        }
+//            debug($query->sql());
             ResultMessage::overwriteData($this->paginate($query, $paginateOptions));
         } catch (NotFoundException $e) {
             ResultMessage::overwriteData([]);

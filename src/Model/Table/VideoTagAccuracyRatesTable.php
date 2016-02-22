@@ -111,12 +111,13 @@ class VideoTagAccuracyRatesTable extends Table {
         $totalRate = $videoTag->count_fake + $videoTag->count_accurate + 1;
         if ($totalRate >= Configure::read('VideoTagValidation.min_rate')) {
             if ($entity->value === VideoTagAccuracyRate::VALUE_ACCURATE) {
-                $threshold = ($videoTag->count_accurate + 1) / $totalRate;
+                $videoTag->count_accurate++;
+                $threshold = $videoTag->count_accurate / $totalRate;
                 $newStatus = ($threshold >= Configure::read('VideoTagValidation.threshold_accurate')) 
                         ? \App\Model\Entity\VideoTag::STATUS_VALIDATED 
                         : null;
             } else {
-                $threshold = ($videoTag->count_fake + 1) / $totalRate;
+                $threshold = $videoTag->count_fake++ / $totalRate;
                 $newStatus = ($threshold >= Configure::read('VideoTagValidation.threshold_fake')) 
                         ? \App\Model\Entity\VideoTag::STATUS_REJECTED 
                         : null;

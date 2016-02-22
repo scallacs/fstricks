@@ -90,6 +90,7 @@ angular.module('app.player')
                             PlayerData.setPlayer('youtube', YoutubeCmdMapper.create(player));
                         },
                         onStateChange: function(event) {
+                            var intervalDuration = 100; // 100 means repeat in 100 ms
                             clearInterval(myTimer);
                             switch (event.data) {
                                 case YT.PlayerState.PLAYING:
@@ -98,7 +99,11 @@ angular.module('app.player')
                                         PlayerData.onPlayProgress(newTime);
                                         PlayerData.onCurrentTimeUpdate(newTime);
                                         PlayerData.data.currentTime = newTime;
-                                    }, 200); // 100 means repeat in 100 ms
+                                        if (PlayerData.looping && (PlayerData.data.end - newTime) < (intervalDuration/1000)){
+                                            console.log("Pre on end triggerd");
+                                            PlayerData.onEnd();
+                                        }
+                                    }, intervalDuration); 
                                     break
                             }
                         }

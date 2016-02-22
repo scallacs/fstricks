@@ -53,6 +53,9 @@ class VideoTagsTable extends Table {
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id'
         ]);
+        $this->hasMany('VideoTagAccuracyRates', [
+            'foreignKey' => 'video_tag_id'
+        ]);
     }
 
     /**
@@ -106,10 +109,6 @@ class VideoTagsTable extends Table {
                             'end' => 'VideoTags.end',
                             'user_id' => 'VideoTags.user_id',
                             'status' => 'VideoTags.status'
-                        ])
-                        ->where([
-//                            'VideoTags.status' => VideoTag::STATUS_VALIDATED,
-//                            'VideoTags.count_points >=' => 'VideoTags.count_report_errors'
                         ])
                         ->contain([
                             'Videos' => $queryVideo,
@@ -209,7 +208,7 @@ class VideoTagsTable extends Table {
                     'VideoTags.status' => VideoTag::STATUS_VALIDATED,
                     '(LEAST(' . $entity->end . ', end) - GREATEST(' . $entity->begin . ', begin))/(end - begin) > ' . self::SIMILARITY_RATIO_THRESHOLD,
                 ];
-                if (!$entity->isNew()){
+                if (!$entity->isNew()) {
                     $conditions['VideoTags.id !='] = $entity->id;
                 }
                 return !$this->exists($conditions);
@@ -225,8 +224,34 @@ class VideoTagsTable extends Table {
      * @param \App\Model\Table\ArrayObject $options
      */
     public function beforeSave($event, $entity, $options) {
+        $entity->_delete_accuracy_rates = false;
+        
+        $entity->modified = new Data('c');
         if ($entity->isNew() && empty($entity->status)) {
             $entity->status = VideoTag::STATUS_PENDING;
+        } 
+        else if (!$entity->isNew() && ($entity->status === VideoTag::STATUS_REJECTED
+                || $entity->status === VideoTag::STATUS_PENDING)) {
+            // Reset counter
+            $entity->status = VideoTag::STATUS_PENDING;
+            $entity->count_accurate = 0;
+            $entity->count_fake = 0;
+            $entity->_delete_accuracy_rates = true;
+        }
+    }
+
+    /**
+     * @param \App\Model\Table\Event $event
+     * @param \Cake\ORM\Entity $entity
+     * @param \App\Model\Table\ArrayObject $options
+     */
+    public function afterSave($event, $entity, $options)  {
+        // Delete all user rates
+        if ($entity->_delete_accuracy_rates) {
+            $accuracyRatesTable = \Cake\ORM\TableRegistry::get('VideoTagAccuracyRates');
+            $accuracyRatesTable->deleteAll([
+                'video_tag_id' => $entity->id
+            ]);
         }
     }
 

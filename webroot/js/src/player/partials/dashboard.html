@@ -1,0 +1,30 @@
+
+<div class="container margin-top">
+
+    <div class="bg-primary section">
+        <h3 class="page-title">
+            <span class="glyphicon glyphicon-list"></span> 
+            My tricks
+        </h3>
+
+        <uib-tabset>
+            <uib-tab 
+                ng-repeat="workspace in workspaces"
+                heading="{{workspace.name}}"
+                active=workspace.active
+                ng-click="onWorkspace(workspace)">
+                <div class="padding-sm">
+                    <div ng-if="!workspace.loader.hasData()" class="text-center text-info">
+                        Nothing yet
+                    </div>
+                    <div ng-if="workspace.loader.hasData()">
+                        <div
+                            ng-repeat="videoTag in workspace.loader.data.items" 
+                            video-tag-item 
+                            video-tag="videoTag"></div>
+                    </div>
+                </div>     
+            </uib-tab>
+        </uib-tabset>
+    </div>
+</div>

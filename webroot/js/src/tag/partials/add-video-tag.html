@@ -17,18 +17,6 @@
 
             <div 
                 ng-show="!showCreateRiderForm">
-                <p 
-                    ng-if="!editionTag.isEditabled()"
-                    class="padding-sm margin-top text-center text-bold text-danger">
-                    <span class="glyphicon glyphicon-warning-sign"></span>
-                    This trick cannot be modified  
-                    <span ng-if="editionTag.isValidated()">
-                        brecause it's already validated. Report an error if there is a problem! 
-                    </span>
-                    <span ng-if="!editionTag.isValidated() && !editionTag.isOwner()">
-                        because you're not the creator.
-                    </span>
-                </p>
 
                 <form id="FormAddVideoTag"
                       class="form padding-sm" 
@@ -223,6 +211,36 @@
                             </div>
                             <hr/>
                         </div>
+
+                        <p 
+                            ng-if="!editionTag.isEditabled()"
+                            class="padding-sm margin-top text-center text-bold text-danger">
+                            <span class="glyphicon glyphicon-warning-sign"></span>
+                            This trick cannot be modified  
+                            <span ng-if="editionTag.isValidated()">
+                                brecause it's already validated. Report an error if there is a problem! 
+                            </span>
+                            <span ng-if="!editionTag.isValidated() && !editionTag.isOwner()">
+                                because you're not the creator.
+                            </span>
+                        </p>
+
+                        <p ng-if="editionTag.isEditabled() && editionTag._video_tag.status === 'rejected'"
+                           class="padding-sm margin-top text-center text-bold text-danger">
+                            <span class="glyphicon glyphicon-warning-sign"></span>
+                            This trick has not be validated due to some invalid informations.
+                            Please correct them. 
+                        </p>
+
+                        <p ng-if="editionTag.isEditabled() && 
+                           !editionTag.isNew() && 
+                           editionTag._video_tag.status === 'pending'"
+                           class="padding-sm margin-top text-center text-bold text-danger">
+                            <span class="glyphicon glyphicon-warning-sign"></span>
+                            This trick is being validated. If you make changes, the validation process 
+                            will start over. 
+                        </p>
+
                         <div class="text-right form-group"
                              ng-if="editionTag.isEditabled()">
                             <button ng-if="!playerData.looping" type="button"  
@@ -283,8 +301,8 @@
     </div>
     <div class="col-md-6 nopadding">
         <div class="full-player" player-container></div>
-        
-        <div ng-if="video.duration" player-bar video-tags="videoTagData.data" duration="video.duration"></div>
+
+        <div ng-if="video.duration" player-bar video-tags="videoTagData.getItems()" duration="video.duration"></div>
         <div class="form-group">
             <div
                 class="margin-top"

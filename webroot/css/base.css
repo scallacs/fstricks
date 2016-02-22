@@ -386,7 +386,7 @@ header .navbar-nav > li > a{
     position: relative;
     background: #111;
     /* border-bottom: 1px solid #333; */
-    border-right: 1px solid #333;
+    /* border-right: 1px solid #333; */
 }
 .item.active{
     background: #000;
@@ -501,6 +501,7 @@ header .navbar-nav > li > a{
 
 .player-container{
     margin: 0 auto;
+    overflow: hidden;
 }
 
 .nopadding.player-container {}

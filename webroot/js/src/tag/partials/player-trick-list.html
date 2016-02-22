@@ -1,29 +1,27 @@
 <div
     class="container-fluid"
     ng-show="playerData.showListTricks"
-    infinite-scroll='videoTagData.loadNextPage()' 
-    infinite-scroll-disabled='videoTagData.disabled' 
+    infinite-scroll='videoTagData.getLoader().loadNextPage()' 
+    infinite-scroll-disabled='videoTagData.getLoader().disabled' 
     infinite-scroll-distance='0.1'
     infinite-scroll-immediate-check="false"
     >
 
-    <div class="row" ng-if="playerData.editionMode">
+    <div class="row" ng-if="playerData.isMode('edition')">
         <button class="btn btn-success btn-block btn-add-tag" ng-click="addNewTag()">
             <span class="glyphicon glyphicon-plus-sign"></span> 
             Add a trick
         </button>
     </div>
 
-    <div ng-repeat="videoTag in videoTagData.data" ng-if="$index % 2 == 0" class="row clearfix">
+    <div ng-repeat="videoTag in videoTagData.getItems()" ng-if="$index % 2 == 0" class="row clearfix">
         <div class="col-sm-6 nopadding">
             <div video-tag-item 
-                 video-tag="videoTag" 
-                 player-data="playerData"></div>
+                 video-tag="videoTag"></div>
         </div>
-        <div class="col-sm-6 nopadding" ng-if="videoTagData.data.length > $index + 1">
+        <div class="col-sm-6 nopadding" ng-if="videoTagData.getItems().length > $index + 1">
             <div video-tag-item 
-                 video-tag="videoTagData.data[$index+1]" 
-                 player-data="playerData"></div>
+                 video-tag="videoTagData.getItems()[$index+1]"></div>
         </div>
         <div style='clear: both;'></div>
     </div>

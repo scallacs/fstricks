@@ -358,14 +358,14 @@ function AddVideoTagController($scope, $filter,
     function init() {
         PlayerData.showListTricks = false;
         VideoTagData.reset();
-        VideoTagData.setFilter('with_pending', true);
-        VideoTagData.setFilter('video_id', $stateParams.videoId);
+        VideoTagData.getLoader().setFilter('with_pending', true);
+        VideoTagData.getLoader().setFilter('video_id', $stateParams.videoId);
         VideoEntity.view({id: $stateParams.videoId}, function(video) {
             $scope.video = video;
             PlayerData.data.duration = video.duration;
             // When data are loaded we set in the editor the tag id to edit
             if ($stateParams.tagId) {
-                VideoTagData.loadAll().then(function(data) {
+                VideoTagData.getLoader().loadAll().then(function(data) {
                     for (var i = 0; i < data.length; i++) {
                         if (data[i].id == $stateParams.tagId) {
                             console.log("Tag to edit found!");
@@ -383,7 +383,7 @@ function AddVideoTagController($scope, $filter,
                         .catch(onVideoNotFound);
             }
             else {
-                VideoTagData.startLoading();
+                VideoTagData.getLoader().startLoading();
                 PlayerData.loadVideo({provider: video.provider_id, video_url: video.video_url})
                         .then(addNewTag)
                         .finally(function() {
@@ -419,7 +419,7 @@ function AddVideoTagController($scope, $filter,
 
         promise.then(function(response) {
             if (response.success) {
-                VideoTagData.delete(editionTag.getId());
+                VideoTagData.getLoader().remove(editionTag.getId());
                 addNewTag();
             }
         });
@@ -459,7 +459,7 @@ function AddVideoTagController($scope, $filter,
                     editionTag.setId(response.data.video_tag_id);
                     var newTag = editionTag.toVideoTag();
                     editionTag._original = newTag;
-                    VideoTagData.add(newTag);
+                    VideoTagData.getLoader().add(newTag);
                     PlayerData.playVideoTag(newTag);
                 }
             });
@@ -483,7 +483,7 @@ function AddVideoTagController($scope, $filter,
         var end = videoTag.end;
         console.log('Finding similar tags...');
         var similarTags = [];
-        angular.forEach(VideoTagData.data, function(tag) {
+        angular.forEach(VideoTagData.getItems(), function(tag) {
             // Contain
             var commonSeconds = Math.min(tag.end, end) - Math.max(tag.begin, begin);
             // Check percentage in common with other tag

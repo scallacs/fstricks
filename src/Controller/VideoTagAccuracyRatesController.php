@@ -44,9 +44,9 @@ class VideoTagAccuracyRatesController extends AppController {
             if ($this->VideoTagAccuracyRates->save($videoTagAccuracyRate, ['checkExisting' => false])) {
                 ResultMessage::setMessage(__('Your rate has been saved.'), true);
                 ResultMessage::overwriteData([
-                    'count_fake' => 1,
-                    'count_accurate' => 1,
-                    'new_status' => 'todo'
+                    'count_fake' => $videoTagAccuracyRate->videoTag->count_fake,
+                    'count_accurate' => $videoTagAccuracyRate->videoTag->count_accurate,
+                    'status' => $videoTagAccuracyRate->videoTag->status
                 ]);
             } else {
                 ResultMessage::setMessage(__('Cannot add your rate for now. Please try again later.'), false);

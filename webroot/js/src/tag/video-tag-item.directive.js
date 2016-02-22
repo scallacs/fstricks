@@ -2,21 +2,22 @@ angular.module('app.tag')
         .directive('videoTagItem', videoTagItem);
 
 videoTagItem.$inject = ['PlayerData'];
-function videoTagItem(PlayerData) {
+function videoTagItem(VideoTagAccuracyRateEntity) {
     return {
         restrict: 'EA',
         templateUrl: 'js/src/tag/partials/video-tag-item.html',
         scope: {
-            videoTag: '=videoTag',
-            editionMode: '@'
+            videoTag: '=videoTag'
         },
-        controller: function($scope, $uibModal, PlayerData, VideoTagData) {
+        controller: function($scope, $uibModal, PlayerData, VideoTagData, AuthenticationService) {
 
             $scope.openReportErrorModal = openReportErrorModal;
             $scope.view = view;
             $scope.playerData = PlayerData;
             $scope.videoTagData = VideoTagData;
 
+            $scope.authData = AuthenticationService.authData;
+            
             function openReportErrorModal(videoTag) {
                 var modal = $uibModal.open({
                     templateUrl: 'js/src/tag/partials/report_error_form.html',
@@ -34,11 +35,10 @@ function videoTagItem(PlayerData) {
                 $scope.$emit("view-video-tag", videoTag);
                 PlayerData.playVideoTag(videoTag);
             }
+            
 
         },
-        link: function($scope, element) {
-            $scope.editionMode = angular.isDefined($scope.editionMode) ? $scope.playerData.editionMode : false;
-            
+        link: function($scope, element, attr) {
             if ($scope.videoTag.provider_id === 'youtube'){
                 $scope.videoTag.thumbnail = 'https://i.ytimg.com/vi/'+$scope.videoTag.video_url+'/default.jpg';
             }

@@ -2,6 +2,7 @@ angular
         .module('app.core', ['ngCookies'])
         .factory('PlayerData', PlayerData)
         .factory('VideoTagData', VideoTagData)
+        .factory('VideoTagLoader', VideoTagLoader)
         .factory('SharedData', SharedData)
         .factory('NationalityEntity', NationalityEntity)
         .factory('RiderEntity', RiderEntity)
@@ -14,6 +15,7 @@ angular
         .factory('VideoTagEntity', VideoTagEntity)
         .factory('AuthenticationService', AuthenticationService)
         .factory('ServerConfigEntity', ServerConfigEntity)
+        .factory('VideoTagAccuracyRateEntity', VideoTagAccuracyRateEntity)
         .filter('searchCategory', searchCategory)
         .filter('getSportByName', getSportByName);
 
@@ -28,7 +30,7 @@ function PlayerData(VideoTagData, $q) {
             this.players = {};
             this.visible = true;
             this.showListTricks = true;
-            this.editionMode = false;
+            this.mode = 'view';
             this.looping = false; // True if we want to loop on the current tag
             this.onCurrentTimeUpdate = function() {
             };
@@ -55,6 +57,8 @@ function PlayerData(VideoTagData, $q) {
         },
         showEditionMode: showEditionMode,
         showViewMode: showViewMode,
+        showValidationMode: showValidationMode,
+        isMode: isMode,
         getPromise: getPromise,
         getPlayer: getPlayer,
         isProvider: isProvider,
@@ -80,6 +84,10 @@ function PlayerData(VideoTagData, $q) {
     obj.init();
 
     return obj;
+
+    function isMode(m) {
+        return this.mode === m;
+    }
 
     function onEnd() {
         console.log("onEnd() reached !");
@@ -107,12 +115,18 @@ function PlayerData(VideoTagData, $q) {
 
     function showEditionMode() {
         this.reset();
-        this.editionMode = true;
+        this.mode = 'edition';
     }
 
     function showViewMode() {
         this.reset();
-        this.editionMode = false;
+        this.mode = 'view';
+        this.visible = true;
+    }
+
+    function showValidationMode() {
+        this.reset();
+        this.mode = 'validation';
         this.visible = true;
     }
 
@@ -254,62 +268,179 @@ function PlayerData(VideoTagData, $q) {
     }
 }
 
-function VideoTagData(VideoTagEntity, $q) {
+function VideoTagLoader(VideoTagEntity, $q) {
+
+    function VideoTagLoader() {
+        this.init();
+    }
+    VideoTagLoader.prototype.init = init;
+    VideoTagLoader.prototype.loadAll = loadAll;
+    VideoTagLoader.prototype.loadNextPage = loadNextPage;
+    VideoTagLoader.prototype.loadPage = loadPage;
+    VideoTagLoader.prototype.setFilters = setFilters;
+    VideoTagLoader.prototype.setFilter = setFilter;
+    VideoTagLoader.prototype.setLimit = setLimit;
+    VideoTagLoader.prototype.remove = remove;
+    VideoTagLoader.prototype.startLoading = startLoading;;
+    VideoTagLoader.prototype.setOrder = setOrder;;
+    VideoTagLoader.prototype.add = add;
+    VideoTagLoader.prototype.hasData = hasData;
+
+    return {
+        instances: {},
+        instance: function(name) {
+            if (!angular.isDefined(this.instances[name])) {
+                this.instances[name] = new VideoTagLoader();
+            }
+            return this.instances[name];
+        }
+    };
+
+    function init() {
+        this.filters = {};
+        this.data = {
+            total: null,
+            items: []
+        };
+        this.limit = 20; // TODO synchro server
+        this.disabled = true;
+        this.currentPage = 1;
+        this.cachePage = {};
+        return this;
+    }
+
+    function setLimit(l) {
+        this.limit = l;
+        this.setFilter('limit', l);
+        return this;
+    }
+    
+    function hasData(){
+        return this.data.items.length > 0;
+    }
+
+    function setOrder(value) {
+        this.filters.order = value;
+    }
+    
+    function add(tag) {
+        this.data.items.push(tag);
+    }
+
+    function loadAll() {
+        var that = this;
+        var deferred = $q.defer();
+
+        this.loadNextPage()
+                .then(successCallback)
+                .catch(function() {
+                    deferred.reject(0);
+                });
+
+        return deferred.promise;
+
+        function successCallback(results) {
+            if (that.disabled) {
+                deferred.resolve(results);
+            }
+            else {
+                VideoTagLoader.loadNextPage().then(successCallback);
+            }
+        }
+    }
+
+    function startLoading() {
+        this.disabled = false;
+        return this.loadPage(1);
+    }
+
+    function loadNextPage() {
+        var that = this;
+        this.disabled = true;
+        var promise = this.loadPage(this.currentPage);
+        this.currentPage += 1;
+        promise.then(function(tags) {
+            if (tags.length < that.limit) {
+                console.log('disabling video tag data loader');
+                that.disabled = true;
+            }
+            else {
+                that.disabled = false;
+            }
+        });
+        return promise;
+    }
+
+    function loadPage(page) {
+        var that = this;
+        console.log('Request page ' + page + ' with filter: ');
+        console.log(this.filters);
+//        console.log(that.data.items);
+        if (this.cachePage[page]) {
+            return this.cachePage[page];
+        }
+        this.filters.page = page;
+        this.cachePage[page] = VideoTagEntity.search(this.filters, function(tags) {
+            console.log('Loading page ' + page + ' response: ' + tags.length + ' tag(s)');
+            for (var i = 0; i < tags.length; i++) {
+                that.data.items.push(tags[i]);
+            }
+        }, function() {
+            that.disabled = true;
+        }).$promise;
+        return this.cachePage[page];
+    }
+
+    function setFilter(name, value) {
+        this.filters[name] = value;
+        return this;
+    }
+
+    function setFilters(value) {
+        this.init();
+        console.log("Setting filters: ");
+        console.log(value);
+        this.filters = value;
+        return this;
+    }
+
+    function remove(id) {
+        for (var i = 0; i < this.data.length; i++) {
+            if (this.data[i].id === id) {
+                this.data.splice(i, 1);
+            }
+        }
+    }
+}
+
+function VideoTagData(VideoTagLoader) {
 
     var obj = {
-        filters: {},
+        getLoader: function() {
+            return VideoTagLoader.instance('default');
+        },
         currentTag: null,
-        data: [],
-        limit: 20, // TODO synchro server
-        disabled: true,
-        currentPage: 1,
-        delete: function(id) {
-            for (var i = 0; i < this.data.length; i++) {
-                if (this.data[i].id === id) {
-                    this.data.splice(i, 1);
-                }
-            }
-        },
-        startLoading: function() {
-            this.disabled = false;
-            return this.loadPage(1);
-        },
         setCurrentTag: function(tag) {
             this.currentTag = tag;
         },
         reset: function() {
-            this.currentTag = null;
-            this.currentPage = 1;
-            this.data = [];
-            this.disabled = true;
-            this.cachePage = {};
-            obj.filters = {};
-        },
-        setFilter: function(name, value) {
-            obj.filters[name] = value;
-        },
-        setFilters: function(value) {
-            this.reset();
-            obj.filters = value;
-        },
-        setOrder: function(value) {
-            obj.filters.order = value;
-        },
-        add: function(tag) {
-            this.data.push(tag);
+            VideoTagLoader.instance('default').init();
         },
         next: function() {
-            return this.data[Math.min(this.data.length - 1, this._getCurrentIndice() + 1)];
+            return this.getItems()[Math.min(this.getItems().length - 1, this._getCurrentIndice() + 1)];
+        },
+        getItems: function(){
+            return this.getLoader().data.items;
         },
         hasPrev: function() {
-            return this.data.length > 0 && obj.currentTag !== null && obj.currentTag.id !== this.data[0].id;
+            return this.getItems().length > 0 && obj.currentTag !== null && obj.currentTag.id !== this.getItems()[0].id;
         },
         hasNext: function() {
-            //console.log(obj.currentTag.id+ ' != ' + this.data[this.data.length - 1].id);
-            return this.data.length > 0 && obj.currentTag !== null && obj.currentTag.id !== this.data[this.data.length - 1].id;
+            //console.log(obj.currentTag.id+ ' != ' + this.getItems()[this.getItems().length - 1].id);
+            return this.getItems().length > 0 && obj.currentTag !== null && obj.currentTag.id !== this.getItems()[this.getItems().length - 1].id;
         },
         prev: function() {
-            return this.data[Math.max(0, this._getCurrentIndice() - 1)];
+            return this.getItems()[Math.max(0, this._getCurrentIndice() - 1)];
         },
         findNextTagToPlay: function(playerTime) {
             return this._findTagToPlay(playerTime, 1);
@@ -318,10 +449,10 @@ function VideoTagData(VideoTagEntity, $q) {
             return this._findTagToPlay(playerTime, -1);
         },
         _findTagToPlay: function(playerTime, m) {
-            for (var i = 0; i < this.data.length; i++) {
-                if (m * this.data[i].begin > m * playerTime) {
-                    console.log("Found next tag: " + this.data[i].id);
-                    return this.data[i];
+            for (var i = 0; i < this.getItems().length; i++) {
+                if (m * this.getItems()[i].begin > m * playerTime) {
+                    console.log("Found next tag: " + this.getItems()[i].id);
+                    return this.getItems()[i];
                 }
             }
             return null;
@@ -330,68 +461,12 @@ function VideoTagData(VideoTagEntity, $q) {
             if (obj.currentTag === null) {
                 return 0;
             }
-            for (var i = 0; i < this.data.length; i++) {
-                if (this.data[i].id === obj.currentTag.id) {
+            for (var i = 0; i < this.getItems().length; i++) {
+                if (this.getItems()[i].id === obj.currentTag.id) {
                     return i;
                 }
             }
             return 0;
-        },
-        cachePage: {},
-        loadAll: function() {
-            var deferred = $q.defer();
-
-            this.loadNextPage()
-                    .then(successCallback)
-                    .catch(function() {
-                        deferred.reject(0);
-                    });
-
-            function successCallback(results) {
-                if (obj.disabled) {
-                    deferred.resolve(results);
-                }
-                else {
-                    obj.loadNextPage().then(successCallback);
-                }
-            }
-
-            return deferred.promise;
-        },
-        loadNextPage: function() {
-            obj.disabled = true;
-            var promise = this.loadPage(this.currentPage);
-            obj.currentPage += 1;
-            promise.then(function(tags) {
-                if (tags.length < obj.limit) {
-                    console.log('disabling video tag data loader');
-                    obj.disabled = true;
-                }
-                else {
-                    obj.disabled = false;
-                }
-            });
-            return promise;
-        },
-        loadPage: function(page) {
-            console.log('Request page ' + page + ' with filter: ');
-            console.log(obj.filters);
-            if (this.cachePage[page]) {
-                return this.cachePage[page];
-            }
-//            if (this.disabled) {
-//                // TODO 
-//            }
-            obj.filters.page = page;
-            this.cachePage[page] = VideoTagEntity.search(obj.filters, function(tags) {
-                console.log('Loading page ' + page + ' response: ' + tags.length + ' tag(s)');
-                for (var i = 0; i < tags.length; i++) {
-                    obj.data.push(tags[i]);
-                }
-            }, function() {
-                obj.disabled = true;
-            }).$promise;
-            return this.cachePage[page];
         }
     };
 
@@ -605,6 +680,23 @@ function VideoTagPointEntity($resource) {
     });
 }
 
+
+function VideoTagAccuracyRateEntity($resource) {
+    var url = WEBROOT_FULL + '/VideoTagAccuracyRates/:action.json';
+    return $resource(url, {action: '@action'}, {
+        accurate: {
+            method: 'POST',
+            params: {action: 'accurate'},
+            isArray: false
+        },
+        fake: {
+            method: 'POST',
+            params: {action: 'fake'},
+            isArray: false
+        }
+    });
+}
+
 function VideoTagEntity($resource) {
     var url = WEBROOT_FULL + '/VideoTags/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
@@ -631,6 +723,11 @@ function VideoTagEntity($resource) {
         search: {
             method: 'GET',
             params: {action: 'search'},
+            isArray: true
+        },
+        validation: {
+            method: 'GET',
+            params: {action: 'validation'},
             isArray: true
         },
         rider: {

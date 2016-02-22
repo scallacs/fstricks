@@ -92,6 +92,7 @@
 <?= $this->Html->script('src/player/video-item.directive'); ?>
 <?= $this->Html->script('src/player/rule-provider-video-id.directive'); ?>
 <?= $this->Html->script('src/player/provider-video-info.factory'); ?>
+<?= $this->Html->script('src/player/video-tag-accuracy-rate.directive'); ?>
 
 <?= $this->Html->script('src/tag/app.tag.module'); ?>
 <?= $this->Html->script('src/tag/trick-list.directive'); ?>

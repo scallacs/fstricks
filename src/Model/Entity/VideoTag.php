@@ -48,7 +48,7 @@ class VideoTag extends Entity {
     ];
 
     
-    public function isEditabled(){
-        return $this->status === self::STATUS_PENDING;
+    public function isEditabled($userId){
+        return $this->status === self::STATUS_PENDING && $this->user_id === $userId;
     }
 }

@@ -19,7 +19,9 @@ angular.module('app.player', [
         .controller('ViewRiderController', ViewRiderController)
         .controller('ViewSearchController', ViewSearchController)
         .controller('ViewRealizationController', ViewRealizationController)
-        .controller('ViewPlaylistController', ViewPlaylistController);
+        .controller('ViewValidationController', ViewValidationController)
+        .controller('ViewPlaylistController', ViewPlaylistController)
+        .controller('DashboardController', DashboardController);
 
 ConfigRoute.$inject = ['$stateProvider'];
 function ConfigRoute($stateProvider) {
@@ -40,6 +42,15 @@ function ConfigRoute($stateProvider) {
                 data: {
                     requireLogin: true,
                     pageLoader: false
+                }
+            })
+            .state('dashboard', {
+                url: '/dashboard',
+                controller: 'DashboardController',
+                templateUrl: baseUrl + 'dashboard.html',
+                data: {
+                    requireLogin: true,
+                    pageLoader: true
                 }
             })
             .state('videoplayer', {
@@ -93,6 +104,15 @@ function ConfigRoute($stateProvider) {
                     }
                 }
             })
+            .state('videoplayer.validation', {
+                url: '/validation',
+                views: {
+                    videoPlayerExtra: {
+                        templateUrl: baseUrl + 'view-validation.html',
+                        controller: 'ViewValidationController'
+                    },
+                }
+            })
             .state('videoplayer.best', {
                 url: '/best',
                 views: {
@@ -137,6 +157,37 @@ function ConfigRoute($stateProvider) {
                     }
                 }
             });
+}
+
+function DashboardController($scope, VideoTagLoader, SharedData) {
+
+    $scope.workspaces = [
+        {id: 'pending', name: "Pendings", active: true, filters: {status: 'pending'}},
+        {id: 'rejected', name: "Rejected", active: false, filters: {status: 'rejected'}},
+        {id: 'official', name: "Officials", active: false, filters: {status: 'validated'}},
+    ];
+
+    $scope.onWorkspace = onWorkspaceChanged;
+
+    init();
+
+    function init() {
+        for (var i = 0; i < $scope.workspaces.length; i++) {
+            var workspace = $scope.workspaces[i];
+            workspace.loader = VideoTagLoader.instance(workspace.id).setFilters(workspace.filters);
+        }
+        $scope.workspaces[0].loader.startLoading()
+                .then(function() {
+                    SharedData.pageLoader(false);
+                })
+                .catch(function() {
+                    // TODO 
+                });
+    }
+
+    function onWorkspaceChanged(workspace) {
+        workspace.loader.startLoading();
+    }
 }
 
 function AddVideoController($scope, ProviderVideoInfo, $state,
@@ -238,10 +289,11 @@ function PlayerController($scope, PlayerData, $stateParams, $state) {
 }
 
 function ViewRealizationController(VideoTagData, $stateParams, PlayerData, SharedData, $state) {
+    PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = false;
-    VideoTagData.setFilters({video_tag_id: $stateParams.videoTagId});
-    VideoTagData.startLoading()
+    VideoTagData.getLoader().setFilters({video_tag_id: $stateParams.videoTagId});
+    VideoTagData.getLoader().startLoading()
             .then(function(results) {
                 if (results.length === 1) {
                     PlayerData.playVideoTag(results[0]).then(function() {
@@ -258,10 +310,10 @@ function ViewRealizationController(VideoTagData, $stateParams, PlayerData, Share
 }
 
 function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData) {
+    PlayerData.showViewMode();
     PlayerData.stop();
-    PlayerData.showListTricks = true;
-    VideoTagData.setFilters({tag_id: $stateParams.tagId, order: $stateParams.order});
-    VideoTagData.startLoading().then(function(results) {
+    VideoTagData.getLoader().setFilters({tag_id: $stateParams.tagId, order: $stateParams.order});
+    VideoTagData.getLoader().startLoading().then(function(results) {
         if (results.length === 1) {
             PlayerData.showListTricks = false;
             PlayerData.playVideoTag(results[0]);
@@ -273,11 +325,12 @@ function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData) {
 
 function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData) {
 //    console.log("View sport: " + $stateParams.sportName);
+    PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = true;
     console.log("Viewing sport: " + $stateParams.sportName);
-    VideoTagData.setFilters({sport_name: $stateParams.sportName, order: $stateParams.order});
-    VideoTagData.startLoading().finally(function() {
+    VideoTagData.getLoader().setFilters({sport_name: $stateParams.sportName, order: $stateParams.order});
+    VideoTagData.getLoader().startLoading().finally(function() {
         SharedData.pageLoader(false);
     });
 }
@@ -285,10 +338,11 @@ function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData)
 function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, SharedData, RiderEntity) {
     $scope.rider = {id: $stateParams.riderId};
 
+    PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = false;
-    VideoTagData.setFilters({rider_id: $stateParams.riderId, order: $stateParams.order});
-    VideoTagData.startLoading().finally(function() {
+    VideoTagData.getLoader().setFilters({rider_id: $stateParams.riderId, order: $stateParams.order});
+    VideoTagData.getLoader().startLoading().finally(function() {
         SharedData.pageLoader(false);
     });
 
@@ -299,23 +353,25 @@ function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, Sha
 }
 
 function ViewSearchController(VideoTagData, PlayerData, SharedData, $stateParams) {
+    PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = true;
 //    console.log($stateParams);
     VideoTagData.reset();
-    VideoTagData.setOrder($stateParams.order);
-    VideoTagData.setFilter('tag_name', $stateParams.tagName);
-    VideoTagData.startLoading().finally(function() {
+    VideoTagData.getLoader().setOrder($stateParams.order);
+    VideoTagData.getLoader().setFilter('tag_name', $stateParams.tagName);
+    VideoTagData.getLoader().startLoading().finally(function() {
         SharedData.pageLoader(false);
     });
 }
 
 function ViewPlaylistController(VideoTagData, PlayerData, SharedData, $stateParams) {
+    PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = true;
     VideoTagData.reset();
-    VideoTagData.setFilter('video_tag_ids', $stateParams.ids);
-    VideoTagData.startLoading().finally(function() {
+    VideoTagData.getLoader().setFilter('video_tag_ids', $stateParams.ids);
+    VideoTagData.getLoader().startLoading().finally(function() {
         SharedData.pageLoader(false);
     });
 }
@@ -323,6 +379,7 @@ function ViewPlaylistController(VideoTagData, PlayerData, SharedData, $statePara
 
 function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, SharedData) {
 
+    PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.onCurrentTimeUpdate = onCurrentTimeUpdate;
     PlayerData.showListTricks = false;
@@ -330,8 +387,8 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
         id: $stateParams.videoId
     };
 
-    VideoTagData.setFilters({video_id: $stateParams.videoId, order: 'begin_time'});
-    VideoTagData.loadPage(1).then(autoPlayVideo).catch(function() {
+    VideoTagData.getLoader().setFilters({video_id: $stateParams.videoId, order: 'begin_time'});
+    VideoTagData.getLoader().loadPage(1).then(autoPlayVideo).catch(function() {
         SharedData.pageLoader(false);
     });
 
@@ -350,7 +407,7 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
                 SharedData.pageLoader(false);
             });
             $scope.videoDuration = response[0].video_duration;
-            $scope.videoTags = VideoTagData.data;
+            $scope.videoTags = VideoTagData.getItems();
 //                YoutubeVideoInfo.snippet(response[0].video_url, function(data) {
 //                    //console.log(data);
 //                    if (data !== null) {
@@ -363,6 +420,75 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
         }
     }
 }
+function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, $state, VideoTagEntity, VideoTagAccuracyRateEntity) {
+    var skipped = [];
+
+    PlayerData.stop();
+    PlayerData.showValidationMode();
+    PlayerData.showListTricks = false;
+    VideoTagData.reset();
+    VideoTagData.mode = 'validation';
+    loadNext();
+
+
+    $scope.rateAccurate = rateAccurate;
+    $scope.rateFake = rateFake;
+    $scope.skip = skip;
+
+    function rateAccurate() {
+        $scope.isButtonsLoading = true;
+        VideoTagAccuracyRateEntity.accurate({
+            video_tag_id: $scope.videoTag.id
+        });
+        toNextTag();
+    }
+
+    function rateFake() {
+        VideoTagAccuracyRateEntity.fake({
+            video_tag_id: $scope.videoTag.id
+        });
+        toNextTag();
+    }
+
+    function skip() {
+        skipped.push($scope.videoTag.id);
+        PlayerData.pause();
+        toNextTag();
+    }
+
+    function toNextTag() {
+        PlayerData.pause();
+        SharedData.pageLoader(true);
+        loadNext();
+    }
+
+    function loadNext() {
+        SharedData.pageLoader(true);
+        return VideoTagEntity
+                .validation({skipped: skipped.join(',')})
+                .$promise
+                .then(successLoadCallback)
+                .catch(function() {
+                    $state.go('videoplayer.home');
+                });
+    }
+
+    function successLoadCallback(tags) {
+        VideoTagData.getLoader().data.items = tags;
+        if (tags.length === 1) {
+            PlayerData
+                    .playVideoTag(tags[0])
+                    .then(function() {
+                        SharedData.pageLoader(false);
+                    });
+            $scope.videoTag = tags[0];
+        }
+        else {
+            SharedData.pageLoader(false);
+        }
+    }
+}
+
 
 function VideoTagPointsController($scope, VideoTagPointEntity) {
     $scope.up = up;

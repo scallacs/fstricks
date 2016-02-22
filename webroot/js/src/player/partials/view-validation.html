@@ -1,0 +1,41 @@
+<div class="padding-sm text-center">
+    <button type="button" 
+            class="btn btn-sm btn-success"
+            ng-click="rateAccurate()">
+        <span class="glyphicon glyphicon-check"></span>
+        Accurate
+    </button>
+    <button type="button" 
+            class="btn btn-sm btn-danger"
+            ng-click="rateFake()">
+        <span class="glyphicon glyphicon-remove"></span>
+        Not accurate or incomplete
+    </button>
+    <button type="button" 
+            class="btn btn-sm btn-default"
+            ng-click="skip()">
+        <span class="glyphicon glyphicon-arrow-right"></span>
+        Skip
+    </button>
+    &nbsp;&nbsp;&nbsp;<a ui-sref="addtag({videoId: videoTag.video_id, tagId:videoTag.id})">Propose a better one</a> 
+    &nbsp;&nbsp;&nbsp;<a href="#HowItWorks">How it works ?</a> 
+</div>
+
+
+<div class="bg-primary section padding-sm" id="HowItWorks">
+    <h3> <span class="glyphicon glyphicon-info-sign"></span> How it works ? </h3>
+    <p>
+        We are displaying here all tricks that needs to be validated. You can tell if they
+        are accurate or not, meaning the time range is well specified, the sport, the trick and the name of the rider
+        are correct. You have three choices: 
+    </p>
+    <ul class="list-unstyled">
+        <li>- Skip: if your not sure, or you don't know please skip</li>
+        <li>- Accurate: if you are sure that <span class="text-bold">everything is valid</span>, click on accurate.</li>
+        <li>- Not accurate: if some of the info are not valid, such as the rider or the sport, click on not accurate.</li>
+    </ul>
+    <p>
+        If you want, you can also propose a better trick, for example if the landing is cutted too soon 
+        or the name of the trick is not accurate. To do so just click on "Propose a better one"
+    </p>
+</div>
