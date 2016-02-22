@@ -285,6 +285,7 @@ function VideoTagLoader(VideoTagEntity, $q) {
     VideoTagLoader.prototype.setOrder = setOrder;;
     VideoTagLoader.prototype.add = add;
     VideoTagLoader.prototype.hasData = hasData;
+    VideoTagLoader.prototype.setMethod = setMethod;
 
     return {
         instances: {},
@@ -304,8 +305,15 @@ function VideoTagLoader(VideoTagEntity, $q) {
         };
         this.limit = 20; // TODO synchro server
         this.disabled = true;
+        this.loading = false;
         this.currentPage = 1;
         this.cachePage = {};
+        this.method = 'search';
+        return this;
+    }
+    
+    function setMethod(method){
+        this.method = method;
         return this;
     }
 
@@ -351,7 +359,7 @@ function VideoTagLoader(VideoTagEntity, $q) {
 
     function startLoading() {
         this.disabled = false;
-        return this.loadPage(1);
+        return this.loadNextPage();
     }
 
     function loadNextPage() {
@@ -380,14 +388,17 @@ function VideoTagLoader(VideoTagEntity, $q) {
             return this.cachePage[page];
         }
         this.filters.page = page;
-        this.cachePage[page] = VideoTagEntity.search(this.filters, function(tags) {
+        this.loading = true;
+        this.cachePage[page] = VideoTagEntity[this.method](this.filters, function(tags) {
             console.log('Loading page ' + page + ' response: ' + tags.length + ' tag(s)');
             for (var i = 0; i < tags.length; i++) {
                 that.data.items.push(tags[i]);
             }
         }, function() {
             that.disabled = true;
-        }).$promise;
+        }).$promise.finally(function(){
+            that.loading = false;
+        });
         return this.cachePage[page];
     }
 
@@ -728,6 +739,11 @@ function VideoTagEntity($resource) {
         validation: {
             method: 'GET',
             params: {action: 'validation'},
+            isArray: true
+        },
+        similar: {
+            method: 'POST',
+            params: {action: 'similar'},
             isArray: true
         },
         rider: {

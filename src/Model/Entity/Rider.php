@@ -51,7 +51,7 @@ class Rider extends Entity
         if (self::$mapLevels === null){
             self::initMapLevels();
         }
-        return self::$mapLevels[$this->level];
+        return isset(self::$mapLevels[$this->level]) ? self::$mapLevels[$this->level] : 'Unknown';
     }
     
     protected static function initMapLevels(){

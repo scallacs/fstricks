@@ -147,12 +147,27 @@ class VideoTagsControllerTest extends MyIntegrationTestCase {
      *
      * @return void
      */
-    public function testEditVideoTag() {
-        $this->logUser();
-        $riderId = 1;
-        $tagId = 1;
+    public function testEditVideoTagNotOwner() {
+        $tagId = \App\Test\Fixture\VideoTagsFixture::ID_PENDING;
         $videoTagsTable = \Cake\ORM\TableRegistry::get('VideoTags');
         $videoTagOrigin = $videoTagsTable->get($tagId);
+        
+        $this->logUser($videoTagOrigin->user_id + 1);
+
+        $this->post('/VideoTags/edit/' . $tagId . '.json', ['rider_id' => 1]);
+        $this->assertResponseError(404);
+    }
+    /**
+     * Test that a user cannot modify the video tag execpt the rider ? 
+     *
+     * @return void
+     */
+    public function testEditVideoTag() {
+        $tagId = \App\Test\Fixture\VideoTagsFixture::ID_PENDING;
+        $videoTagsTable = \Cake\ORM\TableRegistry::get('VideoTags');
+        $videoTagOrigin = $videoTagsTable->get($tagId);
+        
+        $this->logUser($videoTagOrigin->user_id);
 
         $data = [
             'begin' => $videoTagOrigin->begin + 1,
@@ -160,6 +175,7 @@ class VideoTagsControllerTest extends MyIntegrationTestCase {
             'video_id' => $videoTagOrigin->video_id + 1,
             'user_id' => $videoTagOrigin->user_id + 1,
             'tag_id' => $videoTagOrigin->tag_id + 1,
+            'rider_id' => $videoTagOrigin->rider_id + 1,
             'count_tags' => 39232,
             'user_id' => $videoTagOrigin->user_id + 1,
             'created' => 2,
@@ -173,40 +189,16 @@ class VideoTagsControllerTest extends MyIntegrationTestCase {
         $this->assertTrue($result['success'], "Rider should be edited properly.");
 
         $videoTag = $videoTagsTable->get($tagId);
-        $this->assertEquals($videoTagOrigin->begin, $videoTag->begin);
-        $this->assertEquals($videoTagOrigin->end, $videoTag->end);
+        $this->assertNotEquals($videoTagOrigin->begin, $videoTag->begin);
+        $this->assertNotEquals($videoTagOrigin->end, $videoTag->end);
+        $this->assertNotEquals($videoTagOrigin->tag_id, $videoTag->tag_id);
+        $this->assertNotEquals($videoTagOrigin->rider_id, $videoTag->rider_id);
+        
         $this->assertEquals($videoTagOrigin->video_id, $videoTag->video_id);
-        $this->assertEquals($videoTagOrigin->tag_id, $videoTag->tag_id);
         $this->assertEquals($videoTagOrigin->user_id, $videoTag->user_id);
         $this->assertEquals($videoTagOrigin->created, $videoTag->created);
         $this->assertEquals($videoTagOrigin->count_points, $videoTag->count_points);
         $this->assertEquals($videoTagOrigin->status, $videoTag->status);
-    }
-
-    /**
-     * Test add method
-     *
-     * @return void
-     */
-    public function testEditRider() {
-        $this->logUser();
-        $newRiderId = 2;
-        $tagId = 1;
-        $videoTagsTable = \Cake\ORM\TableRegistry::get('VideoTags');
-        $videoTagOrigin = $videoTagsTable->get($tagId);
-//        debug($videoTagOrigin);
-        $data = [
-            'rider_id' => $newRiderId,
-        ];
-        $this->post('/VideoTags/edit/' . $tagId . '.json', $data);
-        $this->assertResponseOk();
-        $videoTag = $videoTagsTable->get($tagId);
-        $this->assertNotEquals($videoTagOrigin->rider_id, $videoTag->rider_id, "Rider id should not be the same as origin");
-        $this->assertEquals($newRiderId, $videoTag->rider_id, "Rider id should be edited for this video tag");
-
-        $result = json_decode($this->_response->body(), true);
-//        debug($result);
-        $this->assertTrue($result['success'], "Should return a successfull response.");
     }
 
     /**

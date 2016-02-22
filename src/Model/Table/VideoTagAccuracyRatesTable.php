@@ -109,23 +109,25 @@ class VideoTagAccuracyRatesTable extends Table {
     public function afterSave($event, $entity, $options) {
         $videoTag = $entity->videoTag;
         $totalRate = $videoTag->count_fake + $videoTag->count_accurate + 1;
+
         if ($totalRate >= Configure::read('VideoTagValidation.min_rate')) {
             if ($entity->value === VideoTagAccuracyRate::VALUE_ACCURATE) {
                 $videoTag->count_accurate++;
                 $threshold = $videoTag->count_accurate / $totalRate;
-                $newStatus = ($threshold >= Configure::read('VideoTagValidation.threshold_accurate')) 
-                        ? \App\Model\Entity\VideoTag::STATUS_VALIDATED 
-                        : null;
+                $newStatus = ($threshold >= Configure::read('VideoTagValidation.threshold_accurate')) ? \App\Model\Entity\VideoTag::STATUS_VALIDATED : null;
             } else {
                 $threshold = $videoTag->count_fake++ / $totalRate;
-                $newStatus = ($threshold >= Configure::read('VideoTagValidation.threshold_fake')) 
-                        ? \App\Model\Entity\VideoTag::STATUS_REJECTED 
-                        : null;
+                $newStatus = ($threshold >= Configure::read('VideoTagValidation.threshold_fake')) ? \App\Model\Entity\VideoTag::STATUS_REJECTED : null;
             }
             if ($newStatus !== null) {
+                // Check if there is not already a validated tag 
                 $videoTagsTable = \Cake\ORM\TableRegistry::get('VideoTags');
                 $videoTag->status = $newStatus;
-                $videoTagsTable->save($videoTag);
+//                debug($videoTag);
+                if (!$videoTagsTable->save($videoTag)) {
+                    // TODO log error
+                }
+//                debug($videoTag);
             }
         }
     }

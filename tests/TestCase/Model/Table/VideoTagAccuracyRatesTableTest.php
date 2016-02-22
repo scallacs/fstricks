@@ -65,20 +65,16 @@ Configure::write('VideoTagValidation', [
     public function testSaveChangeStatusValidated() {
         // Modifiy the video tag:
         $videoTagTable = \Cake\ORM\TableRegistry::get('VideoTags');
-        $videoTag = $videoTagTable->get(\App\Test\Fixture\VideoTagsFixture::ID_PENDING);
-        $videoTag->count_fake = 0;
-        $videoTag->count_accurate = Configure::read('VideoTagValidation.min_rate') - 1;
-        $this->assertTrue((bool) $videoTagTable->save($videoTag));
         $entity = $this->VideoTagAccuracyRates->newEntity([
-            'video_tag_id' => \App\Test\Fixture\VideoTagsFixture::ID_PENDING
+            'video_tag_id' => \App\Test\Fixture\VideoTagsFixture::ID_ONE_MORE_TO_VALIDATE
         ]);
         $entity->user_id = 2;
         $entity->value = VideoTagAccuracyRate::VALUE_ACCURATE;
         $rate = $this->VideoTagAccuracyRates->save($entity, ['checkExisting' => false]);
-        $this->assertTrue((bool) $rate, "You should be able to rate a video tag that has a pending status");
+        $this->assertTrue((bool) $rate, "You should be able to rate a video tag that has a 'pending' status");
         
-        $videoTag = $videoTagTable->get(\App\Test\Fixture\VideoTagsFixture::ID_PENDING);
-        $this->assertEquals(VideoTag::STATUS_VALIDATED, $videoTag->status, "It should be transform to a valid tag");
+        $videoTag = $videoTagTable->get(\App\Test\Fixture\VideoTagsFixture::ID_ONE_MORE_TO_VALIDATE);
+        $this->assertEquals(VideoTag::STATUS_VALIDATED, $videoTag->status, "It should be transform to a 'validated' tag");
     }
 
     /**
@@ -88,20 +84,17 @@ Configure::write('VideoTagValidation', [
     public function testSaveChangeStatusRejected() {
         // Modifiy the video tag:
         $videoTagTable = \Cake\ORM\TableRegistry::get('VideoTags');
-        $videoTag = $videoTagTable->get(\App\Test\Fixture\VideoTagsFixture::ID_PENDING);
-        $videoTag->count_fake = Configure::read('VideoTagValidation.min_rate') - 1;
-        $videoTag->count_accurate = 0;
-        $this->assertTrue((bool) $videoTagTable->save($videoTag));
         $entity = $this->VideoTagAccuracyRates->newEntity([
-            'video_tag_id' => \App\Test\Fixture\VideoTagsFixture::ID_PENDING
+            'video_tag_id' => \App\Test\Fixture\VideoTagsFixture::ID_ONE_MORE_TO_REJECT
         ]);
         $entity->user_id = 2;
         $entity->value = VideoTagAccuracyRate::VALUE_FAKE;
         $rate = $this->VideoTagAccuracyRates->save($entity, ['checkExisting' => false]);
         $this->assertTrue((bool) $rate, "You should be able to rate a video tag that has a pending status");
         
-        $videoTag = $videoTagTable->get(\App\Test\Fixture\VideoTagsFixture::ID_PENDING);
-        $this->assertEquals(VideoTag::STATUS_REJECTED, $videoTag->status, "It should be transform to a rejected tag");
+        $videoTag = $videoTagTable->get(\App\Test\Fixture\VideoTagsFixture::ID_ONE_MORE_TO_REJECT);
+        $this->assertEquals(VideoTag::STATUS_REJECTED, $videoTag->status, 
+                "It should be transform to a 'rejected' tag");
     }
     
     
@@ -112,18 +105,14 @@ Configure::write('VideoTagValidation', [
     public function testSaveChangeNotStatusChanged() {
         // Modifiy the video tag:
         $videoTagTable = \Cake\ORM\TableRegistry::get('VideoTags');
-        $videoTag = $videoTagTable->get(\App\Test\Fixture\VideoTagsFixture::ID_PENDING);
-        $videoTag->count_fake = Configure::read('VideoTagValidation.min_rate') - 2;
-        $videoTag->count_accurate = 0;
-        $this->assertTrue((bool) $videoTagTable->save($videoTag));
         $entity = $this->VideoTagAccuracyRates->newEntity([
-            'video_tag_id' => \App\Test\Fixture\VideoTagsFixture::ID_PENDING
+            'video_tag_id' => \App\Test\Fixture\VideoTagsFixture::ID_TWO_MORE_TO_VALIDATE
         ]);
         $entity->user_id = 2;
         $entity->value = VideoTagAccuracyRate::VALUE_FAKE;
         $rate = $this->VideoTagAccuracyRates->save($entity, ['checkExisting' => false]);
         $this->assertTrue((bool) $rate, "You should be able to rate a video tag that has a pending status");
-        $videoTag = $videoTagTable->get(\App\Test\Fixture\VideoTagsFixture::ID_PENDING);
+        $videoTag = $videoTagTable->get(\App\Test\Fixture\VideoTagsFixture::ID_TWO_MORE_TO_VALIDATE);
         $this->assertEquals(VideoTag::STATUS_PENDING, $videoTag->status, "It should be transform to a rejected tag");
     }
     /**

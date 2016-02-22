@@ -23,6 +23,7 @@ function playerBar() {
                 $scope.$emit('view-video-tag', tag);
             }
             
+            
             function computeStyle(tag){
                 return {
                     width: computeWidth(tag) + "%",

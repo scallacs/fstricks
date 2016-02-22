@@ -284,7 +284,8 @@ function EditionTag() {
  */
 function AddVideoTagController($scope, $filter,
         $stateParams, VideoEntity, VideoTagEntity, TagEntity, SharedData, PlayerData,
-        RiderEntity, VideoTagData, VideoTagEntity, EditionTag, AuthenticationService, $state) {
+        RiderEntity, VideoTagData, VideoTagEntity, EditionTag, AuthenticationService, $state,
+        VideoTagLoader) {
 
     PlayerData.showEditionMode();
 
@@ -323,6 +324,7 @@ function AddVideoTagController($scope, $filter,
     $scope.addEndRange = addEndRange;
     $scope.setStartRangeNow = setStartRangeNow;
     $scope.setEndRangeNow = setEndRangeNow;
+    $scope.loadSimilarTags = loadSimilarTags;
 
     init();
 
@@ -477,6 +479,17 @@ function AddVideoTagController($scope, $filter,
         $scope.similarTags = editionTag.isNew() ? findSimilarTags(editionTag._video_tag) : [];
     }
 
+    function loadSimilarTags(){
+        var videoTag = editionTag._video_tag;
+        VideoTagLoader.instance('similarTags')
+                .init()
+                .setMethod('similar')
+                .setFilter('VideoTag', videoTag)
+                .startLoading()
+                .then(function(data){
+                    $scope.similarTags = data;
+        });
+    }
 
     function findSimilarTags(videoTag) {
         var begin = videoTag.begin;

@@ -69,6 +69,7 @@ class RidersController extends AppController {
      * @return type
      */
     public function save() {
+        ResultMessage::setWrapper(true);
 //        debug($this->request);
         if ($this->request->is('post')) {
             $userId = $this->Auth->user('id');

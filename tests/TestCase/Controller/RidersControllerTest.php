@@ -159,34 +159,48 @@ class RidersControllerTest extends MyIntegrationTestCase {
         $result = json_decode($this->_response->body(), true);
         $data = $result['data'];
         $this->assertCount(0, $data);
-    }
-
+    }    
+    
     /**
-     * TODO
+     * Test index method
+     *
+     * @return void
      */
-    public function testUploadFiles(){
-        $this->logUser(1);
-        $data = [
-            'id' => 1
+    public function testUpload() {
+        $this->logUser();
+        
+        $fileFolder = ROOT . '/tests/Fixture/files/';
+        $folder = new \Cake\Filesystem\Folder($fileFolder . 'pictures');
+        $folder->copy(['to' => $fileFolder . 'tmp/pictures']);
+        $fileInfo = [
+            'name' => 'small_file.jpg',
+            'type' => 'image/jpeg',
+            'size' => 542,
+            'tmp_name' => $fileFolder . 'tmp/pictures/small_file.jpg',
+            'error' => 0
         ];
-        $file = [
-                'name' => 'image_640x480.jpg',
-                'type' => 'application/octet-stream',
-                'tmp_name' => WWW_ROOT . 'tests' . DS . 'Fixture' . DS . 'files/small_file.jpg',
-                'size' => 33000,
-                'error' => UPLOAD_ERR_OK
-        ];
-        $_FILES['picture'] = $file;
-//        debug($_FILES);
-        $this->post('riders/save.json', $data);
+        $this->post('/riders/save.json', [
+            'picture' => $fileInfo
+        ]);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
-//        debug($result);
-        $this->assertArrayHasKey('success', $result);
-        $this->assertTrue($result['success']);
-        $this->assertNotEmpty($result['profile_picture']);
+        $this->assertTrue($result['success'], 'File should be uploaded');
+        
+        $targetFolder = ROOT . DS . 'webroot' . DS . 'files' . DS . 'pictures' . DS . 'photo';
+        $folderToDelete = new \Cake\Filesystem\Folder($targetFolder);
+        $folderToDelete->delete();
     }
 
+
+    /**
+     * Test index method
+     *
+     * @return void
+     */
+    public function testUploadNotLogin() {
+        $this->post('/riders/save.json');
+        $this->assertResponseCode(401);
+    }
     
 //    public function testFacebookSearch(){
 //        $this->get('riders/facebook_search.json?q=Stephane');

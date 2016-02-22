@@ -32,7 +32,8 @@ class Video extends Entity
      * @var array
      */
     protected $_accessible = [
-        '*' => true,
+        'video_url' => true,
+        'provider_id' => true,
         'count_tags' => false,
         'id' => false,
         'duration' => false

@@ -159,19 +159,33 @@ function ConfigRoute($stateProvider) {
             });
 }
 
-function DashboardController($scope, VideoTagLoader, SharedData) {
+function DashboardController($scope, VideoTagLoader, SharedData, $state, AuthenticationService) {
 
     $scope.workspaces = [
-        {id: 'pending', name: "Pendings", active: true, filters: {status: 'pending'}},
-        {id: 'rejected', name: "Rejected", active: false, filters: {status: 'rejected'}},
-        {id: 'official', name: "Officials", active: false, filters: {status: 'validated'}},
+        {id: 'pending', name: "Pendings", active: true, filters: {status: 'pending', order: 'modified'}},
+        {id: 'rejected', name: "Rejected", active: false, filters: {status: 'rejected,duplicate', order: 'modified'}},
+        {id: 'official', name: "Officials", active: false, filters: {status: 'validated', order: 'modified'}},
     ];
 
+    var currentUser = AuthenticationService.authData.user;
     $scope.onWorkspace = onWorkspaceChanged;
+    
 
     init();
 
+    $scope.$on('view-video-tag', function(event, data){
+        $state.go('videoplayer.realization', {
+            videoTagId: data.id
+        });
+    });
+    
     function init() {
+        var totalTags = currentUser.count_tags_validated + currentUser.count_tags_rejected;
+        $scope.currentUser = currentUser;
+        $scope.performance = totalTags > 0 
+            ? (currentUser.count_tags_validated / totalTags) 
+            : "Not yet";
+        
         for (var i = 0; i < $scope.workspaces.length; i++) {
             var workspace = $scope.workspaces[i];
             workspace.loader = VideoTagLoader.instance(workspace.id).setFilters(workspace.filters);
@@ -440,6 +454,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
         VideoTagAccuracyRateEntity.accurate({
             video_tag_id: $scope.videoTag.id
         });
+        skipped.push($scope.videoTag.id);
         toNextTag();
     }
 
@@ -447,7 +462,8 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
         VideoTagAccuracyRateEntity.fake({
             video_tag_id: $scope.videoTag.id
         });
-        toNextTag();
+        skipped.push($scope.videoTag.id);
+        toNextTag()
     }
 
     function skip() {
@@ -478,7 +494,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
         if (tags.length === 1) {
             PlayerData
                     .playVideoTag(tags[0])
-                    .then(function() {
+                    .finally(function() {
                         SharedData.pageLoader(false);
                     });
             $scope.videoTag = tags[0];

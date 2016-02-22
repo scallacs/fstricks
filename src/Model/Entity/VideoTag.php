@@ -27,6 +27,7 @@ class VideoTag extends Entity {
     const STATUS_BLOCKED = 'blocked';
     const STATUS_PENDING = 'pending';
     const STATUS_REJECTED = 'rejected';
+    const STATUS_DUPLICATE = 'duplicate';
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().

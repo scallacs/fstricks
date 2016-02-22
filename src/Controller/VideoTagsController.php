@@ -93,7 +93,7 @@ class VideoTagsController extends AppController {
             if ($tagId !== null) {
                 $videoTag->tag_id = $tagId;
             }
-
+            
             if ($this->VideoTags->save($videoTag)) {
                 ResultMessage::setMessage(__('Your trick has been saved.'), true);
                 ResultMessage::setData('video_tag_id', $videoTag->id);
@@ -113,19 +113,21 @@ class VideoTagsController extends AppController {
 
                 $videoTag = $this->VideoTags->get($id);
                 if (!$videoTag->isEditabled($this->Auth->user('id'))) {
-                    ResultMessage::setMessage(__('Sorry but you are not allowed to modified this trick.'), false);
-                    return;
+                    throw new \Cake\Network\Exception\NotFoundException();
                 }
                 $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data, [
                     'fieldList' => ['rider_id', 'begin', 'end', 'tag_id']
                 ]);
 //                debug($videoTag);
+                $videoTag->status = VideoTag::STATUS_PENDING;
                 if ($this->VideoTags->save($videoTag)) {
                     ResultMessage::setMessage(__('Your trick has been saved.'), true);
                 } else {
                     ResultMessage::setMessage(__('Your trick could not be saved.'), false);
                     ResultMessage::addValidationErrorsModel($videoTag);
                 }
+            } else {
+                throw new \Cake\Network\Exception\NotFoundException();
             }
         } catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
             throw new \Cake\Network\Exception\NotFoundException();
@@ -139,7 +141,7 @@ class VideoTagsController extends AppController {
     public function validation() {
         ResultMessage::setWrapper(false);
         $skipped = [];
-        if (!empty($this->request->query['skipped'])){
+        if (!empty($this->request->query['skipped'])) {
             $skipped = explode(',', $this->request->query['skipped']);
         }
         $query = $this->VideoTags->findAndJoin()
@@ -149,9 +151,9 @@ class VideoTagsController extends AppController {
                 ->notMatching('VideoTagAccuracyRates', function ($q) {
                     return $q->where(['VideoTagAccuracyRates.user_id' => $this->Auth->user('id')]);
                 })
-//                ->order([''])
+                ->order(['VideoTags.modified DESC'])
                 ->limit(1);
-        if (count($skipped) > 0){
+        if (count($skipped) > 0) {
             $query->where(['VideoTags.id NOT IN' => $skipped]);
         }
         ResultMessage::overwriteData($query->all());
@@ -168,7 +170,34 @@ class VideoTagsController extends AppController {
      *  - tag_name: "LIKE"
      *  - page: page number
      */
+    public function similar() {
+        ResultMessage::setWrapper(false);
+        if (empty($this->request->data['VideoTag'])) {
+            return;
+        }
+        $paginateOptions = [
+            'limit' => 20,
+            'maxLimit' => 20
+        ];
+        $this->Paginator->config($paginateOptions);
+        $data = $this->VideoTags->newEntity($this->request->data['VideoTag']);
+        $query = $this->VideoTags->findSimilarTags($data->video_id, $data->begin, $data->end);
+        ResultMessage::overwriteData($this->paginate($query, $paginateOptions));
+    }
+
+    /**
+     * GET data
+     *  - sport_id
+     *  - category_id
+     *  - tag_id
+     *  - video_id
+     *  - rider_id
+     * - trick_slug
+     *  - tag_name: "LIKE"
+     *  - page: page number
+     */
     public function search() {
+        $filterStatus = true;
         $paginateOptions = [
             'limit' => 20,
             'maxLimit' => 20
@@ -190,6 +219,12 @@ class VideoTagsController extends AppController {
                     case 'created':
                         $query->order([
                             'VideoTags.created DESC',
+                            'VideoTags.count_points DESC',
+                        ]);
+                        break;
+                    case 'modified':
+                        $query->order([
+                            'VideoTags.modified DESC',
                             'VideoTags.count_points DESC',
                         ]);
                         break;
@@ -232,6 +267,7 @@ class VideoTagsController extends AppController {
                 $query->where(['VideoTags.id IN' => $ids]);
             }
             if (DataUtil::isPositiveInt($this->request->query, 'video_tag_id')) {
+                $filterStatus = false;
                 $query->where(['VideoTags.id' => $this->request->query['video_tag_id']]);
             }
             if (!empty($this->request->query['trick_slug'])) {
@@ -248,13 +284,12 @@ class VideoTagsController extends AppController {
                 // TODO limit size of string
                 $status = explode(',', $this->request->query['status']);
                 $query->where([
-                    'VideoTags.status IN' => $status, 
+                    'VideoTags.status IN' => $status,
                     'VideoTags.user_id' => $this->Auth->user('id')
                 ]);
-            }
-            else if (!empty($this->request->query['with_pending'])) {
+            } else if (!empty($this->request->query['with_pending'])) {
                 $query->where(['VideoTags.status IN' => [VideoTag::STATUS_PENDING, VideoTag::STATUS_VALIDATED]]);
-            } else {
+            } else if ($filterStatus) {
                 $query->where(['VideoTags.status ' => VideoTag::STATUS_VALIDATED]);
             }
 

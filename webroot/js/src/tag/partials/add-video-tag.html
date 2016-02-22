@@ -26,6 +26,7 @@
                       server-form>
 
                     <fieldset >
+
                         <div class="clearfix">
                             <div class="form-group col-md-12 col-sm-6 clearfix">
 
@@ -203,7 +204,18 @@
                             <div class="alert alert-danger"> 
                                 <p class="text-center">
                                     <span class="glyphicon glyphicon-warning-sign"></span> 
-                                    You cannot create this tag, a similar one already exists. 
+                                    Hey, there are already other tricks register here! Do you still
+                                    want to proceed ? 
+                                </p>
+                                <p class="text-center">
+                                    <button class="btn btn-danger" type="submit">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                        Cancel
+                                    </button>
+                                    <button class="btn btn-success" type="button">
+                                        <span class="glyphicon glyphicon-check"></span>
+                                        Proceed
+                                    </button>
                                 </p>
                             </div>
                             <div ng-repeat="videoTag in similarTags">
@@ -243,6 +255,7 @@
 
                         <div class="text-right form-group"
                              ng-if="editionTag.isEditabled()">
+                            <!--
                             <button ng-if="!playerData.looping" type="button"  
                                     class="btn btn-primary" ng-click="playEditionTag()">
                                 <span class="glyphicon glyphicon-repeat"></span> Loop
@@ -253,7 +266,7 @@
                             </button>
                             &nbsp;
                             &nbsp;
-                            &nbsp;
+                            &nbsp;-->
                             <button ng-if="editionTag.allowedToRemove()" 
                                     type="button"
                                     ng-click="deleteTag(editionTag)"

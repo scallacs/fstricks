@@ -6,15 +6,45 @@
             <span class="glyphicon glyphicon-list"></span> 
             My tricks
         </h3>
+        
+        <table class="table table-striped text-bold" style="max-width: 500px; margin: auto;">
+            <tr>
+                <td class="text-success">
+                    Official trick created
+                </td>
+                <td>
+                    {{currentUser.count_tags_validated}}
+                </td>
+            </tr>
+            <tr>
+                <td class="text-danger">
+                    Tricks rejected
+                </td>
+                <td>
+                    {{currentUser.count_tags_rejected}}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Performance
+                </td>
+                <td>
+                    {{performance}}
+                </td>
+            </tr>
+        </table>
 
-        <uib-tabset>
+        <uib-tabset class="margin-top">
             <uib-tab 
                 ng-repeat="workspace in workspaces"
                 heading="{{workspace.name}}"
                 active=workspace.active
                 ng-click="onWorkspace(workspace)">
                 <div class="padding-sm">
-                    <div ng-if="!workspace.loader.hasData()" class="text-center text-info">
+                    <div ng-if="!workspace.loader.hasData() && workspace.loader.loading" class="text-center text-info">
+                        Loading ...
+                    </div>
+                    <div ng-if="!workspace.loader.hasData() && !workspace.loader.loading" class="text-center text-info">
                         Nothing yet
                     </div>
                     <div ng-if="workspace.loader.hasData()">

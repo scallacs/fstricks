@@ -367,6 +367,10 @@ header .navbar-nav > li > a{
     border-radius: 5px;
     /* box-shadow: -2px 0px 2px black; */
 } 
+.player-bar-tag-validated{
+    background: green;
+}
+    
 .player-bar-tag:hover{
     cursor: pointer;
     background: orangered;

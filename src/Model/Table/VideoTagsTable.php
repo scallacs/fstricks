@@ -18,7 +18,7 @@ use Cake\Validation\Validator;
  */
 class VideoTagsTable extends Table {
 
-    const MIN_TAG_DURATION = 2;
+    const MIN_TAG_DURATION = 2; // TODO common with others
     const MAX_TAG_DURATION = 40;
     const SIMILARITY_RATIO_THRESHOLD = 0.6;
     const SIMILARITY_PRECISION_SECONDS = 2;
@@ -129,24 +129,33 @@ class VideoTagsTable extends Table {
                 ->allowEmpty('id', 'create');
 
         $validator
-                ->add('begin', 'valid', ['rule' => 'decimal'])
+                ->add('begin', 'decimal', ['rule' => 'decimal'])
+                ->add('begin', 'postive', [
+                    'rule' => function ($value, $context) {
+                        return $value >= 0;
+                    },
+                    'message' => 'Begin time must be a positive number.'
+                ])
                 ->requirePresence('begin', 'create')
                 ->notEmpty('begin');
 
         $validator
                 ->add('end', 'trick_duration', [
                     'rule' => function ($value, $context) {
-                if (isset($context['data']['begin'])) {
-                    $duration = $value - $context['data']['begin'];
-                    return $duration >= self::MIN_TAG_DURATION &&
-                            $duration <= self::MAX_TAG_DURATION;
-                }
-                return true;
-            },
+                        if ($value < self::MIN_TAG_DURATION) {
+                            return false;
+                        }
+                        if (isset($context['data']['begin'])) {
+                            $duration = $value - $context['data']['begin'];
+                            return $duration >= self::MIN_TAG_DURATION &&
+                                    $duration <= self::MAX_TAG_DURATION;
+                        }
+                        return true;
+                    },
                     'message' => 'The trick duration must be between ' . self::MIN_TAG_DURATION . ' and ' .
                     self::MAX_TAG_DURATION . ' seconds.'
                 ])
-                ->add('end', 'valid', ['rule' => 'decimal'])
+                ->add('end', 'decimal', ['rule' => 'decimal'])
                 ->requirePresence('end', 'create')
                 ->notEmpty('end');
 
@@ -172,13 +181,10 @@ class VideoTagsTable extends Table {
         $endMin = $begin - self::SIMILARITY_PRECISION_SECONDS;
         $beginMax = $begin - self::SIMILARITY_PRECISION_SECONDS;
         $endMax = $end + self::SIMILARITY_PRECISION_SECONDS;
-        return $this->find('all')
+        return $this->findAndJoin()
                         ->where([
                             'video_id' => $videoId,
                             'OR' => [
-//                        // Similar start or end
-//                        ['VideoTags.begin >=' => $beginMin, 'VideoTags.begin <= ' => $beginMax], 
-//                        ['VideoTags.end >=' => $endMin, 'VideoTags.begin <= ' => $endMax],
                                 // Include inside bigger tag
                                 ['VideoTags.begin <= ' => $beginMin, 'VideoTags.end >= ' => $endMin],
                                 // Contain bigger tag
@@ -201,21 +207,34 @@ class VideoTagsTable extends Table {
         $rules->add($rules->existsIn(['rider_id'], 'Riders'));
 
         // Checking similar tags
-        $rules->add(function($entity, $scope) {
-            if ($entity->isNew() || $entity->dirty('begin') || $entity->dirty('end')) {
-                $conditions = [
-                    'VideoTags.video_id' => $entity->video_id,
-                    'VideoTags.status' => VideoTag::STATUS_VALIDATED,
-                    '(LEAST(' . $entity->end . ', end) - GREATEST(' . $entity->begin . ', begin))/(end - begin) > ' . self::SIMILARITY_RATIO_THRESHOLD,
-                ];
-                if (!$entity->isNew()) {
-                    $conditions['VideoTags.id !='] = $entity->id;
-                }
-                return !$this->exists($conditions);
-            }
-            return true;
-        });
+//        $rules->add(function($entity, $scope) {
+//            if ($entity->isNew() || $entity->dirty('begin') || $entity->dirty('end')) {
+//                if ($scope['repository']->existsSimilarValidated($entity)) {
+//                    $entity->errors('begin', ['There is already a validated trick here']);
+//                    return false;
+//                }
+//            }
+//            return true;
+//        });
         return $rules;
+    }
+
+    /**
+     * Returns true if there is a similar tags already validated
+     * @param \App\Model\Entity\VideoTag $entity
+     * @return boolean
+     */
+    public function existsSimilarValidated(\App\Model\Entity\VideoTag $entity) {
+        $conditions = [
+            'VideoTags.video_id' => $entity->video_id,
+            'VideoTags.status' => VideoTag::STATUS_VALIDATED,
+            '(LEAST(' . $entity->end . ', end) - GREATEST(' . $entity->begin . ', begin))/(end - begin) > '
+            . self::SIMILARITY_RATIO_THRESHOLD,
+        ];
+        if (!$entity->isNew()) {
+            $conditions['VideoTags.id !='] = $entity->id;
+        }
+        return $this->exists($conditions);
     }
 
     /**
@@ -224,19 +243,28 @@ class VideoTagsTable extends Table {
      * @param \App\Model\Table\ArrayObject $options
      */
     public function beforeSave($event, $entity, $options) {
+        if ($entity->status === VideoTag::STATUS_BLOCKED) {
+            $event->stopPropagation();
+            $entity->errors('status', ['You are not authorized to edit this trick']);
+            return false;
+        }
+
         $entity->_delete_accuracy_rates = false;
-        
-        $entity->modified = new Data('c');
+        $now = date('c');
+        $entity->modified = $now;
         if ($entity->isNew() && empty($entity->status)) {
-            $entity->status = VideoTag::STATUS_PENDING;
-        } 
-        else if (!$entity->isNew() && ($entity->status === VideoTag::STATUS_REJECTED
-                || $entity->status === VideoTag::STATUS_PENDING)) {
+            $entity->created = $now;
+            if ($this->existsSimilarValidated($entity)) {
+                $entity->status = VideoTag::STATUS_DUPLICATE;
+            } else {
+                $entity->status = VideoTag::STATUS_PENDING;
+            }
+        } else if (!$entity->isNew() &&
+                ($entity->status === VideoTag::STATUS_REJECTED || $entity->status === VideoTag::STATUS_PENDING)) {
             // Reset counter
-            $entity->status = VideoTag::STATUS_PENDING;
-            $entity->count_accurate = 0;
-            $entity->count_fake = 0;
-            $entity->_delete_accuracy_rates = true;
+            if ($this->existsSimilarValidated($entity)) {
+                $entity->status = VideoTag::STATUS_DUPLICATE;
+            } 
         }
     }
 
@@ -245,7 +273,7 @@ class VideoTagsTable extends Table {
      * @param \Cake\ORM\Entity $entity
      * @param \App\Model\Table\ArrayObject $options
      */
-    public function afterSave($event, $entity, $options)  {
+    public function afterSave($event, $entity, $options) {
         // Delete all user rates
         if ($entity->_delete_accuracy_rates) {
             $accuracyRatesTable = \Cake\ORM\TableRegistry::get('VideoTagAccuracyRates');

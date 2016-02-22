@@ -38,7 +38,7 @@ class VideoTagAccuracyRatesControllerTest extends MyIntegrationTestCase {
      */
     public function testDuplicateRate() {
         $data = [
-            'video_tag_id' => 1
+            'video_tag_id' => \App\Test\Fixture\VideoTagsFixture::ID_PENDING
         ];
         $this->logUser(1);
 //        debug($this->find(1, 1)->first());
@@ -60,7 +60,7 @@ class VideoTagAccuracyRatesControllerTest extends MyIntegrationTestCase {
      */
     public function testFake() {
         $data = [
-            'video_tag_id' => 1
+            'video_tag_id' => \App\Test\Fixture\VideoTagsFixture::ID_PENDING
         ];
         $this->logUser(2);
 
@@ -77,7 +77,7 @@ class VideoTagAccuracyRatesControllerTest extends MyIntegrationTestCase {
      */
     public function testAccurate() {
         $data = [
-            'video_tag_id' => 1
+            'video_tag_id' => \App\Test\Fixture\VideoTagsFixture::ID_PENDING
         ];
         $this->logUser(2);
 

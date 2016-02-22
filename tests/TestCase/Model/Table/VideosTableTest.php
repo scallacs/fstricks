@@ -55,7 +55,6 @@ class VideosTableTest extends TestCase
     public function testAdd() {
         // Add a video:
         $data = [
-            'user_id' => 1,
             'provider_id' => 'youtube',
             'video_url' => 'xb5LHuZGXi0',
         ];
