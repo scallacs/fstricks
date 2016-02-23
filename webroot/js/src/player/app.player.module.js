@@ -310,11 +310,12 @@ function ViewRealizationController(VideoTagData, $stateParams, PlayerData, Share
     PlayerData.stop();
     PlayerData.showListTricks = false;
     VideoTagData
+            .getLoader()
             .setFilters({video_tag_id: $stateParams.videoTagId, status: 'rejected,pending,validated'})
             .startLoading()
             .then(function(results) {
-                if (results.length === 1) {
-                    PlayerData.playVideoTag(results[0]).then(function() {
+                if (results.items.length === 1) {
+                    PlayerData.playVideoTag(results.items[0]).then(function() {
                         SharedData.pageLoader(false);
                     });
                 }
@@ -477,7 +478,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
         VideoTagAccuracyRateEntity.fake({
             video_tag_id: VideoTagData.currentTag.id
         });
-        skipped.push($scope.videoTag.id);
+        skipped.push(VideoTagData.currentTag.id);
         toNextTag()
     }
 

@@ -5,11 +5,13 @@ angular.module('shared')
                 controller: function() {
                 },
                 link: function(scope, elem) {
-                    elem.click(function() {
+                    elem.click(function(event) {
                         var href = WEBROOT_FULL + elem.attr('href');
                         $uibModal.open({
                             template: '<input select-all readonly class="form-control" value="' + href + '"/>'
                         });
+                        event.preventDefault();
+                        return false;
                     });
                 }
             };

@@ -280,7 +280,7 @@ class VideoTagsController extends AppController {
                 $query->where(['VideoTags.rider_id' => (int) $this->request->query['rider_id']]);
             }
 
-            if (!empty($this->request->query['status']) && $this->Auth->user('id')) {
+            if (!empty($this->request->query['status'])) {
                 // TODO limit size of string
                 $status = explode(',', $this->request->query['status']);
                 $query->where([
