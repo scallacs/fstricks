@@ -49,9 +49,9 @@ function playerContainer($window, $timeout, $rootScope) {
                 applyHeight(newValue);
             }, true);
 
-            w.bind('resize', function() {
-                scope.$apply();
-            });
+//            w.bind('resize', function() {
+//                scope.$apply();
+//            });
             
             // Wait that dom is loaded to resize
             

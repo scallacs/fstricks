@@ -4352,9 +4352,10 @@ fieldset {
   }
 }
 .navbar-nav > li > .dropdown-menu {
-  margin-top: 0;
+  margin-top: -1px;
   border-top-right-radius: 0;
   border-top-left-radius: 0;
+  margin-left: -1px;
 }
 .navbar-fixed-bottom .navbar-nav > li > .dropdown-menu {
   margin-bottom: 0;

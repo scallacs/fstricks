@@ -315,17 +315,19 @@
     <div class="col-md-6 nopadding">
         <div class="full-player" player-container></div>
 
-        <div ng-if="video.duration" player-bar video-tags="videoTagData.getItems()" duration="video.duration"></div>
-        <div class="form-group">
-            <div
-                class="margin-top"
-                ng-model="editionTag._extra.range"
-                ui-slider="{range: true}" 
-                min="0" 
-                max="{{playerData.data.duration}}" 
-                step="{{slider.step}}"
-                use-decimals
-                >
+        <div notify-on-load class="player-offset">
+            <div ng-if="video.duration" player-bar video-tags="videoTagData.getItems()" duration="video.duration"></div>
+            <div class="form-group  padding-sm">
+                <div
+                    class="margin-top"
+                    ng-model="editionTag._extra.range"
+                    ui-slider="{range: true}" 
+                    min="0" 
+                    max="{{playerData.data.duration}}" 
+                    step="{{slider.step}}"
+                    use-decimals
+                    >
+                </div>
             </div>
         </div>
     </div>
