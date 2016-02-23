@@ -21,6 +21,7 @@ function topSearch(RiderEntity, TagEntity, SharedData) {
             $scope.onSelect = onSelect;
             $scope.refresh = refresh;
 
+            var searchDisabled = false;
             /**
              * Header search bar function
              * @param {type} trick
@@ -31,7 +32,8 @@ function topSearch(RiderEntity, TagEntity, SharedData) {
             function refresh(search) {
                 $scope.results = [];
                 search = search.trim();
-                if (search.length >= 2) {
+                if (search.length >= 2 && !searchDisabled) {
+                    searchDisabled = true;
                     var searchData = {id: search};
                     if (SharedData.currentSport){
                         searchData.sport_id = SharedData.currentSport.id;
@@ -46,19 +48,29 @@ function topSearch(RiderEntity, TagEntity, SharedData) {
                     $scope.results.push(partialSearch);
                     
                     
-                    TagEntity.suggest(searchData, function(results){
-                        for (var i = 0; i < results.length; i++){
-                            var data = mapper()['tag'](results[i]);
-                            $scope.results.push(data);
-                        }
-                    });
-                    RiderEntity.search({q: search}, function(results){
-                        results = results.data;
-                        for (var i = 0; i < results.length; i++){
-                            var data = mapper()['rider'](results[i]);
-                            $scope.results.push(data);
-                        }
-                    });
+                    TagEntity
+                            .suggest(searchData, function(results){
+                                for (var i = 0; i < results.length; i++){
+                                    var data = mapper()['tag'](results[i]);
+                                    $scope.results.push(data);
+                                }
+                            })
+                            .$promise
+                            .finally(function(){
+                                searchDisabled = false;
+                            });
+                            
+                    RiderEntity
+                            .search({q: search}, function(results){
+                                for (var i = 0; i < results.length; i++){
+                                    var data = mapper()['rider'](results[i]);
+                                    $scope.results.push(data);
+                                }
+                            })
+                            .$promise
+                            .finally(function(){
+                                searchDisabled = false;
+                            });
                 }
             }
             
@@ -66,7 +78,7 @@ function topSearch(RiderEntity, TagEntity, SharedData) {
                 return {
                     rider: function(data){
                         data.title = data.firstname + ' ' + data.lastname;
-                        data.sub_title = data.level_string + ' (' + data.nationality + ')';
+                        data.sub_title = ' (' + data.nationality + ')';
                         data.points = data.count_tags;
                         data.type = 'rider';
                         data.category = 'Rider';

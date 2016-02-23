@@ -1,7 +1,7 @@
 angular.module('app.player')
         .factory('YoutubeCmdMapper', function() {
-            
-            function YoutubeCmdMapper(player){
+
+            function YoutubeCmdMapper(player) {
                 this._player = player;
             }
             YoutubeCmdMapper.prototype = {
@@ -34,9 +34,9 @@ angular.module('app.player')
                     startSeconds: data.begin
                 });
             }
-            
+
             return {
-                create: function(player){
+                create: function(player) {
                     return new YoutubeCmdMapper(player);
                 }
             };
@@ -94,16 +94,21 @@ angular.module('app.player')
                             clearInterval(myTimer);
                             switch (event.data) {
                                 case YT.PlayerState.PLAYING:
+                                    if (PlayerData.looping && PlayerData.data.end < player.getCurrentTime()) {
+                                        PlayerData.onEnd();
+                                    }
+                                    console.log("Setting youtube time event");
                                     myTimer = setInterval(function() {
                                         var newTime = player.getCurrentTime();
                                         PlayerData.onPlayProgress(newTime);
                                         PlayerData.onCurrentTimeUpdate(newTime);
                                         PlayerData.data.currentTime = newTime;
-                                        if (PlayerData.looping && (PlayerData.data.end - newTime) < (intervalDuration/1000)){
+//                                        console.log(PlayerData.data.end - newTime);
+                                        if (PlayerData.looping && (PlayerData.data.end - newTime) < (intervalDuration / 1000)) {
                                             console.log("Pre on end triggerd");
                                             PlayerData.onEnd();
                                         }
-                                    }, intervalDuration); 
+                                    }, intervalDuration);
                                     break
                             }
                         }

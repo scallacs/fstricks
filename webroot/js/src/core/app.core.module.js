@@ -32,6 +32,7 @@ function NotifyOnLoad($rootScope, $timeout) {
 function PlayerData(VideoTagData, $q) {
     var obj = {
         init: function() {
+            console.log("Init PlayerData");
             this.deferred = {
                 youtube: $q.defer(),
                 vimeo: $q.defer()
@@ -99,7 +100,7 @@ function PlayerData(VideoTagData, $q) {
     }
 
     function onEnd() {
-        console.log("onEnd() reached !");
+        //console.log("onEnd() reached !");
         if (this.looping) {
             this.seekTo(this.data.begin);
         }
@@ -589,7 +590,7 @@ function RiderEntity($resource) {
         search: {
             method: 'GET',
             params: {action: 'local_search'},
-            isArray: false
+            isArray: true
         },
         save: {
             method: 'POST',

@@ -9,10 +9,10 @@
             <tr>
                 <td>Nationality</td>
                 <td class="text-bold">{{rider.nationality}}</td>
-                <td>Level</td>
+                <!--<td>Level</td>
                 <td class="text-bold">{{rider.level_string}}</td>
             </tr>
-            <tr>
+            <tr>-->
                 <td>Tagged</td>
                 <td class="text-bold" ng-if="rider.count_tags > 0">
                     {{rider.count_tags}} time(s) <br/>
@@ -21,7 +21,6 @@
                 <td class="text-bold" ng-if="rider.count_tags === 0">
                     Never
                 </td>
-                <td colspan="2"></td>
             </tr>
         </table>
     </div>

@@ -30,7 +30,7 @@
                 </ul>
 
                 <div>
-                    Icons made by 
+                    Sports icons are made by 
                     <a href="http://www.freepik.com" title="Freepik">Freepik</a> from 
                     <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> 
                 </div>

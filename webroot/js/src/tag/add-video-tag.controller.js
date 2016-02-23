@@ -100,7 +100,8 @@ function EditionTag() {
         this._video_tag = {
             mode: 'edition',
             id: null,
-            user_id: this._user_id
+            user_id: this._user_id,
+            provider_id: null
         };
 
         this.setEditabled();
@@ -126,6 +127,7 @@ function EditionTag() {
         }
     }
     function syncTag() {
+        console.log("SyncTag");
         if (this._extra.tag !== null) {
             this._video_tag.tag_name = this._extra.tag.name;
             this._video_tag.tag_id = this._extra.tag.id;
@@ -198,21 +200,21 @@ function EditionTag() {
         if (this.isNew()) {
             this._editabled = true;
         }
-        else if (this._video_tag.status !== 'pending') {
-            this._editabled = false;
-        }
-        else if (this.isOwner()) {
+        else if (this.isOwner() && (this._video_tag.status === 'pending' || this._video_tag.status === 'rejected') ) {
             this._editabled = true;
         }
-        else {
-            this._editabled = {
-                begin: false,
-                end: false,
-                category: false,
-                tag: false,
-                rider: !this.hasRider()
-            };
+        else{
+            this._editabled = false;
         }
+//        else {
+//            this._editabled = {
+//                begin: false,
+//                end: false,
+//                category: false,
+//                tag: false,
+//                rider: !this.hasRider()
+//            };
+//        }
     }
 
     function isNew() {
@@ -280,11 +282,11 @@ function AddVideoTagController($scope, $filter,
     // Properties: TODO match with server side
     var MIN_TAG_DURATION = 2;
     var MAX_TAG_DURATION = 40;
-    var SIMILAR_TAG_LIMIT_RATION = 0.6;
+    var SIMILAR_TAG_LIMIT_RATIO = 0.6;
 
     var editionTag = new EditionTag(AuthenticationService.getCurrentUser().id);
     $scope.editionTag = editionTag;
-    
+
     $scope.showCreateRiderForm = false;
 
     $scope.slider = {
@@ -364,41 +366,49 @@ function AddVideoTagController($scope, $filter,
             PlayerData.data.duration = video.duration;
             // When data are loaded we set in the editor the tag id to edit
             if ($stateParams.tagId) {
-                VideoTagData.getLoader().loadAll().then(function(data) {
-                    for (var i = 0; i < data.length; i++) {
-                        if (data[i].id == $stateParams.tagId) {
-                            console.log("Tag to edit found!");
-                            editVideoTag(data[i]);
-                            return;
-                        }
-                    }
-                    console.log("Cannot find tag to edit: " + $stateParams.tagId);
-                }).finally(function() {
-                    if (PlayerData.currentTag === null) {
-                        addNewTag();
-                    }
-                    SharedData.pageLoader(false);
-                })
-                        .catch(onVideoNotFound);
+                VideoTagData
+                        .getLoader()
+                        .setMode('append')
+                        .loadAll()
+                        .then(function(data) {
+                            console.log("Searching for tag to edit among " + data.items.length + " items");
+                            for (var i = 0; i < data.items.length; i++) {
+                                var item = data.items[i];
+                                if (item.id == $stateParams.tagId) { // @warning $stateParms is a string
+                                    console.log("Tag to edit found!");
+                                    editVideoTag(item);
+                                    return;
+                                }
+                            }
+                            console.log("Cannot find tag to edit: " + $stateParams.tagId);
+                            playVideo(video);
+                        })
+                        .finally(function() {
+                            if (PlayerData.currentTag === null) {
+                                addNewTag();
+                            }
+                            SharedData.pageLoader(false);
+                        });
             }
             else {
                 VideoTagData.getLoader().startLoading();
-                PlayerData.loadVideo({provider: video.provider_id, video_url: video.video_url})
-                        .then(addNewTag)
-                        .finally(function() {
-                            SharedData.pageLoader(false);
-                        })
-                        .catch(onVideoNotFound);
+                playVideo(video);
 
             }
         }, onError);
 
 
-        changeSliderValues([0,0], 1);
+        changeSliderValues([0, 0], 1);
     }
 
-    function onVideoNotFound() {
-
+    function playVideo(video) {
+        return PlayerData.loadVideo({provider: video.provider_id, video_url: video.video_url})
+                .then(addNewTag)
+                .finally(function() {
+                    SharedData.pageLoader(false);
+                });
+        // TODO video does not exists anymore
+        //.catch(onVideoNotFound);
     }
     function onError(error) {
         console.log("Error viewing this tag");
@@ -491,6 +501,7 @@ function AddVideoTagController($scope, $filter,
     }
 
     function findSimilarTags(videoTag) {
+        $scope.hasSimilarValidatedTag = false;
         var begin = videoTag.begin;
         var end = videoTag.end;
         console.log('Finding similar tags...');
@@ -502,7 +513,10 @@ function AddVideoTagController($scope, $filter,
             if (commonSeconds > 0) {
                 var commonPercents = commonSeconds / (end - begin);
 //                console.log("Similar at " + (commonPercents * 100) + "%");
-                if (commonPercents >= SIMILAR_TAG_LIMIT_RATION) { // More than 60% in common
+                if (commonPercents >= SIMILAR_TAG_LIMIT_RATIO) { // More than 60% in common
+                    if (tag.status === 'validated') {
+                        $scope.hasSimilarValidatedTag = true;
+                    }
                     similarTags.push(tag);
                 }
             }
@@ -555,6 +569,17 @@ function AddVideoTagController($scope, $filter,
         editionTag._video_tag.begin = output[0];
         editionTag._extra.range[1] = output[1];
         editionTag._video_tag.end = output[1];
+        if (editionTag._video_tag.provider_id !== null) {
+            if (i === 0) {
+                playEditionTag();
+            }
+            else {
+                PlayerData.seekTo(output[1]);
+                PlayerData.pause();
+                PlayerData.data.end = output[1];
+            }
+        }
+
     }
 
 
@@ -564,7 +589,7 @@ function AddVideoTagController($scope, $filter,
      * @param {0,1} i the time to change (0 => begin, 1 => end)
      */
     function getRangeMinMax(input, i) {
-        input[0] = Math.max(0,input[0]);
+        input[0] = Math.max(0, input[0]);
         var output = input;
         // Left side
         if (i === 1 && input[1] <= MIN_TAG_DURATION) {

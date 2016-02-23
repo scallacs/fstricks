@@ -48,7 +48,7 @@ class RidersController extends AppController {
         if ($this->request->is('post')) {
             $rider = $this->Riders->newEntity($this->request->data);
             $rider->user_id = null;
-
+            $rider->level = \App\Model\Entity\Rider::$levels[0];
             if ($this->Riders->save($rider)) {
                 ResultMessage::setData('rider_id', $rider->id);
                 ResultMessage::setData('rider_display_name', $rider->display_name);
@@ -101,10 +101,6 @@ class RidersController extends AppController {
      */
     public function local_search() {
         ResultMessage::setWrapper(false);
-        ResultMessage::overwriteData([
-            'data' => [],
-            'next' => null
-        ]);
         if ($this->request->is('get') && !empty($this->request->query)) {
             $data = $this->request->query;
             $query = $this->Riders->find('all')
@@ -133,10 +129,7 @@ class RidersController extends AppController {
                 return;
             }
 //                    ->order(['Riders.count_video_tags DESC']);
-            ResultMessage::overwriteData([
-                'data' => $query->all(),
-                'next' => null
-            ]);
+            ResultMessage::overwriteData($query->all());
         }
     }
 

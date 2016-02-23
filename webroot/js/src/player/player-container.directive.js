@@ -72,7 +72,7 @@ function playerContainer($window, $timeout, $rootScope) {
                 var maxHeight = (h - offsetH);
                 var heigth = (w) * (9 / 16);
                 var newHeight = Math.min(heigth, maxHeight);
-                console.log("New max height : " + newHeight);
+                //console.log("New max height : " + newHeight);
                 return newHeight;
             }
         }

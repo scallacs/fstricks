@@ -1,7 +1,8 @@
 <div class="clearfix bg-secondary padding-sm-side">
     <div class="navbar-header">
         <div class="header-title pull-left hidden-sm hidden-xs">
-            <a ui-sref="videoplayer.home">FS Inspiration</a>
+            <a ui-sref="videoplayer.home">{{config.name}}</a> 
+            {{config.version}}
         </div>
     </div>
     <ul id="TopNav" class="nav navbar-nav text-capitalize navbar-no-collapse ">
@@ -44,7 +45,7 @@
             </a>
             <ul class="dropdown-menu">
                 <li> <a ui-sref="dashboard"><span class="glyphicon glyphicon-dashboard"></span> My tricks</a></li>
-                <li> <a ui-sref="myriderprofile.view"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                <!--<li> <a ui-sref="myriderprofile.view"><span class="glyphicon glyphicon-user"></span> Profile</a></li>-->
                 <li> <a ui-sref="settings"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
                 <li ng-click="logout()">
                     <a ui-sref="login">

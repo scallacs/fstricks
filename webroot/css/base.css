@@ -88,7 +88,8 @@ h3, h2, h1{
     /* width: 97%; */
 }
 .btn-add-tag{
-    font-size: 2.5em;
+    font-size: 1.5em;
+    margin-bottom: 10px;
 }
 .bg-primary-darker{
     background: #000;
@@ -119,8 +120,10 @@ h3, h2, h1{
 .bg-primary .btn-primary[disabled].active,
 .bg-primary .form-control[disabled], 
 .bg-primary .form-control[readonly], 
-.bg-primary fieldset[disabled] .form-control{
+.bg-primary fieldset[disabled] .form-control,
+.bg-primary fieldset[disabled] .btn-default{
     background: #555;
+    border-color: #666;
 }
 .bg-primary .nav-tabs{
     border-bottom: 1px solid #555;
@@ -263,7 +266,7 @@ header .navbar-header ul{
 }
 header .header-title{
     font-size: 2em;
-    padding-right: 10px;
+    padding-right: -1px;
     font-weight: bold;
     text-transform: capitalize;
     font-family: Helvetica;
@@ -348,13 +351,16 @@ header .navbar-nav > li > a{
 .player-bar{
     top: 0px;
     position: relative;
-    background: #333;
+    background: #666;
     padding: 0px;
     margin: 0px;
-    /* border-top: 1px solid #111; */
+    border: 1px solid #777;
     /* border-bottom: 1px solid #111; */
     height: 15px;
     border-radius: 5px;
+    margin-left: 1em;
+    margin-right: 1em;
+    margin-bottom: 5px;
 }
 .player-bar-tag.active{
     background: orangered;
@@ -365,11 +371,10 @@ header .navbar-nav > li > a{
     position: absolute;
     min-width: 3px;
     border-radius: 5px;
-    /* box-shadow: -2px 0px 2px black; */
+    z-index: 2;
 } 
 .player-bar-tag-validated{
     background: orange;
-    z-index: 2;
 }
     
 .player-bar-tag:hover{
@@ -452,7 +457,7 @@ header .navbar-nav > li > a{
 
 
 .margin-top{
-    /* margin-top: 10px; */
+    margin-top: 10px;
 }
 
 .user-profile-tag{
@@ -630,19 +635,23 @@ header .navbar-nav > li > a{
 .slider-container .ui-slider{
     	position: relative;
     	text-align: left;
+    	margin-left: 1em;
+    	margin-right: 1em;
 }
 
 .slider-container .ui-slider .ui-slider-handle{
-    background: whitesmoke;
+    background: #DDD;
     position: absolute;
     z-index: 3;
-    width: 1.2em;
+    width: 1em;
     height: 1.6em;
     cursor: default;
-    border-color: #DDD;
-    margin-left: -0.6em;
+    border: 1px solid #AAA;
+    margin-left: -0.5em;
     border-radius: 2px;
     top: -0.2em;
+    cursor: pointer;
+    opacity: 0.87;
 }
 .slider-container .ui-slider-horizontal .ui-slider-range {
 	top: 0;

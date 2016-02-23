@@ -309,8 +309,9 @@ function ViewRealizationController(VideoTagData, $stateParams, PlayerData, Share
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = false;
-    VideoTagData.getLoader().setFilters({video_tag_id: $stateParams.videoTagId});
-    VideoTagData.getLoader().startLoading()
+    VideoTagData
+            .setFilters({video_tag_id: $stateParams.videoTagId, status: 'rejected,pending,validated'})
+            .startLoading()
             .then(function(results) {
                 if (results.length === 1) {
                     PlayerData.playVideoTag(results[0]).then(function() {

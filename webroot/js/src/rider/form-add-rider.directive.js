@@ -106,12 +106,16 @@ angular
                      */
                     function searchSimilars(firstname, lastname) {
                         $scope.loaderSearchSimilars = true;
-                        RiderEntity.search({firstname: firstname, lastname: lastname}, function(results) {
-                            $scope.similarRiders = results.data;
-                            $scope.loaderSearchSimilars = false;
-                        }, function() {
-                            $scope.loaderSearchSimilars = false;
-                        });
+                        $scope.similarRiders = [];
+                        RiderEntity.search({firstname: firstname, lastname: lastname}, function(riders) {
+                                    $scope.similarRiders = riders;
+                                    console.log(riders);
+                                }, function() {
+                                    $scope.similarRiders = [];
+                                })
+                                .$promise.finally(function() {
+                                    $scope.loaderSearchSimilars = false;
+                                });
                     }
 
                     function toggleSportSelection(sportId) {

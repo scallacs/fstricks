@@ -284,11 +284,17 @@ class VideoTagsController extends AppController {
                 // TODO limit size of string
                 $status = explode(',', $this->request->query['status']);
                 $query->where([
-                    'VideoTags.status IN' => $status,
-                    'VideoTags.user_id' => $this->Auth->user('id')
+                    'VideoTags.status IN' => $status
+//                    'VideoTags.user_id' => $this->Auth->user('id')
                 ]);
-            } else if (!empty($this->request->query['with_pending'])) {
-                $query->where(['VideoTags.status IN' => [VideoTag::STATUS_PENDING, VideoTag::STATUS_VALIDATED]]);
+            } // For validation
+            else if (!empty($this->request->query['with_pending'])) {
+                $query->where([
+                    'OR' => [
+                        ['VideoTags.status IN' => [VideoTag::STATUS_PENDING, VideoTag::STATUS_VALIDATED]],
+                        ['VideoTags.status' => VideoTag::STATUS_REJECTED, 'VideoTags.user_id' => $this->Auth->user('id')],
+                    ]
+                ]);
             } else if ($filterStatus) {
                 $query->where(['VideoTags.status ' => VideoTag::STATUS_VALIDATED]);
             }

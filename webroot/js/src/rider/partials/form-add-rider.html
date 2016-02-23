@@ -59,7 +59,7 @@
                         Select
                     </button>
                 </div>
-                
+
                 <span class="progress" ng-show="uploader.picture.progress >= 0">
                     <div style="width:{{uploader.picture.progress}}%" 
                          ng-bind="uploader.picture.progress + '%'"></div>
@@ -152,6 +152,7 @@
                         </div>
                     </div>
                 </div>
+                <!--
                 <div class="form-group clearfix has-feedback" 
                      ng-class="[formGroupClass, {'has-error': addRiderForm.level.$invalid}]">
                     <label class="col-xs-3">Level</label>
@@ -174,47 +175,50 @@
                     </div>
                 </div>
             </div>
+                -->
 
-            <div ng-if="findSimilarRiders" class="bg-info padding-sm text-center" ng-show="loaderSearchSimilars">
-                <img src="img/ajax_loader.gif" alt="Loading..."/> 
-                Searching for existing riders.
             </div>
-            <div ng-if="riders.length > 0">
-                <h3>Existing riders</h3>
-                <div ng-repeat="rider in riders">
-                    <div class="col-xs-10">
-                        <div rider-item rider="rider"></div>
-                    </div>
-                    <div class="col-xs-2">
-                        <button type="button" 
-                                class="btn btn-default"
-                                ng-click="selectExistingRider(rider)">
-                            <span class="glyphicon glyphicon-check"></span>
-                        </button>
+            
+            <div class="clearfix">
+                <div ng-if="findSimilarRiders" class="bg-info padding-sm text-center" ng-show="loaderSearchSimilars">
+                    <img src="img/ajax_loader.gif" alt="Loading..."/> 
+                    Searching for existing riders.
+                </div>
+                <div ng-if="similarRiders.length > 0" class="padding-sm">
+                    <h5>Existing riders</h5>
+                    <div ng-repeat="rider in similarRiders">
+                        <div class="col-xs-10">
+                            <div rider-item rider="rider"></div>
+                        </div>
+                        <div class="col-xs-2">
+                            <button type="button" 
+                                    class="btn btn-default"
+                                    ng-click="selectExistingRider(rider)">
+                                <span class="glyphicon glyphicon-check"></span>
+                            </button>
+                        </div>
                     </div>
                 </div>
+                <div ng-if="!loaderSearchSimilars && riders.length === 0 && !addRiderForm.$invalid">
+                    <p class="bg-success padding-sm text-center">
+                        <span class="glyphicon glyphicon-check"></span> 
+                        Okay, you're good to go, this rider does not exist!
+                    </p>
+                </div>
             </div>
-            <div ng-if="!loaderSearchSimilars && riders.length === 0 && !addRiderForm.$invalid">
-                <p class="bg-success padding-sm text-center">
-                    <span class="glyphicon glyphicon-check"></span> 
-                    Okay, you're good to go, this rider does not exists
-                </p>
+            <div class="text-center form-group">
+                <button type="button" 
+                        class="btn btn-danger"
+                        ng-click="cancel()">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    Cancel
+                </button>
+                <button type="submit" 
+                        ng-disabled="addRiderForm.$invalid"
+                        class="btn btn-success">
+                    <span class="glyphicon glyphicon-plus-sign"></span>
+                    Save
+                </button>
             </div>
-        </div>
-
-        <div class="text-center form-group">
-            <button type="button" 
-                    class="btn btn-danger"
-                    ng-click="cancel()">
-                <span class="glyphicon glyphicon-remove"></span>
-                Cancel
-            </button>
-            <button type="submit" 
-                    ng-disabled="addRiderForm.$invalid"
-                    class="btn btn-success">
-                <span class="glyphicon glyphicon-plus-sign"></span>
-                Save
-            </button>
-        </div>
     </fieldset>
 </form>

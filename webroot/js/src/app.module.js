@@ -5,6 +5,7 @@ angular.module('app', [
     'app.player',
     'app.layout',
     'app.account',
+    'app.config',
     'app.rider',
     'app.tag',
     'app.page',
@@ -16,12 +17,12 @@ angular.module('app', [
         .run(Run);
 
 
-function MainController($scope, PlayerData, VideoTagData, SharedData, AuthenticationService, $state) {
+function MainController($scope, PlayerData, VideoTagData, SharedData, AuthenticationService, $state, Config) {
     $scope.playerData = PlayerData;
     $scope.videoTagData = VideoTagData;
     $scope.SharedData = SharedData;
-
     $scope.authData = AuthenticationService.authData;
+    $scope.config = Config.website;
 
     $scope.$on('view-video-tag', function(event, tag) {
         console.log('MainController: Event view-video-tag');

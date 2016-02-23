@@ -269,7 +269,7 @@
                                 Cancel changes
                             </button>
                             <button type="submit"
-                                    ng-disabled="!editionTag.isDirty() || !formAddVideoTag.$valid || similarTags.length > 0"
+                                    ng-disabled="!editionTag.isDirty() || !formAddVideoTag.$valid"
                                     class="btn btn-success" 
                                     >
                                 <span ng-if="!editionTag.isNew()">
@@ -287,11 +287,16 @@
                     <div ng-if="similarTags.length > 0" class=" form-group">
                         <hr/>
                         <div class="alert alert-danger"> 
-                            <p class="text-center">
+                            <p class="text-center" ng-if="hasSimilarValidatedTag">
                                 <span class="glyphicon glyphicon-warning-sign"></span> 
                                 Hey, it seems that there is already a trick that has been created and validated around here. 
                                 If you create a new one, it will not appear in the search results. 
                                 However you will still be able to share the link with your friends.
+                            </p>
+                            <p class="text-center" ng-if="!hasSimilarValidatedTag">
+                                <span class="glyphicon glyphicon-info-sign"></span> 
+                                Hey, it seems that there is already a trick suggested here but it has not been validated yet. 
+                                If you think there are not valid, feel free to create a new one.
                             </p>
                             <!--
                             <p class="text-center">
@@ -347,4 +352,4 @@
     <a ui-sref="edition_rules">Check out edition rules before adding new tricks</a>
 </p>
 
-{{editionTag._video_tag}}
+<!--{{editionTag._video_tag}}-->
