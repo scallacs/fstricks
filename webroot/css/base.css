@@ -360,7 +360,7 @@ header .navbar-nav > li > a{
     background: orangered;
 }
 .player-bar-tag{
-    background: orange;
+    background: #aaa;
     height: 15px;
     position: absolute;
     min-width: 3px;
@@ -368,7 +368,8 @@ header .navbar-nav > li > a{
     /* box-shadow: -2px 0px 2px black; */
 } 
 .player-bar-tag-validated{
-    background: green;
+    background: orange;
+    z-index: 2;
 }
     
 .player-bar-tag:hover{
@@ -451,7 +452,7 @@ header .navbar-nav > li > a{
 
 
 .margin-top{
-    margin-top: 10px;
+    /* margin-top: 10px; */
 }
 
 .user-profile-tag{
@@ -620,6 +621,42 @@ header .navbar-nav > li > a{
 /* ITEM VIDEO TAG */
 .item-video-tag-remaining{
     padding-top: 5px;
+}
+
+.slider-container{
+    
+}
+
+.slider-container .ui-slider{
+    	position: relative;
+    	text-align: left;
+}
+
+.slider-container .ui-slider .ui-slider-handle{
+    background: whitesmoke;
+    position: absolute;
+    z-index: 3;
+    width: 1.2em;
+    height: 1.6em;
+    cursor: default;
+    border-color: #DDD;
+    margin-left: -0.6em;
+    border-radius: 2px;
+    top: -0.2em;
+}
+.slider-container .ui-slider-horizontal .ui-slider-range {
+	top: 0;
+	height: 100%;
+}
+.slider-container .ui-slider .ui-slider-range {
+	position: absolute;
+	z-index: 1;
+	/* font-size: 1em; */
+	display: block;
+	border: 0;
+	/* background-position: 0 0; */
+	background: #AAA;
+	height: 15px;
 }
 
 /******************************/

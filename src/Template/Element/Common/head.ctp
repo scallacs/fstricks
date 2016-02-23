@@ -18,7 +18,6 @@
 <?= $this->Html->css('bootstrap.css') ?>
 <?= $this->Html->css('ui-bootstrap.css') ?>
 <?= $this->Html->css('base.css') ?>
-<?= $this->Html->css('jquery-ui.min.css'); ?>  <!-- ONLY ADD SLIDER CODE -->
 
 <?= $this->Html->script('components/jquery/dist/jquery.min.js'); ?> <!-- 2.1.4 -->
 <?= $this->Html->script('components/jquery-timeago/jquery.timeago.js'); ?> <!-- 1.0.2 -->

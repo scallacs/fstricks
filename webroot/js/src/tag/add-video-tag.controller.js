@@ -21,12 +21,10 @@ function EditionTag() {
         setId: setId,
         getId: getId,
         init: init,
-        sync: sync,
         syncRider: syncRider,
         setRider: setRider,
         syncCategory: syncCategory,
         syncTag: syncTag,
-        syncRange: syncRange,
         setVideo: setVideo,
         resetTag: resetTag,
         allowedToRemove: allowedToRemove,
@@ -97,7 +95,6 @@ function EditionTag() {
     }
 
     function init() {
-        this._defaultDuration = 5;
         this._original = null;
 
         this._video_tag = {
@@ -112,7 +109,7 @@ function EditionTag() {
             rider: null,
             tag: null,
             category: null,
-            range: [0, this._defaultDuration]
+            range: [0, 2]
         };
     }
 
@@ -158,16 +155,6 @@ function EditionTag() {
     }
     function syncRider() {
         this.setRider(this._extra.rider);
-    }
-    function syncRange() {
-        this._video_tag.begin = this._extra.range[0];
-        this._video_tag.end = this._extra.range[1];
-    }
-    function sync() {
-        this.syncCategory();
-        this.syncTag();
-        this.syncRider();
-        this.syncRange();
     }
 
     function fromVideoTag(videoTag) {
@@ -295,10 +282,25 @@ function AddVideoTagController($scope, $filter,
     var MAX_TAG_DURATION = 40;
     var SIMILAR_TAG_LIMIT_RATION = 0.6;
 
-    $scope.slider = {
-        step: 0.5
-    };
+    var editionTag = new EditionTag(AuthenticationService.getCurrentUser().id);
+    $scope.editionTag = editionTag;
+    
     $scope.showCreateRiderForm = false;
+
+    $scope.slider = {
+        range: true,
+        step: 0.3,
+        min: 0,
+        values: [0, MIN_TAG_DURATION],
+        stop: function(event, ui) {
+            if (editionTag.isNew()) {
+                $scope.similarTags = findSimilarTags(editionTag._video_tag);
+            }
+        },
+        slide: function(event, ui) {
+            changeSliderValues(ui.values, ui.values[1] === ui.value ? 1 : 0);
+        }
+    };
 
     $scope.video = {video_url: null};
 
@@ -326,8 +328,6 @@ function AddVideoTagController($scope, $filter,
     $scope.setEndRangeNow = setEndRangeNow;
     $scope.loadSimilarTags = loadSimilarTags;
 
-    init();
-
     $scope.$on('view-video-tag', function(event, tag) {
         event.stopPropagation();
         editVideoTag(tag);
@@ -339,9 +339,7 @@ function AddVideoTagController($scope, $filter,
     $scope.$on('add-new-tag', addNewTag);
     $scope.$on('rider-selected', onRiderSelectedEvent);
 
-    var editionTag = new EditionTag(AuthenticationService.getCurrentUser().id);
-
-    $scope.$watch('editionTag._extra.range', watchEditionTagRange);
+//    $scope.$watch('editionTag._extra.range', watchEditionTagRange, true);
     $scope.$watch('editionTag._extra.category', function() {
         $scope.suggestedTags = [];
         editionTag.syncCategory();
@@ -353,8 +351,7 @@ function AddVideoTagController($scope, $filter,
         editionTag.syncRider();
     });
 
-    console.log($scope.editionTag);
-    $scope.editionTag = editionTag;
+    init();
 
 
     function init() {
@@ -397,10 +394,11 @@ function AddVideoTagController($scope, $filter,
         }, onError);
 
 
+        changeSliderValues([0,0], 1);
     }
 
     function onVideoNotFound() {
-        
+
     }
     function onError(error) {
         console.log("Error viewing this tag");
@@ -432,6 +430,7 @@ function AddVideoTagController($scope, $filter,
         editionTag.resetTag()
                 .setId(null)
                 .setVideo($scope.video);
+        $scope.similarTags = findSimilarTags(editionTag._video_tag);
         playEditionTag();
     }
 
@@ -479,16 +478,16 @@ function AddVideoTagController($scope, $filter,
         $scope.similarTags = editionTag.isNew() ? findSimilarTags(editionTag._video_tag) : [];
     }
 
-    function loadSimilarTags(){
+    function loadSimilarTags() {
         var videoTag = editionTag._video_tag;
         VideoTagLoader.instance('similarTags')
                 .init()
                 .setMethod('similar')
                 .setFilter('VideoTag', videoTag)
                 .startLoading()
-                .then(function(data){
+                .then(function(data) {
                     $scope.similarTags = data;
-        });
+                });
     }
 
     function findSimilarTags(videoTag) {
@@ -516,64 +515,81 @@ function AddVideoTagController($scope, $filter,
     //  RANGE FUNCTIONS 
     // ----------------------------------------------------------------------- */
 
-    function watchEditionTagRange(newValue, oldValue) {
-        if (newValue == undefined) {
-            return;
-        }
-        if (oldValue == undefined || newValue[0] !== oldValue[0]) {
-//                PlayerData.seekTo(newValue[0]);
-            adaptRange(newValue[0], 0);
-            playEditionTag();
-        }
-        else if (newValue[1] !== oldValue[1]) {
-            adaptRange(newValue[1], 1);
-            PlayerData.seekTo(newValue[1]);
-            PlayerData.pause();
-        }
-        editionTag.syncRange();
-        // If we want to create a new tag
-        if (editionTag.isNew()) {
-            $scope.similarTags = findSimilarTags(editionTag._extra.range);
-        }
-    }
+//    function watchEditionTagRange(newValue, oldValue) {
+//        if (newValue == undefined) {
+//            return;
+//        }
+//        if (oldValue == undefined || newValue[0] !== oldValue[0]) {
+//            PlayerData.seekTo(newValue[0]);
+//            adaptRange(newValue[0], 0);
+//            playEditionTag();
+//        }
+//        else if (newValue[1] !== oldValue[1]) {
+//            adaptRange(newValue[1], 1);
+//            PlayerData.seekTo(newValue[1]);
+//            PlayerData.pause();
+//        }
+//    }
 
     function addStartRange(value) {
-        editionTag._extra.range = [editionTag._extra.range[0] + value, editionTag._extra.range[1]];
+        editionTag._extra.range[0] += value;
+        changeSliderValues(editionTag._extra.range, 0);
     }
     function addEndRange(value) {
-        editionTag._extra.range = [editionTag._extra.range[0], editionTag._extra.range[1] + value];
+        editionTag._extra.range[1] += value;
+        changeSliderValues(editionTag._extra.range, 1);
     }
     function setStartRangeNow() {
-        console.log("Set current time: " + PlayerData.getCurrentTime());
         editionTag._extra.range[0] = PlayerData.getCurrentTime();
+        changeSliderValues(editionTag._extra.range, 0);
     }
     function setEndRangeNow() {
         editionTag._extra.range[1] = PlayerData.getCurrentTime();
+        changeSliderValues(editionTag._extra.range, 1);
     }
+
+    function changeSliderValues(input, i) {
+        var output = getRangeMinMax(input, i);
+        console.log("Changing values: " + input[0] + "-" + input[1]);
+        editionTag._extra.range[0] = output[0];
+        editionTag._video_tag.begin = output[0];
+        editionTag._extra.range[1] = output[1];
+        editionTag._video_tag.end = output[1];
+    }
+
 
     /**
      * 
      * @param int newValue
      * @param {0,1} i the time to change (0 => begin, 1 => end)
      */
-    function adaptRange(newValue, i) {
-        if (i === 1 && newValue <= MIN_TAG_DURATION) {
-            editionTag._extra.range[1] = MIN_TAG_DURATION;
-            editionTag._extra.range[0] = 0;
-            return;
+    function getRangeMinMax(input, i) {
+        input[0] = Math.max(0,input[0]);
+        var output = input;
+        // Left side
+        if (i === 1 && input[1] <= MIN_TAG_DURATION) {
+            output[1] = MIN_TAG_DURATION;
+            output[0] = 0;
+            return output;
         }
-        else if (i === 0 && (PlayerData.data.duration - newValue) <= MIN_TAG_DURATION) {
-            editionTag._extra.range[0] = PlayerData.data.duration - MIN_TAG_DURATION;
-            editionTag._extra.range[1] = PlayerData.data.duration;
-            return;
+        // Right side
+        else if (i === 0 && (PlayerData.data.duration - input[0]) <= MIN_TAG_DURATION) {
+            output[0] = PlayerData.data.duration - MIN_TAG_DURATION;
+            output[1] = PlayerData.data.duration;
+            return output;
         }
+        output[i] = input[i];
 
-        editionTag._extra.range[i] = newValue;
-        if ((editionTag._extra.range[1] - editionTag._extra.range[0]) < MIN_TAG_DURATION) {
-            editionTag._extra.range[1 - i] = editionTag._extra.range[i] + (i === 1 ? -MIN_TAG_DURATION : MIN_TAG_DURATION);
-        } else if ((editionTag._extra.range[1] - editionTag._extra.range[0]) >= MAX_TAG_DURATION) {
-            editionTag._extra.range[1 - i] = editionTag._extra.range[i] + (i === 1 ? -MAX_TAG_DURATION : MAX_TAG_DURATION);
+        // Range is too small 
+        var range = input[1] - input[0];
+        if (range < MIN_TAG_DURATION) {
+            output[1 - i] = input[i] + (i === 1 ? -MIN_TAG_DURATION : MIN_TAG_DURATION);
         }
+        // Range is too big
+        else if (range >= MAX_TAG_DURATION) {
+            output[1 - i] = input[i] + (i === 1 ? -MAX_TAG_DURATION : MAX_TAG_DURATION);
+        }
+        return output;
     }
 
     // ----------------------------------------------------------------------- */
