@@ -104,49 +104,39 @@ class AppController extends Controller {
         $this->set('isUserConnected', $this->Auth->user('id') != null);
         $this->set('currentUser', $this->Auth->user('id') != null ? ['User' => $this->Auth->user()] : null);
 
-        if (//$this->Rest->isActive() || 
-                $this->request->is('json')) {
-            if (ResultMessage::hasWrapper()) {
-                $serialize = ['message', 'data', 'success', 'returnCode', 'details', 'validationErrors', 'debug', 'token'];
+        if ($this->request->is('json')) {
+            $this->set('data', ResultMessage::render());
+//                $this->set('debug', array(
+//                    'request' => $this->request
+//                ));
+//                if (ResultMessage::$token) {
+//                    $this->set('token', ResultMessage::$token);
+//                }
+//
+//            if (isset($this->request->params['paging'])) {
+//                $this->set('paginate', current($this->request->params['paging']));
+//                $serialize = ['paginate', 'data'];
+//            }
+//            else{
+//                $serialize = 'data';
+//            }
 
-                $this->set('message', ResultMessage::$message);
-                $this->set('data', ResultMessage::$data);
-                $this->set('success', ResultMessage::$success);
-                $this->set('returnCode', ResultMessage::$returnCode);
-                $this->set('validationErrors', ResultMessage::$validationErrors);
-                $this->set('details', ResultMessage::$details);
-                $this->set('debug', array(
-                    'request' => $this->request
-                ));
-                if (ResultMessage::$token) {
-                    $this->set('token', ResultMessage::$token);
-                }
-
-                if (isset($this->request->params['paging'])) {
-                    $this->set('paginate', current($this->request->params['paging']));
-                    $serialize[] = 'paginate';
-                }
-
-                $this->set('_serialize', $serialize);
-            } else {
-                $this->set('data', ResultMessage::$data);
-                $this->set('_serialize', 'data');
-            }
+            $this->set('_serialize', 'data');
             $this->response->type('json');
         } else {
-            if (ResultMessage::$message !== null) {
+            if (ResultMessage::hasMessage()) {
                 $this->Flash->set(ResultMessage::$message);
             }
-
-            if (ResultMessage::$redirectUrl === null) {
-                $this->redirect($this->referer());
-            } else if (ResultMessage::$redirectUrl !== false) {
-                $this->redirect(ResultMessage::getRedirectUrl());
-            } else {
+//
+//            if (ResultMessage::$redirectUrl === null) {
+//                $this->redirect($this->referer());
+//            } else if (ResultMessage::$redirectUrl !== false) {
+//                $this->redirect(ResultMessage::getRedirectUrl());
+//            } else {
                 foreach (ResultMessage::$data as $d => $v) {
                     $this->set($d, $v);
                 }
-            }
+//            }
             // No redirection $data['redirectUrl'] === false
         }
         return parent::beforeRender($event);

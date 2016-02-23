@@ -1,7 +1,5 @@
 <div
-    ng-style="resizeWithOffset()" 
-    resize 
-    notifier="notifyServiceOnChage(params)">
+    resize >
     <div ng-show="SharedData.loadingState || videoTagData.loading" class="pick-video-message">
         <p>
             Loading...
@@ -39,13 +37,12 @@
                     ng-click="prevTrick()">
                     <span class="glyphicon glyphicon-arrow-left"></span>
                 </div>
-                <div class="iframe-wrapper res-16by9">   
+                <div class="iframe-wrapper">   
                     <youtube
                         ng-if="playerData.isProvider('youtube')"
                         player-data="playerData" 
                         frameborder="0">
                     </youtube> 
-
                     <vimeo-video  
                         ng-if="playerData.isProvider('vimeo')"
                         id="vimeoplayer"

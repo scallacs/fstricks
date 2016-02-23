@@ -248,3 +248,5 @@ Plugin::load('Proffer');
 ini_set('memory_limit', '256M');
 
 Configure::write('JsonConfigFolder', WWW_ROOT . DS . 'data' . DS);
+
+Configure::write('TokenExpirationTime', 30 * (86400 * 1000)); // 30 jours

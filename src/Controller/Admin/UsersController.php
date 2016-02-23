@@ -145,7 +145,7 @@ class UsersController extends AppController {
             if ($user) {
                 $this->Auth->setUser($user);
                 $this->setToken();
-                ResultMessage::setRedirectUrl($this->Auth->redirectUrl());
+//                ResultMessage::setRedirectUrl($this->Auth->redirectUrl());
                 ResultMessage::setMessage("Welcome back !", true);
             } else {
                 ResultMessage::setMessage('Your username or password is incorrect', false);

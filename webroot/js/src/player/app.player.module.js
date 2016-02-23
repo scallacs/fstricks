@@ -167,30 +167,34 @@ function DashboardController($scope, VideoTagLoader, SharedData, $state, Authent
         {id: 'official', name: "Officials", active: false, filters: {status: 'validated', order: 'modified'}},
     ];
 
-    var currentUser = AuthenticationService.authData.user;
     $scope.onWorkspace = onWorkspaceChanged;
-    
 
     init();
 
-    $scope.$on('view-video-tag', function(event, data){
+    $scope.$on('view-video-tag', function(event, data) {
         $state.go('videoplayer.realization', {
             videoTagId: data.id
         });
     });
-    
+
     function init() {
-        var totalTags = currentUser.count_tags_validated + currentUser.count_tags_rejected;
-        $scope.currentUser = currentUser;
-        $scope.performance = totalTags > 0 
-            ? (currentUser.count_tags_validated / totalTags) 
-            : "Not yet";
-        
+        //var totalTags = currentUser.count_tags_validated + currentUser.count_tags_rejected;
+        //$scope.currentUser = currentUser;
+        //$scope.performance = totalTags > 0 
+        //    ? (currentUser.count_tags_validated / totalTags) 
+        //    : "Not yet";
+
         for (var i = 0; i < $scope.workspaces.length; i++) {
             var workspace = $scope.workspaces[i];
-            workspace.loader = VideoTagLoader.instance(workspace.id).setFilters(workspace.filters);
+            workspace.loader = VideoTagLoader
+                    .instance(workspace.id)
+                    .setFilters(workspace.filters)
+                    .setMode('replace')
+                    .setLimit(10);
         }
-        $scope.workspaces[0].loader.startLoading()
+        $scope.workspaces[0]
+                .loader
+                .startLoading()
                 .then(function() {
                     SharedData.pageLoader(false);
                 })
@@ -260,12 +264,11 @@ function AddVideoController($scope, ProviderVideoInfo, $state,
         }
         $scope.isHistoryLoading = true;
 
-        VideoTagEntity.recentlyTagged({page: page, total_number: (page <= 1 ? 1 : null)}, function(response) {
-            if (angular.isDefined(response.total) && response.total !== null) {
-                console.log("Set total video: " + response.total);
-                $scope.totalVideos = response.total;
-            }
-            var items = response.data;
+        VideoTagEntity.recentlyTagged({page: page}, function(response) {
+            console.log("Set total video: " + response.total);
+            $scope.totalVideos = response.total;
+            $scope.videoPerPage = response.perPage;
+            var items = response.items;
             angular.forEach(items, function(video) {
                 var providerFactory = ProviderVideoInfo.get(video.provider_id);
                 providerFactory
@@ -391,7 +394,7 @@ function ViewPlaylistController(VideoTagData, PlayerData, SharedData, $statePara
 }
 
 
-function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, SharedData) {
+function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, SharedData, $state) {
 
     PlayerData.showViewMode();
     PlayerData.stop();
@@ -401,10 +404,13 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
         id: $stateParams.videoId
     };
 
-    VideoTagData.getLoader().setFilters({video_id: $stateParams.videoId, order: 'begin_time'});
-    VideoTagData.getLoader().loadPage(1).then(autoPlayVideo).catch(function() {
-        SharedData.pageLoader(false);
-    });
+    VideoTagData.getLoader()
+            .setFilters({video_id: $stateParams.videoId, order: 'begin_time'})
+            .startLoading()
+            .then(autoPlayVideo)
+            .catch(function() {
+                SharedData.pageLoader(false);
+            });
 
     // TODO only for first page
 
@@ -413,15 +419,17 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
     }
 
     function autoPlayVideo(response) {
-        if (response.length > 0) {
+        console.log("Autho play video");
+        if (response.items.length > 0) {
+            var first = response.items[0];
             PlayerData.loadVideo({
-                provider: response[0].provider_id,
-                video_url: response[0].video_url
-            }).then(function() {
+                provider: first.provider_id,
+                video_url: first.video_url
+            }).finally(function() {
                 SharedData.pageLoader(false);
             });
-            $scope.videoDuration = response[0].video_duration;
-            $scope.videoTags = VideoTagData.getItems();
+            $scope.videoDuration = first.video_duration;
+            $scope.videoTags = response.items;
 //                YoutubeVideoInfo.snippet(response[0].video_url, function(data) {
 //                    //console.log(data);
 //                    if (data !== null) {
@@ -432,9 +440,16 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
 //                    }
 //                });
         }
+        else {
+            console.log("This video has no trick");
+            $state.go('notfound');
+        }
     }
 }
-function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, $state, VideoTagEntity, VideoTagAccuracyRateEntity) {
+
+// TODO add current sport ...
+function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, $state, VideoTagEntity, 
+    VideoTagAccuracyRateEntity, $rootScope) {
     var skipped = [];
 
     PlayerData.stop();
@@ -443,8 +458,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     VideoTagData.reset();
     VideoTagData.mode = 'validation';
     loadNext();
-
-
+    
     $scope.rateAccurate = rateAccurate;
     $scope.rateFake = rateFake;
     $scope.skip = skip;
@@ -452,22 +466,22 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     function rateAccurate() {
         $scope.isButtonsLoading = true;
         VideoTagAccuracyRateEntity.accurate({
-            video_tag_id: $scope.videoTag.id
+            video_tag_id: VideoTagData.currentTag.id
         });
-        skipped.push($scope.videoTag.id);
+        skipped.push(VideoTagData.currentTag.id);
         toNextTag();
     }
 
     function rateFake() {
         VideoTagAccuracyRateEntity.fake({
-            video_tag_id: $scope.videoTag.id
+            video_tag_id: VideoTagData.currentTag.id
         });
         skipped.push($scope.videoTag.id);
         toNextTag()
     }
 
     function skip() {
-        skipped.push($scope.videoTag.id);
+        skipped.push(VideoTagData.currentTag.id);
         PlayerData.pause();
         toNextTag();
     }
@@ -497,9 +511,9 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
                     .finally(function() {
                         SharedData.pageLoader(false);
                     });
-            $scope.videoTag = tags[0];
         }
         else {
+            VideoTagData.currentTag = null;
             SharedData.pageLoader(false);
         }
     }

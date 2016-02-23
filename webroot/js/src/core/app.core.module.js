@@ -16,9 +16,18 @@ angular
         .factory('AuthenticationService', AuthenticationService)
         .factory('ServerConfigEntity', ServerConfigEntity)
         .factory('VideoTagAccuracyRateEntity', VideoTagAccuracyRateEntity)
+        .directive('notifyOnLoad', NotifyOnLoad)
         .filter('searchCategory', searchCategory)
         .filter('getSportByName', getSportByName);
 
+
+function NotifyOnLoad($rootScope, $timeout) {
+    return function() {
+        $timeout(function() {
+            $rootScope.$broadcast('notity-player-offset');
+        });
+    };
+}
 
 function PlayerData(VideoTagData, $q) {
     var obj = {
@@ -213,7 +222,7 @@ function PlayerData(VideoTagData, $q) {
         return this.getPromise().then(function() {
             obj.data.video_url = null
             var player = obj.getPlayer();
-            if (player !== null){
+            if (player !== null) {
                 player.stop();
             }
         });
@@ -284,11 +293,13 @@ function VideoTagLoader(VideoTagEntity, $q) {
     VideoTagLoader.prototype.setFilter = setFilter;
     VideoTagLoader.prototype.setLimit = setLimit;
     VideoTagLoader.prototype.remove = remove;
-    VideoTagLoader.prototype.startLoading = startLoading;;
-    VideoTagLoader.prototype.setOrder = setOrder;;
+    VideoTagLoader.prototype.startLoading = startLoading;
+    VideoTagLoader.prototype.setOrder = setOrder;
     VideoTagLoader.prototype.add = add;
     VideoTagLoader.prototype.hasData = hasData;
     VideoTagLoader.prototype.setMethod = setMethod;
+    VideoTagLoader.prototype.setMode = setMode;
+    VideoTagLoader.prototype._onSuccessPageLoad = _onSuccessPageLoad;
 
     return {
         instances: {},
@@ -304,6 +315,7 @@ function VideoTagLoader(VideoTagEntity, $q) {
         this.filters = {};
         this.data = {
             total: null,
+            perPage: null,
             items: []
         };
         this.limit = 20; // TODO synchro server
@@ -312,11 +324,17 @@ function VideoTagLoader(VideoTagEntity, $q) {
         this.currentPage = 1;
         this.cachePage = {};
         this.method = 'search';
+        this.mode = 'append'; // Append to data Other mode: 'replace'
         return this;
     }
-    
-    function setMethod(method){
+
+    function setMethod(method) {
         this.method = method;
+        return this;
+    }
+
+    function setMode(m) {
+        this.mode = m;
         return this;
     }
 
@@ -325,15 +343,15 @@ function VideoTagLoader(VideoTagEntity, $q) {
         this.setFilter('limit', l);
         return this;
     }
-    
-    function hasData(){
+
+    function hasData() {
         return this.data.items.length > 0;
     }
 
     function setOrder(value) {
         this.filters.order = value;
     }
-    
+
     function add(tag) {
         this.data.items.push(tag);
     }
@@ -370,8 +388,8 @@ function VideoTagLoader(VideoTagEntity, $q) {
         this.disabled = true;
         var promise = this.loadPage(this.currentPage);
         this.currentPage += 1;
-        promise.then(function(tags) {
-            if (tags.length < that.limit) {
+        promise.then(function(data) {
+            if (data.items.length < data.perPage) {
                 console.log('disabling video tag data loader');
                 that.disabled = true;
             }
@@ -387,27 +405,43 @@ function VideoTagLoader(VideoTagEntity, $q) {
         console.log('Request page ' + page + ' with filter: ');
         console.log(this.filters);
 //        console.log(that.data.items);
-        if (this.cachePage[page]) {
-            return this.cachePage[page];
+        if (!angular.isDefined(this.cachePage[page])) {
+            this.filters.page = page;
+            this.loading = true;
+            this.cachePage[page] = VideoTagEntity[this.method](this.filters).$promise;
         }
-        this.filters.page = page;
-        this.loading = true;
-        this.cachePage[page] = VideoTagEntity[this.method](this.filters, function(tags) {
-            console.log('Loading page ' + page + ' response: ' + tags.length + ' tag(s)');
-            for (var i = 0; i < tags.length; i++) {
-                that.data.items.push(tags[i]);
-            }
-        }, function() {
-            that.disabled = true;
-        }).$promise.finally(function(){
-            that.loading = false;
-        });
+        this.cachePage[page]
+                .then(function(data) {
+                    that._onSuccessPageLoad(data)
+                })
+                .catch(function() {
+                    that.disabled = true;
+                })
+                .finally(function() {
+                    that.loading = false;
+                });
         return this.cachePage[page];
     }
 
     function setFilter(name, value) {
         this.filters[name] = value;
         return this;
+    }
+
+    function _onSuccessPageLoad(data) {
+        this.data.perPage = data.perPage;
+        this.data.total = data.total;
+
+        var tags = data.items;
+        console.log('[OK] Loading page ' + this.filters.page + ': ' + tags.length + ' item(s)');
+        if (this.mode === 'append') {
+            for (var i = 0; i < tags.length; i++) {
+                this.data.items.push(tags[i]);
+            }
+        }
+        else {
+            this.data.items = tags;
+        }
     }
 
     function setFilters(value) {
@@ -444,7 +478,7 @@ function VideoTagData(VideoTagLoader) {
         next: function() {
             return this.getItems()[Math.min(this.getItems().length - 1, this._getCurrentIndice() + 1)];
         },
-        getItems: function(){
+        getItems: function() {
             return this.getLoader().data.items;
         },
         hasPrev: function() {
@@ -738,7 +772,7 @@ function VideoTagEntity($resource) {
         search: {
             method: 'GET',
             params: {action: 'search'},
-            isArray: true
+            isArray: false
         },
         validation: {
             method: 'GET',

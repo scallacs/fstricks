@@ -36,9 +36,6 @@
             <a ui-sref="signup">Sign up</a>
         </li>
         <li ng-if="authData.isAuthed()">
-            <a ui-sref="dashboard"><span class="glyphicon glyphicon-dashboard"></span></a>
-        </li>
-        <li ng-if="authData.isAuthed()">
             <a ui-sref="videoplayer.validation()"><span class="glyphicon glyphicon-check"></span></a>
         </li>
         <li ng-if="authData.isAuthed()" class="dropdown">
@@ -46,6 +43,7 @@
                 <span class="glyphicon glyphicon-cog"></span>
             </a>
             <ul class="dropdown-menu">
+                <li> <a ui-sref="dashboard"><span class="glyphicon glyphicon-dashboard"></span> My tricks</a></li>
                 <li> <a ui-sref="myriderprofile.view"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
                 <li> <a ui-sref="settings"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
                 <li ng-click="logout()">

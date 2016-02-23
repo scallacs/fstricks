@@ -297,13 +297,15 @@ class VideoTagsController extends AppController {
                 $str = $this->request->query['tag_name'];
                 \App\Model\Table\TableUtil::multipleWordSearch($query, $str, 'Tags.name');
             }
-//        if (!empty($this->request->query['with_total'])){
-//            $data = [
-//                
-//            ]
-//        }
+//            if (!empty($this->request->query['with_total'])){
+//                $data = [
+//
+//                ]
+//            }
 //            debug($query->sql());
-            ResultMessage::overwriteData($this->paginate($query, $paginateOptions));
+            ResultMessage::setPaginateData(
+                    $this->paginate($query, $paginateOptions),
+                    $this->request->params['paging']['VideoTags']);
         } catch (NotFoundException $e) {
             ResultMessage::overwriteData([]);
         }
@@ -315,10 +317,7 @@ class VideoTagsController extends AppController {
      */
     public function recentlyTagged() {
         ResultMessage::setWrapper(false);
-        $data = [
-            'data' => null,
-            'total' => null
-        ];
+        // TODO configuration 
         $paginateOptions = [
             'limit' => 5,
             'maxLimit' => 5
@@ -336,17 +335,9 @@ class VideoTagsController extends AppController {
                     ->contain(['Videos'])
                     ->distinct(['Videos.id']);
 
-            // TODO use cakephp behavior!
-            $data['data'] = $this->paginate($query);
-            if (!empty($this->request->query['total_number'])) {
-                if (count($data['data']) < $paginateOptions['limit']) {
-                    $data['total'] = count($data['data']);
-                } else {
-                    $data['total'] = $query->count();
-                }
-            }
-
-            ResultMessage::overwriteData($data);
+            ResultMessage::setPaginateData(
+                    $this->paginate($query, $paginateOptions),
+                    $this->request->params['paging']['VideoTags']);
         } catch (NotFoundException $e) {
             ResultMessage::overwriteData($data);
         }

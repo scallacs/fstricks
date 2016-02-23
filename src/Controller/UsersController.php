@@ -46,7 +46,7 @@ class UsersController extends AppController {
             if ($user) {
                 $this->Auth->setUser($user);
                 $this->setToken();
-                ResultMessage::setRedirectUrl($this->Auth->redirectUrl());
+//                ResultMessage::setRedirectUrl($this->Auth->redirectUrl());
                 ResultMessage::setMessage("Welcome back !", true);
             } else {
                 ResultMessage::setMessage('Your username or password is incorrect', false);
@@ -170,7 +170,7 @@ class UsersController extends AppController {
                 $this->setToken();
                 assert($this->Auth->user('id'));
                 ResultMessage::setMessage('The user has been saved.', true);
-                ResultMessage::setRedirectUrl(['action' => 'index']);
+//                ResultMessage::setRedirectUrl(['action' => 'index']);
                 ResultMessage::setData('user', $userArray);
             } else {
                 ResultMessage::setMessage('Your account cannot be created. Please check your inputs.', false);
@@ -198,7 +198,7 @@ class UsersController extends AppController {
         $token = \Firebase\JWT\JWT::encode([
                     'id' => $userId,
                     'sub' => $userId,
-                    'exp' => time() + 604800,
+                    'exp' => time() + \Cake\Core\Configure::read('TokenExpirationTime'),
                     'iat' => time()
                         ], Security::salt());
 

@@ -6,7 +6,7 @@
             <span class="glyphicon glyphicon-list"></span> 
             My tricks
         </h3>
-        
+        <!--
         <table class="table table-striped text-bold" style="max-width: 500px; margin: auto;">
             <tr>
                 <td class="text-success">
@@ -32,7 +32,7 @@
                     {{performance}}
                 </td>
             </tr>
-        </table>
+        </table>-->
 
         <uib-tabset class="margin-top">
             <uib-tab 
@@ -40,20 +40,29 @@
                 heading="{{workspace.name}}"
                 active=workspace.active
                 ng-click="onWorkspace(workspace)">
-                <div class="padding-sm">
-                    <div ng-if="!workspace.loader.hasData() && workspace.loader.loading" class="text-center text-info">
+
+                <div page-loader is-loading="workspace.loader.loading"></div>
+
+                <div class="text-center text-bold padding-sm">
+                    <p ng-if="!workspace.loader.hasData() && workspace.loader.loading">
                         Loading ...
-                    </div>
-                    <div ng-if="!workspace.loader.hasData() && !workspace.loader.loading" class="text-center text-info">
+                    </p>
+                    <p ng-if="!workspace.loader.hasData() && !workspace.loader.loading">
                         Nothing yet
-                    </div>
-                    <div ng-if="workspace.loader.hasData()">
-                        <div
-                            ng-repeat="videoTag in workspace.loader.data.items" 
-                            video-tag-item 
-                            video-tag="videoTag"></div>
-                    </div>
-                </div>     
+                    </p>
+                </div>
+                <ul class="list-unstyled">
+                    <li pagination-id="workspace.id"
+                        dir-paginate="videoTag in workspace.loader.data.items | itemsPerPage: workspace.loader.data.perPage"
+                        total-items="workspace.loader.data.total">
+                    <video-tag-item video-tag="videoTag"></video-tag-item>
+                    </li>
+                </ul>
+                <div pagination-id="workspace.id"
+                     dir-pagination-controls
+                     on-page-change="workspace.loader.loadPage(newPageNumber)"
+                     class="pagination-container">
+                </div>
             </uib-tab>
         </uib-tabset>
     </div>

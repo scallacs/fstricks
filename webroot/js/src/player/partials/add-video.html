@@ -115,6 +115,14 @@
             </h3>
 
             <div page-loader is-loading="isHistoryLoading"></div>
+            <div class="text-center text-bold padding-sm">
+                <p ng-if="recentVideos === false">
+                    Loading your history...
+                </p>
+                <p ng-if="recentVideos.length === 0">
+                    Add your first video now !
+                </p>
+            </div>
             <div ng-if="recentVideos.length > 0" >
                 <ul class="list-unstyled">
                     <li dir-paginate="video in recentVideos | itemsPerPage: videoPerPage"
@@ -129,14 +137,6 @@
                      on-page-change="pageChanged(newPageNumber)"
                      class="pagination-container">
                 </div>
-            </div>
-            <div class="text-center text-bold padding-sm">
-                <p ng-if="recentVideos === false">
-                    Loading your history...
-                </p>
-                <p ng-if="recentVideos.length === 0">
-                    Add your first video now !
-                </p>
             </div>
         </div>
     </div>

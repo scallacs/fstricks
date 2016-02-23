@@ -1,4 +1,4 @@
-<div ng-show="!playerData.data.video_url">
+<div ng-show="!playerData.data.video_url && !SharedData.loadingState && !videoTagData.loading">
     <p class="pick-video-message">
         Pick a trick to play<br/>
         <span class="text-muted"><a ui-sref="addvideo"> or create new ones</a></span>

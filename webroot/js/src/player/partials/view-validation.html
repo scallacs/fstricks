@@ -1,4 +1,5 @@
-<div class="padding-sm text-center">
+<div notify-on-load class="padding-sm text-center player-offset" 
+     ng-if="videoTagData.currentTag">
     <button type="button" 
             class="btn btn-sm btn-success"
             ng-click="rateAccurate()">
@@ -17,7 +18,7 @@
         <span class="glyphicon glyphicon-arrow-right"></span>
         Skip
     </button>
-    &nbsp;&nbsp;&nbsp;<a ui-sref="addtag({videoId: videoTag.video_id, tagId:videoTag.id})">Propose a better one</a> 
+    &nbsp;&nbsp;&nbsp;<a ui-sref="addtag({videoId: videoTagData.currentTag.video_id, tagId:videoTagData.currentTag.id})">Propose a better one</a> 
     &nbsp;&nbsp;&nbsp;<a href="#HowItWorks">How it works ?</a> 
 </div>
 

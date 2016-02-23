@@ -4,7 +4,7 @@ angular.module('app.player')
  * Server form. Extend ng form functionnalities.
  * Add a loader when the form is waiting for a server response.
  */
-function playerBar() {
+function playerBar($timeout, $rootScope) {
     return {
         scope: {
             videoTags: '=videoTags',
@@ -13,24 +13,24 @@ function playerBar() {
         templateUrl: 'js/src/player/partials/player-bar.html',
         controller: function($scope, VideoTagData) {
             $scope.options = {
-                popoverTemplateUrl:  'js/src/player/partials/popover-video-tag.html'
+                popoverTemplateUrl: 'js/src/player/partials/popover-video-tag.html'
             };
             $scope.view = view;
             $scope.computeStyle = computeStyle;
             $scope.videoTagData = VideoTagData;
-            
-            function view(tag){
+
+            function view(tag) {
                 $scope.$emit('view-video-tag', tag);
             }
-            
-            
-            function computeStyle(tag){
+
+
+            function computeStyle(tag) {
                 return {
                     width: computeWidth(tag) + "%",
                     marginLeft: computeMargin(tag) + "%"
                 };
             }
-            
+
             function computeMargin(tag) {
                 var margin = (tag.begin / $scope.duration) * 100;
                 return margin;
@@ -39,10 +39,7 @@ function playerBar() {
                 var width = ((tag.end - tag.begin) / $scope.duration) * 100;
                 return width;
             }
-            
-        },
-        link: function(scope, elem, attr) {
-            
+
         }
     };
 

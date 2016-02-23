@@ -496,7 +496,7 @@ header .navbar-nav > li > a{
 }
 
 .res-16by9{
-    padding-bottom: 56.25%;
+    /* padding-bottom: 56.25%; */
 }
 
 .res-1by1{
@@ -505,19 +505,18 @@ header .navbar-nav > li > a{
 
 .player-container{
     margin: 0 auto;
-    overflow: hidden;
+    height: 100%;
 }
 
 .nopadding.player-container {}
 
 .iframe-wrapper{
-    /* width: 100%; */
-    /* position: relative; */
+    height: 500px;
 }
 
 .iframe-wrapper iframe{
-    position: absolute;
-    /* top: 0; */
+    /* position: absolute;
+    top: 0; */
     /* left: 0; */
     width: 100%;
     height: 100%;
