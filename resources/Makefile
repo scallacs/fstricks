@@ -49,6 +49,10 @@ copy-frontend-sources: clone init-prod copy-js-components copy-js-sources minify
 	cp -r $(TMP_SRC_DIR)/webroot/img $(PROD_DIR)/webroot/img 
 	cp -r $(TMP_SRC_DIR)/webroot/data $(PROD_DIR)/webroot/data 
 	cp -r $(TMP_SRC_DIR)/webroot/js/lib $(PROD_DIR)/webroot/js/lib 
+	cp -r $(TMP_SRC_DIR)/webroot/js/src $(PROD_DIR)/webroot/js/src 
+	$(info ************ Cleaning **********)
+	find . -type f -name '*.spec.js' -delete
+	find . -type f ! -name '*.min.js' -delete
 	
 copy-js-components: copy-frontend-sources
 	$(info ************ Copying js sources **********)
@@ -62,8 +66,10 @@ YUI_COMPRESSOR = java -jar bin/yuicompressor.jar
 # Flags to pass to the YUI Compressor for both CSS and JS.
 YUI_COMPRESSOR_FLAGS = --charset utf-8 --verbose
 
-CSS_MINIFIED = $(addprefix $CSS_OUTPUT, $(notdir $(CSS_FILES:.css=-min.css)))
-JS_MINIFIED = $(addprefix $JS_OUTPUT, $(JS_FILES:.js=-min.js)))
+#CSS_MINIFIED = $(addprefix $CSS_OUTPUT, $(notdir $(CSS_FILES:.css=-min.css)))
+#JS_MINIFIED = $(addprefix $JS_OUTPUT, $(JS_FILES:.js=-min.js)))
+CSS_MINIFIED = $(CSS_FILES:.css=.min.css)
+JS_MINIFIED = $(JS_FILES:.js=.min.js)
 
 # target: minify - Minifies CSS and JS.
 minify: minify-css minify-js
