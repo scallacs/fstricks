@@ -6,24 +6,33 @@
 
 
 PROD_DIR = /var/www
-JS_OUTPUT = $(PROD_DIR)/webroot/js/src
-CSS_OUTPUT = $(PROD_DIR)/webroot/css
 TMP_SRC_DIR = /home/ec2-user/WebsiteTricker
 
+#PROD_DIR = /var/www
+#TMP_SRC_DIR = F:/Programmation/Web/Tricker
+#JS_OUTPUT = $(PROD_DIR)/webroot/js/src
+#CSS_OUTPUT = $(PROD_DIR)/webroot/css
+
 # suffix will be ignored.
-CSS_FILES = $(filter-out %-min.css,$(wildcard \
+CSS_FILES = $(filter-out %.min.css,$(wildcard \
 	$(TMP_SRC_DIR)/webroot/css/*.css \
 	$(TMP_SRC_DIR)/webroot/css/**/*.css \
 ))
 
 # Patterns matching JS files that should be minified. Files with a -min.js
 # suffix will be ignored.
-JS_FILES = $(filter-out %-min.js %.spec.js,$(wildcard \
+JS_FILES = $(filter-out %.min.js %.spec.js,$(wildcard \
 	$(TMP_SRC_DIR)/webroot/js/src/*.js \
 	$(TMP_SRC_DIR)/webroot/js/src/**/*.js \
+	$(TMP_SRC_DIR)/webroot/js/src/**/**/*.js \
 ))
 
 ##############################################################################
+
+$(info ************ MAKEFILE **********)
+$(info => Production	: $(PROD_DIR))
+$(info => Sources	: $(TMP_SRC_DIR))
+$(info ********************************)
 
 clone:
 	git clone https://github.com/scallacs/tricker.git $(TMP_SRC_DIR)
@@ -44,15 +53,17 @@ copy-backend-sources: clone init-prod
 	$(info ************ Installing dependencies **********)
 	cd $(PROD_DIR) && composer install
 	
-copy-frontend-sources: clone init-prod copy-js-components copy-js-sources minify
+copy-frontend-sources: init-prod copy-js-components copy-js-sources minify
+	cd $(TMP_SRC_DIR)/webroot
 	$(info ************ Copying frontend sources **********)
-	cp -r $(TMP_SRC_DIR)/webroot/img $(PROD_DIR)/webroot/img 
-	cp -r $(TMP_SRC_DIR)/webroot/data $(PROD_DIR)/webroot/data 
-	cp -r $(TMP_SRC_DIR)/webroot/js/lib $(PROD_DIR)/webroot/js/lib 
-	cp -r $(TMP_SRC_DIR)/webroot/js/src $(PROD_DIR)/webroot/js/src 
+	cp -r img $(PROD_DIR)/webroot/img 
+	cp -r data $(PROD_DIR)/webroot/data 
+	cp -r js/lib $(PROD_DIR)/webroot/js/lib 
+	cp -r src $(PROD_DIR)/webroot/js/src 
 	$(info ************ Cleaning **********)
-	find . -type f -name '*.spec.js' -delete
-	find . -type f ! -name '*.min.js' -delete
+	cd js/src && find . -type f -name '*.spec.js' -delete
+	cd js/src find . -type f ! -name '*.min.js' -delete
+	cd js/css find . -type f ! -name '*.min.css' -delete
 	
 copy-js-components: copy-frontend-sources
 	$(info ************ Copying js sources **********)
@@ -73,7 +84,7 @@ JS_MINIFIED = $(JS_FILES:.js=.min.js)
 
 # target: minify - Minifies CSS and JS.
 minify: minify-css minify-js
-
+)
 # target: minify-css - Minifies CSS.
 minify-css: $(CSS_FILES) $(CSS_MINIFIED)
 
