@@ -37,11 +37,12 @@ $(info ********************************)
 clone:
 	git clone https://github.com/scallacs/tricker.git $(TMP_SRC_DIR)
 	
+# target: init-prod - Init the target directory. Create a copy 
 init-prod:
 	cp -r $(PROD_DIR) /home/ec2-user/ProductionCopy
 	rm -rf $(PROD_DIR)/*
 	
-copy-backend-sources: clone init-prod
+copy-backend-sources: init-prod
 	$(info ************ Copying backend sources **********)
 	cp -r $(TMP_SRC_DIR)/src $(PROD_DIR)/src
 	cp -r $(TMP_SRC_DIR)/config $(PROD_DIR)/config
