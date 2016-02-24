@@ -11,9 +11,9 @@
 <?= $this->Html->meta('icon') ?>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="js/components/ui-select/dist/select.min.css">
-<?= $this->Html->css('bootstrap.css') ?>
-<?= $this->Html->css('ui-bootstrap.css') ?>
-<?= $this->Html->css('base.css') ?>
+<?= $this->Html->css('bootstrap.min.css') ?>
+<?= $this->Html->css('ui-bootstrap.min.css') ?>
+<?= $this->Html->css('base.min.css') ?>
 
 
 <?= $this->Html->script('components/jquery/dist/jquery.min.js'); ?> <!-- 2.1.4 -->
@@ -45,7 +45,7 @@
 <?= $this->Html->script("components/angular-utils-pagination/dirPagination.js"); ?>         <!-- Use mimified -->
 <?= $this->Html->script("components/ngInfiniteScroll/build/ng-infinite-scroll.min.js"); ?>
 
-<?php if (!\Cake\Core\Configure::read('debug')){ ?>
+<?php if (\Cake\Core\Configure::read('debug')){ ?>
     <?= $this->Html->script('src/shared/shared.module'); ?>
     <?= $this->Html->script('src/shared/directives/copy-this-link.directive'); ?>
     <?= $this->Html->script('src/shared/form/shared.form.module'); ?>
