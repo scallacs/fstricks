@@ -11,6 +11,7 @@
     "node"
   ],
   "private": true,
+  "directory": "webroot/js/components/",
   "ignore": [
     "**/.*",
     "node_modules",

@@ -3,31 +3,17 @@
 # - Copy to output folder
 # 
 # Patterns matching CSS files that should be minified. Files with a -min.css
-
+##############################################################################
 
 PROD_DIR = /var/www/html
 TMP_SRC_DIR = /home/ec2-user/WebsiteTricker
-
-#PROD_DIR = /var/www
-#TMP_SRC_DIR = F:/Programmation/Web/Tricker
-#JS_OUTPUT = $(PROD_DIR)/webroot/js/src
-#CSS_OUTPUT = $(PROD_DIR)/webroot/css
+DB_SOURCE = $(TMP_SRC_DIR)/resources/database/trickers.sql
 
 # suffix will be ignored.
 CSS_FILES = $(filter-out %.min.css,$(wildcard \
 	$(TMP_SRC_DIR)/webroot/css/*.css \
 	$(TMP_SRC_DIR)/webroot/css/**/*.css \
 ))
-
-# Patterns matching JS files that should be minified. Files with a -min.js
-# suffix will be ignored.
-JS_FILES = $(filter-out %.min.js %.spec.js,$(wildcard \
-	$(TMP_SRC_DIR)/webroot/js/src/*.js \
-	$(TMP_SRC_DIR)/webroot/js/src/**/*.js \
-	$(TMP_SRC_DIR)/webroot/js/src/**/**/*.js \
-))
-
-DB_SOURCE = $(TMP_SRC_DIR)/resources/database/trickers.sql
 
 ##############################################################################
 
@@ -36,22 +22,24 @@ $(info => Production	: $(PROD_DIR))
 $(info => Sources	: $(TMP_SRC_DIR))
 $(info ********************************)
 
-clone:
-	git clone https://github.com/scallacs/tricker.git $(TMP_SRC_DIR)
-	
-
-# target: prod build the production website
+# target: - prod build the production website
 prod: copy-sources 
 
 .PHONY: database
 database: $(DB_SOURCE)
 	echo "CREATE DATABASE IF NOT EXISTS trickers" |  mysql -uroot -pr4xc3oSFSTDB -hlocalhost
 	mysql -uroot -pr4xc3oSFSTDB -hlocalhost trickers < $(DB_SOURCE)
-
+	
 # target: init-prod - Init the target directory. Create a copy 
 init-prod:
-	cp -r $(PROD_DIR) /home/ec2-user/ProductionCopy
 	rm -rf $(PROD_DIR)/*
+	cp -r $(TMP_SRC_DIR) $(PROD_DIR)
+	
+build-backend: 
+	chmod 777 $(PROD_DIR)/tmp
+	cd $(PROD_DIR) && composer install
+	
+	
 	
 copy-sources: copy-backend-sources copy-frontend-sources
 
@@ -59,7 +47,6 @@ copy-backend-sources:
 	$(info ************ Copying backend sources **********)
 	cp -r $(TMP_SRC_DIR)/src $(PROD_DIR)/src
 	cp -r $(TMP_SRC_DIR)/config $(PROD_DIR)/config
-	cd $(TMP_SRC_DIR)
 	cp $(TMP_SRC_DIR)/index.php $(PROD_DIR)
 	cp $(TMP_SRC_DIR)/composer.json $(PROD_DIR)
 	cp $(TMP_SRC_DIR)/composer.lock $(PROD_DIR)
@@ -75,12 +62,14 @@ copy-backend-sources:
 	$(info ************ Installing dependencies **********)
 	cd $(PROD_DIR) && composer install
 	
+WEBROOT_FILES = img data js/lib 
+copy-webroot: copy-js-components minify
+
 copy-frontend-sources: copy-js-components minify
 	$(info ************ Copying frontend sources **********)
 	cp -r $(TMP_SRC_DIR)/webroot/img $(PROD_DIR)/webroot/img 
 	cp -r $(TMP_SRC_DIR)/webroot/data $(PROD_DIR)/webroot/data 
 	cp -r $(TMP_SRC_DIR)/webroot/js/lib $(PROD_DIR)/webroot/js/lib 
-	cp -r $(TMP_SRC_DIR)/webroot/js/src $(PROD_DIR)/webroot/js/src 
 	cp -r $(TMP_SRC_DIR)/webroot/css $(PROD_DIR)/webroot/css 
 	$(info ************ Cleaning **********)
 	cd $(PROD_DIR)/webroot/js/src && find . -type f -name '*.spec.js' -delete

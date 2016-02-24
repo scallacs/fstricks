@@ -54,12 +54,7 @@ sudo mv composer.phar /usr/local/bin/composer
 
 sudo yum install npm
 sudo npm install bower -g
-sudo npm install uglify-js -g
 
-sudo npm install --save-dev gulp
-sudo npm install --global gulp-concat
-sudo npm install --global gulp-uglify
-sudo npm install --global gulp-ng-annotate
 # gulp-sourcemaps
 
 #### CONFIGURE php .INI #######

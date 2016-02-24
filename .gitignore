@@ -13,7 +13,7 @@ CakePHP 3
 /webroot/js/src/*.min.js
 /webroot/js/src/**/*.min.js
 /webroot/js/src/**/**/*.min.js
-
+/node_modules/*
 
 CakePHP 2
 
