@@ -16,7 +16,7 @@ angular.module('app', [
         .controller('MainController', MainController)
         .run(Run);
 
-
+MainController.$inject = ['$scope', 'PlayerData', 'VideoTagData', 'SharedData', 'AuthenticationService', '$state', 'Config'];
 function MainController($scope, PlayerData, VideoTagData, SharedData, AuthenticationService, $state, Config) {
     $scope.playerData = PlayerData;
     $scope.videoTagData = VideoTagData;
@@ -46,8 +46,8 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
     });
 }
 
-
-function Run($rootScope, AuthenticationService, loginModal, $state, SharedData, PlayerData) {
+Run.$inject = ['$rootScope', 'AuthenticationService', 'loginModal', '$state', 'SharedData'];
+function Run($rootScope, AuthenticationService, loginModal, $state, SharedData) {
 
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
         console.log('$stateChangeStart: ' + event);
@@ -82,6 +82,7 @@ function Run($rootScope, AuthenticationService, loginModal, $state, SharedData, 
 
 }
 
+ConfigRouting.$inject = ['$stateProvider'];
 function ConfigRouting($stateProvider) {
     'use strict';
     $stateProvider.state("otherwise", {
@@ -99,6 +100,8 @@ function ConfigRouting($stateProvider) {
         }
     });
 }
+
+ConfigInterceptor.$inject = ['$httpProvider'];
 function ConfigInterceptor($httpProvider) {
     'use strict';
     //$locationProvider.html5Mode(true).hashPrefix('!');

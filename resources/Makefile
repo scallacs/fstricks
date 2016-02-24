@@ -87,6 +87,7 @@ copy-frontend-sources: copy-js-components minify
 	cd $(PROD_DIR)/webroot/js/src && find . -type f ! -name '*.min.js' ! -name '*.html' -delete
 	cd $(PROD_DIR)/webroot/css && find . -type f ! -name '*.min.css' -delete
 	
+# TODO only copy build not all components
 copy-js-components: copy-frontend-sources
 	$(info ************ Copying js sources **********)
 	cd $(TMP_SRC_DIR)/webroot/js && bower install && mkdir -p $(PROD_DIR)/webroot/js/components && cp -r components/* $(PROD_DIR)/webroot/js/components

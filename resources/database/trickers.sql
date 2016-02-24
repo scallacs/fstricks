@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  127.0.0.1
--- Généré le :  Lun 22 Février 2016 à 23:53
+-- Généré le :  Mer 24 Février 2016 à 16:26
 -- Version du serveur :  5.6.17
 -- Version de PHP :  5.5.12
 
@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS `riders` (
 
 INSERT INTO `riders` (`id`, `firstname`, `lastname`, `picture`, `picture_dir`, `user_id`, `level`, `count_tags`, `slug`, `status`, `nationality`) VALUES
 (3, 'Marck', 'McMorris', NULL, '', NULL, 1, 11, 'marck-mcmorris-can', NULL, 'can'),
-(4, 'sebastien', 'toutant', NULL, NULL, NULL, 1, 26, 'sebastien-toutant', NULL, 'can'),
+(4, 'sebastien', 'toutant', NULL, NULL, NULL, 1, 33, 'sebastien-toutant', NULL, 'can'),
 (14, 'thomas', 'delfino', NULL, NULL, NULL, 1, 0, 'thomas-delfino', NULL, 'fr'),
 (18, 'stéphane', 'Léonard', 'IMG_1488.jpg', 'c8e728e7-3ec0-4eaf-8369-2709efd40afa', 3, 1, 0, 'stephane-Leonard-fr', '', 'fr'),
 (19, 'xavier', 'de le rue', NULL, NULL, NULL, 2, 0, 'xavier-de-le-rue', NULL, 'fr'),
@@ -291,7 +291,7 @@ CREATE TABLE IF NOT EXISTS `tags` (
   KEY `fk_tags_categories1_idx` (`category_id`),
   KEY `fk_tags_users1_idx` (`user_id`),
   KEY `unique_tag` (`name`,`category_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci AUTO_INCREMENT=122 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci AUTO_INCREMENT=127 ;
 
 --
 -- Contenu de la table `tags`
@@ -401,7 +401,12 @@ INSERT INTO `tags` (`id`, `name`, `count_ref`, `sport_id`, `category_id`, `user_
 (118, 'mute  double roll to revert', 1, 6, 22, 2, '2016-02-22 22:03:44', 'mute-double-roll-to-revert'),
 (119, 'double backflip', 1, 8, 10, 2, '2016-02-22 22:09:06', 'double-backflip'),
 (120, 'rodeo flip', 1, 7, 16, 2, '2016-02-22 22:15:58', 'rodeo-flip'),
-(121, 'double frontflip', 1, 9, 17, 2, '2016-02-22 22:27:13', 'double-frontflip');
+(121, 'double frontflip', 1, 9, 17, 2, '2016-02-22 22:27:13', 'double-frontflip'),
+(122, 'backside air', 1, 1, 1, 2, '2016-02-23 13:39:47', 'backside-air'),
+(123, 'backside lip slide', 3, 1, 2, 2, '2016-02-23 19:28:14', 'backside-lip-slide'),
+(124, 'frontside lip-slide', 1, 1, 2, 2, '2016-02-23 19:40:30', 'frontside-lip-slide'),
+(125, 'nose press to 180 to tail press', 1, 1, 2, 2, '2016-02-23 19:57:10', 'nose-press-to-180-to-tail-press'),
+(126, 'backside 720 mute', 1, 1, 3, 2, '2016-02-23 19:58:39', 'backside-720-mute');
 
 -- --------------------------------------------------------
 
@@ -435,7 +440,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 INSERT INTO `users` (`id`, `email`, `username`, `password`, `status`, `count_tags`, `count_report_errors`, `created`, `last_login`, `provider`, `provider_uid`, `count_tags_validated`, `count_tags_rejected`) VALUES
 (1, 'stef@gmail.com', '', '$2y$10$FG/i.axEibcBRvV0VTnjEOwZrLg1IU1SGv3kxhqZGvYO9plB642V.', 'activated', 24, 0, '2016-01-06 10:11:42', NULL, NULL, NULL, 0, 0),
-(2, 'stef@tricker.com', 'stef@tricker.com', '$2y$10$BrAuL3GXU55X1kUYJs.m1eGkPcamVYAAYbG82evDQw47evxRvXnk6', 'activated', 131, 12, '2016-01-06 10:11:42', NULL, NULL, NULL, 0, 0),
+(2, 'stef@tricker.com', 'stef@tricker.com', '$2y$10$BrAuL3GXU55X1kUYJs.m1eGkPcamVYAAYbG82evDQw47evxRvXnk6', 'activated', 138, 12, '2016-01-06 10:11:42', NULL, NULL, NULL, 0, 0),
 (3, NULL, 'Stéphane Léonard', NULL, 'activated', 23, 0, '2016-01-09 22:31:51', NULL, 'facebook', '10208111125313888', 0, 0),
 (4, 'stef2@tricker.com', 'scallacs', '$2y$10$cEeSprRbnfkSHcKYrVqd3O1rqcuj6Jgv/HxcCgxIdAU7GcR0tBeea', 'activated', 0, 0, '2016-01-10 22:16:04', NULL, NULL, NULL, 0, 0),
 (5, 'test@mail.com', 'test', '$2y$10$3FSWMO/mmEWyzXYRqfyqAutBw9RRMpEiJVIbFWJaulhBEqwidGaWq', 'activated', 0, 0, '2016-01-11 08:40:04', NULL, NULL, NULL, 0, 0),
@@ -464,7 +469,7 @@ CREATE TABLE IF NOT EXISTS `videos` (
   UNIQUE KEY `unique_video_provider` (`video_url`,`provider_id`),
   KEY `fk_videos_sources_idx` (`provider_id`),
   KEY `fk_videos_users1_idx` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci AUTO_INCREMENT=148 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci AUTO_INCREMENT=149 ;
 
 --
 -- Contenu de la table `videos`
@@ -478,7 +483,7 @@ INSERT INTO `videos` (`id`, `video_url`, `provider_id`, `count_tags`, `user_id`,
 (57, '7-Mi5mG4BsQ', 'youtube', 1, 2, '2015-12-28 10:23:33', '2016-02-06 13:17:26', 'public', 350),
 (58, 'eeCoNywb45U', 'youtube', 1, 2, '2015-12-28 10:26:09', '2016-02-06 13:17:27', 'public', 261),
 (59, '1MQfbMoCfb4', 'youtube', 2, 2, '2015-12-28 15:54:54', '2016-02-06 13:17:27', 'public', 277),
-(60, 'Ofc9hh0NWe8', 'youtube', 24, 2, '2015-12-28 16:17:49', '2016-02-14 13:38:34', 'public', 244),
+(60, 'Ofc9hh0NWe8', 'youtube', 30, 2, '2015-12-28 16:17:49', '2016-02-23 20:08:39', 'public', 244),
 (82, '6mEHw5q6Yfs', 'youtube', 0, 1, '2016-01-05 20:45:02', '2016-02-06 13:17:28', 'public', 1812),
 (102, 'xb5LHuZGXi0', 'youtube', 0, 1, '2016-01-05 20:55:44', '2016-02-06 13:17:29', 'public', 131),
 (103, 'k7-3xEpyAgo', 'youtube', 1, 2, '2016-01-08 09:35:12', '2016-02-06 13:17:29', 'public', 51),
@@ -491,7 +496,7 @@ INSERT INTO `videos` (`id`, `video_url`, `provider_id`, `count_tags`, `user_id`,
 (110, 'OprCOLuUPzY', 'youtube', 6, 2, '2016-01-10 23:53:16', '2016-02-06 13:17:32', 'public', 213),
 (111, 'PTfNhcoVH1g', 'youtube', 1, 2, '2016-01-12 10:04:41', '2016-02-06 13:17:33', 'public', 3017),
 (112, '0o-xXXMXX1Q', 'youtube', 1, 2, '2016-01-14 11:21:13', '2016-02-06 13:17:34', 'public', 165),
-(113, 'hDnGPpHEM6U', 'youtube', 13, 3, '2016-01-14 16:20:22', '2016-02-22 15:41:25', 'public', 294),
+(113, 'hDnGPpHEM6U', 'youtube', 14, 3, '2016-01-14 16:20:22', '2016-02-23 13:39:47', 'public', 294),
 (114, 'FAjxL5km4wU', 'youtube', 1, 2, '2016-01-14 23:10:32', '2016-02-06 13:17:35', 'private', 0),
 (115, 'QFUsEjZ6ppU', 'youtube', 7, 2, '2016-01-24 16:28:50', '2016-02-12 10:42:45', 'public', 234),
 (116, 'b8LNh5iO0Hk', 'youtube', 3, 3, '2016-02-05 00:36:22', '2016-02-06 13:17:35', 'public', 374),
@@ -525,7 +530,8 @@ INSERT INTO `videos` (`id`, `video_url`, `provider_id`, `count_tags`, `user_id`,
 (144, 'yZdx1MCJySc', 'youtube', 1, 2, '2016-02-22 22:00:36', '2016-02-22 22:03:44', 'public', 49),
 (145, '7idj9R43tZA', 'youtube', 1, 2, '2016-02-22 22:05:44', '2016-02-22 22:09:06', 'public', 108),
 (146, 'jVIDlndAWhw', 'youtube', 1, 2, '2016-02-22 22:14:12', '2016-02-22 22:15:58', 'public', 125),
-(147, 'fPcqmiz8zJ0', 'youtube', 1, 2, '2016-02-22 22:18:11', '2016-02-22 22:27:13', 'public', 6);
+(147, 'fPcqmiz8zJ0', 'youtube', 1, 2, '2016-02-22 22:18:11', '2016-02-22 22:27:13', 'public', 6),
+(148, '125896742', 'vimeo', 0, 2, '2016-02-23 15:50:30', NULL, 'public', 406);
 
 --
 -- Déclencheurs `videos`
@@ -592,7 +598,7 @@ CREATE TABLE IF NOT EXISTS `video_tags` (
   KEY `fk_users_has_videos_users1_idx` (`user_id`),
   KEY `fk_users_has_videos_tags1_idx` (`tag_id`),
   KEY `fk_video_tags_riders1_idx` (`rider_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci AUTO_INCREMENT=184 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci AUTO_INCREMENT=191 ;
 
 --
 -- Contenu de la table `video_tags`
@@ -602,7 +608,7 @@ INSERT INTO `video_tags` (`id`, `video_id`, `tag_id`, `user_id`, `rider_id`, `be
 (11, 56, 10, 2, NULL, '32.13', '38.24', '2015-12-27 09:46:26', NULL, 1, 0, 'pending', 0, 1),
 (12, 56, 11, 2, NULL, '61.13', '64.63', '2015-12-27 15:05:05', NULL, 1, 1, 'pending', 0, 1),
 (16, 58, 15, 2, NULL, '112.62', '116.38', '2015-12-28 10:29:33', NULL, 1, 0, 'pending', 1, 0),
-(18, 60, 16, 2, 4, '4.50', '12.55', '2015-12-28 16:19:32', NULL, 1, 0, 'validated', 0, 0),
+(18, 60, 16, 2, 4, '4.50', '12.55', '2015-12-28 16:19:32', NULL, 2, 0, 'validated', 0, 0),
 (19, 60, 17, 2, 4, '34.50', '40.00', '2015-12-28 16:21:35', NULL, 2, 0, 'validated', 0, 0),
 (20, 60, 18, 2, 4, '178.00', '187.76', '2015-12-28 16:43:43', NULL, 1, 0, 'validated', 0, 0),
 (21, 60, 19, 2, 4, '28.00', '34.00', '2016-01-05 18:01:17', NULL, 1, 0, 'validated', 0, 0),
@@ -668,7 +674,7 @@ INSERT INTO `video_tags` (`id`, `video_id`, `tag_id`, `user_id`, `rider_id`, `be
 (120, 128, 27, 2, 24, '25.50', '30.50', '2016-02-13 16:43:18', NULL, 1, 0, 'validated', 0, 0),
 (121, 128, 86, 2, 24, '111.00', '117.00', '2016-02-13 16:45:25', NULL, 0, 0, 'validated', 0, 0),
 (122, 128, 87, 2, 24, '139.00', '151.00', '2016-02-13 16:55:20', NULL, 0, 0, 'validated', 0, 0),
-(123, 128, 88, 2, 24, '156.50', '168.50', '2016-02-13 16:57:20', NULL, 0, 0, 'validated', 0, 0),
+(123, 128, 88, 2, 24, '156.50', '168.50', '2016-02-13 16:57:20', NULL, 1, 0, 'validated', 0, 0),
 (124, 128, 27, 2, 24, '212.00', '220.00', '2016-02-13 16:58:34', NULL, 2, 0, 'validated', 0, 0),
 (125, 124, 80, 2, 23, '76.00', '81.50', '2016-02-14 11:20:17', NULL, 0, 0, 'validated', 0, 0),
 (126, 129, 89, 2, 25, '71.50', '88.00', '2016-02-14 11:39:30', NULL, 0, 0, 'validated', 0, 0),
@@ -706,8 +712,15 @@ INSERT INTO `video_tags` (`id`, `video_id`, `tag_id`, `user_id`, `rider_id`, `be
 (179, 113, 63, 2, 4, '27.45', '31.83', '2016-02-22 15:41:25', '2016-02-22 22:29:12', 0, 0, 'validated', 0, 2),
 (180, 144, 118, 2, 47, '11.50', '18.73', '2016-02-22 22:03:44', '2016-02-22 22:31:47', 0, 0, 'validated', 0, 2),
 (181, 145, 119, 2, 48, '29.50', '33.60', '2016-02-22 22:09:06', '2016-02-22 22:31:45', 1, 0, 'validated', 0, 2),
-(182, 146, 120, 2, 49, '4.00', '17.50', '2016-02-22 22:15:58', '2016-02-22 22:31:36', 1, 0, 'validated', 0, 2),
-(183, 147, 121, 2, 50, '0.00', '5.00', '2016-02-22 22:27:13', '2016-02-22 22:31:32', 1, 0, 'validated', 0, 2);
+(182, 146, 120, 2, 49, '4.00', '17.50', '2016-02-22 22:15:58', '2016-02-22 22:31:36', 2, 0, 'validated', 0, 2),
+(183, 147, 121, 2, 50, '0.00', '5.00', '2016-02-22 22:27:13', '2016-02-22 22:31:32', 1, 0, 'validated', 0, 2),
+(184, 113, 122, 2, 4, '68.50', '76.50', '2016-02-23 13:39:47', '2016-02-23 14:14:42', 0, 0, 'validated', 0, 2),
+(185, 60, 123, 2, 4, '171.30', '175.40', '2016-02-23 19:28:14', '2016-02-23 19:28:14', 0, 0, 'pending', 0, 0),
+(186, 60, 123, 2, 4, '171.30', '175.40', '2016-02-23 19:28:15', '2016-02-23 19:35:18', 0, 0, 'pending', 0, 0),
+(187, 60, 124, 2, 4, '165.00', '169.66', '2016-02-23 19:40:30', '2016-02-23 19:40:30', 0, 0, 'pending', 0, 1),
+(188, 60, 125, 2, 4, '107.10', '111.00', '2016-02-23 19:57:10', '2016-02-23 19:57:10', 0, 0, 'pending', 1, 0),
+(189, 60, 126, 2, 4, '92.70', '99.00', '2016-02-23 19:58:39', '2016-02-23 19:58:39', 0, 0, 'pending', 0, 1),
+(190, 60, 123, 2, 4, '48.10', '50.10', '2016-02-23 20:08:39', '2016-02-23 20:08:39', 0, 0, 'pending', 1, 0);
 
 --
 -- Déclencheurs `video_tags`
@@ -842,6 +855,11 @@ INSERT INTO `video_tag_accuracy_rates` (`user_id`, `video_tag_id`, `value`, `cre
 (2, 181, 'accurate', '2016-02-22 22:31:44'),
 (2, 182, 'accurate', '2016-02-22 22:31:36'),
 (2, 183, 'accurate', '2016-02-22 22:31:32'),
+(2, 184, 'accurate', '2016-02-23 14:10:08'),
+(2, 187, 'accurate', '2016-02-23 21:28:39'),
+(2, 188, 'fake', '2016-02-23 21:28:24'),
+(2, 189, 'accurate', '2016-02-23 21:28:12'),
+(2, 190, 'fake', '2016-02-23 21:27:16'),
 (3, 78, 'accurate', '2016-02-22 22:47:38'),
 (3, 79, 'accurate', '2016-02-22 22:48:26'),
 (3, 80, 'accurate', '2016-02-22 22:48:20'),
@@ -878,7 +896,8 @@ INSERT INTO `video_tag_accuracy_rates` (`user_id`, `video_tag_id`, `value`, `cre
 (3, 180, 'accurate', '2016-02-22 22:29:05'),
 (3, 181, 'accurate', '2016-02-22 22:29:00'),
 (3, 182, 'accurate', '2016-02-22 22:28:52'),
-(3, 183, 'accurate', '2016-02-22 22:28:46');
+(3, 183, 'accurate', '2016-02-22 22:28:46'),
+(3, 184, 'accurate', '2016-02-23 14:14:42');
 
 --
 -- Déclencheurs `video_tag_accuracy_rates`
@@ -911,7 +930,7 @@ CREATE TABLE IF NOT EXISTS `video_tag_points` (
   UNIQUE KEY `unique_video_tag_user` (`user_id`,`video_tag_id`),
   KEY `fk_video_tag_points_video_tags1_idx` (`video_tag_id`),
   KEY `fk_video_tag_points_users1_idx` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci AUTO_INCREMENT=74 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci AUTO_INCREMENT=77 ;
 
 --
 -- Contenu de la table `video_tag_points`
@@ -965,7 +984,10 @@ INSERT INTO `video_tag_points` (`id`, `value`, `user_id`, `video_tag_id`) VALUES
 (70, 1, 3, 168),
 (71, 1, 3, 181),
 (72, 1, 3, 182),
-(73, 1, 3, 183);
+(73, 1, 3, 183),
+(74, 1, 2, 182),
+(75, 1, 2, 123),
+(76, 1, 3, 18);
 
 --
 -- Déclencheurs `video_tag_points`
