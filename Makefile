@@ -5,17 +5,20 @@ CSS_FILES = $(filter-out %.min.css,$(wildcard \
 ))
 YUI_COMPRESSOR = java -jar bin/yuicompressor.jar
 YUI_COMPRESSOR_FLAGS = --charset utf-8 --verbose
+GULP_BIN = node_modules/gulp/bin/gulp.js
 
 ###############################################################
 
 # target: prod - build the project for production
-prod: build clean-prod database
-	mv config/app.prod.php config/app.php
+prod: build clean-prod config-prod database
 
 # target: dev - build the project for dev
 dev: build database
 	mv config/app.dev.php config/app.php
 
+config-prod:
+	mv config/app.prod.php config/app.php
+	
 .PHONY: database
 database: $(DB_SOURCE)
 	echo "CREATE DATABASE IF NOT EXISTS trickers" |  mysql -uroot -pr4xc3oSFSTDB -hlocalhost
@@ -46,7 +49,7 @@ minify: minify-css minify-js
 	
 # target : minify-js
 minify-js:
-	gulp concat-js
+	$(GULP_BIN) concat-js
 	
 # target: minify-css - Minifies CSS.
 minify-css: $(CSS_FILES) $(CSS_MINIFIED)
