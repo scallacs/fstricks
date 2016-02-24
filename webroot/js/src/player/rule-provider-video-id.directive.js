@@ -1,9 +1,9 @@
 angular.module('app.player')
-        .directive('ruleProviderVideoId', function($q, ProviderVideoInfo) {
+        .directive('ruleProviderVideoId', ['$q', 'ProviderVideoInfo', function($q, ProviderVideoInfo) {
             return {
                 require: 'ngModel',
                 link: function(scope, elm, attrs, ngModel) {
-                    ngModel.$asyncValidators.ruleProviderVideoId = function(videoId, viewValue) {
+                    ngModel.$asyncValidators.ruleProviderVideoId = function(videoId) {
                         if (ngModel.$isEmpty(videoId)) {
                             return $q.when();
                         }
@@ -31,9 +31,8 @@ angular.module('app.player')
 //                            console.log("Exception...");
 //                            def.reject();
 //                        }
-
                         return def.promise;
                     };
                 }
             };
-        });
+        }]);

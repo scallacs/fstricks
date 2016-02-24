@@ -3,7 +3,7 @@ angular.module('app.tag', ['app.core', 'ui.bootstrap', 'ui.select', 'ui.router',
         .controller('ModalReportErrorController', ModalReportErrorController)
         .config(Config);
 
-
+Config.$inject = ['$stateProvider'];
 function Config($stateProvider) {
     var baseUrl = 'js/src/tag/partials/';
 
@@ -26,6 +26,7 @@ function Config($stateProvider) {
             });
 }
 
+SearchTagController.$inject = ['$scope', 'TagEntity'];
 function SearchTagController($scope, TagEntity) {
 
     $scope.suggested = [];
@@ -59,8 +60,8 @@ function SearchTagController($scope, TagEntity) {
 
 }
 
-function ModalReportErrorController($scope, $uibModalInstance, ErrorReportEntity,
-        videoTag) {
+ModalReportErrorController.$inject = ['$scope', '$uibModalInstance', 'ErrorReportEntity', 'videoTag'];
+function ModalReportErrorController($scope, $uibModalInstance, ErrorReportEntity, videoTag) {
 
     $scope.videoTag = videoTag;
     $scope.feedback = null;

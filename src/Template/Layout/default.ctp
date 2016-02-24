@@ -8,7 +8,7 @@
         <?= $this->fetch('script') ?>
 
     </head>
-    <body ng-app="app" ng-controller="MainController as main">
+    <body ng-app="app" ng-controller="MainController as main" id="ng-app">
 
     <toaster-container toaster-options="{'close-button': true}"></toaster-container>
 

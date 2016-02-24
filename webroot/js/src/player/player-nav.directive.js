@@ -7,7 +7,7 @@ angular.module('app.player')
 function playerNav() {
     return {
         templateUrl: 'js/src/player/partials/player-nav.html',
-        controller: function($scope, PlayerData, VideoTagData) {
+        controller: ['$scope', 'PlayerData', 'VideoTagData', function($scope, PlayerData, VideoTagData) {
             $scope.toggleListTricks = toggleListTricks;
             $scope.playerData = PlayerData;
             $scope.videoTagData = VideoTagData;
@@ -25,10 +25,7 @@ function playerNav() {
             function toggleListTricks() {
                 PlayerData.showListTricks = !PlayerData.showListTricks;
             }
-        },
-        link: function(scope, elem, attr, form) {
-
-        }
+        }]
     };
 
 }

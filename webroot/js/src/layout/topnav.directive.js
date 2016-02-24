@@ -7,8 +7,8 @@ angular.module('app.layout')
 function topnav() {
     return {
         templateUrl: 'js/src/layout/partials/topnav.html',
-        controller: function($scope, AuthenticationService,
-                $state, SportEntity, SharedData, TagEntity, VideoTagData, PlayerData) {
+        controller: ['$scope', 'AuthenticationService', '$state', 'SportEntity', 'SharedData', 'VideoTagData', 'PlayerData', 
+            function($scope, AuthenticationService, $state, SportEntity, SharedData, VideoTagData, PlayerData) {
             // create a message to display in our view
             $scope.currentSport = null;
             $scope.logout = logout;
@@ -63,7 +63,7 @@ function topnav() {
                 $scope.currentSport = sport;
                 SharedData.currentSport = sport;
             }
-        }
+        }]
     };
 
 }

@@ -159,7 +159,8 @@ function ConfigRoute($stateProvider) {
             });
 }
 
-function DashboardController($scope, VideoTagLoader, SharedData, $state, AuthenticationService) {
+DashboardController.$inject = ['$scope', 'VideoTagLoader', 'SharedData', '$state'];
+function DashboardController($scope, VideoTagLoader, SharedData, $state) {
 
     $scope.workspaces = [
         {id: 'pending', name: "Pendings", active: true, filters: {status: 'pending', order: 'modified'}},
@@ -208,6 +209,7 @@ function DashboardController($scope, VideoTagLoader, SharedData, $state, Authent
     }
 }
 
+AddVideoController.$inject = ['$scope', 'ProviderVideoInfo', '$state', 'VideoEntity', 'VideoTagEntity', 'ServerConfigEntity', 'SharedData'];
 function AddVideoController($scope, ProviderVideoInfo, $state,
         VideoEntity, VideoTagEntity, ServerConfigEntity, SharedData) {
 
@@ -290,7 +292,8 @@ function AddVideoController($scope, ProviderVideoInfo, $state,
 
 }
 
-function PlayerController($scope, PlayerData, $stateParams, $state) {
+PlayerController.$inject = ['$scope', 'PlayerData'];
+function PlayerController($scope, PlayerData) {
     PlayerData.showViewMode();
     PlayerData.showListTricks = true;
 
@@ -305,6 +308,7 @@ function PlayerController($scope, PlayerData, $stateParams, $state) {
 //    }
 }
 
+ViewRealizationController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', '$state'];
 function ViewRealizationController(VideoTagData, $stateParams, PlayerData, SharedData, $state) {
     PlayerData.showViewMode();
     PlayerData.stop();
@@ -328,6 +332,7 @@ function ViewRealizationController(VideoTagData, $stateParams, PlayerData, Share
             });
 }
 
+ViewTagController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData'];
 function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData) {
     PlayerData.showViewMode();
     PlayerData.stop();
@@ -342,6 +347,7 @@ function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData) {
     });
 }
 
+ViewSportController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData'];
 function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData) {
 //    console.log("View sport: " + $stateParams.sportName);
     PlayerData.showViewMode();
@@ -354,6 +360,7 @@ function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData)
     });
 }
 
+ViewRiderController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'RiderEntity'];
 function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, SharedData, RiderEntity) {
     $scope.rider = {id: $stateParams.riderId};
 
@@ -371,7 +378,8 @@ function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, Sha
     });
 }
 
-function ViewSearchController(VideoTagData, PlayerData, SharedData, $stateParams) {
+ViewSearchController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData'];
+function ViewSearchController(VideoTagData, $stateParams, PlayerData, SharedData) {
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = true;
@@ -384,7 +392,8 @@ function ViewSearchController(VideoTagData, PlayerData, SharedData, $stateParams
     });
 }
 
-function ViewPlaylistController(VideoTagData, PlayerData, SharedData, $stateParams) {
+ViewPlaylistController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData'];
+function ViewPlaylistController(VideoTagData, $stateParams, PlayerData, SharedData) {
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = true;
@@ -396,6 +405,7 @@ function ViewPlaylistController(VideoTagData, PlayerData, SharedData, $statePara
 }
 
 
+ViewVideoController.$inject = ['$scope', 'VideoTagData', 'PlayerData', '$stateParams', 'SharedData', '$state'];
 function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, SharedData, $state) {
 
     PlayerData.showViewMode();
@@ -450,8 +460,8 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
 }
 
 // TODO add current sport ...
-function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, $state, VideoTagEntity, 
-    VideoTagAccuracyRateEntity, $rootScope) {
+ViewValidationController.$inject = ['$scope', 'VideoTagData', 'PlayerData', 'SharedData', '$state', 'VideoTagEntity', 'VideoTagAccuracyRateEntity'];
+function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, $state, VideoTagEntity, VideoTagAccuracyRateEntity) {
     var skipped = [];
 
     PlayerData.stop();
@@ -521,7 +531,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     }
 }
 
-
+VideoTagPointsController.$inject = ['$scope', 'VideoTagPointEntity'];
 function VideoTagPointsController($scope, VideoTagPointEntity) {
     $scope.up = up;
     $scope.down = down;

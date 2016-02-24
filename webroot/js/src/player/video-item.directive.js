@@ -6,8 +6,6 @@ angular.module('app.player')
         scope: {
             video: '=',
             id: '='
-        },
-        link: function(scope, element) {
         }
     };
 

@@ -20,7 +20,7 @@ angular
         .filter('searchCategory', searchCategory)
         .filter('getSportByName', getSportByName);
 
-
+NotifyOnLoad.$inject = ['$rootScope', '$timeout'];
 function NotifyOnLoad($rootScope, $timeout) {
     return function() {
         $timeout(function() {
@@ -29,6 +29,7 @@ function NotifyOnLoad($rootScope, $timeout) {
     };
 }
 
+PlayerData.$inject = ['VideoTagData', '$q'];
 function PlayerData(VideoTagData, $q) {
     var obj = {
         init: function() {
@@ -285,6 +286,7 @@ function PlayerData(VideoTagData, $q) {
     }
 }
 
+VideoTagLoader.$inject = ['VideoTagEntity', '$q'];
 function VideoTagLoader(VideoTagEntity, $q) {
 
     function VideoTagLoader() {
@@ -466,6 +468,7 @@ function VideoTagLoader(VideoTagEntity, $q) {
     }
 }
 
+VideoTagData.$inject = ['VideoTagLoader'];
 function VideoTagData(VideoTagLoader) {
 
     var obj = {
@@ -576,6 +579,7 @@ function SharedData() {
     return data;
 }
 
+NationalityEntity.$inject = ['$resource'];
 function NationalityEntity($resource) {
 
     var url = WEBROOT_FULL + '/nationalities/:action.json';
@@ -588,6 +592,7 @@ function NationalityEntity($resource) {
     });
 }
 
+RiderEntity.$inject = ['$resource'];
 function RiderEntity($resource) {
     var url = WEBROOT_FULL + '/Riders/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
@@ -614,6 +619,7 @@ function RiderEntity($resource) {
     });
 }
 
+UserEntity.$inject = ['$resource'];
 function UserEntity($resource) {
     var url = WEBROOT_FULL + '/Users/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
@@ -650,6 +656,7 @@ function UserEntity($resource) {
     });
 }
 
+ErrorReportEntity.$inject = ['$resource'];
 function ErrorReportEntity($resource) {
     var url = WEBROOT_FULL + '/ReportErrors/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
@@ -661,6 +668,7 @@ function ErrorReportEntity($resource) {
     });
 }
 
+VideoEntity.$inject = ['$resource'];
 function VideoEntity($resource) {
     var url = WEBROOT_FULL + '/Videos/:action/:id/:provider.json';
     return $resource(url, {id: '@id', action: '@action'}, {
@@ -687,6 +695,7 @@ function VideoEntity($resource) {
     });
 }
 
+SportEntity.$inject = ['$resource'];
 function SportEntity($resource) {
     var url = WEBROOT_FULL + '/Sports/:action/:id.json';
     //var url = '/sys/MediaTagTricks/:action/:id';
@@ -701,6 +710,7 @@ function SportEntity($resource) {
 
 }
 
+TagEntity.$inject = ['$resource'];
 function TagEntity($resource) {
     var url = WEBROOT_FULL + '/Tags/:action/:id.json';
     //var url = '/sys/MediaTagTricks/:action/:id';
@@ -718,6 +728,7 @@ function TagEntity($resource) {
     });
 }
 
+VideoTagPointEntity.$inject = ['$resource'];
 function VideoTagPointEntity($resource) {
     var url = WEBROOT_FULL + '/VideoTagPoints/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
@@ -734,7 +745,7 @@ function VideoTagPointEntity($resource) {
     });
 }
 
-
+VideoTagAccuracyRateEntity.$inject = ['$resource'];
 function VideoTagAccuracyRateEntity($resource) {
     var url = WEBROOT_FULL + '/VideoTagAccuracyRates/:action.json';
     return $resource(url, {action: '@action'}, {
@@ -751,6 +762,7 @@ function VideoTagAccuracyRateEntity($resource) {
     });
 }
 
+VideoTagEntity.$inject = ['$resource'];
 function VideoTagEntity($resource) {
     var url = WEBROOT_FULL + '/VideoTags/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
@@ -802,6 +814,40 @@ function VideoTagEntity($resource) {
     });
 }
 
+ServerConfigEntity.$inject = ['$resource'];
+function ServerConfigEntity($resource) {
+    var resource = $resource('data/:action.json', {action: '@action'}, {
+        rules: {
+            method: 'GET',
+            params: {action: 'rules'},
+            isArray: false,
+            cache: true
+        },
+        countries: {
+            method: 'GET',
+            params: {action: 'countries'},
+            isArray: true,
+            cache: true
+        }
+    });
+
+    return {
+        rules: rules,
+        countries: countries
+    };
+
+    function rules() {
+        return resource.rules().$promise;
+    }
+
+    function countries() {
+        return resource.countries().$promise;
+    }
+
+
+}
+
+AuthenticationService.$inject = ['$http', '$cookies', '$rootScope', 'UserEntity', '$state'];
 function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state) {
 
     var service = {};
@@ -904,37 +950,5 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state) 
             $state.go('login');
         }
     }
-
-}
-
-function ServerConfigEntity($resource) {
-    var resource = $resource('data/:action.json', {action: '@action'}, {
-        rules: {
-            method: 'GET',
-            params: {action: 'rules'},
-            isArray: false,
-            cache: true
-        },
-        countries: {
-            method: 'GET',
-            params: {action: 'countries'},
-            isArray: true,
-            cache: true
-        }
-    });
-
-    return {
-        rules: rules,
-        countries: countries
-    };
-
-    function rules() {
-        return resource.rules().$promise;
-    }
-
-    function countries() {
-        return resource.countries().$promise;
-    }
-
 
 }

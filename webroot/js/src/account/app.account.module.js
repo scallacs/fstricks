@@ -6,7 +6,6 @@ angular.module('app.account', [
     'app.config',
     'app.core',
     'shared.form'])
-        .run(Run)
         .config(ConfigRoute)
         .config(ConfigSocialApi)
         .service('loginModal', loginModal)
@@ -14,14 +13,6 @@ angular.module('app.account', [
         .controller('SettingsController', SettingsController)
         .controller('UserLoginController', UserLoginController)
         .controller('SignupController', SignupController);
-
-
-
-// TODO move
-function Run() {
-//    $FB.init(Config.api.facebook);
-}
-
 
 ConfigRoute.$inject = ['$stateProvider'];
 function ConfigRoute($stateProvider) {
@@ -52,6 +43,7 @@ function ConfigRoute($stateProvider) {
             });
 }
 
+ConfigSocialApi.$inject = ['$authProvider', 'Config'];
 function ConfigSocialApi($authProvider, Config) {
     $authProvider.facebook({
         clientId: Config.api.facebook,
@@ -103,6 +95,7 @@ function SettingsController($scope, AuthenticationService, UserEntity) {
     }
 }
 
+UserLoginController.$inject = ['$scope', '$state'];
 function UserLoginController($scope, $state) {
 
     $scope.$on("user-login-success", function() {
@@ -129,6 +122,7 @@ function SignupController($scope, $state, AuthenticationService) {
     }
 }
 
+loginModal.$inject = ['$uibModal'];
 function loginModal($uibModal) {
     var instance = null;
 
@@ -157,6 +151,7 @@ function loginModal($uibModal) {
     };
 }
 
+LoginModalController.$inject = ['$scope'];
 function LoginModalController($scope) {
 
     this.cancel = $scope.$dismiss;

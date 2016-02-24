@@ -1,5 +1,5 @@
 angular.module('app.player')
-        .factory('ProviderVideoInfo', function($http, YoutubeVideoInfo, VimeoInfo) {
+        .factory('ProviderVideoInfo', ['YoutubeVideoInfo', 'VimeoInfo', function(YoutubeVideoInfo, VimeoInfo) {
             return {
                 get: function(provider) {
                     if (provider === 'youtube') {
@@ -14,4 +14,4 @@ angular.module('app.player')
                     }
                 }
             };
-        });
+        }]);

@@ -1,13 +1,10 @@
 angular.module('app.account')
         .directive('formLogin', formLoginDirective);
-/**
- * Server form. Extend ng form functionnalities.
- * Add a loader when the form is waiting for a server response.
- */
+
 function formLoginDirective() {
     return {
         templateUrl: 'js/src/account/partials/form-login.html',
-        controller: function($scope, $auth, AuthenticationService) {
+        controller: ['$scope', '$auth', 'AuthenticationService', function($scope, $auth, AuthenticationService) {
             $scope.authenticate = authenticate;
             $scope.login = login;
 
@@ -36,7 +33,7 @@ function formLoginDirective() {
                     }
                 }
             }
-        }
+        }]
     };
 
 }

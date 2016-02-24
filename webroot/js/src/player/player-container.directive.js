@@ -1,13 +1,13 @@
 angular.module('app.player')
-        .directive('playerContainer', playerContainer);
+        .directive('playerContainer', ['$window', '$rootScope', playerContainer]);
 /**
  * Server form. Extend ng form functionnalities.
  * Add a loader when the form is waiting for a server response.
  */
-function playerContainer($window, $timeout, $rootScope) {
+function playerContainer($window, $rootScope) {
     return {
         templateUrl: 'js/src/player/partials/player-container.html',
-        controller: function($scope, PlayerData, VideoTagData) {
+        controller: ['$scope', 'PlayerData', 'VideoTagData', function($scope, PlayerData, VideoTagData) {
             $scope.playerData = PlayerData;
             $scope.videoTagData = VideoTagData;
             $scope.nextTrick = nextTrick;
@@ -15,7 +15,6 @@ function playerContainer($window, $timeout, $rootScope) {
 
             function nextTrick() {
                 if (VideoTagData.hasNext()) {
-                    console.log("Next trick");
                     var tag = VideoTagData.next();
                     if (tag !== null) {
                         $scope.$emit('view-video-tag', tag);
@@ -25,7 +24,6 @@ function playerContainer($window, $timeout, $rootScope) {
             }
             function prevTrick() {
                 if (VideoTagData.hasPrev()) {
-                    console.log("Prev trick");
                     var tag = VideoTagData.prev();
                     if (tag !== null) {
                         $scope.$emit('view-video-tag', tag);
@@ -34,7 +32,7 @@ function playerContainer($window, $timeout, $rootScope) {
                 }
             }
 
-        },
+        }],
         link: function(scope, element, attr) {
             var w = angular.element($window);
             var header = angular.element('header');
@@ -56,7 +54,6 @@ function playerContainer($window, $timeout, $rootScope) {
             // Wait that dom is loaded to resize
             
             $rootScope.$on('notity-player-offset', function(){
-                console.log("notity-player-offset");
                 applyHeight({
                     h: w.height(),
                     w: w.width()

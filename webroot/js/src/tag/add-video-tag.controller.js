@@ -271,10 +271,12 @@ function EditionTag() {
  - category_id
  - rider_id [optional]
  */
-function AddVideoTagController($scope, $filter,
-        $stateParams, VideoEntity, VideoTagEntity, TagEntity, SharedData, PlayerData,
-        RiderEntity, VideoTagData, VideoTagEntity, EditionTag, AuthenticationService, $state,
-        VideoTagLoader) {
+AddVideoTagController.$inject = ['$scope', '$filter', '$state', '$stateParams', 
+        'VideoEntity', 'VideoTagEntity', 'TagEntity', 'RiderEntity', 'SharedData', 'PlayerData',
+        'VideoTagData', 'EditionTag', 'AuthenticationService', 'VideoTagLoader'];
+function AddVideoTagController($scope, $filter, $state, $stateParams, 
+        VideoEntity, VideoTagEntity, TagEntity, RiderEntity, SharedData, PlayerData,
+        VideoTagData, EditionTag, AuthenticationService, VideoTagLoader) {
 
     PlayerData.showEditionMode();
 

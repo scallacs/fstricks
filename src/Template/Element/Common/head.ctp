@@ -30,9 +30,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.js"></script>
 
 
-<?= $this->Html->script('lib/bootstrap.min.js'); ?>  <!-- Can be remove if using angular ? -->
+<?= $this->Html->script('lib/bootstrap.min.js'); ?>
 <?= $this->Html->script("lib/ui-bootstrap-custom-tpls-0.14.3.min.js"); ?>
-<?= $this->Html->script("lib/slider.js"); ?>
+<?= $this->Html->script("lib/slider.min.js"); ?>
 
 <?= $this->Html->script("components/lodash/dist/lodash.min.js"); ?> <!-- Used by the slider ? -->
 <?= $this->Html->script("components/angular-ui-router/release/angular-ui-router.min"); ?>

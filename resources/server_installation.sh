@@ -32,3 +32,10 @@ sudo yum-config-manager --enable epel
 sudo yum install -y phpMyAdmin
 # Authorize connection to php my admin from this ip: 
 sudo sed -i -e 's/127.0.0.1/78.233.201.181/g' /etc/httpd/conf.d/phpMyAdmin.conf
+sudo service httpd restart
+
+
+
+
+
+

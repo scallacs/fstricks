@@ -32,78 +32,84 @@
                 function pause() {
                     this._player.api('pause');
                 }
-                
+
                 return {
-                    create: function(player){
+                    create: function(player) {
                         return new VimeoCmdMapper(player);
                     }
                 }
             })
-            .directive('vimeoVideo', function(VimeoService, VimeoCmdMapper) {
-                return {
-                    restrict: 'EA',
-                    replace: true,
-                    scope: {
-                        playerData: '='
-                    },
-                    link: function(scope, element, attrs, ctrl) {
-                        var playerId = attrs.playerId || element[0].id;
-                        element[0].id = playerId;
+            .directive('vimeoVideo', vimeoVideoDirective)
+            .factory('VimeoService', VimeoService);
 
-                        var PlayerData = scope.playerData;
-                        var url = PlayerData.data.video_url ?
-                                'https://vimeo.com/' + PlayerData.data.video_url : PlayerData.data.video_url;
+    vimeoVideoDirective.$inject = ['VimeoService', 'VimeoCmdMapper'];
+    function vimeoVideoDirective(VimeoService, VimeoCmdMapper) {
+        return {
+            restrict: 'EA',
+            replace: true,
+            scope: {
+                playerData: '='
+            },
+            link: function(scope, element, attrs, ctrl) {
+                var playerId = attrs.playerId || element[0].id;
+                element[0].id = playerId;
 
-                        var params = {
-                            url: url,
-                            callback: 'JSON_CALLBACK',
-                            player_id: playerId,
-                            width: '100%',
-                            api: 1
-                        };
+                var PlayerData = scope.playerData;
+                var url = PlayerData.data.video_url ?
+                        'https://vimeo.com/' + PlayerData.data.video_url : PlayerData.data.video_url;
 
-                        VimeoService.oEmbed(params).then(function(data) {
-                            element.html(data.html);
-                        }, function(error) {
-                            PlayerData.errorPlayer('vimeo', error);
-                        });
-
-
-                        var iframe = $('#' + playerId)[0];
-                        var player = $f(iframe);
-                        // When the player is ready, add listeners for pause, finish, and playProgress
-                        player.addEvent('ready', function() {
-                            PlayerData.setPlayer('vimeo', VimeoCmdMapper.create(player));
-                            player.addEvent('playProgress', PlayerData.onPlayProgress);
-                        });
-
-                        function onPause(id) {
-                            console.log('paused');
-                        }
-
-                        function onFinish(id) {
-                            console.log('finished');
-                        }
-
-                        function onPlayProgress(data, id) {
-                            console.log(data.seconds + 's played');
-                        }
-
-                    },
-                    controller: function() {
-                    }
+                var params = {
+                    url: url,
+                    callback: 'JSON_CALLBACK',
+                    player_id: playerId,
+                    width: '100%',
+                    api: 1
                 };
-            })
 
-            .factory('VimeoService', function($http) {
-                var endpoint = 'https://www.vimeo.com/api/oembed.json';
+                VimeoService.oEmbed(params).then(function(data) {
+                    element.html(data.html);
+                }, function(error) {
+                    PlayerData.errorPlayer('vimeo', error);
+                });
 
-                return {
-                    oEmbed: function(params) {
-                        return $http.jsonp(endpoint, {params: params}).then(function(res) {
-                            return res.data;
-                        });
-                    }
-                };
-            });
+
+                var iframe = $('#' + playerId)[0];
+                var player = $f(iframe);
+                // When the player is ready, add listeners for pause, finish, and playProgress
+                player.addEvent('ready', function() {
+                    PlayerData.setPlayer('vimeo', VimeoCmdMapper.create(player));
+                    player.addEvent('playProgress', PlayerData.onPlayProgress);
+                });
+
+                function onPause(id) {
+                    console.log('paused');
+                }
+
+                function onFinish(id) {
+                    console.log('finished');
+                }
+
+                function onPlayProgress(data, id) {
+                    console.log(data.seconds + 's played');
+                }
+
+            },
+            controller: function() {
+            }
+        };
+    }
+    
+    VimeoService.$inject = ['$http'];
+    function VimeoService($http) {
+        var endpoint = 'https://www.vimeo.com/api/oembed.json';
+
+        return {
+            oEmbed: function(params) {
+                return $http.jsonp(endpoint, {params: params}).then(function(res) {
+                    return res.data;
+                });
+            }
+        };
+    }
+
 })(window, window.angular);
