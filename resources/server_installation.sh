@@ -1,6 +1,15 @@
 # Log to server
 ssh -i resources/webserver-fstricks-linux.pem ec2-user@ec2-52-36-163-153.us-west-2.compute.amazonaws.com
 
+########### PHP ################
+sudo yum update -y
+sudo yum install -y httpd24 php56 mysql55-server php56-mysqlnd
+sudo service httpd start
+sudo chkconfig httpd on
+chkconfig --list httpd
+###########################
+
+  
 # Setting file perms
 cd /var/www
 sudo groupadd www
@@ -23,8 +32,7 @@ find /var/www -type f -exec sudo chmod 0664 {} \;
 # MYSQL 
 sudo service mysqld start
 sudo mysql_secure_installation
-
- sudo chkconfig mysqld on # start mysql server at every boot
+sudo chkconfig mysqld on # start mysql server at every boot
  
 #Enable the Extra Packages for Enterprise Linux (EPEL) repository from the Fedora project on your instance.
 sudo yum-config-manager --enable epel
@@ -48,6 +56,32 @@ sudo yum install npm
 sudo npm install bower -g
 sudo npm install uglify-js -g
 
+sudo npm install --save-dev gulp
+sudo npm install --global gulp-concat
+sudo npm install --global gulp-uglify
+sudo npm install --global gulp-ng-annotate
+# gulp-sourcemaps
+
+#### CONFIGURE php .INI #######
+sudo yum install libicu
+sudo yum install libicu-devel.x86_64
+sudo yum install php-pear # for pecl
+#sudo yum install libicu-devel
+#sudo yum install gcc gcc-c++ autoconf automake
+#sudo pecl install Xdebug
+#4) Find the php.ini file using
+#vim /etc/php.ini
+#And add the following line
+#sudo -s
+#echo "[xdebug]" >> /etc/php.ini
+#echo "zend_extension=\"/usr/lib64/php/modules/xdebug.so\"" >> /etc/php.ini
+#echo "xdebug.remote_enable = 1" >> /etc/php.ini
+sudo yum install php56-devel.x86_64
+sudo pecl install intl
+echo "extension=intl.so" >> /etc/php.ini
+sudo service httpd restart
+
+echo "LoadModule rewrite_module modules/mod_rewrite.so" >> /etc/httpd/conf/httpd.conf
 
 
 
