@@ -1,5 +1,5 @@
 angular.module('shared')
-        .directive('copyThisLink', function($uibModal) {
+        .directive('copyThisLink', ['$uibModal', function($uibModal) {
             return {
                 restrict: 'A',
                 link: function(scope, elem) {
@@ -13,8 +13,8 @@ angular.module('shared')
                     });
                 }
             };
-        })
-        .directive('selectAll', function($timeout) {
+        }])
+        .directive('selectAll', ['$timeout', function($timeout) {
             return {
                 restrict: 'A',
                 link: function(scope, element, attrs) {
@@ -26,4 +26,4 @@ angular.module('shared')
                     }, 100);
                 }
             };
-        });
+        }]);
