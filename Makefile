@@ -1,7 +1,6 @@
 # suffix will be ignored.
 CSS_FILES = $(filter-out %.min.css,$(wildcard \
-	$(TMP_SRC_DIR)/webroot/css/*.css \
-	$(TMP_SRC_DIR)/webroot/css/**/*.css \
+	webroot/css/*.css \
 ))
 CSS_MINIFIED = $(CSS_FILES:.css=.min.css)
 YUI_COMPRESSOR = java -jar bin/yuicompressor.jar
