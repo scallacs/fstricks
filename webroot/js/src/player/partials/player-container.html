@@ -17,7 +17,7 @@
             </p>
         </div>
         <div ng-show="!playerData.hasError()
-                        && videoTagData.currentTag == null && !videoTagData.getLoader().hasData()" 
+                        && videoTagData.currentTag === null && !videoTagData.getLoader().hasData()" 
              class="pick-video-message">
             <p ng-if="playerData.isMode('view')">
                 Oups, there is no tricks registered yet... 

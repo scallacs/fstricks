@@ -37,7 +37,10 @@ function PlayerData(VideoTagData, $q) {
                 youtube: $q.defer(),
                 vimeo: $q.defer()
             };
-            this.players = {};
+            this.players = {
+                youtube: null,
+                vimeo: null
+            };
             this.visible = true;
             this.showListTricks = true;
             this.mode = 'view';
@@ -106,7 +109,8 @@ function PlayerData(VideoTagData, $q) {
         }
     }
     function hasError() {
-        return this.data.provider !== null && !this.players[this.data.provider];
+        return this.data.provider !== null && 
+                this.players[this.data.provider] !== null && !this.players[this.data.provider];
     }
     function onPlayProgress(currentTime) {
         if (this.data.end !== null && currentTime >= this.data.end) {

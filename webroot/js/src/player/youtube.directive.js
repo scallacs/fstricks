@@ -1,6 +1,5 @@
 angular.module('app.player')
         .factory('YoutubeCmdMapper', function() {
-
             function YoutubeCmdMapper(player) {
                 this._player = player;
             }
@@ -34,7 +33,6 @@ angular.module('app.player')
                     startSeconds: data.begin
                 });
             }
-
             return {
                 create: function(player) {
                     return new YoutubeCmdMapper(player);
@@ -45,10 +43,8 @@ angular.module('app.player')
         .directive('youtube', function($window, VideoEntity, PlayerData, YoutubeCmdMapper) {
 
             var myTimer;
-
             function initPlayer(element, scope) {
                 var player;
-
                 var playerContainer = element.children()[0];
                 var player = new YT.Player(playerContainer, {
                     playerVars: {
@@ -90,7 +86,7 @@ angular.module('app.player')
                             PlayerData.setPlayer('youtube', YoutubeCmdMapper.create(player));
                         },
                         onStateChange: function(event) {
-                            var intervalDuration = 100; // 100 means repeat in 100 ms
+                            var intervalDuration = 100; // TODO constant 100 means repeat in 100 ms
                             clearInterval(myTimer);
                             switch (event.data) {
                                 case YT.PlayerState.PLAYING:

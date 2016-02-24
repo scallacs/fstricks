@@ -11,14 +11,6 @@
                 </ul>
             </div>
             <div class="col-sm-4">
-                <!--
-                <ul class="list-unstyled">
-                    <li class="text-big">
-                        <a ui-sref="addviode">
-                            <span class="glyphicon glyphicon-plus-sign"></span> Add a trick
-                        </a>
-                    </li>
-                </ul>-->
             </div>
             <div class="col-sm-4">
                 <p class="copyright">
