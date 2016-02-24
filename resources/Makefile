@@ -5,7 +5,7 @@
 # Patterns matching CSS files that should be minified. Files with a -min.css
 
 
-PROD_DIR = /var/www
+PROD_DIR = /var/www/html
 TMP_SRC_DIR = /home/ec2-user/WebsiteTricker
 
 #PROD_DIR = /var/www
@@ -27,6 +27,8 @@ JS_FILES = $(filter-out %.min.js %.spec.js,$(wildcard \
 	$(TMP_SRC_DIR)/webroot/js/src/**/**/*.js \
 ))
 
+DB_SOURCE = $(TMP_SRC_DIR)/resources/database/trickers.sql
+
 ##############################################################################
 
 $(info ************ MAKEFILE **********)
@@ -37,38 +39,57 @@ $(info ********************************)
 clone:
 	git clone https://github.com/scallacs/tricker.git $(TMP_SRC_DIR)
 	
+
+# target: prod build the production website
+prod: copy-sources 
+
+.PHONY: database
+database: $(DB_SOURCE)
+	echo "CREATE DATABASE IF NOT EXISTS trickers" |  mysql -uroot -pr4xc3oSFSTDB -hlocalhost
+	mysql -uroot -pr4xc3oSFSTDB -hlocalhost trickers < $(DB_SOURCE)
+
 # target: init-prod - Init the target directory. Create a copy 
 init-prod:
 	cp -r $(PROD_DIR) /home/ec2-user/ProductionCopy
 	rm -rf $(PROD_DIR)/*
 	
-copy-backend-sources: init-prod
+copy-sources: copy-backend-sources copy-frontend-sources
+
+copy-backend-sources: 
 	$(info ************ Copying backend sources **********)
 	cp -r $(TMP_SRC_DIR)/src $(PROD_DIR)/src
 	cp -r $(TMP_SRC_DIR)/config $(PROD_DIR)/config
-	mkdir $(PROD_DIR)/vendor
-	mkdir $(PROD_DIR)/plugins
-	mkdir $(PROD_DIR)/logs
-	mkdir $(PROD_DIR)/tmp
-	mkdir $(PROD_DIR)/webroot
+	cd $(TMP_SRC_DIR)
+	cp $(TMP_SRC_DIR)/index.php $(PROD_DIR)
+	cp $(TMP_SRC_DIR)/composer.json $(PROD_DIR)
+	cp $(TMP_SRC_DIR)/composer.lock $(PROD_DIR)
+	cp $(TMP_SRC_DIR)/.htaccess $(PROD_DIR)
+	mkdir -p $(PROD_DIR)/webroot
+	cp $(TMP_SRC_DIR)/webroot/index.php $(PROD_DIR)/webroot
+	cp $(TMP_SRC_DIR)/webroot/.htaccess $(PROD_DIR)/webroot
+	mkdir -p $(PROD_DIR)/vendor
+	mkdir -p $(PROD_DIR)/plugins
+	mkdir -p $(PROD_DIR)/logs
+	mkdir -p $(PROD_DIR)/tmp
+	chmod 777 $(PROD_DIR)/tmp
 	$(info ************ Installing dependencies **********)
 	cd $(PROD_DIR) && composer install
 	
-copy-frontend-sources: init-prod copy-js-components copy-js-sources minify
-	cd $(TMP_SRC_DIR)/webroot
+copy-frontend-sources: copy-js-components minify
 	$(info ************ Copying frontend sources **********)
-	cp -r img $(PROD_DIR)/webroot/img 
-	cp -r data $(PROD_DIR)/webroot/data 
-	cp -r js/lib $(PROD_DIR)/webroot/js/lib 
-	cp -r src $(PROD_DIR)/webroot/js/src 
+	cp -r $(TMP_SRC_DIR)/webroot/img $(PROD_DIR)/webroot/img 
+	cp -r $(TMP_SRC_DIR)/webroot/data $(PROD_DIR)/webroot/data 
+	cp -r $(TMP_SRC_DIR)/webroot/js/lib $(PROD_DIR)/webroot/js/lib 
+	cp -r $(TMP_SRC_DIR)/webroot/js/src $(PROD_DIR)/webroot/js/src 
+	cp -r $(TMP_SRC_DIR)/webroot/css $(PROD_DIR)/webroot/css 
 	$(info ************ Cleaning **********)
-	cd js/src && find . -type f -name '*.spec.js' -delete
-	cd js/src find . -type f ! -name '*.min.js' -delete
-	cd js/css find . -type f ! -name '*.min.css' -delete
+	cd $(PROD_DIR)/webroot/js/src && find . -type f -name '*.spec.js' -delete
+	cd $(PROD_DIR)/webroot/js/src && find . -type f ! -name '*.min.js' ! -name '*.html' -delete
+	cd $(PROD_DIR)/webroot/css && find . -type f ! -name '*.min.css' -delete
 	
 copy-js-components: copy-frontend-sources
 	$(info ************ Copying js sources **********)
-	cd $(TMP_SRC_DIR)/webroot/js && bower install && cp components $(PROD_DIR)/webroot/js/components
+	cd $(TMP_SRC_DIR)/webroot/js && bower install && mkdir -p $(PROD_DIR)/webroot/js/components && cp -r components/* $(PROD_DIR)/webroot/js/components
 	
 	
 ##############################################################################
