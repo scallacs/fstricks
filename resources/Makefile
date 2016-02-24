@@ -72,10 +72,12 @@ copy-js-components: copy-frontend-sources
 	
 ##############################################################################
 # Command to run to execute the YUI Compressor.
-YUI_COMPRESSOR = java -jar bin/yuicompressor.jar
+YUI_COMPRESSOR = java -jar $(TMP_SRC_DIR)/bin/yuicompressor.jar
+UGLIFY_COMPRESSOR = uglifyjs 
 
 # Flags to pass to the YUI Compressor for both CSS and JS.
 YUI_COMPRESSOR_FLAGS = --charset utf-8 --verbose
+UGLIFY_COMPRESSOR_FLAGS = --charset utf-8 --verbose
 
 #CSS_MINIFIED = $(addprefix $CSS_OUTPUT, $(notdir $(CSS_FILES:.css=-min.css)))
 #JS_MINIFIED = $(addprefix $JS_OUTPUT, $(JS_FILES:.js=-min.js)))
@@ -84,21 +86,21 @@ JS_MINIFIED = $(JS_FILES:.js=.min.js)
 
 # target: minify - Minifies CSS and JS.
 minify: minify-css minify-js
-)
+
 # target: minify-css - Minifies CSS.
 minify-css: $(CSS_FILES) $(CSS_MINIFIED)
 
 # target: minify-js - Minifies JS.
 minify-js: $(JS_FILES) $(JS_MINIFIED)
 
-%-min.css: %.css
+%.min.css: %.css
 	@echo '==> Minifying $<'
 	$(YUI_COMPRESSOR) $(YUI_COMPRESSOR_FLAGS) --type css $< >$@
 	@echo
 
-%-min.js: %.js
+%.min.js: %.js
 	@echo '==> Minifying $<'
-	$(YUI_COMPRESSOR) $(YUI_COMPRESSOR_FLAGS) --type js $< >$@
+	$(UGLIFY_COMPRESSOR) $(UGLIFY_COMPRESSOR_FLAGS) --type js $< >$@
 	@echo
 
 # target: clean - Removes minified CSS and JS files.

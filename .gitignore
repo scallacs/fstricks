@@ -10,6 +10,10 @@ CakePHP 3
 /webroot/files/*
 /tests/Fixture/files/tmp
 /webroot/coverage
+/webroot/js/src/*.min.js
+/webroot/js/src/**/*.min.js
+/webroot/js/src/**/**/*.min.js
+
 
 CakePHP 2
 
