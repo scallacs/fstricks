@@ -1,6 +1,6 @@
 
 angular.module('shared.form')
-        .factory('DataExistsService', function($resource) {
+        .factory('DataExistsService', ['$resource', function($resource) {
             var url = WEBROOT_FULL + '/:controller/:action/:value.json';
 
             return $resource(url, {controller: '@controller', action: '@action', value: '@value'}, {
@@ -10,8 +10,8 @@ angular.module('shared.form')
                     isArray: false
                 }
             });
-        })
-        .directive('ftUnique', function(DataExistsService) {
+        }])
+        .directive('ftUnique', ['DataExistsService', function(DataExistsService) {
             return {
                 restrict: 'A',
                 require: 'ngModel',
@@ -39,4 +39,4 @@ angular.module('shared.form')
                     });
                 }
             }
-        });
+        }]);

@@ -1,8 +1,5 @@
 angular.module('shared.vimeo')
         .factory('VimeoItem', function() {
-            var mapSize = {
-                default: 0
-            };
 
             function VimeoItem(item) {
                 this._item = item;
@@ -34,7 +31,6 @@ angular.module('shared.vimeo')
 
             function thumbnail(size) {
                 return this._item.thumbnail_small;
-                //this._item.pictures.sizes[mapSize[size]].link;
             }
 
             function title() {
@@ -57,7 +53,7 @@ angular.module('shared.vimeo')
                 }
             };
         })
-        .factory('VimeoInfo', function($q, VimeoItem) {
+        .factory('VimeoInfo', ['$q', 'VimeoItem', function($q, VimeoItem) {
             function VimeoInfo() {
                 this._query = null;
                 this._videoIds = [];
@@ -138,7 +134,7 @@ angular.module('shared.vimeo')
             function exists() {
                 return this._data;
             }
-        });
+        }]);
 
 /*
  * 

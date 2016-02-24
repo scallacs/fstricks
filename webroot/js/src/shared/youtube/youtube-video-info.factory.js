@@ -46,7 +46,7 @@ angular.module('shared.youtube')
                 }
             };
         })
-        .factory('YoutubeVideoInfo', function($q, Config, YoutubeItem) {
+        .factory('YoutubeVideoInfo', ['$q', 'Config', 'YoutubeItem', function($q, Config, YoutubeItem) {
             var API_KEY = Config.api.google;
             function YoutubeVideoInfo() {
                 this._query = null;
@@ -166,5 +166,5 @@ angular.module('shared.youtube')
 //                }
 //                return duration;
 //            }
-        });
+        }]);
 

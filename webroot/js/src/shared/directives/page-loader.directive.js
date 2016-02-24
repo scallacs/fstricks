@@ -1,5 +1,5 @@
 angular.module('shared')
-        .directive('pageLoader', function(SharedData) {
+        .directive('pageLoader', function() {
             return {
                 restrict: 'A',
                 templateUrl: 'js/src/shared/directives/page-loader.html',
@@ -16,5 +16,4 @@ angular.module('shared')
                     });
                 }
             };
-
         });

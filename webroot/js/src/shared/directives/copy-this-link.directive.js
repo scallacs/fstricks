@@ -2,8 +2,6 @@ angular.module('shared')
         .directive('copyThisLink', function($uibModal) {
             return {
                 restrict: 'A',
-                controller: function() {
-                },
                 link: function(scope, elem) {
                     elem.click(function(event) {
                         var href = WEBROOT_FULL + elem.attr('href');
