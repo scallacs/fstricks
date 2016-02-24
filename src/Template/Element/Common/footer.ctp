@@ -4,7 +4,7 @@
             <div class="col-sm-4">
                 <ul class="list-unstyled">
                     <li ng-repeat="sport in sports">
-                        <a ng-href="#/sports/{{sport.name}}"  class="text-capitalize" ng-click="setCurrentSport(sport)">
+                        <a  ui-sref="videoplayer.sport({sportName: sport.name})" lass="text-capitalize" ng-click="setCurrentSport(sport)">
                             {{sport.name}}
                         </a>
                     </li>
@@ -25,8 +25,8 @@
                     © 2016 fstricks.com All Rights Reserved
                 </p>
                 <ul class="list-inline">
-                    <li><a href="#/faq">FAQ</a></li>
-                    <li><a href="#/contact">Contact</a></li>
+                    <li><a ui-sref="faq">FAQ</a></li>
+                    <li><a ui-sref="contact">Contact</a></li>
                 </ul>
 
                 <div>
