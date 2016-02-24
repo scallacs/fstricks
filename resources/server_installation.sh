@@ -78,7 +78,10 @@ sudo service httpd restart
 
 echo "LoadModule rewrite_module modules/mod_rewrite.so" >> /etc/httpd/conf/httpd.conf
 
-
+#http://stackoverflow.com/questions/19408349/htaccess-works-in-localhost-but-doesnt-work-in-ec2-instance
+sudo vim /etc/httpd/conf/httpd.conf
+#DocumentRoot "/var/www/html" was listed in two places for me. 
+#I had to change the subsequent AllowOverride None to AllowOverride All in those two places.
 
 
 

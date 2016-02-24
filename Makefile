@@ -3,11 +3,19 @@ CSS_FILES = $(filter-out %.min.css,$(wildcard \
 	$(TMP_SRC_DIR)/webroot/css/*.css \
 	$(TMP_SRC_DIR)/webroot/css/**/*.css \
 ))
+CSS_MINIFIED = $(CSS_FILES:.css=.min.css)
 YUI_COMPRESSOR = java -jar bin/yuicompressor.jar
 YUI_COMPRESSOR_FLAGS = --charset utf-8 --verbose
 GULP_BIN = node_modules/gulp/bin/gulp.js
+DB_SOURCE = resources/database/trickers.sql
 
 ###############################################################
+
+mv2prod: prod
+	rm -rf /var/www/html/*
+	cp -r ./* /var/www/html
+	cp .htaccess /var/www/html
+	cp webroot/.htaccess /var/www/html/webroot
 
 # target: prod - build the project for production
 prod: build clean-prod config-prod database
@@ -30,6 +38,7 @@ clean-prod:
 	rm -rf webroot/coverage
 	rm -rf webroot/js/e2e-tests
 	find webroot/js/src -type f ! -name '*.html' -delete
+	find webroot/cs -type f ! -name '*.min.css' -delete
 
 build: build-backend build-frontend minify
 
@@ -54,7 +63,6 @@ minify-js:
 # target: minify-css - Minifies CSS.
 minify-css: $(CSS_FILES) $(CSS_MINIFIED)
 	
-CSS_MINIFIED = $(CSS_FILES:.css=.min.css)
 %.min.css: %.css
 	@echo '==> Minifying $<'
 	$(YUI_COMPRESSOR) $(YUI_COMPRESSOR_FLAGS) --type css $< >$@
