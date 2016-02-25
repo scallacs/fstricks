@@ -25,10 +25,10 @@ prod: build clean-prod config-prod database
 
 # target: dev - build the project for dev
 dev: build database
-	mv config/app.dev.php config/app.php
+	cp config/app.dev.php config/app.php
 
 config-prod:
-	mv config/app.prod.php config/app.php
+	cp config/app.prod.php config/app.php
 	
 .PHONY: database
 database: $(DB_SOURCE)
