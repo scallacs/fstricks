@@ -294,7 +294,7 @@ header .navbar-header ul{
 }
 header .header-title{
     font-size: 2em;
-    padding-right: -1px;
+    padding-right: 5px;
     font-weight: bold;
     text-transform: capitalize;
     font-family: Helvetica;
