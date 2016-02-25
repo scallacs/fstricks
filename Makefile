@@ -11,7 +11,7 @@ DB_SOURCE = resources/database/trickers.sql
 ###############################################################
 
 # target: mv2prod - Moving to production
-mv2prod: prod
+mv2prod: 
 	rm -rf /var/www/html/*
 	cp -r ./* /var/www/html
 	cp .htaccess /var/www/html
@@ -21,6 +21,7 @@ mv2prod: prod
 	
 # target: prod - build the project for production
 prod: build clean-prod config-prod database
+
 
 # target: dev - build the project for dev
 dev: build database

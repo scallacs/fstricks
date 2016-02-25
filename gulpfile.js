@@ -2,6 +2,7 @@ var gulp = require('gulp')
 var concat = require('gulp-concat')
 var uglify = require('gulp-uglify')
 var wrap = require('gulp-wrap')
+var stripDebug = require('gulp-strip-debug');
 //var ngAnnotate = require('gulp-ng-annotate')
 
 gulp.task('concat-js', function () {
@@ -18,6 +19,7 @@ gulp.task('concat-js', function () {
         'webroot/js/src/app.module.js'
     ])
     .pipe(wrap('(function(){\n"use strict";\n<%= contents %>\n})();'))
+    .pipe(stripDebug())
     .pipe(concat('webroot/js/app.js'))
 //    .pipe(ngAnnotate())
     .pipe(uglify())
