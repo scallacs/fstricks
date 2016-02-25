@@ -1,9 +1,6 @@
 <div class="item item-video-tag bg-primary clickable clearfix" 
      ng-class="{ 'active': videoTagData.currentTag.id === videoTag.id}" >
 
-    <div class="item-category" ng-if="false">
-        {{videoTag.category_name}}
-    </div>
     <div class="item-sport">
         <span ng-if="videoTag.sport_name">
             <img ng-src="{{videoTag.sport_name| imageUrl}}" 
@@ -11,10 +8,10 @@
                  alt="{{videoTag.sport_name}}"/>
         </span>
     </div>
-    <div class="col-xs-3 item-thumbnail">
+    <div class="col-xs-3 item-thumbnail hide-no-room">
         <img src="{{videoTag.thumbnail}}"/>
     </div>
-    <div class="col-xs-9">
+    <div class="col-xs-9 item-content">
         <div class="clickable">
             <div class="col-xs-10"  ng-click="view(videoTag)">
                 <p class="item-title text-capitalize" ng-if="videoTag.tag_name">
@@ -83,7 +80,7 @@
                 </div>
             </div>
         </div>
-        <div class="">
+        <div class="hide-no-room">
             <div class="col-xs-10">
                 <div class="padding-sm" 
                      ng-if="!playerData.isMode('view')" >

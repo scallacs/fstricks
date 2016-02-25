@@ -36,7 +36,7 @@ function playerContainer($window, $rootScope) {
         link: function(scope, element, attr) {
             var w = angular.element($window);
             var header = angular.element('header');
-
+            var tableCurrentTrick = header.find('.table-current-trick');
             scope.getWindowDimensions = function() {
                 return {
                     'h': w.height(),
@@ -65,7 +65,12 @@ function playerContainer($window, $rootScope) {
             }
             function computeHeight(h, w) {
                 var offsetsContainer = $('.player-offset').outerHeight();
-                var offsetH = header.height() + offsetsContainer;
+                if (angular.element('footer').find('#IsXSDevice:visible').length === 1){
+                    var offsetH = tableCurrentTrick.height() + offsetsContainer;
+                }
+                else{
+                    var offsetH = header.height() + offsetsContainer;
+                }
                 var maxHeight = (h - offsetH);
                 var heigth = (w) * (9 / 16);
                 var newHeight = Math.min(heigth, maxHeight);

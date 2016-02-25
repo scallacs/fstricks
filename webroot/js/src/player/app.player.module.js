@@ -148,14 +148,6 @@ function ConfigRoute($stateProvider) {
                         templateUrl: baseUrl + 'view-rider.html'
                     }
                 }
-            })
-            .state('videoplayer.home', {
-                url: '/',
-                views: {
-                    videoPlayerExtra: {
-                        controller: 'ViewSearchController'
-                    }
-                }
             });
 }
 
@@ -511,7 +503,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
                 .$promise
                 .then(successLoadCallback)
                 .catch(function() {
-                    $state.go('videoplayer.home');
+                    $state.go('home');
                 });
     }
 

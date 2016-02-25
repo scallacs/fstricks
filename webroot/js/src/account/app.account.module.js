@@ -100,7 +100,7 @@ function UserLoginController($scope, $state) {
 
     $scope.$on("user-login-success", function() {
         console.log("On user-login-success");
-        $state.go('videoplayer.home');
+        $state.go('home');
     });
 
 }
@@ -116,7 +116,7 @@ function SignupController($scope, $state, AuthenticationService) {
 
         function successCallback(response) {
             if (response.success) {
-                $state.go('videoplayer.home');
+                $state.go('home');
             }
         }
     }

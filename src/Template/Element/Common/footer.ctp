@@ -29,4 +29,5 @@
             </div>
         </div>
     </div>
+    <div id="IsXSDevice" class="visible-xs"></div>
 </footer>

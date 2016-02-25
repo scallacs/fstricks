@@ -50,6 +50,11 @@ Run.$inject = ['$rootScope', 'AuthenticationService', 'loginModal', '$state', 'S
 function Run($rootScope, AuthenticationService, loginModal, $state, SharedData) {
 
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
+        if (toState.redirectTo) {
+            event.preventDefault();
+            $state.go(toState.redirectTo, toParams);
+            return;
+        }
         console.log('$stateChangeStart: ' + event);
         var requireLogin = toState.data.requireLogin;
 
@@ -70,7 +75,7 @@ function Run($rootScope, AuthenticationService, loginModal, $state, SharedData) 
                     .catch(function() {
                         if (loginModal.isset()) {
                             console.log("Closing modal with catch");
-                            return $state.go('videoplayer.home');
+                            return $state.go('home');
                         }
                     });
         }
@@ -85,20 +90,25 @@ function Run($rootScope, AuthenticationService, loginModal, $state, SharedData) 
 ConfigRouting.$inject = ['$stateProvider'];
 function ConfigRouting($stateProvider) {
     'use strict';
-    $stateProvider.state("otherwise", {
-        url: "*path",
-        templateUrl: "js/src/views/error-not-found.html",
-        data: {
-            requireLogin: false
-        }
-    });
-    $stateProvider.state("notfound", {
-        url: "*path",
-        templateUrl: "js/src/views/error-not-found.html",
-        data: {
-            requireLogin: false
-        }
-    });
+    $stateProvider
+            .state('home', {
+                url: "",
+                redirectTo: 'videoplayer.best'
+            })
+            .state("otherwise", {
+                url: "*path",
+                templateUrl: "js/src/views/error-not-found.html",
+                data: {
+                    requireLogin: false
+                }
+            })
+            .state("notfound", {
+                url: "*path",
+                templateUrl: "js/src/views/error-not-found.html",
+                data: {
+                    requireLogin: false
+                }
+            });
 }
 
 ConfigInterceptor.$inject = ['$httpProvider'];
@@ -134,7 +144,7 @@ function ConfigInterceptor($httpProvider) {
                                 deferred.resolve($http(rejection.config));
                             })
                             .catch(function() {
-                                $state.go('videoplayer.home');
+                                $state.go('home');
                                 deferred.reject(rejection);
                             });
                     return;

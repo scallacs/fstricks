@@ -1,25 +1,30 @@
 <?= $this->Html->charset() ?>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>
-    <?= $this->fetch('title') ?>
+    <?php echo \Cake\Core\Configure::read('Company.title'); ?>
 </title>
 
 <script>
     const WEBROOT = '<?= $this->request->webroot; ?>';
-    const WEBROOT_FULL = '<?= \Cake\Routing\Router::url('/', true); ?>';
-</script>
+            const WEBROOT_FULL = '<?= \Cake\Routing\Router::url('/', true); ?>';</script>
 <?= $this->Html->meta('icon') ?>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="js/components/ui-select/dist/select.min.css">
-<?= $this->Html->css('bootstrap.min.css') ?>
-<?= $this->Html->css('ui-bootstrap.min.css') ?>
-<?= $this->Html->css('base.min.css') ?>
 
+<link rel="stylesheet" href="js/components/ui-select/dist/select.min.css">
+<?php if (!\Cake\Core\Configure::read('debug')) { ?>
+    <?= $this->Html->css('bootstrap.min.css') ?>
+    <?= $this->Html->css('ui-bootstrap.min.css') ?>
+    <?= $this->Html->css('base.min.css') ?>
+<?php } else { ?>
+    <?= $this->Html->css('bootstrap.css') ?>
+    <?= $this->Html->css('ui-bootstrap.css') ?>
+    <?= $this->Html->css('base.css') ?>
+<?php } ?>
 
 <?= $this->Html->script('components/jquery/dist/jquery.min.js'); ?> <!-- 2.1.4 -->
 <?= $this->Html->script('components/jquery-timeago/jquery.timeago.js'); ?> <!-- 1.0.2 -->
 <?= $this->Html->script("components/jquery-ui/jquery-ui.min.js"); ?> <!-- Replace with bootstrap ? -->
- 
+
 
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"); ?>
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-resource.min.js"); ?>
@@ -45,7 +50,7 @@
 <?= $this->Html->script("components/angular-utils-pagination/dirPagination.js"); ?>         <!-- Use mimified -->
 <?= $this->Html->script("components/ngInfiniteScroll/build/ng-infinite-scroll.min.js"); ?>
 
-<?php if (\Cake\Core\Configure::read('debug')){ ?>
+<?php if (\Cake\Core\Configure::read('debug')) { ?>
     <?= $this->Html->script('src/shared/shared.module'); ?>
     <?= $this->Html->script('src/shared/directives/copy-this-link.directive'); ?>
     <?= $this->Html->script('src/shared/form/shared.form.module'); ?>

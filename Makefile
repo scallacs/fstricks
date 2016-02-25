@@ -10,12 +10,15 @@ DB_SOURCE = resources/database/trickers.sql
 
 ###############################################################
 
+# target: mv2prod - Moving to production
 mv2prod: prod
 	rm -rf /var/www/html/*
 	cp -r ./* /var/www/html
 	cp .htaccess /var/www/html
 	cp webroot/.htaccess /var/www/html/webroot
-
+	sudo chmod 777 -R /var/www/html/logs
+	sudo chmod 777 -R /var/www/html/tmp
+	
 # target: prod - build the project for production
 prod: build clean-prod config-prod database
 
@@ -37,7 +40,7 @@ clean-prod:
 	rm -rf webroot/coverage
 	rm -rf webroot/js/e2e-tests
 	find webroot/js/src -type f ! -name '*.html' -delete
-	find webroot/cs -type f ! -name '*.min.css' -delete
+	find webroot/css -type f ! -name '*.min.css' -delete
 
 build: build-backend build-frontend minify
 

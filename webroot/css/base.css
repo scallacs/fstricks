@@ -38,16 +38,43 @@ h3, h2, h1{
     height: 0.6em;
 }
 .table-current-trick{
-    background: #111;
     width: 100%;
-    min-height: 106px;
     text-align: center;
+    display: table;
+    background: #000;
+}
+@media (min-width: 767px){  
+    .table-current-trick .current-tag-wrapper{
+        min-height: 105px;
+    }
+}
+@media (max-width: 767px) {
+    .table-current-trick .hide-no-room{
+        display: none;
+    }
+    .table-current-trick:hover .hide-no-room{
+        display: inherit;
+    }
+    .table-current-trick .item-content{
+        width: 100%;
+    }
+    .table-current-trick:hover .item-content{
+        width: 75%;
+    }
+}
+.table-current-trick .btn-player-nav{
+    display: table-cell;
+    width: 40px;
+    vertical-align: middle;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 .table-current-trick .item-video-tag{
     border: none;
 }
 .table-current-trick .current-tag{
-    background: #000;
+    display: table-cell;
+    vertical-align: middle;
 }
 .table-current-trick td.disabled a{
     color: #777;
@@ -377,7 +404,7 @@ header .navbar-nav > li > a{
 .player-bar-tag-validated{
     background: orange;
 }
-    
+
 .player-bar-tag:hover{
     cursor: pointer;
     background: orangered;
@@ -474,7 +501,7 @@ header .navbar-nav > li > a{
 }
 
 
-    /* padding: 10px; */
+/* padding: 10px; */
 }
 
 @media(min-width: 768px){
@@ -630,14 +657,14 @@ header .navbar-nav > li > a{
 }
 
 .slider-container{
-    
+
 }
 
 .slider-container .ui-slider{
-    	position: relative;
-    	text-align: left;
-    	margin-left: 1em;
-    	margin-right: 1em;
+    position: relative;
+    text-align: left;
+    margin-left: 1em;
+    margin-right: 1em;
 }
 
 .slider-container .ui-slider .ui-slider-handle{
@@ -655,18 +682,18 @@ header .navbar-nav > li > a{
     opacity: 0.87;
 }
 .slider-container .ui-slider-horizontal .ui-slider-range {
-	top: 0;
-	height: 100%;
+    top: 0;
+    height: 100%;
 }
 .slider-container .ui-slider .ui-slider-range {
-	position: absolute;
-	z-index: 1;
-	/* font-size: 1em; */
-	display: block;
-	border: 0;
-	/* background-position: 0 0; */
-	background: #AAA;
-	height: 15px;
+    position: absolute;
+    z-index: 1;
+    /* font-size: 1em; */
+    display: block;
+    border: 0;
+    /* background-position: 0 0; */
+    background: #AAA;
+    height: 15px;
 }
 
 /******************************/

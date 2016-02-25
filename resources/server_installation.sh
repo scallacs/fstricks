@@ -82,6 +82,7 @@ echo "LoadModule rewrite_module modules/mod_rewrite.so" >> /etc/httpd/conf/httpd
 sudo vim /etc/httpd/conf/httpd.conf
 #DocumentRoot "/var/www/html" was listed in two places for me. 
 #I had to change the subsequent AllowOverride None to AllowOverride All in those two places.
+sudo service httpd restart
 
 
 

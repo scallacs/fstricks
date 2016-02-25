@@ -1,25 +1,22 @@
-<table class="table-current-trick" >
-    <tbody>
-        <tr>
-            <td class="current-tag" 
-                ng-if="videoTagData.currentTag">
-                <div video-tag-item video-tag="videoTagData.currentTag"></div>
-            </td>
-            <td
-                ng-if="videoTagData.currentTag && !playerData.isMode('validation')"
-                class="toggle-player-mode" 
-                ng-click="togglePlayerMode()"
-                ng-class="{disabled:!playerData.looping}">
+<div class="table-current-trick" ng-if="videoTagData.currentTag">
+    <div class="current-tag" >
+        <div class="current-tag-wrapper">
+            <div video-tag-item video-tag="videoTagData.currentTag">
+            </div>
+        </div>
+    </div>
+    <div
+        ng-if="videoTagData.currentTag && !playerData.isMode('validation')"
+        class="toggle-player-mode btn-player-nav" 
+        ng-click="togglePlayerMode()"
+        ng-class="{disabled:!playerData.looping}">
 
-                <span class="glyphicon glyphicon-repeat text-big" title="Repeat tricks"></span>
-                <!--<span ng-if="playerData.looping" class="glyphicon glyphicon-play" title="Play normally"></span>-->
-            </td>
-            <td class="toggle-list-tricks"  
-                ng-if="!playerData.isMode('validation')"
-                ng-click="toggleListTricks()" 
-                style="width: 40px">
-                <a href="" class="text-big"><span class="glyphicon glyphicon-list"></span></a>
-            </td>
-        </tr>
-    </tbody>
-</table>
+        <span class="glyphicon glyphicon-repeat text-big" title="Repeat tricks"></span>
+        <!--<span ng-if="playerData.looping" class="glyphicon glyphicon-play" title="Play normally"></span>-->
+    </div>
+    <div class="toggle-list-tricks  btn-player-nav"  
+         ng-if="!playerData.isMode('validation')"
+         ng-click="toggleListTricks()" >
+        <a href="" class="text-big"><span class="glyphicon glyphicon-list"></span></a>
+    </div>
+</div>

@@ -222,18 +222,28 @@ Log::config('m', [
 Plugin::load('Bootstrap'); // instead of Plugin::load('Bootstrap3') ;
 
 
-Configure::write('Company.name', 'Freestyle Tricks');
-Configure::write('Youtube', ['key' => 'AIzaSyC851NBlFCigGum0qdk04GHGVYF_tqd-M4']);
+Configure::write('Company', [
+    'title' => 'Freestyle Tricks',
+    'name' => 'FS tricks'
+]);
+Configure::write('Youtube', [
+    'key' => 'AIzaSyC851NBlFCigGum0qdk04GHGVYF_tqd-M4'
+]);
 Configure::write('Vimeo', [
     'id' => 'f941f4c31738338a894c2b547ab6a9d1255d63d1',
     'key' => 'rR8YpMiWxBtkvk6QHjKbj8MK+4EpWJXevpCQTUgsy5RtYgoskrcCbvZUoju1MRzhZXZBpETrX1XvS4Nrr8EW2evFf76/Kz2fNiYsCDL/8tRu1YYbCU666kkoaWMZbr5a'
 ]);
-Configure::write('Facebook', ['key' => '079e8ce1830a2177f3a10b939615a7f6', 'id' => '1536208040040285']);
+Configure::write('Facebook', [
+    'key' => '079e8ce1830a2177f3a10b939615a7f6', 
+    'id' => '1536208040040285'
+]);
+Configure::write('JsonConfigFolder', WWW_ROOT . DS . 'data' . DS);
+Configure::write('TokenExpirationTime', 30 * (86400 * 1000)); // 30 jour
 
 Configure::write('VideoTagValidation', [
     "threshold_reject" => 0.7,
     "threshold_accept" => 0.7,
-    "min_rate" => 2
+    "min_rate" => 6
 ]);
 
 Cache::config('veryLongCache', [
@@ -241,12 +251,13 @@ Cache::config('veryLongCache', [
     'duration' => '+999 days',
     'group' => ['sports']
 ]);
+Cache::config('onDayCache', [
+    'className' => 'File',
+    'duration' => '+1 days',
+    'group' => ['sports']
+]);
 
 Plugin::load('ADmad/HybridAuth', ['bootstrap' => true, 'routes' => true]);
 Plugin::load('Proffer');
 
 ini_set('memory_limit', '256M');
-
-Configure::write('JsonConfigFolder', WWW_ROOT . DS . 'data' . DS);
-
-Configure::write('TokenExpirationTime', 30 * (86400 * 1000)); // 30 jours
