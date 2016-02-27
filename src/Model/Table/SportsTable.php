@@ -61,12 +61,12 @@ class SportsTable extends Table {
     public function findAllCached() {
 //        debug(\Cake\Cache\Cache::clearGroup('sports', 'veryLongCache'));
 //        debug(\Cake\Cache\Cache::delete('sports', 'veryLongCache'));
-        
+
         return $this
                         ->find('all')
                         ->where(['status' => SportsTable::STATUS_PUBLIC])
-                        ->contain(['Categories']);
-                        //->cache('sports', 'veryLongCache');
+                        ->contain(['Categories'])
+                        ->cache('sports', 'veryLongCache');
     }
 
     public function findFromNameCached($name) {
@@ -93,6 +93,12 @@ class SportsTable extends Table {
             }
         }
         return null;
+    }
+
+    public function afterSave($entity, $options = []) {
+        if ($entity->isNew()) {
+            Cake\Cache\Cache::clearGroup('sports', 'veryLongCache');
+        }
     }
 
 }

@@ -17,7 +17,8 @@
                     © 2016 fstricks.com All Rights Reserved
                 </p>
                 <ul class="list-inline">
-                    <li><a ui-sref="faq">FAQ</a></li>
+                    <li><a ui-sref="gtu">Terms of Use</a></li>
+                    <li><a ui-sref="privacy_policy">Privacy Policy</a></li>
                     <li><a ui-sref="contact">Contact</a></li>
                 </ul>
 

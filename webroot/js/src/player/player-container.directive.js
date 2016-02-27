@@ -52,7 +52,6 @@ function playerContainer($window, $rootScope) {
 //            });
             
             // Wait that dom is loaded to resize
-            
             $rootScope.$on('notity-player-offset', function(){
                 applyHeight({
                     h: w.height(),
@@ -70,6 +69,7 @@ function playerContainer($window, $rootScope) {
                 }
                 else{
                     var offsetH = header.height() + offsetsContainer;
+//                    alert(offsetsContainer);
                 }
                 var maxHeight = (h - offsetH);
                 var heigth = (w) * (9 / 16);

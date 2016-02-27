@@ -90,6 +90,7 @@ class VideoTagsTable extends Table {
                             'rider_name' => 'CONCAT(Riders.firstname, \' \', Riders.lastname)',
                             'rider_picture' => 'Riders.picture',
                             'rider_nationality' => 'Riders.nationality',
+                            'rider_slug' => 'Riders.slug',
                             'rider_id' => 'Riders.id'
                 ]);
             };

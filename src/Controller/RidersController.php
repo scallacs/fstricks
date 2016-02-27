@@ -25,13 +25,18 @@ class RidersController extends AppController {
      */
     public function profile($profileId = null) {
         ResultMessage::setWrapper(false);
-        if ($profileId === null && $this->Auth->user('id')) {
+//        if ($profileId === null && $this->Auth->user('id')) {
+//            $query = $this->Riders->find()
+//                    ->limit(1)
+//                    ->where(['Riders.user_id' => $this->Auth->user('id')]);
+//            $data = $query->first();
+//        } else 
+        if (!empty($profileId)) {
             $query = $this->Riders->find()
                     ->limit(1)
-                    ->where(['Riders.user_id' => $this->Auth->user('id')]);
+                    ->where(['Riders.slug' => $profileId]);
             $data = $query->first();
-        } else if (!empty($profileId)) {
-            $data = $this->Riders->get($profileId);
+            // TODO add cache //->cache('riders', 'veryLongCache')
         } else {
             throw new \Cake\Network\Exception\UnauthorizedException();
         }

@@ -26,7 +26,7 @@
                     <span class="thumbnail-round-xs">
                         <img ng-if="videoTag.rider_picture_round_xs" ng-src="videoTag.rider_picture_round_xs"/>
                     </span>
-                    <a  ui-sref="videoplayer.rider({riderId: videoTag.rider_id})"
+                    <a  ui-sref="videoplayer.rider({riderId: videoTag.rider_slug})"
                         class="item-user-name text-info text-capitalize">
                         {{videoTag.rider_name}}
                     </a>
@@ -127,7 +127,7 @@
                             </a>
                         </li>           
                         <li>
-                            <a  ui-sref="videoplayer.tag({tagId:videoTag.tag_id})">
+                            <a  ui-sref="videoplayer.tag({tagSlug:videoTag.tag_slug})">
                                 <span class="glyphicon glyphicon-eye-open"></span>  
                                 View all videos for this trick
                             </a>

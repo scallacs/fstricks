@@ -135,7 +135,7 @@ class TagsTable extends Table {
         if (!empty($entity->name)) {
             // TODO remove from here (set in entity)
             $entity->name = \App\Lib\DataUtil::lowernamenumeric($entity->name);
-            $entity->slug = \Cake\Utility\Inflector::slug($entity->name);
+            $entity->slug = \Cake\Utility\Inflector::slug($entity->name.'-'.$entity->category_id);
         }
     }
 

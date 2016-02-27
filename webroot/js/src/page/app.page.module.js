@@ -38,14 +38,6 @@ function ConfigRoute($stateProvider) {
                 data: {
                     requireLogin: false
                 }
-            })
-            .state('edition_rules', {
-                url: '/edition-rules',
-                templateUrl: baseUrl + '/edition_rules.html',
-                controller: 'PagesController',
-                data: {
-                    requireLogin: false
-                }
             });
 }
 

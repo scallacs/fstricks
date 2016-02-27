@@ -248,7 +248,7 @@ Configure::write('VideoTagValidation', [
 
 Cache::config('veryLongCache', [
     'className' => 'File',
-    'duration' => '+999 days',
+    'duration' => '+1 days',
     'group' => ['sports']
 ]);
 Cache::config('onDayCache', [

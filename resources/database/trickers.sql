@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.1.14
+-- version 4.0.10.14
 -- http://www.phpmyadmin.net
 --
--- Client :  127.0.0.1
--- Généré le :  Jeu 25 Février 2016 à 12:50
--- Version du serveur :  5.6.17
--- Version de PHP :  5.5.12
+-- Client: localhost
+-- Généré le: Jeu 25 Février 2016 à 16:01
+-- Version du serveur: 5.5.46
+-- Version de PHP: 5.6.17
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Base de données :  `trickers`
+-- Base de données: `trickers`
 --
 
 -- --------------------------------------------------------
@@ -287,6 +287,7 @@ CREATE TABLE IF NOT EXISTS `tags` (
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `slug` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`,`category_id`),
   KEY `fk_tags_sports1_idx` (`sport_id`),
   KEY `fk_tags_categories1_idx` (`category_id`),
   KEY `fk_tags_users1_idx` (`user_id`),
@@ -299,7 +300,6 @@ CREATE TABLE IF NOT EXISTS `tags` (
 
 INSERT INTO `tags` (`id`, `name`, `count_ref`, `sport_id`, `category_id`, `user_id`, `created`, `slug`) VALUES
 (1, 'frontside 360', 1, 1, 1, NULL, '2015-12-26 09:01:35', 'frontside_360'),
-(2, 'frontside 540', 0, 1, 1, NULL, '2015-12-26 09:01:35', 'frontside_540'),
 (3, 'backside 360', 0, 1, 1, NULL, '2015-12-26 09:01:35', 'backside_360'),
 (4, 'backside 180', 0, 1, 1, NULL, '2015-12-26 09:01:35', 'backside_180'),
 (5, 'backside 540', 0, 1, 1, NULL, '2015-12-26 09:01:35', 'backside_540'),
@@ -322,7 +322,6 @@ INSERT INTO `tags` (`id`, `name`, `count_ref`, `sport_id`, `category_id`, `user_
 (29, 'frontflip', 1, 2, 8, 3, '2016-01-09 23:30:10', 'frontflip'),
 (30, 'frontflip superman', 1, 2, 5, 3, '2016-01-09 23:35:55', 'frontflip-superman'),
 (31, 'double backflip on one ski', 1, 2, 5, 3, '2016-01-09 23:38:13', 'double-backflip-on-one-ski'),
-(32, 'backside 360 in', 1, 1, 2, 3, '2016-01-10 19:17:23', 'backside-360-in'),
 (33, 'backside bio 720 nose grab', 0, 1, 1, 2, '2016-01-10 22:29:19', 'backside-bio-720-nose-grab'),
 (34, 'backside 180 mute', 1, 1, 1, 2, '2016-01-10 22:32:58', 'backside-180-mute'),
 (35, 'frontside double cork 1080 stalefish', 1, 1, 1, 2, '2016-01-10 22:39:44', 'frontside-double-cork-1080-stalefish'),
@@ -332,8 +331,6 @@ INSERT INTO `tags` (`id`, `name`, `count_ref`, `sport_id`, `category_id`, `user_
 (39, 'backside 540 indy', 1, 1, 1, 2, '2016-01-10 23:55:48', 'backside-540-indy'),
 (40, 'frontside 720 tail grab', 1, 1, 1, 2, '2016-01-10 23:57:29', 'frontside-720-tail-grab'),
 (41, 'frontside double cork 1080 mute', 4, 1, 1, 2, '2016-01-10 23:59:30', 'frontside-double-cork-1080-mute'),
-(44, 'backside air', 0, 1, 3, 2, '2016-01-11 14:24:51', 'backside-air'),
-(45, 'backside air', 0, 1, 3, 2, '2016-01-11 14:25:26', 'backside-air'),
 (48, 'double backflip', 1, 5, 9, 2, '2016-01-14 11:21:59', 'double-backflip'),
 (49, 'frontside double cork 1260 stalefish', 1, 1, 1, 3, '2016-01-14 16:22:53', 'frontside-double-cork-1260-stalefish'),
 (50, 'frontside underflip 540 indy', 1, 1, 2, 3, '2016-01-14 16:27:24', 'frontside-underflip-540-indy'),
@@ -349,16 +346,11 @@ INSERT INTO `tags` (`id`, `name`, `count_ref`, `sport_id`, `category_id`, `user_
 (61, 'backflip indy out', 1, 1, 2, 2, '2016-01-24 17:17:38', 'backflip-indy-out'),
 (62, 'double backflip indy', 2, 1, 1, 2, '2016-01-24 17:19:25', 'double-backflip-indy'),
 (63, 'backside 1080 mute', 3, 1, 1, 3, '2016-02-03 22:11:58', 'backside-1080-mute'),
-(64, 'backside triple cork 1620 mute', 1, 1, 1, 2, '2016-02-04 14:49:10', 'backside-triple-cork-1620-mute'),
 (65, 'backside triple cork 1620 mute', 1, 1, 1, 2, '2016-02-04 14:49:16', 'backside-triple-cork-1620-mute'),
 (66, 'backside 360 in', 1, 1, 2, 3, '2016-02-04 19:54:56', 'backside-360-in'),
 (67, 'backside cork 1080 indy', 1, 1, 1, 3, '2016-02-05 00:59:11', 'backside-cork-1080-indy'),
-(68, 'backside cork 1080 indy', 0, 1, 1, 3, '2016-02-05 01:03:07', 'backside-cork-1080-indy'),
 (69, 'fronstide 360 stalefish', 1, 1, 1, 3, '2016-02-06 08:43:43', 'fronstide-360-stalefish'),
 (71, 'frontside 360 double shifty', 1, 1, 1, 3, '2016-02-06 12:12:07', 'frontside-360-double-shifty'),
-(72, 'nollie', 0, 1, 4, 3, '2016-02-07 12:36:45', 'nollie'),
-(73, 'nollie', 0, 1, 4, 3, '2016-02-07 12:38:01', 'nollie'),
-(74, 'frontside 540', 0, 1, 1, 3, '2016-02-07 13:01:57', 'frontside-540'),
 (75, 'to delete', 0, 1, 1, 2, '2016-02-12 12:57:24', 'to-delete'),
 (76, 'frontside 270 in to 270 out', 0, 1, 2, 2, '2016-02-12 16:16:06', 'frontside-270-in-to-270-out'),
 (77, 'frontside 270 in', 1, 1, 2, 2, '2016-02-12 17:04:59', 'frontside-270-in'),
@@ -623,7 +615,7 @@ INSERT INTO `video_tags` (`id`, `video_id`, `tag_id`, `user_id`, `rider_id`, `be
 (59, 106, 29, 3, NULL, '56.00', '59.00', '2016-01-09 23:30:10', NULL, 0, 0, 'pending', 0, 1),
 (60, 106, 30, 3, NULL, '22.00', '24.50', '2016-01-09 23:35:55', NULL, 0, 0, 'pending', 0, 1),
 (61, 106, 31, 3, NULL, '81.69', '84.92', '2016-01-09 23:38:13', NULL, 1, 0, 'pending', 0, 1),
-(62, 107, 32, 3, NULL, '390.67', '396.50', '2016-01-10 19:17:23', NULL, 0, 0, 'pending', 0, 1),
+(62, 107, 66, 3, NULL, '390.67', '396.50', '2016-01-10 19:17:23', NULL, 0, 0, 'pending', 0, 1),
 (64, 109, 34, 2, 20, '95.50', '98.00', '2016-01-10 22:32:58', NULL, 1, 0, 'validated', 0, 0),
 (65, 109, 23, 2, 20, '115.00', '122.36', '2016-01-10 22:38:23', NULL, 2, 0, 'validated', 0, 0),
 (66, 109, 35, 2, 20, '129.30', '135.22', '2016-01-10 22:39:44', NULL, 0, 0, 'validated', 0, 0),
@@ -652,7 +644,7 @@ INSERT INTO `video_tags` (`id`, `video_id`, `tag_id`, `user_id`, `rider_id`, `be
 (92, 115, 61, 2, 3, '171.91', '176.91', '2016-01-24 17:17:38', '2016-02-22 22:49:48', 0, 0, 'validated', 0, 2),
 (93, 115, 62, 2, 3, '216.00', '219.50', '2016-01-24 17:19:25', '2016-02-22 22:49:50', 0, 0, 'validated', 0, 2),
 (94, 113, 63, 3, 4, '219.45', '224.00', '2016-02-03 22:11:58', '2016-02-22 22:49:13', 0, 0, 'validated', 0, 2),
-(95, 115, 64, 2, 3, '176.68', '186.00', '2016-02-04 14:49:10', '2016-02-22 22:50:08', 0, 0, 'rejected', 2, 0),
+(95, 115, 65, 2, 3, '176.68', '186.00', '2016-02-04 14:49:10', '2016-02-22 22:50:08', 0, 0, 'rejected', 2, 0),
 (96, 113, 66, 3, 4, '245.50', '248.50', '2016-02-04 19:54:56', NULL, 0, 0, 'validated', 0, 0),
 (97, 116, 67, 3, 23, '53.50', '62.32', '2016-02-05 00:59:11', '2016-02-22 22:38:28', 0, 0, 'validated', 1, 1),
 (98, 116, 18, 3, NULL, '319.92', '325.50', '2016-02-05 19:56:52', '2016-02-22 22:33:53', 0, 0, 'rejected', 1, 1),

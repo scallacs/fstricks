@@ -88,7 +88,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer.tag', {
-                url: '/trick/:tagId',
+                url: '/trick/:tagSlug',
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewTagController',
@@ -328,7 +328,7 @@ ViewTagController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'Shar
 function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData) {
     PlayerData.showViewMode();
     PlayerData.stop();
-    VideoTagData.getLoader().setFilters({tag_id: $stateParams.tagId, order: $stateParams.order});
+    VideoTagData.getLoader().setFilters({tag_slug: $stateParams.tagSlug, order: $stateParams.order});
     VideoTagData.getLoader().startLoading().then(function(results) {
         if (results.length === 1) {
             PlayerData.showListTricks = false;

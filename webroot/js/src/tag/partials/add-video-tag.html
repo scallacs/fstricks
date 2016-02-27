@@ -1,7 +1,27 @@
 <div class="list-tricks" trick-list></div>
 
-<div class="clearfix  bg-primary">
-    <div class="col-md-6 clearfix nopadding">
+<div class="clearfix  bg-primary row">
+    <div class="col-md-6 col-md-push-6 nopadding">
+        <div class="full-player" player-container></div>
+
+        <div notify-on-load class="player-offset padding-top padding-bottom">
+            <div class="slider-container">
+                <div
+                    ui-slider="slider" 
+                    ng-model="editionTag._extra.range"
+                    max="{{playerData.data.duration}}" 
+                    use-decimals
+                    ng-disabled="!editionTag.isEditabled('begin') || !editionTag.isEditabled('end')"
+                    >
+                </div>
+                <div ng-if="video.duration" 
+                     player-bar 
+                     video-tags="videoTagData.getItems()" 
+                     duration="video.duration"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-md-pull-6 clearfix nopadding">
         <div class="panel-add-video-tag">
             <div ng-show="showCreateRiderForm">
                 <h3 class="page-title">
@@ -323,27 +343,6 @@
                         Add a new trick
                     </button>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 nopadding">
-        <div class="full-player" player-container></div>
-
-        <div notify-on-load class="player-offset">
-            <div class="slider-container">
-                <div
-                    ui-slider="slider" 
-                    class="margin-top"
-                    ng-model="editionTag._extra.range"
-                    max="{{playerData.data.duration}}" 
-                    use-decimals
-                    ng-disabled="!editionTag.isEditabled('begin') || !editionTag.isEditabled('end')"
-                    >
-                </div>
-                <div ng-if="video.duration" 
-                     player-bar 
-                     video-tags="videoTagData.getItems()" 
-                     duration="video.duration"></div>
             </div>
         </div>
     </div>

@@ -7,7 +7,16 @@ YUI_COMPRESSOR = java -jar bin/yuicompressor.jar
 YUI_COMPRESSOR_FLAGS = --charset utf-8 --verbose
 GULP_BIN = node_modules/gulp/bin/gulp.js
 DB_SOURCE = resources/database/trickers.sql
+DB_PROD_NAME = trickers 
+# For end to end tests
+DB_DEV_NAME = trickers
+ 
+DB_DEV_CREDENTIAL = -uroot -hlocalhost -hlocalhost
+DB_PROD_CREDENTIAL = -uroot -pr4xc3oSFSTDB -hlocalhost
 
+KARMA_BIN = node_modules/karma/bin/karma
+WEBDRIVER_MANAGER_BIN = node_modules/webdriver-manager/bin/webdriver-manager
+PROTRACTOR_BIN = node_modules/protractor/bin/protractor
 ###############################################################
 
 # target: mv2prod - Moving to production
@@ -32,8 +41,8 @@ config-prod:
 	
 .PHONY: database
 database: $(DB_SOURCE)
-	echo "CREATE DATABASE IF NOT EXISTS trickers" |  mysql -uroot -pr4xc3oSFSTDB -hlocalhost
-	mysql -uroot -pr4xc3oSFSTDB -hlocalhost trickers < $(DB_SOURCE)
+	echo "CREATE DATABASE IF NOT EXISTS $(DB_PROD_NAME)" |  mysql $(DB_PROD_CREDENTIAL)
+	mysql $(DB_PROD_CREDENTIAL) $(DB_PROD_NAME) < $(DB_SOURCE)
 	
 # target: clean-prod - cleaning prod server 
 .PHONY: clean-prod
@@ -71,16 +80,32 @@ minify-css: $(CSS_FILES) $(CSS_MINIFIED)
 	$(YUI_COMPRESSOR) $(YUI_COMPRESSOR_FLAGS) --type css $< >$@
 	@echo
 	
-.PHONY: test-frontend
-# target : - test-frontend run test on backend
-test-frontend:
-	cd webroot/js && karma start && karma run 
+
+	
 	
 ###############################################################
 # TESTS
+
+tests: test-backend test-frontend
 	
-.PHONY: test-backend
+
+start-webdriver:
+	$(WEBDRIVER_MANAGER_BIN) start 
+	
+# target : - test-frontend run test on backend 
+.PHONY: test-frontend
+test-frontend: 
+	$(PROTRACTOR_BIN) webroot/js/e2e-tests/protractor-conf.js
+
+
+# Init db 
+prepare-db:
+	cp config/app.dev.php config/app.php
+	echo "DROP DATABASE $(DB_DEV_NAME); CREATE DATABASE $(DB_DEV_NAME)" |  mysql $(DB_DEV_CREDENTIAL)
+	mysql $(DB_DEV_CREDENTIAL) $(DB_DEV_NAME) < $(DB_SOURCE) 
+	
 # target : - test-backend run test on backend
+.PHONY: test-backend
 test-backend:
 	vendor/bin/phpunit --coverage-html webroot/coverage tests/TestCase
     #webroot/coverage/index.html 

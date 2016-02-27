@@ -26,8 +26,8 @@ Frontend
 --------------------------------------------------------------------------------
 E2E tests
 
-[require] npm install -g protractor
-[required] webdriver-manager update
-
+[require] npm install protractor --save
+[required] 
+webdriver-manager update
 webdriver-manager start
 protractor protractor.conf.js

@@ -3,14 +3,15 @@
 <title>
     <?php echo \Cake\Core\Configure::read('Company.title'); ?>
 </title>
+<?= $this->Html->meta('icon', 'img/favicon.png'); ?>
 
 <script>
     const WEBROOT = '<?= $this->request->webroot; ?>';
-            const WEBROOT_FULL = '<?= \Cake\Routing\Router::url('/', true); ?>';</script>
-<?= $this->Html->meta('icon') ?>
+    const WEBROOT_FULL = '<?= \Cake\Routing\Router::url('/', true); ?>';
+    const API_BASE_URL = '<?= \Cake\Routing\Router::url('/api', true); ?>'
+</script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />
-
-<link rel="stylesheet" href="js/components/ui-select/dist/select.min.css">
+<?= $this->Html->css('../js/components/ui-select/dist/select.min.css'); ?> <!-- 2.1.4 -->
 <?php if (!\Cake\Core\Configure::read('debug')) { ?>
     <?= $this->Html->css('bootstrap.min.css') ?>
     <?= $this->Html->css('ui-bootstrap.min.css') ?>
@@ -23,7 +24,7 @@
 
 <?= $this->Html->script('components/jquery/dist/jquery.min.js'); ?> <!-- 2.1.4 -->
 <?= $this->Html->script('components/jquery-timeago/jquery.timeago.js'); ?> <!-- 1.0.2 -->
-<?= $this->Html->script("components/jquery-ui/jquery-ui.min.js"); ?> <!-- Replace with bootstrap ? -->
+<?= $this->Html->script("lib/jquery-ui.min.js"); ?> <!-- Replace with bootstrap ? -->
 
 
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"); ?>

@@ -16,7 +16,7 @@
                 <td>Tagged</td>
                 <td class="text-bold" ng-if="rider.count_tags > 0">
                     {{rider.count_tags}} time(s) <br/>
-                    <a ui-sref="videoplayer.rider({rider_id: rider.id})" ng-click="playerData.showListTricks = true">view videos</a>
+                    <a ui-sref="videoplayer.rider({rider_id: rider.slug})" ng-click="playerData.showListTricks = true">view videos</a>
                 </td>
                 <td class="text-bold" ng-if="rider.count_tags === 0">
                     Never

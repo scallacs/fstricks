@@ -41,32 +41,28 @@ use Cake\Routing\Router;
  */
 Router::defaultRouteClass('Route');
 
-Router::prefix('api', function ($routes) {
-    $routes->extensions(['json']);
-    $routes->resources('Spots');
-    $routes->resources('Users');
-    Router::connect('/api/users/register', ['controller' => 'Users', 'action' => 'add', 'prefix' => 'api']);
-    $routes->fallbacks('InflectedRoute');
-});
 Router::prefix('Admin', function ($routes) {
     $routes->extensions(['json']);
     $routes->fallbacks('InflectedRoute');
 });
 
-Router::scope('/', function ($routes) {
+Router::scope('/api', function ($routes) {
     $routes->extensions(['json']);
+    $routes->fallbacks('InflectedRoute');
+});
+
+Router::scope('/', function ($routes) {
     /**
      * Here, we are connecting '/' (base path) to a controller called 'Pages',
      * its action called 'display', and we pass a param to select the view file
      * to use (in this case, src/Template/Pages/home.ctp)...
      */
-    $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
-    $routes->connect('/signup', ['controller' => 'users', 'action' => 'signup']);
 
     /**
      * ...and connect the rest of 'Pages' controller's URLs.
      */
-    $routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+    //$routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+    $routes->connect('/**', ['controller' => 'Pages', 'action' => 'app']);
 
     /**
      * Connect catchall routes for all controllers.
@@ -85,9 +81,6 @@ Router::scope('/', function ($routes) {
      * routes you want in your application.
      */
     $routes->fallbacks('InflectedRoute');
-
-
-    $routes->resources('Spots');
 });
 
 

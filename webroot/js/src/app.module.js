@@ -38,10 +38,10 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
             });
         }
         else if (data.type === 'rider') {
-            $state.go('videoplayer.rider', {riderId: data.id});
+            $state.go('videoplayer.rider', {riderId: data.slug});
         }
         else if (data.type === 'tag') {
-            $state.go('videoplayer.tag', {tagId: data.id});
+            $state.go('videoplayer.tag', {tagSlug: data.slug});
         }
     });
 }
@@ -92,7 +92,7 @@ function ConfigRouting($stateProvider) {
     'use strict';
     $stateProvider
             .state('home', {
-                url: "",
+                url: "/",
                 redirectTo: 'videoplayer.best'
             })
             .state("otherwise", {
@@ -111,10 +111,11 @@ function ConfigRouting($stateProvider) {
             });
 }
 
-ConfigInterceptor.$inject = ['$httpProvider'];
-function ConfigInterceptor($httpProvider) {
+ConfigInterceptor.$inject = ['$httpProvider', '$locationProvider'];
+function ConfigInterceptor($httpProvider, $locationProvider) {
     'use strict';
     //$locationProvider.html5Mode(true).hashPrefix('!');
+    $locationProvider.html5Mode(true);
 
     var interceptor = ['$rootScope', '$q', '$injector', '$timeout',
         function(scope, $q, $injector, $timeout) {

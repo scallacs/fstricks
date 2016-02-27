@@ -264,10 +264,13 @@ body{
     padding: 10px;
 }
 .padding-sm-side{
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: 0px;
-    padding-bottom: 0px;
+    padding: 0px 10px 0px 10px;
+}
+.padding-top{
+    padding: 10px;
+}
+.padding-bottom{
+    10px;
 }
 label.hide-radio{
     padding-left: 0px;

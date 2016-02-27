@@ -1,0 +1,22 @@
+
+            <h3>Google</h3>
+            <div class='innerText'>
+                Google's advertising requirements can be summed up by Google's Advertising 
+                Principles. They are put in place to provide a positive experience for users.
+                https://support.google.com/adwordspolicy/answer/1316548?hl=en 
+            </div>
+            <div class='innerText'>
+                We have not enabled Google AdSense on our site but we may do so in the future.
+            </div>
+			
+
+# Update tags 
+UPDATE tags SET slug = CONCAT(slug, '-', category_id)
+
+# Update riders
+UPDATE `trickers`.`riders` SET `slug` = 'thomas-delfino-fr' 
+WHERE `riders`.`id` = 14; 
+UPDATE `trickers`.`riders` 
+SET `slug` = 'xavier-de-le-rue-fr' WHERE `riders`.`id` = 19; 
+UPDATE `trickers`.`riders` SET `slug` = 'victor-de-le-rue-fr' 
+WHERE `riders`.`id` = 20;
