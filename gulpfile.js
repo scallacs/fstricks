@@ -34,10 +34,11 @@ gulp.task('concat-css', function() {
             'webroot/css/ui-bootstrap.css', 
             'webroot/css/base.css'
         ])
-        .pipe(cleanCSS({debug: true}, function(details) {
-            console.log(details.stats.originalSize);
-            console.log(details.stats.minifiedSize);
-        }))
+//        .pipe(cleanCSS({debug: true}, function(details) {
+//            console.log(details.stats.originalSize);
+//            console.log(details.stats.minifiedSize);
+//        }))
+        .pipe(cleanCSS())
         .pipe(concat('style.css'))
         .pipe(gulp.dest('webroot/css/'));
 });

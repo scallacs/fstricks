@@ -3,8 +3,6 @@ CSS_FILES = $(filter-out %.min.css,$(wildcard \
 	webroot/css/*.css \
 ))
 CSS_MINIFIED = $(CSS_FILES:.css=.min.css)
-YUI_COMPRESSOR = java -jar bin/yuicompressor.jar
-YUI_COMPRESSOR_FLAGS = --charset utf-8 --verbose
 GULP_BIN = node_modules/gulp/bin/gulp.js
 DB_SOURCE = resources/database/trickers.sql
 DB_PROD_NAME = trickers 
@@ -73,15 +71,9 @@ minify-js:
 	$(GULP_BIN) concat-js
 	
 # target: minify-css - Minifies CSS.
-minify-css: $(CSS_FILES) $(CSS_MINIFIED)
-	
-%.min.css: %.css
-	@echo '==> Minifying $<'
-	$(YUI_COMPRESSOR) $(YUI_COMPRESSOR_FLAGS) --type css $< >$@
-	@echo
-	
-
-	
+minify-css:
+	$(GULP_BIN) concat-css
+		
 	
 ###############################################################
 # TESTS
