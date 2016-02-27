@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "99a77fd09901c8e97f35337490987bc7",
-    "content-hash": "4c97e982bfad757516c3705db444e86f",
+    "hash": "51a2eadc94d02d976a14ed493ea8dbdd",
+    "content-hash": "1ea7d8f99947c2704b0cf8c56e2138be",
     "packages": [
         {
             "name": "admad/cakephp-hybridauth",
@@ -94,6 +94,45 @@
                 "jwt"
             ],
             "time": "2016-01-03 06:48:10"
+        },
+        {
+            "name": "admad/cakephp-sequence",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ADmad/cakephp-sequence.git",
+                "reference": "873b1eec2ff5ba30efd2ea0b458be49e8eca8743"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ADmad/cakephp-sequence/zipball/873b1eec2ff5ba30efd2ea0b458be49e8eca8743",
+                "reference": "873b1eec2ff5ba30efd2ea0b458be49e8eca8743",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/orm": "3.*"
+            },
+            "require-dev": {
+                "cakephp/cakephp": "~3.0"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "ADmad\\Sequence\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Sequence plugin for CakePHP 3.0+ to maintain ordered list of records",
+            "keywords": [
+                "cakephp",
+                "list",
+                "orm",
+                "sequence"
+            ],
+            "time": "2016-02-05 13:55:51"
         },
         {
             "name": "aura/installer-default",

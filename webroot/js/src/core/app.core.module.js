@@ -92,7 +92,8 @@ function PlayerData(VideoTagData, $q) {
         onEnd: onEnd,
         onPlayProgress: onPlayProgress,
         getCurrentTime: getCurrentTime,
-        updateCurrentTag: updateCurrentTag
+        updateCurrentTag: updateCurrentTag,
+        resetPlayer: resetPlayer
     };
 
     obj.init();
@@ -160,7 +161,13 @@ function PlayerData(VideoTagData, $q) {
         this.players[type] = player;
         this.deferred[type].resolve();
     }
+    function resetPlayer(type) {
+        console.log("Resetting player: " + type);
+        this.players[type] = null;
+        this.deferred[type] = $q.defer();
+    }
     function getPlayer() {
+        console.log(this.players[this.data.provider]);
         return this.players[this.data.provider];
     }
     function playVideoTag(videoTag) {
@@ -238,7 +245,6 @@ function PlayerData(VideoTagData, $q) {
         if (angular.isDefined(data.provider)) {
             this.data.provider = data.provider;
         }
-
         return this.getPromise().then(function() {
             console.log('Load video in playerData: ' + data.video_url);
             var toLoad = {

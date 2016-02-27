@@ -47,17 +47,17 @@ ConfigSocialApi.$inject = ['$authProvider', 'Config'];
 function ConfigSocialApi($authProvider, Config) {
     $authProvider.facebook({
         clientId: Config.api.facebook,
-        url: WEBROOT_FULL + '/users/facebook_login.json',
-        redirectUri: WEBROOT_FULL
+        url: API_BASE_URL + '/users/facebook_login.json',
+        redirectUri: API_BASE_URL
     });
 
     $authProvider.withCredentials = true;
     $authProvider.tokenRoot = null;
     $authProvider.cordova = false;
     $authProvider.baseUrl = '/';
-//    $authProvider.loginUrl = WEBROOT_FULL + 'users/login';
-//    $authProvider.signupUrl = WEBROOT_FULL + 'users/signup';
-//    $authProvider.unlinkUrl = WEBROOT_FULL + 'users/unlink';
+//    $authProvider.loginUrl = API_BASE_URL + 'users/login';
+//    $authProvider.signupUrl = API_BASE_URL + 'users/signup';
+//    $authProvider.unlinkUrl = API_BASE_URL + 'users/unlink';
     $authProvider.tokenName = 'token';
     $authProvider.tokenPrefix = '';//'satellizer';
     $authProvider.authHeader = 'Authorization';

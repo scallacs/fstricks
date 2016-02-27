@@ -361,8 +361,9 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
     function init() {
         PlayerData.showListTricks = false;
         VideoTagData.reset();
-        VideoTagData.getLoader().setFilter('with_pending', true);
-        VideoTagData.getLoader().setFilter('video_id', $stateParams.videoId);
+        VideoTagData.getLoader()
+                .setFilter('with_pending', true)
+                .setFilter('video_id', $stateParams.videoId);
         VideoEntity.view({id: $stateParams.videoId}, function(video) {
             $scope.video = video;
             PlayerData.data.duration = video.duration;
@@ -395,7 +396,6 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
             else {
                 VideoTagData.getLoader().startLoading();
                 playVideo(video);
-
             }
         }, onError);
 

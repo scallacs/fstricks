@@ -268,3 +268,4 @@ Plugin::load('ADmad/HybridAuth', ['bootstrap' => true, 'routes' => true]);
 Plugin::load('Proffer');
 
 ini_set('memory_limit', '256M');
+Plugin::load('ADmad/Sequence');

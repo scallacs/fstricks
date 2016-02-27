@@ -18,7 +18,8 @@
         "facebook/php-sdk-v4": "^5.1",
         "davidyell/proffer": "~0.6",
         "flowjs/flow-php-server": "^1.0",
-        "vimeo/vimeo-api": "^1.2"
+        "vimeo/vimeo-api": "^1.2",
+        "admad/cakephp-sequence": "^2.0"
     },
     "require-dev": {
         "psy/psysh": "@stable",
