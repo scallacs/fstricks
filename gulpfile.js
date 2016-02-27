@@ -9,7 +9,7 @@ var cleanCSS = require('gulp-clean-css');
 gulp.task('concat-js-components', function() {
     gulp.src([
         'webroot/js/components/jquery-timeago/jquery.timeago.js',
-        "webroot/js/components/angular-ui-router/release/angular-ui-router.min",
+        "webroot/js/components/angular-ui-router/release/angular-ui-router.min.js",
         "webroot/js/components/angular-simple-logger/dist/angular-simple-logger.min.js",
         'webroot/js/components/ui-select/dist/select.min.js',
         "webroot/js/components/ng-file-upload/ng-file-upload-shim.min.js",

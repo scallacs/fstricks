@@ -29,6 +29,9 @@ mv2prod:
 # target: prod - build the project for production
 prod: build clean-prod config-prod 
 
+reset-repo: 
+    git fetch origin
+    git reset --hard origin/master
 
 # target: dev - build the project for dev
 dev: build 
