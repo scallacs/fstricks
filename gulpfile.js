@@ -61,7 +61,7 @@ gulp.task('concat-js', function() {
 
 gulp.task('concat-css', function() {
     return gulp.src([
-        'webroot/css/select.css'
+        'webroot/css/select.css',
         'webroot/css/bootstrap.css',
         'webroot/css/base.css'
     ])
