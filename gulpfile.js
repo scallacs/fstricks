@@ -38,7 +38,7 @@ gulp.task('concat-css', function() {
             console.log(details.stats.originalSize);
             console.log(details.stats.minifiedSize);
         }))
-        .pipe(concat('webroot/css/style.css'))
-        .pipe(gulp.dest('dist'));
+        .pipe(concat('style.css'))
+        .pipe(gulp.dest('webroot/css/'));
 });
 
