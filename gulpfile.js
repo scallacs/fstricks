@@ -29,9 +29,7 @@ gulp.task('concat-js', function () {
 
 gulp.task('concat-css', function() {
     return gulp.src([
-            'webroot/css/select.min.css', 
             'webroot/css/bootstrap.css', 
-            'webroot/css/ui-bootstrap.css', 
             'webroot/css/base.css'
         ])
 //        .pipe(cleanCSS({debug: true}, function(details) {
