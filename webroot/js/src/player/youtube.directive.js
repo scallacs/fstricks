@@ -1,5 +1,5 @@
 angular.module('app.player')
-        .factory('YoutubeCmdMapper', function() {
+        .factory('YoutubeCmdMapper', ['$q', function($q) {
             function YoutubeCmdMapper(player) {
                 this._player = player;
             }
@@ -25,7 +25,7 @@ angular.module('app.player')
                 this._player.pauseVideo();
             }
             function getCurrentTime() {
-                return this._player.getCurrentTime();
+                return $q.when(this._player.getCurrentTime());
             }
             function loadVideo(data) {
                 this._player.loadVideoById({
@@ -39,7 +39,7 @@ angular.module('app.player')
                 }
             };
 
-        })
+        }])
         .directive('youtube', youtubeDirective);
 
 youtubeDirective.$inject = ['$window', 'VideoEntity', 'PlayerData', 'YoutubeCmdMapper'];

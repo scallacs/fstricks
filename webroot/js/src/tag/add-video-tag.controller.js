@@ -200,10 +200,10 @@ function EditionTag() {
         if (this.isNew()) {
             this._editabled = true;
         }
-        else if (this.isOwner() && (this._video_tag.status === 'pending' || this._video_tag.status === 'rejected') ) {
+        else if (this.isOwner() && (this._video_tag.status === 'pending' || this._video_tag.status === 'rejected')) {
             this._editabled = true;
         }
-        else{
+        else {
             this._editabled = false;
         }
 //        else {
@@ -271,10 +271,10 @@ function EditionTag() {
  - category_id
  - rider_id [optional]
  */
-AddVideoTagController.$inject = ['$scope', '$filter', '$state', '$stateParams', 
-        'VideoEntity', 'VideoTagEntity', 'TagEntity', 'RiderEntity', 'SharedData', 'PlayerData',
-        'VideoTagData', 'EditionTag', 'AuthenticationService', 'VideoTagLoader'];
-function AddVideoTagController($scope, $filter, $state, $stateParams, 
+AddVideoTagController.$inject = ['$scope', '$filter', '$state', '$stateParams',
+    'VideoEntity', 'VideoTagEntity', 'TagEntity', 'RiderEntity', 'SharedData', 'PlayerData',
+    'VideoTagData', 'EditionTag', 'AuthenticationService', 'VideoTagLoader'];
+function AddVideoTagController($scope, $filter, $state, $stateParams,
         VideoEntity, VideoTagEntity, TagEntity, RiderEntity, SharedData, PlayerData,
         VideoTagData, EditionTag, AuthenticationService, VideoTagLoader) {
 
@@ -556,12 +556,16 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
         changeSliderValues(editionTag._extra.range, 1);
     }
     function setStartRangeNow() {
-        editionTag._extra.range[0] = PlayerData.getCurrentTime();
-        changeSliderValues(editionTag._extra.range, 0);
+        PlayerData.getCurrentTime().then(function(currentTime) {
+            editionTag._extra.range[0] = currentTime;
+            changeSliderValues(editionTag._extra.range, 0);
+        });
     }
     function setEndRangeNow() {
-        editionTag._extra.range[1] = PlayerData.getCurrentTime();
-        changeSliderValues(editionTag._extra.range, 1);
+        PlayerData.getCurrentTime().then(function(currentTime) {
+            editionTag._extra.range[1] = currentTime;
+            changeSliderValues(editionTag._extra.range, 1);
+        });
     }
 
     function changeSliderValues(input, i) {

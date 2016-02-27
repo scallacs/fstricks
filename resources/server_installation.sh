@@ -1,5 +1,5 @@
 # Log to server
-ssh -i resources/webserver-fstricks-linux.pem ec2-user@ec2-52-36-163-153.us-west-2.compute.amazonaws.com
+ssh -i resources/webserver-fstricks-linux.pem ec2-user@fstricks.com
 
 ########### PHP ################
 sudo yum update -y

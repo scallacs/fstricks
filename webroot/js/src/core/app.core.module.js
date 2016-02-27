@@ -62,10 +62,12 @@ function PlayerData(VideoTagData, $q) {
             this.onPause = function() {
             };
             this.onSeek = function() {
-                if ((obj.data.begin !== null && obj.getCurrentTime() < obj.data.begin)
-                        || (obj.data.end !== null && obj.getCurrentTime() > obj.data.end)) {
-                    obj.looping = false;
-                }
+                obj.getCurrentTime().then(function(currentTime) {
+                    if ((obj.data.begin !== null && currentTime < obj.data.begin)
+                            || (obj.data.end !== null && currentTime > obj.data.end)) {
+                        obj.looping = false;
+                    }
+                });
             };
 
         },
@@ -111,12 +113,12 @@ function PlayerData(VideoTagData, $q) {
         }
     }
     function hasError() {
-        return this.data.provider !== null && 
+        return this.data.provider !== null &&
                 this.players[this.data.provider] !== null && !this.players[this.data.provider];
     }
     function onPlayProgress(currentTime) {
-        if (this.data.end !== null && currentTime >= this.data.end) {
-            this.onEnd();
+        if (obj.data.end !== null && currentTime >= obj.data.end) {
+            obj.onEnd();
         }
     }
     function startLooping() {
@@ -167,7 +169,7 @@ function PlayerData(VideoTagData, $q) {
         this.deferred[type] = $q.defer();
     }
     function getPlayer() {
-        console.log(this.players[this.data.provider]);
+        //console.log(this.players[this.data.provider]);
         return this.players[this.data.provider];
     }
     function playVideoTag(videoTag) {
@@ -262,7 +264,7 @@ function PlayerData(VideoTagData, $q) {
     }
 
     function getPromise() {
-        console.log("Getting promise for: " + this.data.provider);
+        //console.log("Getting promise for: " + this.data.provider);
         return this.deferred[this.data.provider].promise;
     }
 

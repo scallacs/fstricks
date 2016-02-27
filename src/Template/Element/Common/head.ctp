@@ -15,7 +15,7 @@
 <?php if (!\Cake\Core\Configure::read('debug')) { ?>
     <?= $this->Html->css('style.css') ?>
 <?php } else { ?>
-<?= $this->Html->css('select.css'); ?> 
+    <?= $this->Html->css('select.css'); ?> 
     <?= $this->Html->css('bootstrap.css') ?>
     <?= $this->Html->css('base.css') ?>
 <?php } ?>
@@ -26,7 +26,6 @@
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"); ?>
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-cookies.min.js"); ?>
 <?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"); ?>
-<?= $this->Html->script("https://f.vimeocdn.com/js/froogaloop2.min.js"); ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.js"></script>
 
 <?php if (\Cake\Core\Configure::read('debug')) { ?>
@@ -34,7 +33,9 @@
     <?= $this->Html->script('lib/bootstrap.min.js'); ?>
     <?= $this->Html->script("lib/ui-bootstrap-custom-tpls-0.14.3.min.js"); ?>
     <?= $this->Html->script("lib/slider.min.js"); ?>
+    <?= $this->Html->script("debug/froogaloop.js"); ?>
 <?php } else { ?>
+    <?= $this->Html->script("https://f.vimeocdn.com/js/froogaloop2.min.js"); ?>
     <?= $this->Html->script('lib.js'); ?>
 <?php } ?>
 
