@@ -246,6 +246,13 @@ Configure::write('VideoTagValidation', [
     "min_rate" => 6
 ]);
 
+// TODO use
+Configure::write('Pagination', [
+    'Playlists' => ['maxLimit' => 20, 'limit' => 10],
+    'Riders' => ['maxLimit' => 20, 'limit' => 10],
+    'VideoTags' => ['maxLimit' => 20, 'limit' => 10],
+]);
+
 Cache::config('veryLongCache', [
     'className' => 'File',
     'duration' => '+1 days',

@@ -6,6 +6,7 @@ use App\Controller\AppController;
 use App\Lib\ResultMessage;
 use App\Lib\DataUtil;
 use App\Model\Entity\VideoTag;
+use Cake\Core\Configure;
 
 /**
  * VideoTags Controller
@@ -176,8 +177,8 @@ class VideoTagsController extends AppController {
             return;
         }
         $paginateOptions = [
-            'limit' => 20,
-            'maxLimit' => 20
+            'limit' => 5,
+            'maxLimit' => 5
         ];
         $this->Paginator->config($paginateOptions);
         $data = $this->VideoTags->newEntity($this->request->data['VideoTag']);
@@ -198,11 +199,7 @@ class VideoTagsController extends AppController {
      */
     public function search() {
         $filterStatus = true;
-        $paginateOptions = [
-            'limit' => 20,
-            'maxLimit' => 20
-        ];
-        $this->Paginator->config($paginateOptions);
+        $this->Paginator->config(Configure::read('Pagination.VideoTags'));
         ResultMessage::setWrapper(false);
 
         try {

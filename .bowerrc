@@ -1,5 +1,5 @@
 {
-  "directory": "webroot/js/",
+  "directory": "webroot/js/components/",
   "analytics": false,
   "timeout": 120000
 }

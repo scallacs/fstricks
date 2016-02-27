@@ -1,14 +1,18 @@
 
-            <h3>Google</h3>
-            <div class='innerText'>
-                Google's advertising requirements can be summed up by Google's Advertising 
-                Principles. They are put in place to provide a positive experience for users.
-                https://support.google.com/adwordspolicy/answer/1316548?hl=en 
-            </div>
-            <div class='innerText'>
-                We have not enabled Google AdSense on our site but we may do so in the future.
-            </div>
+<h3>Google</h3>
+<div class='innerText'>
+	Google's advertising requirements can be summed up by Google's Advertising 
+	Principles. They are put in place to provide a positive experience for users.
+	https://support.google.com/adwordspolicy/answer/1316548?hl=en 
+</div>
+<div class='innerText'>
+	We have not enabled Google AdSense on our site but we may do so in the future.
+</div>
 			
+# Update counts
+UPDATE tags SET count_ref = (SELECT count(*) 
+FROM video_tags 
+WHERE tag_id = tags.id AND status = 'validated');
 
 # Update tags 
 UPDATE tags SET slug = CONCAT(slug, '-', category_id)
@@ -20,3 +24,12 @@ UPDATE `trickers`.`riders`
 SET `slug` = 'xavier-de-le-rue-fr' WHERE `riders`.`id` = 19; 
 UPDATE `trickers`.`riders` SET `slug` = 'victor-de-le-rue-fr' 
 WHERE `riders`.`id` = 20;
+
+UPDATE `trickers`.`tags` SET `category_id` = '1' WHERE `tags`.`id` = 90;
+UPDATE `trickers`.`video_tags` SET `tag_id` = '117' WHERE `video_tags`.`id` = 81;
+
+DELETE FROM tags  WHERE id = 51;
+DELETE FROM tags  WHERE name = 'fro';
+
+UPDATE video_tags SET tag_id = 94 where tag_id = 81;
+DELETE FROM tags  WHERE id = 81;
