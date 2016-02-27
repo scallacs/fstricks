@@ -71,8 +71,8 @@ minify: minify-css minify-js
 # target : minify-js
 minify-js:
 	$(GULP_BIN) concat-js
-	$(GULP_BIN) concat-components-js
-	$(GULP_BIN) concat-lib-js
+	$(GULP_BIN) concat-js-components
+	$(GULP_BIN) concat-js-lib
 	
 # target: minify-css - Minifies CSS.
 minify-css:
