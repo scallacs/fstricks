@@ -7,19 +7,18 @@
 
 <script>
     const WEBROOT = '<?= $this->request->webroot; ?>';
-    const WEBROOT_FULL = '<?= \Cake\Routing\Router::url('/', true); ?>';
-    const API_BASE_URL = '<?= \Cake\Routing\Router::url('/api', true); ?>'
+            const WEBROOT_FULL = '<?= \Cake\Routing\Router::url('/', true); ?>';
+            const API_BASE_URL = '<?= \Cake\Routing\Router::url('/api', true); ?>'
 </script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />
-<?= $this->Html->css('../js/components/ui-select/dist/select.min.css'); ?> 
+
 <?php if (!\Cake\Core\Configure::read('debug')) { ?>
-    <?= $this->Html->css('bootstrap.min.css') ?>
+    <?= $this->Html->css('../js/components/ui-select/dist/select.min.css'); ?> 
+    <?= $this->Html->css('style.min.css') ?>
     <?= $this->Html->css('ui-bootstrap.min.css') ?>
     <?= $this->Html->css('base.min.css') ?>
 <?php } else { ?>
-    <?= $this->Html->css('bootstrap.css') ?>
-    <?= $this->Html->css('ui-bootstrap.css') ?>
-    <?= $this->Html->css('base.css') ?>
+    <?= $this->Html->css('style.css') ?>
 <?php } ?>
 
 <?= $this->Html->script('components/jquery/dist/jquery.min.js'); ?>

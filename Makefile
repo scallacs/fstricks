@@ -29,11 +29,11 @@ mv2prod:
 	sudo chmod 777 -R /var/www/html/tmp
 	
 # target: prod - build the project for production
-prod: build clean-prod config-prod database
+prod: build clean-prod config-prod 
 
 
 # target: dev - build the project for dev
-dev: build database
+dev: build 
 	cp config/app.dev.php config/app.php
 
 config-prod:
