@@ -154,11 +154,13 @@ class ResultMessageTest extends \Cake\TestSuite\TestCase {
     public function testPaginate() {
         ResultMessage::setWrapper(false);
         ResultMessage::setPaginateData([1, 2], [
-            'total' => 2
+            'count' => 2,
+            'perPage' => 5
         ]);
         $expected = [
-            'data' => [1,2],
-            'total' => 2
+            'items' => [1,2],
+            'count' => 2,
+            'perPage' => 5
         ];
         $this->assertEquals($expected, ResultMessage::render());
     }

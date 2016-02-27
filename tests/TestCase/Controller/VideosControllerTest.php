@@ -62,7 +62,7 @@ class VideosControllerTest extends MyIntegrationTestCase {
         foreach ($data as $d) {
             foreach ($d['urls'] as $url) {
                 \App\Lib\ResultMessage::reset();
-                $this->post('/Videos/add.json', [
+                $this->post('/api/Videos/add.json', [
                     'provider_id' => $d['provider_id'],
                     'video_url' => $url
                 ]);
@@ -81,7 +81,7 @@ class VideosControllerTest extends MyIntegrationTestCase {
             'provider_id' => $this->providers[0],
             'video_url' => '6mEHw5q6Yfs'
         ];
-        $this->post('/Videos/add.json', $data);
+        $this->post('/api/Videos/add.json', $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body());
         $this->assertTrue($result->success);
@@ -89,7 +89,7 @@ class VideosControllerTest extends MyIntegrationTestCase {
             'provider_id' => $this->providers[0],
             'video_url' => '6mEHw5q6Yfs'
         ];
-        $this->post('/Videos/add.json', $data);
+        $this->post('/api/Videos/add.json', $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body());
         $this->assertFalse($result->success);
@@ -99,7 +99,7 @@ class VideosControllerTest extends MyIntegrationTestCase {
     // Add Not logged in 
     public function testAddUnauthorized() {
         try {
-            $this->post('/Videos/add.json');
+            $this->post('/api/Videos/add.json');
             $this->assertResponseError();
         } catch (\Cake\Network\Exception\UnauthorizedException $ex) {
             
@@ -115,7 +115,7 @@ class VideosControllerTest extends MyIntegrationTestCase {
         // Set session data
         $this->logUser();
         // No data
-        $this->post('/Videos/add.json');
+        $this->post('/api/Videos/add.json');
         $this->assertResponseOk();
 
         $result = json_decode($this->_response->body());
@@ -123,7 +123,7 @@ class VideosControllerTest extends MyIntegrationTestCase {
 
         // ---------------------------------------------------------------------
         // Invalid provider
-        $this->post('/Videos/add.json', [
+        $this->post('/api/Videos/add.json', [
             'provider' => 'feoizjfeijo',
             'videoId' => 'feizjfeio'
         ]);
@@ -136,7 +136,7 @@ class VideosControllerTest extends MyIntegrationTestCase {
 
         // ---------------------------------------------------------------------
         // valid provider, invalid video id
-        $this->post('/Videos/add.json', [
+        $this->post('/api/Videos/add.json', [
             'provider_id' => $this->providers[0],
             'video_url' => 'feizjfvefefefezfezfezcezfeeio'
         ]);
@@ -156,19 +156,19 @@ class VideosControllerTest extends MyIntegrationTestCase {
             'video_url' => '6mEHw5q6Yfs'
         ];
 
-        $this->post("/Videos/addOrGet.json", $data);
+        $this->post("/api/Videos/addOrGet.json", $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body());
         $this->assertTrue($result->success);
 
-        $this->post("/Videos/addOrGet.json", $data);
+        $this->post("/api/Videos/addOrGet.json", $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body());
         $this->assertTrue($result->success);
     }
 
     public function testView() {
-        $this->get("/Videos/view/1.json");
+        $this->get("/api/Videos/view/1.json");
         $this->assertResponseOk();
         $result = json_decode($this->_response->body());
         $this->assertEquals(1, $result->id);
@@ -176,7 +176,7 @@ class VideosControllerTest extends MyIntegrationTestCase {
 
     public function testViewNotExists() {
         try {
-            $this->get("/Videos/view/99999.json");
+            $this->get("/api/Videos/view/99999.json");
             $this->assertResponseCode(404);
         } catch (\Cake\Network\Exception\NotFoundException $ex) {
             
@@ -184,13 +184,13 @@ class VideosControllerTest extends MyIntegrationTestCase {
     }
 
     public function testSearch() {
-        $this->get("/Videos/search?video_url=myfakevideourl&provider_id=youtube");
+        $this->get("/api/Videos/search?video_url=myfakevideourl&provider_id=youtube");
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
         $this->assertArrayHasKey('id', $result);
     }
 
     public function report_dead_link(){
-        
+        $this->markTestIncomplete('Not implemented yet.');
     }
 }

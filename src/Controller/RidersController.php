@@ -37,8 +37,9 @@ class RidersController extends AppController {
                     ->where(['Riders.slug' => $profileId]);
             $data = $query->first();
             // TODO add cache //->cache('riders', 'veryLongCache')
-        } else {
-            throw new \Cake\Network\Exception\UnauthorizedException();
+        } 
+        if (empty($data)){
+            throw new \Cake\Network\Exception\NotFoundException();
         }
         ResultMessage::overwriteData($data);
     }
@@ -53,7 +54,7 @@ class RidersController extends AppController {
         if ($this->request->is('post')) {
             $rider = $this->Riders->newEntity($this->request->data);
             $rider->user_id = null;
-            $rider->level = \App\Model\Entity\Rider::$levels[0];
+            $rider->level = 3;
             if ($this->Riders->save($rider)) {
                 ResultMessage::setData('rider_id', $rider->id);
                 ResultMessage::setData('rider_display_name', $rider->display_name);

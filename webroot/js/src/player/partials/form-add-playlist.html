@@ -1,0 +1,224 @@
+<form server-form
+      id="FormAddRider"
+      name="addRiderForm" 
+      method="post"  
+      ng-submit="save(rider, uploader.picture)" 
+      novalidate>
+    <fieldset>
+        <div class="col-sm-4" ng-if="profilePicture">
+
+
+            <fieldset>
+                <div class="thumbnail text-center">
+                    <img
+                        ng-if="uploader.picture"
+                        ngf-src="uploader.picture" 
+                        ngf-background="file" 
+                        />
+                    <span ng-if="!uploader.picture">
+                        <img ng-if="rider.picture_portrait" ng-src="{{rider.picture_portrait}}">
+                        <img ng-if="!rider.picture_portrait" src="img/icon_avatar.png">
+                    </span>
+                </div>
+
+                <div class="text-center" ng-class="{'has-error': addRiderForm.picture.$invalid}">
+                    <span class="ion-person form-control-feedback"></span>
+                    <div class="help-block text-danger" 
+                         ng-if="addRiderForm.picture.$dirty" 
+                         ng-messages="addRiderForm.picture.$error">
+                        <div ng-message="maxSize">
+                            File too large {{errorFiles[0].size / 1000000|number:1}}: max {{uploader.options.maxSize}}
+                        </div>
+                        <div ng-message="minHeight">
+                            Picture is not tall enough
+                        </div>
+                        <div ng-message="minWidth">
+                            Picture is not large enough
+                        </div>
+                        <div ng-message="pattern">
+                            You must select an image
+                        </div>
+                        <div ng-message="server">{{addRiderForm.picture.$error.server}}</div>
+                    </div>
+                </div>
+
+                <div class="text-center" >
+                    <button class="btn btn-primary" 
+                            id="ButtonSelectImage"
+                            ngf-multiple="false"
+                            ngf-select 
+                            ng-model="uploader.picture" 
+                            name="picture" 
+                            ngf-pattern="'image/*'"
+                            ngf-accept="'image/*'" 
+                            ngf-max-size="{{uploader.options.maxSize}}" 
+                            ngf-min-height="{{uploader.options.minHeight}}" 
+                            ngf-resize="{{uploader.options.resize}}"
+                            ngf-model-invalid="uploader.picture_errors" >
+                        <span class="glyphicon glyphicon-picture"></span>
+                        Select
+                    </button>
+                </div>
+
+                <span class="progress" ng-show="uploader.picture.progress >= 0">
+                    <div style="width:{{uploader.picture.progress}}%" 
+                         ng-bind="uploader.picture.progress + '%'"></div>
+                </span>
+            </fieldset>
+
+            <!--
+                      <div flow-name="uploader.flow"
+                           flow-init="uploader.init" 
+                           flow-file-added="!!{png:1,gif:1,jpg:1,jpeg:1}[$file.getExtension()]" 
+                           flow-file-success="onUploadSuccess($file, $message, $flow )"
+                           flow-error="onUploadError( $file, $message, $flow )"
+                           flow-complete="onUploadComplete()"
+                           class="ng-scope">-->
+
+
+        </div>
+
+        <div ng-class="{'col-sm-8': profilePicture}">
+
+            <div class="clearfix">
+                <div class="form-group clearfix has-feedback" 
+                     ng-class="[formGroupClass, {'has-error': addRiderForm.firstname.$invalid}]">
+                    <label class="col-xs-3">Firstname</label>
+                    <div class="col-xs-9">
+                        <input type="text" 
+                               class="form-control" 
+                               placeholder="Firstname"
+                               name="firstname"
+                               ng-model="rider.firstname"
+                               required
+                               servererror
+                               ng-minlength="2"
+                               ng-maxlength="20"/>
+                        <span class="ion-person form-control-feedback"></span>
+                        <div class="help-block text-danger" 
+                             ng-if="addRiderForm.firstname.$dirty" 
+                             ng-messages="addRiderForm.firstname.$error">
+                            <div ng-message="required">You must enter your name.</div>
+                            <div ng-message="minlength">You must enter at least 2 caracters.</div>
+                            <div ng-message="maxlength">You cannot enter more than 20 caracters.</div>
+                            <div ng-message="server">{{addRiderForm.firstname.$error.server}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group clearfix has-feedback" 
+                     ng-class="[formGroupClass, {'has-error': addRiderForm.lastname.$invalid}]">
+                    <label class="col-xs-3">Lastname</label>
+                    <div class="col-xs-9">
+                        <input type="text" 
+                               class="form-control" 
+                               placeholder="Lastname"
+                               name="lastname"
+                               ng-model="rider.lastname"
+                               required
+                               servererror
+                               ng-minlength="2"
+                               ng-maxlength="20"/>
+                        <span class="ion-person form-control-feedback"></span>
+                        <div class="help-block text-danger" 
+                             ng-if="addRiderForm.lastname.$dirty" 
+                             ng-messages="addRiderForm.lastname.$error">
+                            <div ng-message="required">You must enter your last name.</div>
+                            <div ng-message="minlength">You must enter at least 2 caracters.</div>
+                            <div ng-message="maxlength">You cannot enter more than 20 caracters.</div>
+                            <div ng-message="server">{{addRiderForm.lastname.$error.server}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix">
+                <div class="form-group clearfix has-feedback" 
+                     ng-class="[formGroupClass, {'has-error': addRiderForm.nationality.$invalid}]">
+                    <label class="col-xs-3">Nationality</label>
+                    <div class="col-xs-9">
+                        <select
+                            ng-model="rider.nationality"
+                            name="nationality"
+                            class="form-control"
+                            servererror>
+                            <option ng-repeat="nationality in nationalities" name="riderNationality{{nationality.code}}" 
+                                    value="{{nationality.code}}">
+                                {{nationality.name}}
+                            </option>
+                        </select>
+                        <span class="ion-person form-control-feedback"></span>
+                        <div class="help-block text-danger" 
+                             ng-messages="addRiderForm.nationality.$error">
+                            <div ng-message="server">{{addRiderForm.nationality.$error.server}}</div>
+                        </div>
+                    </div>
+                </div>
+                <!--
+                <div class="form-group clearfix has-feedback" 
+                     ng-class="[formGroupClass, {'has-error': addRiderForm.level.$invalid}]">
+                    <label class="col-xs-3">Level</label>
+                    <div class="col-xs-9">
+
+
+                        <select
+                            name="level"
+                            ng-model="rider.level"
+                            class="form-control"
+                            servererror
+                            ng-required
+                            ng-options="convertToInt(level.code) as level.name for level in levels">
+                        </select>
+                        <span class="ion-person form-control-feedback"></span>
+                        <div class="help-block text-danger" 
+                             ng-messages="addRiderForm.level.$error">
+                            <div ng-message="server">{{addRiderForm.level.$error.server}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                -->
+
+            </div>
+            
+            <div class="clearfix">
+                <div ng-if="findSimilarRiders" class="bg-info padding-sm text-center" ng-show="loaderSearchSimilars">
+                    <img src="img/ajax_loader.gif" alt="Loading..."/> 
+                    Searching for existing riders.
+                </div>
+                <div ng-if="similarRiders.length > 0" class="padding-sm">
+                    <h5>Existing riders</h5>
+                    <div ng-repeat="rider in similarRiders">
+                        <div class="col-xs-10">
+                            <div rider-item rider="rider"></div>
+                        </div>
+                        <div class="col-xs-2">
+                            <button type="button" 
+                                    class="btn btn-default"
+                                    ng-click="selectExistingRider(rider)">
+                                <span class="glyphicon glyphicon-check"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="!loaderSearchSimilars && riders.length === 0 && !addRiderForm.$invalid">
+                    <p class="bg-success padding-sm text-center">
+                        <span class="glyphicon glyphicon-check"></span> 
+                        Okay, you're good to go, this rider does not exist!
+                    </p>
+                </div>
+            </div>
+            <div class="text-center form-group">
+                <button type="button" 
+                        class="btn btn-danger"
+                        ng-click="cancel()">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    Cancel
+                </button>
+                <button type="submit" 
+                        ng-disabled="addRiderForm.$invalid"
+                        class="btn btn-success">
+                    <span class="glyphicon glyphicon-plus-sign"></span>
+                    Save
+                </button>
+            </div>
+    </fieldset>
+</form>

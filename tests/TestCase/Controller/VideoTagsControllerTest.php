@@ -34,7 +34,7 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
      */
     public function testView() {
         $id = 1;
-        $this->get("/VideoTags/view/$id.json");
+        $this->get("/api/VideoTags/view/$id.json");
         $this->assertResponseOk();
     }
     
@@ -45,7 +45,7 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
      */
     public function testDeleteNotOwner() {
         $this->logUser(2);
-        $this->post("/VideoTags/delete/".VideoTagsFixture::ID_PENDING.".json");
+        $this->post("/api/VideoTags/delete/".VideoTagsFixture::ID_PENDING.".json");
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
 //        debug($result);
@@ -58,7 +58,7 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
      */
     public function testDeleteOwner() {
         $this->logUser(1);
-        $this->post("/VideoTags/delete/".VideoTagsFixture::ID_PENDING.".json");
+        $this->post("/api/VideoTags/delete/".VideoTagsFixture::ID_PENDING.".json");
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
         $this->assertTrue($result['success']);
@@ -70,7 +70,7 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
      */
     public function testDeleteValidated() {
         $this->logUser(1);
-        $this->post("/VideoTags/delete/".VideoTagsFixture::ID_VALIDATED.".json");
+        $this->post("/api/VideoTags/delete/".VideoTagsFixture::ID_VALIDATED.".json");
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
         $this->assertFalse($result['success']);
@@ -80,7 +80,7 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
      */
     public function testRecentlyTagged() {
         $this->logUser(1);
-        $this->get("/VideoTags/recentlyTagged.json");
+        $this->get("/api/VideoTags/recentlyTagged.json");
         $this->assertResponseOk();
     }
 
@@ -88,7 +88,7 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
      */
     public function testSimilar() {
         $this->logUser(1);
-        $this->post("/VideoTags/similar.json", [
+        $this->post("/api/VideoTags/similar.json", [
             'VideoTag' => [
                 'begin' => 5,
                 'end' => 10,
@@ -106,7 +106,7 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
      */
     public function testValidation() {
         $this->logUser();
-        $this->get('/VideoTags/validation.json');
+        $this->get('/api/VideoTags/validation.json');
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
         //$this->assertCount($result, 1);
@@ -118,10 +118,12 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
      * @return void
      */
     public function testSearch() {
-        $this->get('/VideoTags/search.json');
+        $this->get('/api/VideoTags/search.json');
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
-        $first = $result[0];
+        $this->assertArrayHasKey('items', $result);
+        $this->assertGreaterThan(0, count($result['items']));
+        $first = $result['items'][0];
         $this->assertArrayHasKey('tag_id', $first);
         $this->assertArrayHasKey('tag_name', $first);
         $this->assertArrayHasKey('video_id', $first);
@@ -140,37 +142,39 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
      * - trick_name
      */
     public function testSearchParams() {
-        $this->get('/VideoTags/search.json?tag_name=frontside');
+        $this->get('/api/VideoTags/search.json?tag_name=frontside');
         $this->assertResponseOk();
-        $this->get('/VideoTags/search.json?rider_id=1');
+        $this->get('/api/VideoTags/search.json?rider_id=1');
         $this->assertResponseOk();
-        $this->get('/VideoTags/search.json?sport_id=1');
+        $this->get('/api/VideoTags/search.json?sport_id=1');
         $this->assertResponseOk();
-        $this->get('/VideoTags/search.json?tag_id=1');
+        $this->get('/api/VideoTags/search.json?tag_id=1');
         $this->assertResponseOk();
-        $this->get('/VideoTags/search.json?trick-slug=frontside-360');
+        $this->get('/api/VideoTags/search.json?trick-slug=frontside-360');
         $this->assertResponseOk();
-        $this->get('/VideoTags/search.json?order=invalidorder');
+        $this->get('/api/VideoTags/search.json?order=invalidorder');
         $this->assertResponseOk();
-        $this->get('/VideoTags/search.json?order=begin_time');
+        $this->get('/api/VideoTags/search.json?order=begin_time');
         $this->assertResponseOk();
-        $this->get('/VideoTags/search.json?order=created');
+        $this->get('/api/VideoTags/search.json?order=created');
         $this->assertResponseOk();
-        $this->get('/VideoTags/search.json?order=modified');
+        $this->get('/api/VideoTags/search.json?order=modified');
         $this->assertResponseOk();
-        $this->get('/VideoTags/search.json?order=best');
+        $this->get('/api/VideoTags/search.json?order=best');
         $this->assertResponseOk();
-        $this->get('/VideoTags/search.json?video_tag_id=1');
+        $this->get('/api/VideoTags/search.json?video_tag_id=1');
         $this->assertResponseOk();
-        $this->get('/VideoTags/search.json?trick_slug=1');
+        $this->get('/api/VideoTags/search.json?tag_slug=myslug');
         $this->assertResponseOk();
-        $this->get('/VideoTags/search.json?video_tag_ids=1,2,3');
+        $this->get('/api/VideoTags/search.json?trick_slug=1');
         $this->assertResponseOk();
-        $this->get('/VideoTags/search.json?status=pending,invalidstatus');
+        $this->get('/api/VideoTags/search.json?video_tag_ids=1,2,3');
         $this->assertResponseOk();
-        $this->get('/VideoTags/search.json?sport_name=snowboard');
+        $this->get('/api/VideoTags/search.json?status=pending,invalidstatus');
         $this->assertResponseOk();
-        $this->get('/VideoTags/search.json?sport_name=snowboard&category_name=jib');
+        $this->get('/api/VideoTags/search.json?sport_name=snowboard');
+        $this->assertResponseOk();
+        $this->get('/api/VideoTags/search.json?sport_name=snowboard&category_name=jib');
         $this->assertResponseOk();
     }
 
@@ -187,7 +191,7 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
             'begin' => 2,
             'end' => 10
         ];
-        $this->post('/VideoTags/add.json', $data);
+        $this->post('/api/VideoTags/add.json', $data);
 
         $this->assertResponseOk();
         $result = json_decode($this->_response->body());
@@ -212,7 +216,7 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
             'begin' => 2,
             'end' => 10
         ];
-        $this->post('/VideoTags/add.json', $data);
+        $this->post('/api/VideoTags/add.json', $data);
 
         $this->assertResponseOk();
         $result = json_decode($this->_response->body());
@@ -234,7 +238,7 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
             'end' => 10,
             'rider_id' => $riderId
         ];
-        $this->post('/VideoTags/add.json', $data);
+        $this->post('/api/VideoTags/add.json', $data);
 
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
@@ -259,9 +263,8 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
         $videoTagOrigin = $videoTagsTable->get($tagId);
         
         $this->logUser($videoTagOrigin->user_id + 1);
-
-        $this->post('/VideoTags/edit/' . $tagId . '.json', ['rider_id' => 1]);
-        $this->assertResponseError(404);
+        $this->post('/api/VideoTags/edit/' . $tagId . '.json', ['rider_id' => 1]);
+        $this->assertResponseError(404); // Not authorized
     }
     /**
      * Test that a user cannot modify the video tag execpt the rider ? 
@@ -288,7 +291,7 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
             'count_points' => 378293,
             'status' => \App\Model\Entity\VideoTag::STATUS_REJECTED
         ];
-        $this->post('/VideoTags/edit/' . $tagId . '.json', $data);
+        $this->post('/api/VideoTags/edit/' . $tagId . '.json', $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
 //        debug($result);
@@ -319,10 +322,29 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
         $data = [
             'rider_id' => $riderId,
         ];
-        $this->post('/VideoTags/edit/' . $tagId . '.json', $data);
+        $this->post('/api/VideoTags/edit/' . $tagId . '.json', $data);
         $this->assertResponseError(404);
     }
 
+    
+    /**
+     * TODO NEW TEST
+     */
+    public function testEditNotOwner() {
+        $tagId = \App\Test\Fixture\VideoTagsFixture::ID_PENDING;
+        $videoTagsTable = \Cake\ORM\TableRegistry::get('VideoTags');
+        $videoTagOrigin = $videoTagsTable->get($tagId);
+        
+        $this->logUser($videoTagOrigin->user_id + 1);
+        $data = [
+            'begin' => $videoTagOrigin->begin + 1,
+            'end' => $videoTagOrigin->end + 1,
+        ];
+        $this->post('/api/VideoTags/edit/' . $tagId . '.json', $data);
+        $this->assertResponseError(404, "The user should not be able to edit "
+                . "another user video tag.");
+    }
+    
     /**
      * Test add invalid time range
      *
@@ -337,7 +359,7 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
             'begin' => 2,
             'end' => 2 + (\App\Model\Table\VideoTagsTable::MIN_TAG_DURATION - 1)
         ];
-        $this->post('/VideoTags/add.json', $data);
+        $this->post('/api/VideoTags/add.json', $data);
 
         $this->assertResponseOk();
         $result = json_decode($this->_response->body());
@@ -352,7 +374,7 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
             'begin' => 2,
             'end' => 2 + \App\Model\Table\VideoTagsTable::MAX_TAG_DURATION + 1
         ];
-        $this->post('/VideoTags/add.json', $data);
+        $this->post('/api/VideoTags/add.json', $data);
         $result = json_decode($this->_response->body());
 //        debug($result);
         $this->assertFalse($result->success);

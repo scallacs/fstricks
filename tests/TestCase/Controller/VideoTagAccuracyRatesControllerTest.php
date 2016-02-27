@@ -45,7 +45,7 @@ class VideoTagAccuracyRatesControllerTest extends MyIntegrationTestCase {
         $exists = $this->find(1, 1)->count() === 1;
         $this->assertTrue($exists, "Fixtures are not properly sets");
 
-        $this->post('/VideoTagAccuracyRates/fake.json', $data);
+        $this->post('/api/VideoTagAccuracyRates/fake.json', $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
 //        debug($this->find(1, 1)->first());
@@ -64,7 +64,7 @@ class VideoTagAccuracyRatesControllerTest extends MyIntegrationTestCase {
         ];
         $this->logUser(2);
 
-        $this->post('/VideoTagAccuracyRates/fake.json', $data);
+        $this->post('/api/VideoTagAccuracyRates/fake.json', $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
         $this->assertTrue($result['success']);
@@ -81,7 +81,7 @@ class VideoTagAccuracyRatesControllerTest extends MyIntegrationTestCase {
         ];
         $this->logUser(2);
 
-        $this->post('/VideoTagAccuracyRates/accurate.json', $data);
+        $this->post('/api/VideoTagAccuracyRates/accurate.json', $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
         $this->assertTrue($result['success']);

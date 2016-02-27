@@ -26,7 +26,7 @@ class UsersControllerTest extends MyIntegrationTestCase {
     // Test adding duplicate account
     public function testProfile() {
         $this->logUser();
-        $this->get('/users/profile.json');
+        $this->get('/api/users/profile.json');
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
     }
@@ -37,7 +37,7 @@ class UsersControllerTest extends MyIntegrationTestCase {
 //            'username' => "sca.leonard@gmail.com",
 //            "password" => 'testtest',
 //        ];
-//        $this->post('/users/login.json', $data);
+//        $this->post('/api/users/login.json', $data);
 //        $this->assertResponseOk();
 //
 //        $result = json_decode($this->_response->body(), true);
@@ -52,7 +52,7 @@ class UsersControllerTest extends MyIntegrationTestCase {
             'username' => "invalid@gmail.com",
             "password" => 'testtest',
         ];
-        $this->post('/users/login.json', $data);
+        $this->post('/api/users/login.json', $data);
         $this->assertResponseOk();
 
         $result = json_decode($this->_response->body(), true);
@@ -69,7 +69,7 @@ class UsersControllerTest extends MyIntegrationTestCase {
             "password" => 'testtest',
             'confirm_password' => 'testtest'
         ];
-        $this->post('/users/signup.json', $data);
+        $this->post('/api/users/signup.json', $data);
         $this->assertResponseOk();
 
         $result = json_decode($this->_response->body(), true);
@@ -86,7 +86,7 @@ class UsersControllerTest extends MyIntegrationTestCase {
             "password" => 'testtest',
             'confirm_password' => 'testtest'
         ];
-        $this->post('/users/signup.json', $data);
+        $this->post('/api/users/signup.json', $data);
         $this->assertResponseOk();
 
         $result = json_decode($this->_response->body(), true);
@@ -98,7 +98,7 @@ class UsersControllerTest extends MyIntegrationTestCase {
 //    public function testUnauthorizedEditProfile() {
 //        \App\Lib\ResultMessage::reset();
 //        try {
-//            $this->post('/users/edit.json');
+//            $this->post('/api/users/edit.json');
 //        } catch (\Cake\Network\Exception\UnauthorizedException $ex) {
 //            
 //        }
@@ -110,7 +110,7 @@ class UsersControllerTest extends MyIntegrationTestCase {
         $data = [
             'code' => 'oijfeojfoej'
         ];
-        $this->post('/users/facebook_login.json', $data);
+        $this->post('/api/users/facebook_login.json', $data);
         $this->assertResponseOk();
 
         $result = json_decode($this->_response->body(), true);
@@ -126,7 +126,7 @@ class UsersControllerTest extends MyIntegrationTestCase {
 //        $data = [
 //            'code' => 'oijfeojfoej'
 //        ];
-//        $this->post('/users/facebook_login.json', $data);
+//        $this->post('/api/users/facebook_login.json', $data);
 //        $this->assertResponseOk();
 //
 //        $result = json_decode($this->_response->body(), true);

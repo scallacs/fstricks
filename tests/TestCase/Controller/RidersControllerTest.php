@@ -25,7 +25,7 @@ class RidersControllerTest extends MyIntegrationTestCase {
      * @return void
      */
     public function testUnauthorizedSave() {
-        $this->post('riders/save');
+        $this->post('/api/riders/save');
         $this->assertResponseError("Should raise a not authorh");
     }
 
@@ -42,7 +42,7 @@ class RidersControllerTest extends MyIntegrationTestCase {
             'nationality' => 'fr',
             'level' => 1
         ];
-        $this->post('riders/save.json', $data);
+        $this->post('/api/riders/save.json', $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
         $this->assertTrue($result['success']);
@@ -56,7 +56,7 @@ class RidersControllerTest extends MyIntegrationTestCase {
             'nationality' => 'fr',
             'level' => 1
         ];
-        $this->post('riders/save.json', $data);
+        $this->post('/api/riders/save.json', $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
         $this->assertTrue($result['success']);
@@ -70,7 +70,7 @@ class RidersControllerTest extends MyIntegrationTestCase {
             'nationality' => 'fr',
             'level' => 1
         ];
-        $this->post('riders/add.json', $data);
+        $this->post('/api/riders/add.json', $data);
 //        debug($this->_response->body());
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
@@ -83,40 +83,40 @@ class RidersControllerTest extends MyIntegrationTestCase {
             'firstname' => 'test',
             'lastname' => 'test',
         ];
-        $this->post('riders/add.json', $data);
+        $this->post('/api/riders/add.json', $data);
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
         $this->assertFalse($result['success']);
         $this->assertArrayHasKey('validationErrors', $result);
         $this->assertArrayHasKey('Riders', $result['validationErrors']);
     }
-
-    public function testUserRiderProfile() {
-        $this->logUser(1);
-        $this->get('riders/profile.json');
-        $this->assertResponseOk();
-        $result = json_decode($this->_response->body(), true);
-        $this->assertArrayHasKey('id', $result);
-    }
+//
+//    public function testUserRiderProfile() {
+//        $this->logUser(1);
+//        $this->get('/api/riders/profile.json');
+//        $this->assertResponseOk();
+//        $result = json_decode($this->_response->body(), true);
+//        $this->assertArrayHasKey('id', $result);
+//    }
 
     public function testUserRiderProfileNotLoggedIn() {
         try {
-            $this->get('riders/profile.json');
+            $this->get('/api/riders/profile.json');
         } catch (Cake\Network\Exception\UnauthorizedException $ex) {
             
         }
     }
-
-    public function testViewProfile() {
-        $this->get('riders/profile/2.json');
-        $this->assertResponseOk();
-        $result = json_decode($this->_response->body(), true);
-        $this->assertArrayHasKey('id', $result);
-    }
+//
+//    public function testViewProfile() {
+//        $this->get('/api/riders/profile/2.json');
+//        $this->assertResponseOk();
+//        $result = json_decode($this->_response->body(), true);
+//        $this->assertArrayHasKey('id', $result);
+//    }
 
     public function testProfileNotFound() {
         try {
-            $this->get('riders/profile/9999999.json');
+            $this->get('/api/riders/profile/9999999.json');
             $this->assertResponseCode(404);
         } catch (Exception $ex) {
             
@@ -125,39 +125,35 @@ class RidersControllerTest extends MyIntegrationTestCase {
     
     
     public function testLocalSearch(){
-        $this->get('riders/local_search.json?q=Stephane');
+        $this->get('/api/riders/local_search.json?q=Stephane');
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
-        $this->assertArrayHasKey('data', $result);
-        
-        $this->get('riders/local_search.json?firstname=Stephane');
+
+        $this->get('/api/riders/local_search.json?firstname=Stephane');
         $this->assertResponseOk();
         
-        $this->get('riders/local_search.json?firstname=Stephane&lastname=test');
+        $this->get('/api/riders/local_search.json?firstname=Stephane&lastname=test');
         $this->assertResponseOk();
     }
     
     public function testLocalSearchResults(){
-        $this->get('riders/local_search.json?q=XaVIer de le rue');
+        $this->get('/api/riders/local_search.json?q=XaVIer de le rue');
         $this->assertResponseOk();
-        $result = json_decode($this->_response->body(), true);
-        $data = $result['data'];
+        $data = json_decode($this->_response->body(), true);
         $this->assertCount(1, $data);
         $this->assertEquals(3, $data[0]['id']);
         
         // Test ignore accents
-        $this->get('riders/local_search.json?q=Stephane Leonard');
+        $this->get('/api/riders/local_search.json?q=Stephane Leonard');
         $this->assertResponseOk();
-        $result = json_decode($this->_response->body(), true);
-        $data = $result['data'];
+        $data = json_decode($this->_response->body(), true);
         $this->assertCount(1, $data);
         $this->assertEquals(1, $data[0]['id']);
         
         // Test no results
-        $this->get('riders/local_search.json?q=Stephane De le rue');
+        $this->get('/api/riders/local_search.json?q=Stephane De le rue');
         $this->assertResponseOk();
-        $result = json_decode($this->_response->body(), true);
-        $data = $result['data'];
+        $data = json_decode($this->_response->body(), true);
         $this->assertCount(0, $data);
     }    
     
@@ -179,7 +175,7 @@ class RidersControllerTest extends MyIntegrationTestCase {
             'tmp_name' => $fileFolder . 'tmp/pictures/small_file.jpg',
             'error' => 0
         ];
-        $this->post('/riders/save.json', [
+        $this->post('/api//riders/save.json', [
             'picture' => $fileInfo
         ]);
         $this->assertResponseOk();
@@ -198,12 +194,12 @@ class RidersControllerTest extends MyIntegrationTestCase {
      * @return void
      */
     public function testUploadNotLogin() {
-        $this->post('/riders/save.json');
+        $this->post('/api//riders/save.json');
         $this->assertResponseCode(401);
     }
     
 //    public function testFacebookSearch(){
-//        $this->get('riders/facebook_search.json?q=Stephane');
+//        $this->get('/api/riders/facebook_search.json?q=Stephane');
 //        $this->assertResponseOk();
 //    }
 
