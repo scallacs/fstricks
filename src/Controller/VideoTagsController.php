@@ -310,7 +310,7 @@ class VideoTagsController extends AppController {
 //            }
 //            debug($query->sql());
             ResultMessage::setPaginateData(
-                    $this->paginate($query, $paginateOptions),
+                    $this->paginate($query),
                     $this->request->params['paging']['VideoTags']);
         } catch (NotFoundException $e) {
             ResultMessage::overwriteData([]);

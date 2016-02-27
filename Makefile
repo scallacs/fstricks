@@ -47,6 +47,8 @@ database: $(DB_SOURCE)
 clean-prod:
 	rm -rf webroot/coverage
 	rm -rf webroot/js/e2e-tests
+	rm -rf webroot/js/components
+	rm -rf webroot/js/lib
 	find webroot/js/src -type f ! -name '*.html' -delete
 	find webroot/css -type f ! -name '*.min.css' -delete
 
@@ -69,6 +71,8 @@ minify: minify-css minify-js
 # target : minify-js
 minify-js:
 	$(GULP_BIN) concat-js
+	$(GULP_BIN) concat-components-js
+	$(GULP_BIN) concat-lib-js
 	
 # target: minify-css - Minifies CSS.
 minify-css:

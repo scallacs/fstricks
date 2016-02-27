@@ -22,7 +22,7 @@ angular.module('app.player', [
         .controller('ViewValidationController', ViewValidationController)
         .controller('ViewPlaylistController', ViewPlaylistController)
         .controller('DashboardController', DashboardController)
-        .controlle('AddPlaylistController', AddPlaylistController);
+        .controller('AddPlaylistController', AddPlaylistController);
 
 ConfigRoute.$inject = ['$stateProvider'];
 function ConfigRoute($stateProvider) {
@@ -555,6 +555,7 @@ function VideoTagPointsController($scope, VideoTagPointEntity) {
     }
 }
 
+AddPlaylistController.$inject = ['$scope'];
 function AddPlaylistController($scope){
     
 }
