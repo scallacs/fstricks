@@ -54,7 +54,7 @@ clean-prod:
 	rm -rf webroot/js/components
 	rm -rf webroot/js/lib
 	find webroot/js/src -type f ! -name '*.html' -delete
-	find webroot/css -type f ! -name '*.min.css' -delete
+	find webroot/css -type f ! -name 'style.css' -delete
 
 build: build-backend build-frontend minify
 
