@@ -16,6 +16,10 @@ KARMA_BIN = node_modules/karma/bin/karma
 WEBDRIVER_MANAGER_BIN = node_modules/webdriver-manager/bin/webdriver-manager
 PROTRACTOR_BIN = node_modules/protractor/bin/protractor
 ###############################################################
+# target: reset-repo - reset repo
+reset-repo: 
+	git reset --hard origin/master
+#	git fetch origin
 
 # target: mv2prod - Moving to production
 mv2prod: 
@@ -29,10 +33,6 @@ mv2prod:
 # target: prod - build the project for production
 prod: build clean-prod config-prod 
 
-# target: reset-repo - reset repo
-#resetrepo:
-#    git fetch origin
-#    git reset --hard origin/master
 
 # target: dev - build the project for dev
 dev: build 
@@ -56,7 +56,7 @@ clean-prod:
 	find webroot/js/src -type f ! -name '*.html' -delete
 	find webroot/css -type f ! -name 'style.css' -delete
 
-build: build-backend build-frontend minify
+build: reset-repo build-backend build-frontend minify
 
 .PHONY: build-backend
 build-backend: 
