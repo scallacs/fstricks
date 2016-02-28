@@ -1,9 +1,9 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\PlaylistsTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use App\Lib\JsonConfigHelper;
 
 /**
  * App\Model\Table\PlaylistsTable Test Case
@@ -60,22 +60,22 @@ class PlaylistsTableTest extends TestCase
      */
     public function testValidationDefault()
     {
+        // Min length
+        $entity = $this->Playlists->newEntity(['title' => 'A']);
+        $this->assertArrayHasKey('title', $entity->errors());
         // Max length
-        $data = [
-            'title' => 'Title very to long', // TODO 
-            'description' => 'Title very to long', // TODO 
-            'status' => 'Invalid status',
-        ];
-        $this->markTestIncomplete('Not implemented yet.');
+        $title = \App\Test\TestUtils::generateString(JsonConfigHelper::rules("playlists", "title", "max_length") + 2);
+        $entity = $this->Playlists->newEntity([
+            'title' => $title
+        ]);
+        $this->assertArrayHasKey('title', $entity->errors());
+        // description
+        $description = \App\Test\TestUtils::generateString(JsonConfigHelper::rules("playlists", "description", "max_length") + 1);
+        $entity = $this->Playlists->newEntity(['description' => $description]);
+        $this->assertArrayHasKey('description', $entity->errors());
+        // Status
+        $entity = $this->Playlists->newEntity(['status' => \App\Model\Entity\Playlist::STATUS_BLOCKED]);
+        $this->assertArrayHasKey('status', $entity->errors());
     }
 
-    /**
-     * Test buildRules method
-     *
-     * @return void
-     */
-    public function testBuildRules()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
 }

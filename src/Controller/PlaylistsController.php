@@ -12,6 +12,11 @@ use App\Lib\ResultMessage;
  */
 class PlaylistsController extends AppController {
 
+    public function initialize() {
+        parent::initialize();
+        $this->loadComponent('Paginator');
+    }
+    
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
         $this->Auth->allow(['index', 'view', 'search']);
@@ -23,10 +28,9 @@ class PlaylistsController extends AppController {
      * @return void
      */
     public function user() {
-//        $this->Paginator->config(Configure::read('Pagination.Playlists'));
+//        $this->Paginator->config(\Cake\Core\Configure::read('Pagination.Playlists'));
         $query = $this->Playlists
-                    ->find()
-                    ->where(['Playlists.user_id' => $this->Auth->user('id')])
+                    ->findVisible($this->Auth->user('id'))
                     ->order(['Playlists.modified DESC']);
         $data = $query->all();
 //        ResultMessage::setPaginateData(
@@ -42,7 +46,7 @@ class PlaylistsController extends AppController {
      * @return void
      */
     public function index() {
-        $this->Paginator->config(Configure::read('Pagination.Playlists'));
+        $this->Paginator->config(\Cake\Core\Configure::read('Pagination.Playlists'));
         $query = $this->Playlists->findPublic()
                 ->order(['Playlists.count_points DESC']);
         ResultMessage::setPaginateData(
@@ -65,10 +69,9 @@ class PlaylistsController extends AppController {
                         'title' => 'Playlists.title',
                         'slug' => 'Playlists.slug',
                         'count_points' => 'Playlists.count_points',
-                        'order' => 'Playlists.order',
                         'id' => 'Playlists.id',
                     ])
-                    ->order(['Playlists.order DESC'])
+                    ->order(['Playlists.count_points DESC'])
                     ->limit(10);
             \App\Model\Table\TableUtil::multipleWordSearch($query, $data['q'], 'Playlists.title');
             ResultMessage::overwriteData($query->all());
@@ -83,16 +86,16 @@ class PlaylistsController extends AppController {
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
     public function view($slug = null) {
-        $query = $this->Playlists->findPublic()
+        ResultMessage::setWrapper(false);
+        $query = $this->Playlists->findVisible($this->Auth->user('id'))
                 ->limit(1)
                 ->where([
             'Playlists.slug' => $slug,
-            'OR' => [
-                ['Playlists.status' => \App\Model\Entity\Playlist::STATUS_PUBLIC],
-                ['Playlists.user_id' => $this->Auth->user('id')]
-            ]
         ]);
         $data = $query->first();
+        if (empty($data)){
+            throw new \Cake\Network\Exception\NotFoundException();
+        }
         ResultMessage::overwriteData($data);
     }
 
@@ -102,10 +105,12 @@ class PlaylistsController extends AppController {
      * @return void Redirects on successful add, renders view otherwise.
      */
     public function add() {
+        ResultMessage::setWrapper(true);
         if ($this->request->is('post')) {
             $playlist = $this->Playlists->newEntity($this->request->data);
             $playlist->user_id = $this->Auth->user('id');
             if ($this->Playlists->save($playlist)) {
+                ResultMessage::setMessage("Playlist created", true);
                 ResultMessage::setData('playlist_id', $playlist->id);
                 return;
             }
@@ -122,11 +127,12 @@ class PlaylistsController extends AppController {
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
     public function edit($id = null) {
+        ResultMessage::setWrapper(true);
         if ($this->request->is('post')) {
-            $playlist = $this->Playlists->newEntity($this->request->data);
-            $playlist->user_id = $this->Auth->user('id');
+            $playlist = $this->Playlists->getEditabled($id, $this->Auth->user('id'));
+            $this->Playlists->patchEntity($playlist, $this->request->data);
             if ($this->Playlists->save($playlist)) {
-                ResultMessage::setData('playlist_id', $playlist->id);
+                ResultMessage::setMessage("Playlist saved", true);
                 return;
             }
             ResultMessage::addValidationErrorsModel($playlist);
@@ -142,18 +148,12 @@ class PlaylistsController extends AppController {
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
     public function delete($id = null) {
-        if ($id === null || !$this->request->is('post')) {
-            ResultMessage::setSuccess(false);
-            return;
-        }
-        $success = $this->Playlists->deleteAll([
-            'id' => $id,
-            'user_id' => $this->Auth->user('id')
-        ]);
-        if ($success) {
-            ResultMessage::setMessage('This playlist has beed successfully removed', $success);
+        $this->request->allowMethod(['post', 'delete']);
+        $playlist = $this->Playlists->getEditabled($id, $this->Auth->user('id'));
+        if ($this->Playlists->delete($playlist)) {
+            ResultMessage::setMessage('This playlist has been successfully removed', true);
         } else {
-            ResultMessage::setMessage('Sorry but you are not allowed to remove it', $success);
+            ResultMessage::setMessage('Sorry but you are not allowed to remove it', false);
         }
     }
 

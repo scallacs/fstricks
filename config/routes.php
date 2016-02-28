@@ -48,6 +48,7 @@ Router::prefix('Admin', function ($routes) {
 
 Router::scope('/api', function ($routes) {
     $routes->extensions(['json']);
+//    $routes->resources('Playlists');
     $routes->fallbacks('InflectedRoute');
 });
 

@@ -12,6 +12,39 @@ use App\Lib\ResultMessage;
  */
 class PlaylistVideoTagsController extends AppController {
 
+    public function initialize() {
+        parent::initialize();
+        $this->Playlists = \Cake\ORM\TableRegistry::get('Playlists');
+    }
+
+    public function beforeFilter(\Cake\Event\Event $event) {
+        parent::beforeFilter($event);
+        $this->Auth->allow(['playlist']);
+    }
+
+    /**
+     * Find all elements of a playlist
+     * @param type $playlistId
+     * @throws \Cake\Network\Exception\NotFoundException
+     */
+    public function playlist($playlistId = null) {
+        $playlist = $this->Playlists
+                ->findVisible($this->Auth->user('id'))
+                ->where(['Playlists.id' => $playlistId]);
+        if (empty($playlist)) {
+            throw new \Cake\Network\Exception\NotFoundException();
+        }
+        $data = $this->PlaylistVideoTags
+                ->find('all')
+                ->where([
+                    'PlaylistVideoTags.playlist_id' => $playlistId
+                ])
+                ->order(['PlaylistVideoTags.position ASC']);
+
+        ResultMessage::setWrapper(false);
+        ResultMessage::overwriteData($data);
+    }
+
     /**
      *
      * @param string|null $id Playlist Video Tag id.
@@ -19,14 +52,18 @@ class PlaylistVideoTagsController extends AppController {
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
     public function add() {
-        if ($this->request->is('post')) {
+        if ($this->request->is('post') && \App\Lib\DataUtil::isPositiveInt($this->request->data, 'playlist_id')) {
+            $playlistId = $this->request->data['playlist_id'];
+
+            // Check user authorized to add in this playlist
+            $playlist = $this->Playlists->getEditabled($playlistId, $this->Auth->user('id'));
             $playlistVideoTag = $this->PlaylistVideoTags->newEntity($this->request->data);
-            $playlistVideoTag->user_id = $this->Auth->user('id');
-            
+
+//            debug($playlistVideoTag);
             if ($this->PlaylistVideoTags->save($playlistVideoTag)) {
                 ResultMessage::setMessage(__('Added to playlist.'), true);
             } else {
-                ResultMessage::setMessage(__('Cannot add to playlist. Please, try again.'), false);
+                ResultMessage::addValidationErrorsModel($playlistVideoTag, true);
             }
         }
     }
@@ -35,7 +72,7 @@ class PlaylistVideoTagsController extends AppController {
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
-    public function down($id = null) {
+    public function down($id = ull) {
         $this->move_relative($id, -1);
     }
 
@@ -56,12 +93,9 @@ class PlaylistVideoTagsController extends AppController {
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function delete($id = null) {
+    public function delete($id) {
         $this->request->allowMethod(['post', 'delete']);
-        $playlistVideoTag = $this->PlaylistVideoTags->get($id);
-        if ($playlistVideoTag->user_id !== $this->Auth->user('id')) {
-            throw new \Cake\Network\Exception\UnauthorizedException();
-        }
+        $playlistVideoTag = $this->PlaylistVideoTags->getEditabled($id, $this->Auth->user('id'));
         if ($this->PlaylistVideoTags->delete($playlistVideoTag)) {
             ResultMessage::setMessage(__('Removed from playlist'), true);
         } else {
@@ -70,10 +104,10 @@ class PlaylistVideoTagsController extends AppController {
     }
 
     private function move_relative($id, $value) {
-        $playlistVideoTag = $this->PlaylistVideoTags->get($id);
-        if ($playlistVideoTag->user_id !== $this->Auth->user('id')) {
-            throw new \Cake\Network\Exception\UnauthorizedException();
-        }
+
+        $playlistVideoTag = $this->PlaylistVideoTags
+                ->getEditabled($id, $this->Auth->user('id'));
+        
         if ($this->request->is('post')) {
             $playlistVideoTag->position = $playlistVideoTag->postion + $value;
             if ($this->PlaylistVideoTags->save($playlistVideoTag)) {

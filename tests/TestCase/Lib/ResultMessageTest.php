@@ -159,7 +159,7 @@ class ResultMessageTest extends \Cake\TestSuite\TestCase {
         ]);
         $expected = [
             'items' => [1,2],
-            'count' => 2,
+            'total' => 2,
             'perPage' => 5
         ];
         $this->assertEquals($expected, ResultMessage::render());

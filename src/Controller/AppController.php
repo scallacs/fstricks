@@ -124,9 +124,9 @@ class AppController extends Controller {
             $this->set('_serialize', 'data');
             $this->response->type('json');
         } else {
-            if (ResultMessage::hasMessage()) {
-                $this->Flash->set(ResultMessage::$message);
-            }
+//            if (ResultMessage::hasMessage()) {
+//                $this->Flash->set(ResultMessage::$message);
+//            }
 //
 //            if (ResultMessage::$redirectUrl === null) {
 //                $this->redirect($this->referer());

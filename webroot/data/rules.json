@@ -31,5 +31,14 @@
                 {"code": "vimeo", "name": "Vimeo"}
             ]
         }
+    },
+    "playlists": {
+        "title": {
+            "min_length": 2, 
+            "max_length": 50
+        },
+        "description": {
+            "max_length": 1000
+        }
     }
 }

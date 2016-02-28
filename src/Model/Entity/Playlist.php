@@ -34,7 +34,9 @@ class Playlist extends Entity
      * @var array
      */
     protected $_accessible = [
-        '*' => true,
-        'id' => false,
+        '*' => false,
+        'title' => true,
+        'description' => true,
+        'status' => true
     ];
 }

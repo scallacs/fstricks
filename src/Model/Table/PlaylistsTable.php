@@ -3,10 +3,11 @@
 namespace App\Model\Table;
 
 use App\Model\Entity\Playlist;
-use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use App\Lib\JsonConfigHelper;
+
 
 /**
  * Playlists Model
@@ -30,12 +31,6 @@ class PlaylistsTable extends Table {
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
-        $this->addBehavior('ADmad/Sequence.Sequence', [
-            'order' => 'position', // Field to use to store integer sequence. Default "position".
-            'scope' => ['video_tag_id'], // Array of field names to use for grouping records. Default [].
-            'start' => 1, // Initial value for sequence. Default 1.
-        ]);
-
 
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id'
@@ -58,19 +53,36 @@ class PlaylistsTable extends Table {
 
         $validator
                 ->requirePresence('title', 'create')
-                ->notEmpty('title');
+                ->notEmpty('title')
+                ->add('title', [
+                    'maxLength' => [
+                        'rule' => ['maxLength', JsonConfigHelper::rules("playlists", "title", "max_length")],
+                        'message' => 'Choose a shorter title.'
+                    ],
+                    'minLength' => [
+                        'rule' => ['minLength', JsonConfigHelper::rules("playlists", "title", "min_length")],
+                        'message' => 'Choose a longer title.'
+                    ]
+                ]);
 
         $validator
-                ->allowEmpty('description');
+                ->allowEmpty('description')
+                ->add('description', [
+                    'maxLength' => [
+                        'rule' => ['maxLength', JsonConfigHelper::rules("playlists", "description", "max_length")],
+                        'message' => 'Your description is too long.'
+                    ]
+                ]);
 
         $validator
                 ->requirePresence('status', 'create')
-                ->notEmpty('status');
-
-        $validator
-                ->add('count_points', 'valid', ['rule' => 'numeric'])
-                ->requirePresence('count_points', 'create')
-                ->notEmpty('count_points');
+                ->notEmpty('status')
+                ->add('status', [
+                    'inList' => [
+                        'rule' => ['inList', [Playlist::STATUS_PRIVATE, Playlist::STATUS_PUBLIC]],
+                        'message' => 'Invalid status.'
+                    ]
+                ]);
 
         return $validator;
     }
@@ -88,7 +100,39 @@ class PlaylistsTable extends Table {
     }
 
     public function findPublic() {
-        return $this->find('all')->where(['Playlist.status' => Playlist::STATUS_PUBLIC]);
+        return $this->find('all')->where(['Playlists.status' => Playlist::STATUS_PUBLIC]);
+    }
+
+    public function findVisible($userId = null, $query = null) {
+        if ($query === null) {
+            $query = $this->find('all');
+        }
+        return $query->where([
+                    'OR' => [
+                        ['Playlists.status' => Playlist::STATUS_PUBLIC],
+                        ['Playlists.status' => Playlist::STATUS_PRIVATE, 'Playlists.user_id' => $userId]]
+        ]);
+    }
+
+    public function getEditabled($id, $userId = null) {
+        if ($id === null || $userId === null) {
+            throw new \Cake\Datasource\NotFoundException();
+        }
+        $playlist = $this->get($id);
+        if ($playlist->user_id !== $userId || $playlist->status === Playlist::STATUS_BLOCKED) {
+            throw new \Cake\Network\Exception\NotFoundException();
+        }
+        return $playlist;
+    }
+
+    public function findEditabled($userId = null, $query = null) {
+        if ($query === null) {
+            $query = $this->find('all');
+        }
+        return $query->where([
+                    'Playlists.status !=' => Playlist::STATUS_BLOCKED,
+                    'Playlists.user_id' => $userId
+        ]);
     }
 
 }

@@ -70,6 +70,7 @@ class ResultMessage {
       ] 
      */
     public static function setPaginateData($results, $paginateInfo) {
+        self::$wrapper = false;
         self::$data = [
             'total' => $paginateInfo['count'],
             'perPage' => $paginateInfo['perPage'],

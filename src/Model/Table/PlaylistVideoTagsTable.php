@@ -28,7 +28,7 @@ class PlaylistVideoTagsTable extends Table
 
         $this->table('playlist_video_tags');
         $this->displayField('playlist_id');
-        $this->primaryKey(['playlist_id', 'video_tag_id']);
+        $this->primaryKey('id');
 
         $this->belongsTo('Playlists', [
             'foreignKey' => 'playlist_id',
@@ -38,6 +38,13 @@ class PlaylistVideoTagsTable extends Table
             'foreignKey' => 'video_tag_id',
             'joinType' => 'INNER'
         ]);
+        
+        $this->addBehavior('ADmad/Sequence.Sequence', [
+            'order' => 'position', // Field to use to store integer sequence. Default "position".
+            'scope' => ['playlist_id'], // Array of field names to use for grouping records. Default [].
+            'start' => 1, // Initial value for sequence. Default 1.
+        ]);
+
     }
 
     /**
@@ -49,9 +56,11 @@ class PlaylistVideoTagsTable extends Table
     public function validationDefault(Validator $validator)
     {
         $validator
-            ->add('position', 'valid', ['rule' => 'numeric'])
-            ->requirePresence('position', 'create')
-            ->notEmpty('position');
+            ->requirePresence('video_tag_id', true)
+            ->notEmpty('video_tag_id');
+        $validator
+            ->requirePresence('playlist_id', true)
+            ->notEmpty('playlist_id');
 
         return $validator;
     }
@@ -67,6 +76,30 @@ class PlaylistVideoTagsTable extends Table
     {
         $rules->add($rules->existsIn(['playlist_id'], 'Playlists'));
         $rules->add($rules->existsIn(['video_tag_id'], 'VideoTags'));
+        $rules->add($rules->isUnique(['video_tag_id', 'playlist_id']));
         return $rules;
+    }
+    
+    
+    public function findEditabled($id, $userId){
+        return $this->find('all')
+                ->where([
+                    'PlaylistVideoTags.id' => $id
+                ])
+                ->matching('Playlists', function($q) use ($userId) {
+                        return \Cake\ORM\TableRegistry::get('Playlists')
+                                ->findEditabled($userId, $q)
+                                ->select(['Playlists.id', 'Playlists.user_id', 'Playlists.status']);
+                    }
+                )
+                ->limit(1);
+    }
+    public function getEditabled($id, $userId){
+        $data = $this->findEditabled($id, $userId)
+                ->first();
+        if (empty($data)){
+            throw new \Cake\Network\Exception\NotFoundException();
+        }
+        return $data;
     }
 }

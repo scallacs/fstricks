@@ -7,7 +7,7 @@ use Cake\TestSuite\IntegrationTestCase;
 /**
  * App\Controller\PlaylistVideoTagsController Test Case
  */
-class PlaylistVideoTagsControllerTest extends IntegrationTestCase
+class PlaylistVideoTagsControllerTest extends MyIntegrationTestCase
 {
 
     /**
@@ -28,29 +28,90 @@ class PlaylistVideoTagsControllerTest extends IntegrationTestCase
         'app.sports'
     ];
     
+    /**
+     * setUp method
+     *
+     * @return void
+     */
+    public function setUp() {
+        parent::setUp();
+        $this->Playlists = \Cake\ORM\TableRegistry::get('Playlists');
+        $this->PlaylistVideoTags = \Cake\ORM\TableRegistry::get('PlaylistVideoTags');
+    }
+
+    
+    
+    public function testPlaylist(){
+        $this->post('/api/PlaylistVideoTags/playlist/'.\App\Test\Fixture\PlaylistsFixture::ID_PUBLIC.'.json');
+        $this->assertResponseOk();
+    }
     
     public function testUp(){
-        $this->markTestIncomplete('Not implemented yet.');
-        $this->post('/api/PlaylistVideoTags/down/1');
+        $playlistId = \App\Test\Fixture\PlaylistsFixture::ID_PUBLIC;
+        $playlist = $this->Playlists->get($playlistId);
+        $userId = $playlist->user_id;
+        $this->logUser($userId);
+        $this->post('/api/PlaylistVideoTags/up/'.$playlist->id.'.json');
+        $this->assertResponseOk();
+        $this->assertResultMessageSuccess();
     }
+    
     public function testDown(){
-        $this->markTestIncomplete('Not implemented yet.');
-        $this->post('/api/PlaylistVideoTags/down/1');
+        $playlistId = \App\Test\Fixture\PlaylistsFixture::ID_PUBLIC;
+        $playlist = $this->Playlists->get($playlistId);
+        $userId = $playlist->user_id;
+        $this->logUser($userId);
+        $this->post('/api/PlaylistVideoTags/down/'.$playlist->id.'.json');
+        $this->assertResponseOk();
+        $this->assertResultMessageSuccess();
     }
+    
     public function testAdd(){
-        $this->markTestIncomplete('Not implemented yet.');
+        $playlistId = \App\Test\Fixture\PlaylistsFixture::ID_EMPTY_PLAYLIST;
+        $userId = $this->Playlists->get($playlistId)->user_id;
+        $this->logUser($userId);
         $data = [
-            'video_tag_id' => '',
-            'playlist_id' => ''
+            'video_tag_id' => \App\Test\Fixture\VideoTagsFixture::ID_VALIDATED,
+            'playlist_id' => $playlistId
         ];
-        $this->post('/api/PlaylistVideoTags/add', $data);
+        $this->post('/api/PlaylistVideoTags/add.json', $data);
+        
         $this->assertResponseOk();
-        $result = json_decode($this->_response->body());
+//        debug(json_decode($this->_response->body(), true));
+        $this->assertResultMessageSuccess();
+        
+        // Duplicate
+        \App\Lib\ResultMessage::reset();
+        $this->post('/api/PlaylistVideoTags/add.json', $data);
+        $this->assertResponseOk();
+//        $result = json_decode($this->_response->body(), true);
+        $this->assertResultMessageFailure();
     }
-    public function testRemove(){
-        $this->markTestIncomplete('Not implemented yet.');
-        $this->post('/api/PlaylistVideoTags/delete/1');
+    public function testAddBlockedPlaylist(){
+        $playlistId = \App\Test\Fixture\PlaylistsFixture::ID_BLOCKED;
+        $userId = $this->Playlists->get($playlistId)->user_id;
+        $this->logUser($userId);
+        $data = [
+            'video_tag_id' => \App\Test\Fixture\VideoTagsFixture::ID_VALIDATED,
+            'playlist_id' => $playlistId
+        ];
+        $this->post('/api/PlaylistVideoTags/add.json', $data);
+        $this->assertResponseError(404);
+    }
+    
+    public function testDelete(){
+        $playlistItem = $this->PlaylistVideoTags->get(1);
+        $playlist = $this->Playlists->get($playlistItem->playlist_id);
+        $this->logUser($playlist->user_id);
+        $this->post('/api/PlaylistVideoTags/delete/'.$playlistItem->id.'.json');
         $this->assertResponseOk();
-        $result = json_decode($this->_response->body());
+        $this->assertResultMessageSuccess();
+    }
+    public function testDeleteNotOwner(){
+        $playlistItem = $this->PlaylistVideoTags->get(1);
+        $playlist = $this->Playlists->get($playlistItem->playlist_id);
+        $this->logUser($playlist->user_id + 1);
+        $this->post('/api/PlaylistVideoTags/delete/'.$playlistItem->id.'.json');
+        $this->assertResponseError();
     }
 }

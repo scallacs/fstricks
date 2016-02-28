@@ -25,8 +25,8 @@ class PlaylistVideoTag extends Entity
      * @var array
      */
     protected $_accessible = [
-        '*' => true,
-        'playlist_id' => false,
-        'video_tag_id' => false,
+        'playlist_id' => true,
+        'video_tag_id' => true,
+        'position' => true,
     ];
 }
