@@ -116,7 +116,7 @@ class PlaylistsTable extends Table {
 
     public function getEditabled($id, $userId = null) {
         if ($id === null || $userId === null) {
-            throw new \Cake\Datasource\NotFoundException();
+            throw new \Cake\Network\Exception\NotFoundException();
         }
         $playlist = $this->get($id);
         if ($playlist->user_id !== $userId || $playlist->status === Playlist::STATUS_BLOCKED) {

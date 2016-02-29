@@ -8,14 +8,14 @@ function videoTagItem() {
         scope: {
             videoTag: '=videoTag'
         },
-        controller: ['$scope', '$uibModal', 'PlayerData', 'VideoTagData', 'AuthenticationService', function($scope, $uibModal, PlayerData, VideoTagData, AuthenticationService) {
+        controller: ['$scope', '$uibModal', 'PlayerData', 'VideoTagData', 'AuthenticationService', 
+                function($scope, $uibModal, PlayerData, VideoTagData, AuthenticationService) {
 
             $scope.openReportErrorModal = openReportErrorModal;
             $scope.view = view;
             $scope.playerData = PlayerData;
             $scope.videoTagData = VideoTagData;
             $scope.addToPlaylist = addToPlaylist;
-
             $scope.authData = AuthenticationService.authData;
             
             function openReportErrorModal(videoTag) {

@@ -147,20 +147,21 @@ function ConfigInterceptor($httpProvider, $locationProvider) {
                 var deferred = $q.defer();
                 if (status === 401) {
                     $injector.get('AuthenticationService').logout();
-                    loginModal.open().result
+                    loginModal.open()
+                            .result
                             .then(function() {
-                                deferred.resolve($http(rejection.config));
+                                return $http(rejection.config);
                             })
                             .catch(function() {
                                 $state.go('home');
                                 deferred.reject(rejection);
                             });
-                    return;
+//                    alert('ok');
                 }
 //                else if (status === 404){
 //                }
                 else if (status >= 500) {
-                    alert('Sorry but we have a few issues right now. This functinality is not available, try again later.');
+                    alert('This functinality is not available for now, try again later.');
                     return;
                 }
                 return $q.reject(rejection);

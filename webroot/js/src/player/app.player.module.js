@@ -621,6 +621,11 @@ function EditPlaylistController($scope, PaginateDataLoader, PlaylistItemEntity, 
         $scope.showEditionForm = false;
         event.stopPropagation();
     });
+//    $scope.$on('on-item-removed', function(event, playlist) {
+//        $scope.playlist = playlist;
+//        $scope.showEditionForm = false;
+//        event.stopPropagation();
+//    });
 
     function onDrop(event, $index, item, type, external) {
         PlaylistItemEntity.edit({

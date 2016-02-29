@@ -90,25 +90,25 @@ class PlaylistVideoTagsController extends AppController {
      */
     public function edit() {
         if ($this->request->is('post') &&
-                DataUtil::isPositiveInt($this->request->data, 'playlist_id') && 
-                DataUtil::isPositiveInt($this->request->data, 'video_tag_id') && 
+                DataUtil::isPositiveInt($this->request->data, 'playlist_id') &&
+                DataUtil::isPositiveInt($this->request->data, 'video_tag_id') &&
                 DataUtil::isPositiveInt($this->request->data, 'position')) {
             // Check user authorized to add in this playlist
             $playlistId = DataUtil::getPositiveInt($this->request->data, 'playlist_id');
             $videoTagId = DataUtil::getPositiveInt($this->request->data, 'video_tag_id');
             $position = DataUtil::getPositiveInt($this->request->data, 'position');
-            
+
             $this->Playlists->getEditabled($playlistId, $this->Auth->user('id')); // @throws NotFoundException
-            
+
             $conditions = [
                 'video_tag_id' => $videoTagId,
                 'playlist_id' => $playlistId
             ];
             $playlistVideoTag = $this->PlaylistVideoTags->find('all')->where($conditions)->limit(1)->first();
-            if (!empty($playlistVideoTag)){
+            if (!empty($playlistVideoTag)) {
                 $playlistVideoTag->position = $position;
                 $saved = $this->PlaylistVideoTags->save($playlistVideoTag);
-                if ($saved){
+                if ($saved) {
                     ResultMessage::setMessage(__('Tricks moved'), true);
                 }
             }
@@ -140,13 +140,25 @@ class PlaylistVideoTagsController extends AppController {
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function delete($id) {
+    public function delete($id = null) {
         $this->request->allowMethod(['post', 'delete']);
-        $playlistVideoTag = $this->PlaylistVideoTags->getEditabled($id, $this->Auth->user('id'));
-        if ($this->PlaylistVideoTags->delete($playlistVideoTag)) {
+
+        if ($id !== null) {
+            $playlistVideoTag = $this->PlaylistVideoTags->getEditabled($id, $this->Auth->user('id'));
+            if ($this->PlaylistVideoTags->delete($playlistVideoTag)) {
+                ResultMessage::setMessage(__('Removed from playlist'), true);
+            } else {
+                ResultMessage::setMessage(__('Cannot remove from playlist. Please, try again.'), false);
+            }
+        } else if (DataUtil::isPositiveInt($this->request->data, 'playlist_id') &&
+                DataUtil::isPositiveInt($this->request->data, 'video_tag_id')) {
+            $playlistId = DataUtil::getPositiveInt($this->request->data, 'playlist_id');
+            $this->Playlists->getEditabled($playlistId, $this->Auth->user('id'));
+            $this->PlaylistVideoTags->deleteAll([
+                'playlist_id' => $playlistId,
+                'video_tag_id' => DataUtil::getPositiveInt($this->request->data, 'video_tag_id'),
+            ]);
             ResultMessage::setMessage(__('Removed from playlist'), true);
-        } else {
-            ResultMessage::setMessage(__('Cannot remove from playlist. Please, try again.'), false);
         }
     }
 
