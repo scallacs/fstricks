@@ -7,17 +7,28 @@
             <span class="glyphicon glyphicon-list"></span> 
             My playlists
         </h3>
-        <div ng-repeat="playlist in playlists" class="row" >
-            <div class="pull-right text-bold text-big">
-                <a class="text-info" href="#" ng-click="edit(playlist)">
+
+        <div 
+            dir-paginate="playlist in loader.data.items | itemsPerPage: loader.data.perPage"
+            total-items="loader.data.total"
+            removable-item 
+            removable-item-id="playlist.id" 
+            removable-item-options="removeOptions"
+            class="clearfix">
+            <div class="item-top-btns">
+                <a class="text-info" ui-sref="editplaylist({playlistId: playlist.id})">
                     <span class="glyphicon glyphicon-edit"></span>
                 </a>
-                <a class="text-danger" href="#" ng-click="remove(playlist)">
+                <a class="text-danger btn-remove-item" href="#">
                     <span class="glyphicon glyphicon-trash"></span>
                 </a>
             </div>
-            <div playlist-item playlist="playlist" short-mode="true" remove-btn="true"></div>
+            <div playlist-item playlist="playlist" short-mode="true"></div>
+        </div>
+
+        <div dir-pagination-controls
+             on-page-change="loader.loadPage(newPageNumber)"
+            class="pagination-container">
         </div>
     </div>
-    
 </div>

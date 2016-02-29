@@ -29,7 +29,7 @@ class PlaylistVideoTagsController extends AppController {
      * @throws \Cake\Network\Exception\NotFoundException
      */
     public function playlist($playlistId = null) {
-        $this->Paginator->config(\Cake\Core\Configure::read('Pagination.Playlists'));
+        $this->Paginator->config(\Cake\Core\Configure::read('Pagination.PlaylistVideoTags'));
         
         $playlist = $this->Playlists
                 ->findVisible($this->Auth->user('id'))

@@ -1,0 +1,78 @@
+<form 
+    name="addPlaylistForm" 
+    server-form
+    id="FormAddPlaylist"
+    method="post"  
+    novalidate>
+    <fieldset>
+        <div class="clearfix">
+            <div class="form-group clearfix has-feedback" 
+                 ng-class="{'has-error': addPlaylistForm.title.$invalid}">
+                <input type="text" 
+                       class="form-control" 
+                       placeholder="Title"
+                       name="title"
+                       ng-model="playlist.title"
+                       required
+                       servererror
+                       ng-minlength="2"
+                       ng-maxlength="50"/>
+                <span class="ion-person form-control-feedback"></span>
+                <div class="help-block text-danger" 
+                     ng-if="addPlaylistForm.title.$dirty" 
+                     ng-messages="addPlaylistForm.title.$error">
+                    <div ng-message="required">You must enter a title.</div>
+                    <div ng-message="minlength">You must enter at least 2 caracters.</div>
+                    <div ng-message="maxlength">You cannot enter more than 50 caracters.</div>
+                    <div ng-message="server">{{addPlaylistForm.title.$error.server}}</div>
+                </div>
+            </div>
+            <div class="form-group clearfix has-feedback" 
+                 ng-class="{'has-error': addPlaylistForm.description.$invalid}">
+                <textarea type="text" 
+                          class="form-control" 
+                          placeholder="description"
+                          name="description"
+                          ng-model="playlist.description"
+                          servererror
+                          ng-maxlength="1000">
+                </textarea>
+                <span class="ion-person form-control-feedback"></span>
+                <div class="help-block text-danger" 
+                     ng-if="addPlaylistForm.description.$dirty" 
+                     ng-messages="addPlaylistForm.description.$error">
+                    <div ng-message="maxlength">You cannot enter more than 1000 caracters.</div>
+                    <div ng-message="server">{{addPlaylistForm.description.$error.server}}</div>
+                </div>
+            </div>
+            <div class="clearfix">
+                <div class="form-group clearfix has-feedback" 
+                     ng-class="{'has-error': addPlaylistForm.status.$invalid}">
+                    <select
+                        ng-model="playlist.status"
+                        name="status"
+                        class="form-control"
+                        servererror>
+                        <option ng-repeat="status in availableStatus" name="playlistStatus{{status.code}}" 
+                                value="{{status.code}}">
+                            {{status.name}}
+                        </option>
+                    </select>
+                    <span class="ion-person form-control-feedback"></span>
+                    <div class="help-block text-danger" 
+                         ng-messages="addPlaylistForm.status.$error">
+                        <div ng-message="server">{{addPlaylistForm.status.$error.server}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" 
+                        ng-click="addPlaylist(playlist)" 
+                        ng-disabled="addPlaylistForm.$invalid"
+                        class="btn btn-success">
+                    <span class="glyphicon glyphicon-plus-sign"></span>
+                    Save
+                </button>
+            </div>
+    </fieldset>
+</form>

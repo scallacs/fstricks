@@ -22,6 +22,7 @@ angular.module('app.player', [
         .controller('ViewPlaylistController', ViewPlaylistController)
         .controller('DashboardController', DashboardController)
         .controller('ManagePlaylistController', ManagePlaylistController)
+        .controller('EditPlaylistController', EditPlaylistController)
         .controller('ModalPlaylistController', ModalPlaylistController);
 
 ConfigRoute.$inject = ['$stateProvider'];
@@ -58,6 +59,15 @@ function ConfigRoute($stateProvider) {
                 url: '/playlist/manage',
                 controller: 'ManagePlaylistController',
                 templateUrl: baseUrl + 'playlist-manage.html',
+                data: {
+                    requireLogin: true,
+                    pageLoader: true
+                }
+            })
+            .state('editplaylist', {
+                url: '/playlist/edit/:playlistId',
+                controller: 'EditPlaylistController',
+                templateUrl: baseUrl + 'playlist-edit.html',
                 data: {
                     requireLogin: true,
                     pageLoader: true
@@ -161,8 +171,8 @@ function ConfigRoute($stateProvider) {
             });
 }
 
-DashboardController.$inject = ['$scope', 'VideoTagLoader', 'SharedData', '$state'];
-function DashboardController($scope, VideoTagLoader, SharedData, $state) {
+DashboardController.$inject = ['$scope', 'PaginateDataLoader', 'SharedData', '$state'];
+function DashboardController($scope, PaginateDataLoader, SharedData, $state) {
 
     $scope.workspaces = [
         {id: 'pending', name: "Pendings", active: true, filters: {status: 'pending', order: 'modified'}},
@@ -189,7 +199,7 @@ function DashboardController($scope, VideoTagLoader, SharedData, $state) {
 
         for (var i = 0; i < $scope.workspaces.length; i++) {
             var workspace = $scope.workspaces[i];
-            workspace.loader = VideoTagLoader
+            workspace.loader = PaginateDataLoader
                     .instance(workspace.id)
                     .setFilters(workspace.filters)
                     .setMode('replace')
@@ -386,7 +396,8 @@ function ViewSearchController(VideoTagData, $stateParams, PlayerData, SharedData
     PlayerData.stop();
     PlayerData.showListTricks = true;
 //    console.log($stateParams);
-    VideoTagData.reset()
+    VideoTagData.reset();
+    VideoTagData.getLoader()
             .setOrder($stateParams.order)
             .setFilter('tag_name', $stateParams.tagName)
             .startLoading()
@@ -399,8 +410,9 @@ ViewPlaylistController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'Pla
 function ViewPlaylistController($scope, VideoTagData, $stateParams, PlayerData, SharedData, PlaylistItemEntity) {
     PlayerData.showViewMode();
     PlayerData.stop();
-    PlayerData.showListTricks = false;
     VideoTagData.reset();
+    PlayerData.showListTricks = false;
+    PlayerData.playAll = true;
     $scope.playlist = false;
 
     var loader = VideoTagData.getLoader();
@@ -413,12 +425,20 @@ function ViewPlaylistController($scope, VideoTagData, $stateParams, PlayerData, 
     }
 
     loader.startLoading()
-            .then(function(){
+            .then(function() {
                 $scope.playlist = loader.data.extra.playlist;
             })
             .finally(function() {
                 SharedData.pageLoader(false);
             });
+
+    $scope.startPlaylist = startPlaylist;
+
+    function startPlaylist() {
+        if (VideoTagData.getItems().length > 0) {
+            PlayerData.playVideoTag(VideoTagData.getItems()[0], false);
+        }
+    }
 }
 
 
@@ -548,50 +568,47 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     }
 }
 
-ManagePlaylistController.$inject = ['$scope', 'PlaylistEntity', 'SharedData'];
-function ManagePlaylistController($scope, PlaylistEntity, SharedData) {
-    $scope.playlists = [];
+ManagePlaylistController.$inject = ['$scope', 'PlaylistEntity', 'SharedData', 'PaginateDataLoader'];
+function ManagePlaylistController($scope, PlaylistEntity, SharedData, PaginateDataLoader) {
+    $scope.removeOptions = {trigger: '.btn-remove-item', 'controller': 'Playlists', confirm: true, wait: false};
 
-    loadPlaylists();
+    $scope.loader = PaginateDataLoader.instance('playlist')
+            .setResource(PlaylistEntity.user)
+            .setMode('replace');
 
-    function loadPlaylists() {
-        // Load user playlists
-        return PlaylistEntity.user({}, function(playlists) {
-            $scope.playlists = playlists;
-        }).$promise.finally(function() {
-            SharedData.pageLoader(false);
-        });
-    }
-    
-    function remove(playlist){
-        PlaylistEntity.delete({id: playlist.id}, function(){
-            
-        });
-    }
+    $scope.loader
+            .startLoading()
+            .finally(function() {
+                SharedData.pageLoader(false);
+            });
+
+}
+
+EditPlaylistController.$inject = [];
+function EditPlaylistController() {
+
 }
 
 ModalPlaylistController.$inject = ['$scope', '$uibModalInstance', 'PlaylistEntity', 'PlaylistItemEntity',
-    'videoTag', 'toaster'];
+    'videoTag', 'toaster', 'PaginateDataLoader'];
 function ModalPlaylistController($scope, $uibModalInstance, PlaylistEntity, PlaylistItemEntity,
-        videoTag, toaster) {
-
+        videoTag, toaster, PaginateDataLoader) {
     $scope.videoTag = videoTag;
     $scope.playlists = [];
     $scope.showAddPlaylistForm = false;
-    $scope.availableStatus = [
-        {code: 'public', name: 'Public', icon: 'world'},
-        {code: 'private', name: 'Private', icon: 'private'}
-    ];
-    $scope.playlist = {
-        status: 'public'
-    };
     $scope.ok = ok;
     $scope.cancel = cancel;
-    $scope.addPlaylist = addPlaylist;
     $scope.toggleForm = function() {
         $scope.showAddPlaylistForm = !$scope.showAddPlaylistForm;
     };
     $scope.addToPlaylist = addToPlaylist;
+
+    $scope.$on('on-playlist-save', function(event, response) {
+        $scope.showAddPlaylistForm = false;
+        addToPlaylist({id: response.data.playlist_id});
+        $uibModalInstance.close($scope.videoTag);
+    });
+
     loadPlaylists();
 
     function ok() {
@@ -600,23 +617,19 @@ function ModalPlaylistController($scope, $uibModalInstance, PlaylistEntity, Play
     function cancel() {
         $uibModalInstance.dismiss('cancel');
     }
-    function addPlaylist(playlist) {
-        playlist.video_tag_id = videoTag.id;
-        console.log($scope.addPlaylistForm);
-        $scope.addPlaylistForm
-                .submit(PlaylistEntity.add(playlist).$promise)
-                .then(function(response) {
-                    if (response.success) {
-                        $uibModalInstance.close($scope.videoTag);
-                    }
-                });
-    }
 
     function loadPlaylists() {
-        // Load user playlists
-        return PlaylistEntity.user({}, function(playlists) {
-            $scope.playlists = playlists;
-        });
+
+        $scope.loader = PaginateDataLoader.instance('playlist')
+                .setResource(PlaylistEntity.user)
+                .setMode('replace')
+                .setLimit(7);
+
+        $scope.loader
+                .startLoading()
+                .finally(function() {
+
+                });
     }
 
     function addToPlaylist(playlist) {
@@ -624,7 +637,6 @@ function ModalPlaylistController($scope, $uibModalInstance, PlaylistEntity, Play
             video_tag_id: videoTag.id,
             playlist_id: playlist.id
         }, function(result) {
-            console.log(result);
             if (result.success) {
                 ok();
             }

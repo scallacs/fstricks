@@ -2,7 +2,7 @@ angular
         .module('app.core', ['ngCookies'])
         .factory('PlayerData', PlayerData)
         .factory('VideoTagData', VideoTagData)
-        .factory('VideoTagLoader', VideoTagLoader)
+        .factory('PaginateDataLoader', PaginateDataLoader)
         .factory('SharedData', SharedData)
         .factory('NationalityEntity', NationalityEntity)
         .factory('RiderEntity', RiderEntity)
@@ -48,6 +48,7 @@ function PlayerData(VideoTagData, $q) {
             this.showListTricks = true;
             this.mode = 'view';
             this.looping = false; // True if we want to loop on the current tag
+            this.playAll = false; // True if want to go to the next tag on end
             this.onCurrentTimeUpdate = function() {
             };
             this.data = {
@@ -113,6 +114,9 @@ function PlayerData(VideoTagData, $q) {
         if (this.looping) {
             this.seekTo(this.data.begin);
         }
+        else if (this.playAll && VideoTagData.hasNext()){
+            this.playVideoTag(VideoTagData.next(), false);
+        }
     }
     function hasError() {
         return this.data.provider !== null &&
@@ -174,13 +178,13 @@ function PlayerData(VideoTagData, $q) {
         //console.log(this.players[this.data.provider]);
         return this.players[this.data.provider];
     }
-    function playVideoTag(videoTag) {
+    function playVideoTag(videoTag, looping) {
         this.data.provider = videoTag.provider_id;
         return this.getPromise().then(function() {
-            _view(videoTag);
+            _view(videoTag, looping);
         });
     }
-    function _view(videoTag) {
+    function _view(videoTag, looping) {
         //console.log("PlayerData._view: " + videoTag.id);
 //        console.log(videoTag);
         VideoTagData.setCurrentTag(videoTag);
@@ -193,8 +197,7 @@ function PlayerData(VideoTagData, $q) {
         obj.data.begin = videoTag.begin;
         obj.data.end = videoTag.end;
         obj.showListTricks = false;
-        obj.looping = true;
-
+        obj.looping = !angular.isDefined(looping) ? true : looping;
         if (videoTag.provider_id === obj.data.provider &&
                 videoTag.video_url === obj.data.video_url) {
             obj.seekTo(videoTag.begin);
@@ -297,33 +300,33 @@ function PlayerData(VideoTagData, $q) {
     }
 }
 
-VideoTagLoader.$inject = ['VideoTagEntity', '$q'];
-function VideoTagLoader(VideoTagEntity, $q) {
+PaginateDataLoader.$inject = ['VideoTagEntity', '$q'];
+function PaginateDataLoader(VideoTagEntity, $q) {
 
-    function VideoTagLoader() {
+    function PaginateDataLoader() {
         this.init();
     }
-    VideoTagLoader.prototype.init = init;
-    VideoTagLoader.prototype.loadAll = loadAll;
-    VideoTagLoader.prototype.loadNextPage = loadNextPage;
-    VideoTagLoader.prototype.loadPage = loadPage;
-    VideoTagLoader.prototype.setFilters = setFilters;
-    VideoTagLoader.prototype.setFilter = setFilter;
-    VideoTagLoader.prototype.setLimit = setLimit;
-    VideoTagLoader.prototype.remove = remove;
-    VideoTagLoader.prototype.startLoading = startLoading;
-    VideoTagLoader.prototype.setOrder = setOrder;
-    VideoTagLoader.prototype.add = add;
-    VideoTagLoader.prototype.hasData = hasData;
-    VideoTagLoader.prototype.setResource = setResource;
-    VideoTagLoader.prototype.setMode = setMode;
-    VideoTagLoader.prototype._onSuccessPageLoad = _onSuccessPageLoad;
+    PaginateDataLoader.prototype.init = init;
+    PaginateDataLoader.prototype.loadAll = loadAll;
+    PaginateDataLoader.prototype.loadNextPage = loadNextPage;
+    PaginateDataLoader.prototype.loadPage = loadPage;
+    PaginateDataLoader.prototype.setFilters = setFilters;
+    PaginateDataLoader.prototype.setFilter = setFilter;
+    PaginateDataLoader.prototype.setLimit = setLimit;
+    PaginateDataLoader.prototype.remove = remove;
+    PaginateDataLoader.prototype.startLoading = startLoading;
+    PaginateDataLoader.prototype.setOrder = setOrder;
+    PaginateDataLoader.prototype.add = add;
+    PaginateDataLoader.prototype.hasData = hasData;
+    PaginateDataLoader.prototype.setResource = setResource;
+    PaginateDataLoader.prototype.setMode = setMode;
+    PaginateDataLoader.prototype._onSuccessPageLoad = _onSuccessPageLoad;
 
     return {
         instances: {},
         instance: function(name) {
             if (!angular.isDefined(this.instances[name])) {
-                this.instances[name] = new VideoTagLoader();
+                this.instances[name] = new PaginateDataLoader();
             }
             return this.instances[name];
         }
@@ -392,7 +395,7 @@ function VideoTagLoader(VideoTagEntity, $q) {
                 deferred.resolve(results);
             }
             else {
-                VideoTagLoader.loadNextPage().then(successCallback);
+                PaginateDataLoader.loadNextPage().then(successCallback);
             }
         }
     }
@@ -481,19 +484,19 @@ function VideoTagLoader(VideoTagEntity, $q) {
     }
 }
 
-VideoTagData.$inject = ['VideoTagLoader'];
-function VideoTagData(VideoTagLoader) {
+VideoTagData.$inject = ['PaginateDataLoader'];
+function VideoTagData(PaginateDataLoader) {
 
     var obj = {
         getLoader: function() {
-            return VideoTagLoader.instance('default');
+            return PaginateDataLoader.instance('default');
         },
         currentTag: null,
         setCurrentTag: function(tag) {
             this.currentTag = tag;
         },
         reset: function() {
-            VideoTagLoader.instance('default').init();
+            PaginateDataLoader.instance('default').init();
             this.currentTag = null;
         },
         next: function() {
@@ -585,7 +588,7 @@ function SharedData() {
     var data = {
         loadingState: true,
         pageLoader: function(val) {
-            console.log('Set loading sate: ' + val);
+            //console.log('Set loading sate: ' + val);
             this.loadingState = val ? true : false;
         }
     };
@@ -832,7 +835,7 @@ function PlaylistEntity($resource) {
         user: {
             method: 'GET',
             params: {action: 'user'},
-            isArray: true
+            isArray: false
         },
         search: {
             method: 'GET',

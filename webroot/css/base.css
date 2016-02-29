@@ -344,9 +344,30 @@ header .navbar-nav > li > a{
 }
 .message.success{}
 
+.item-top-btns{
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 10px 5px 10px 0px;
+    float: right;
+}
+.item-top-btns a{
+    margin-right: 5px;
+}
+/* ------------------------------------------------------------ */
+/* PLAYLIST  */
+/* ------------------------------------------------------------ */
+
+.playlist-item{
+    padding-bottom: 10px;
+}
+.bg-primary 
+.playlist-item{
+    border-bottom: 1px solid #222;
+}
 
 .playlist-heading{
-    padding-top: 5px;   
+    padding: 5px 0px 5px 0px;
+    font-size: 1.4em;
 }
 .playlist-count-ref{
     font-size: 1.5em;

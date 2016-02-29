@@ -28,16 +28,13 @@ class PlaylistsController extends AppController {
      * @return void
      */
     public function user() {
-//        $this->Paginator->config(\Cake\Core\Configure::read('Pagination.Playlists'));
+        $this->Paginator->config(\Cake\Core\Configure::read('Pagination.Playlists'));
         $query = $this->Playlists
                 ->findVisible($this->Auth->user('id'))
                 ->order(['Playlists.modified DESC']);
-        $data = $query->all();
-//        ResultMessage::setPaginateData(
-//                $this->paginate($query),
-//                $this->request->params['paging']['Playlists']);
-        ResultMessage::setWrapper(false);
-        ResultMessage::overwriteData($data);
+        ResultMessage::setPaginateData(
+                $this->paginate($query),
+                $this->request->params['paging']['Playlists']);
     }
 
     /**

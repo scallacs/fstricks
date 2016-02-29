@@ -273,10 +273,10 @@ function EditionTag() {
  */
 AddVideoTagController.$inject = ['$scope', '$filter', '$state', '$stateParams',
     'VideoEntity', 'VideoTagEntity', 'TagEntity', 'RiderEntity', 'SharedData', 'PlayerData',
-    'VideoTagData', 'EditionTag', 'AuthenticationService', 'VideoTagLoader'];
+    'VideoTagData', 'EditionTag', 'AuthenticationService', 'PaginateDataLoader'];
 function AddVideoTagController($scope, $filter, $state, $stateParams,
         VideoEntity, VideoTagEntity, TagEntity, RiderEntity, SharedData, PlayerData,
-        VideoTagData, EditionTag, AuthenticationService, VideoTagLoader) {
+        VideoTagData, EditionTag, AuthenticationService, PaginateDataLoader) {
 
     PlayerData.showEditionMode();
 
@@ -492,7 +492,7 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
 
     function loadSimilarTags() {
         var videoTag = editionTag._video_tag;
-        VideoTagLoader.instance('similarTags')
+        PaginateDataLoader.instance('similarTags')
                 .init()
                 .setResource(VideoTagEntity.similar)
                 .setFilter('VideoTag', videoTag)

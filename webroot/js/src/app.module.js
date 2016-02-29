@@ -58,7 +58,7 @@ function Run($rootScope, AuthenticationService, loginModal, $state, SharedData) 
             $state.go(toState.redirectTo, toParams);
             return;
         }
-        console.log('$stateChangeStart: ' + event);
+        //console.log('$stateChangeStart: ' + event);
         var requireLogin = toState.data.requireLogin;
 
         if (requireLogin && !AuthenticationService.isAuthed()) {

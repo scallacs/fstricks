@@ -100,7 +100,7 @@ class PlaylistsTable extends Table {
     }
 
     public function findPublic() {
-        return $this->find('all')->where(['Playlists.status' => Playlist::STATUS_PUBLIC]);
+        return $this->find('all')->where(['Playlists.status' => Playlist::STATUS_PUBLIC, 'Playlists.count_tags > 1']);
     }
 
     public function findVisible($userId = null, $query = null) {
@@ -109,8 +109,8 @@ class PlaylistsTable extends Table {
         }
         return $query->where([
                     'OR' => [
-                        ['Playlists.status' => Playlist::STATUS_PUBLIC],
-                        ['Playlists.status' => Playlist::STATUS_PRIVATE, 'Playlists.user_id' => $userId]]
+                        ['Playlists.status' => Playlist::STATUS_PUBLIC, 'Playlists.count_tags > 0'],
+                        ['Playlists.status IN ' => [Playlist::STATUS_PRIVATE,Playlist::STATUS_PUBLIC], 'Playlists.user_id' => $userId]]
         ]);
     }
 

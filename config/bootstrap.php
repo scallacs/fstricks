@@ -251,7 +251,8 @@ Configure::write('Pagination', [
     'Playlists' => ['maxLimit' => 20, 'limit' => 10],
     'Riders' => ['maxLimit' => 20, 'limit' => 10],
     'VideoTags' => ['maxLimit' => 20, 'limit' => 20],
-    'Playlists' => ['maxLimit' => 20, 'limit' => 20],
+    'Playlists' => ['maxLimit' => 10, 'limit' => 10],
+    'PlaylistVideoTags' => ['maxLimit' => 20, 'limit' => 20],
 ]);
 
 Cache::config('veryLongCache', [
