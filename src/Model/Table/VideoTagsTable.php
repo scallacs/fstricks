@@ -65,7 +65,7 @@ class VideoTagsTable extends Table {
      * @param query | null $queryTags
      * @return query
      */
-    public function findAndJoin($queryVideo = null, $queryTags = null, $queryRiders = null) {
+    public function findAndJoin($query = null, $queryVideo = null, $queryTags = null, $queryRiders = null) {
         if ($queryVideo === null) {
             $queryVideo = function($q) {
                 return $q;
@@ -95,7 +95,10 @@ class VideoTagsTable extends Table {
                 ]);
             };
         }
-        return $this->find('all')
+        if ($query === null){
+            $query = $this->find('all');
+        }
+        return $query
                         ->select([
                             'tag_slug' => 'Tags.slug',
                             'tag_name' => 'Tags.name',

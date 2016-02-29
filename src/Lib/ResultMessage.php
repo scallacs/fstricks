@@ -77,6 +77,13 @@ class ResultMessage {
             'items' => $results,
         ];
     }
+    
+    public static function setPaginateExtra($key, $value){
+        if (!isset(self::$data['extra'])){
+            self::$data['extra'] = [];
+        }
+        self::$data['extra'][$key] = $value;
+    }
 
     public static function setSuccess($value = true) {
         self::$result['success'] = (bool) $value;

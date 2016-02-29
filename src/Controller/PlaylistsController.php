@@ -16,7 +16,7 @@ class PlaylistsController extends AppController {
         parent::initialize();
         $this->loadComponent('Paginator');
     }
-    
+
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
         $this->Auth->allow(['index', 'view', 'search']);
@@ -30,8 +30,8 @@ class PlaylistsController extends AppController {
     public function user() {
 //        $this->Paginator->config(\Cake\Core\Configure::read('Pagination.Playlists'));
         $query = $this->Playlists
-                    ->findVisible($this->Auth->user('id'))
-                    ->order(['Playlists.modified DESC']);
+                ->findVisible($this->Auth->user('id'))
+                ->order(['Playlists.modified DESC']);
         $data = $query->all();
 //        ResultMessage::setPaginateData(
 //                $this->paginate($query),
@@ -50,8 +50,7 @@ class PlaylistsController extends AppController {
         $query = $this->Playlists->findPublic()
                 ->order(['Playlists.count_points DESC']);
         ResultMessage::setPaginateData(
-                $this->paginate($query),
-                $this->request->params['paging']['Playlists']);
+                $this->paginate($query), $this->request->params['paging']['Playlists']);
     }
 
     /**
@@ -85,15 +84,18 @@ class PlaylistsController extends AppController {
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function view($slug = null) {
+    public function view($id = null) {
         ResultMessage::setWrapper(false);
-        $query = $this->Playlists->findVisible($this->Auth->user('id'))
+
+        $query = $this->Playlists
+                ->findVisible($this->Auth->user('id'))
                 ->limit(1)
+                ->hydrate(false)
                 ->where([
-            'Playlists.slug' => $slug,
+            'Playlists.id' => $id,
         ]);
         $data = $query->first();
-        if (empty($data)){
+        if (empty($data)) {
             throw new \Cake\Network\Exception\NotFoundException();
         }
         ResultMessage::overwriteData($data);

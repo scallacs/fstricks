@@ -1,0 +1,115 @@
+
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close"  aria-label="Close" ng-click="cancel()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Playlists</h4>
+    </div>
+    <div class="modal-body clearfix" ng-show="playlists.length > 0 || showAddPlaylistForm">
+        <div ng-show="!showAddPlaylistForm" ng-repeat="playlist in playlists" >
+            <div class="col-xs-1">
+                <button class="btn btn-primary" ng-click="addToPlaylist(playlist)">
+                    <span class="glyphicon glyphicon-check"></span>
+                </button>
+            </div>
+            <div class="col-xs-11" playlist-item playlist="playlist" shortmode="true"></div>
+        </div>
+        <form 
+            name="addPlaylistForm" 
+            ng-show="showAddPlaylistForm"
+            server-form
+            id="FormAddPlaylist"
+            method="post"  
+            novalidate>
+            <fieldset>
+                <div class="clearfix">
+                    <div class="form-group clearfix has-feedback" 
+                         ng-class="{'has-error': addPlaylistForm.title.$invalid}">
+                        <input type="text" 
+                               class="form-control" 
+                               placeholder="Title"
+                               name="title"
+                               ng-model="playlist.title"
+                               required
+                               servererror
+                               ng-minlength="2"
+                               ng-maxlength="20"/>
+                        <span class="ion-person form-control-feedback"></span>
+                        <div class="help-block text-danger" 
+                             ng-if="addPlaylistForm.title.$dirty" 
+                             ng-messages="addPlaylistForm.title.$error">
+                            <div ng-message="required">You must enter a title.</div>
+                            <div ng-message="minlength">You must enter at least 2 caracters.</div>
+                            <div ng-message="maxlength">You cannot enter more than 50 caracters.</div>
+                            <div ng-message="server">{{addPlaylistForm.title.$error.server}}</div>
+                        </div>
+                    </div>
+                    <div class="form-group clearfix has-feedback" 
+                         ng-class="{'has-error': addPlaylistForm.description.$invalid}">
+                        <textarea type="text" 
+                                  class="form-control" 
+                                  placeholder="description"
+                                  name="description"
+                                  ng-model="playlist.description"
+                                  servererror
+                                  ng-maxlength="1000">
+                        </textarea>
+                        <span class="ion-person form-control-feedback"></span>
+                        <div class="help-block text-danger" 
+                             ng-if="addPlaylistForm.description.$dirty" 
+                             ng-messages="addPlaylistForm.description.$error">
+                            <div ng-message="maxlength">You cannot enter more than 1000 caracters.</div>
+                            <div ng-message="server">{{addPlaylistForm.description.$error.server}}</div>
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                        <div class="form-group clearfix has-feedback" 
+                             ng-class="{'has-error': addPlaylistForm.status.$invalid}">
+                            <select
+                                ng-model="playlist.status"
+                                name="status"
+                                class="form-control"
+                                servererror>
+                                <option ng-repeat="status in availableStatus" name="playlistStatus{{status.code}}" 
+                                        value="{{status.code}}">
+                                    {{status.name}}
+                                </option>
+                            </select>
+                            <span class="ion-person form-control-feedback"></span>
+                            <div class="help-block text-danger" 
+                                 ng-messages="addPlaylistForm.status.$error">
+                                <div ng-message="server">{{addPlaylistForm.status.$error.server}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" 
+                                ng-click="addPlaylist(playlist)" 
+                                ng-disabled="addPlaylistForm.$invalid"
+                                class="btn btn-success">
+                            <span class="glyphicon glyphicon-plus-sign"></span>
+                            Save
+                        </button>
+                    </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a ui-sref="manageplaylist">Manage playlists</a> &nbsp;&nbsp;
+        <button class="btn btn-primary" ng-if="!showAddPlaylistForm" ng-click="toggleForm()">
+            <span class="glyphicon glyphicon-plus-sign"></span> 
+            New playlist
+        </button>
+        <button class="btn btn-primary" ng-if="showAddPlaylistForm" ng-click="toggleForm()">
+            <span class="glyphicon glyphicon-arrow-left"></span> 
+            Back
+        </button>
+        <button type="button" class="btn btn-default" ng-click="cancel()">
+            <span class="glyphicon glyphicon-remove"></span>  
+            Close
+        </button>
+    </div>
+</div><!-- /.modal-content -->
+
+

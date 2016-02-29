@@ -19,6 +19,9 @@ class DataUtil{
     static function getLowerString($data, $key, $default = ''){
         return isset($data[$key]) ? self::toLowerString($data[$key]) : $default;
     }
+    static function getBoolean($data, $key, $default = false){
+        return isset($data[$key]) ? (bool) $data[$key] : $default;
+    }
     static function toLowerString($str){
         return mb_strtolower(trim($str));
     }

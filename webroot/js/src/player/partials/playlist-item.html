@@ -1,13 +1,21 @@
 <div class="playlist-item">
-    <span class="col-xs-4 text-center">
-        <img class="thumbnail" ng-src="{{playlist.thumbnail('default')}}">
-    </span>
-    <div class="col-xs-8">
-        <h4 class="media-heading">
-            <a ui-sref="videoplayer.playlist({playlistId: playlist.id})">{{playlist.title()}}</a>
+    <div ng-class="{'col-sm-7': !shortmode}">
+        <h4 class="playlist-heading">
+            <a ui-sref="videoplayer.playlist({playlistId: playlist.id})">{{playlist.title}}</a>
         </h4> 
-        <p>
+        <p class="text-sm"  ng-if="!shortmode">
             {{playlist.description}}
         </p>
+        <p class="text-sm text-muted">
+            <span class="text-bold">{{playlist.status}}</span> - Created {{ playlist.created | timeago}}
+        </p>
     </div> 
+    <div class="col-sm-5 clearfix" ng-if="!shortmode">
+        <div class="col-xs-8" >
+            <div up-down-points data="playlist" controller="PlaylistPoints">
+        </div>
+        <div class="col-xs-4 playlist-count-ref">
+            {{playlist.count_tags}} <span class="glyphicon glyphicon-tags"></span>
+        </div>
+    </div>
 </div>

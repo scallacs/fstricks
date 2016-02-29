@@ -345,6 +345,15 @@ header .navbar-nav > li > a{
 .message.success{}
 
 
+.playlist-heading{
+    padding-top: 5px;   
+}
+.playlist-count-ref{
+    font-size: 1.5em;
+    font-weight: bold;
+    padding-top: 4px
+}
+
 /* ------------------------------------------------------------ */
 /* PLAYER BAR  */
 /* ------------------------------------------------------------ */

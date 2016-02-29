@@ -94,24 +94,13 @@
                         </span>
                     </p>
 
-                    <div  ng-controller="VideoTagPointsController" 
-                          ng-show="videoTag.time_to_play == null || videoTag.time_to_play == 0">
-                        <button type="button" class="btn btn-primary"  ng-click="down(videoTag)" 
-                                ng-disabled="videoTagData.currentTag.id !== videoTag.id || videoTag.user_rate === 'loading'"
-                                ng-class="videoTag.user_rate === 'down' ? 'active' : ''">
-                            <span class="glyphicon glyphicon-arrow-down"></span>
-                        </button>
-                        <span class="item-points">
-                            {{videoTag.count_points}}
-                        </span>
-                        <button type="button" 
-                                class="btn btn-primary" 
-                                ng-click="up(videoTag)" 
-                                ng-disabled="videoTagData.currentTag.id !== videoTag.id || videoTag.user_rate === 'loading'"
-                                ng-class="videoTag.user_rate === 'up' ? 'active' : ''">
-                            <span class="glyphicon glyphicon-arrow-up"></span>
-                        </button>
-                    </div>
+                    <fieldset up-down-points
+                         ng-show="videoTag.time_to_play == null || videoTag.time_to_play == 0"
+                         ng-disabled="videoTagData.currentTag.id !== videoTag.id"
+                         data="videoTag"
+                         controller="VideoTagPoints"
+                        >
+                    </fieldset>
                 </div>
             </div>
             <div class="col-xs-2">
@@ -134,8 +123,14 @@
                         </li>           
                         <li>
                             <a href="" ng-click="openReportErrorModal(videoTag)">
-                                <span class="glyphicon glyphicon-warning-sign"></span> 
+                                <span class="glyphicon glyphicon-warning-sign"></span>  
                                 Report an error
+                            </a>
+                        </li>      
+                        <li>
+                            <a href="" ng-click="addToPlaylist(videoTag)">
+                                <span class="glyphicon glyphicon-plus-sign"></span> 
+                                Add to playlist...
                             </a>
                         </li>
                         <li ng-if="(videoTag.status === 'pending' || videoTag.status === 'rejected') &&

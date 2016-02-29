@@ -11,7 +11,6 @@ angular.module('app.player', [
 ])
         .config(ConfigRoute)
         .controller('AddVideoController', AddVideoController)
-        .controller('VideoTagPointsController', VideoTagPointsController)
         .controller('PlayerController', PlayerController)
         .controller('ViewVideoController', ViewVideoController)
         .controller('ViewTagController', ViewTagController)
@@ -22,7 +21,8 @@ angular.module('app.player', [
         .controller('ViewValidationController', ViewValidationController)
         .controller('ViewPlaylistController', ViewPlaylistController)
         .controller('DashboardController', DashboardController)
-        .controller('AddPlaylistController', AddPlaylistController);
+        .controller('ManagePlaylistController', ManagePlaylistController)
+        .controller('ModalPlaylistController', ModalPlaylistController);
 
 ConfigRoute.$inject = ['$stateProvider'];
 function ConfigRoute($stateProvider) {
@@ -49,6 +49,15 @@ function ConfigRoute($stateProvider) {
                 url: '/dashboard',
                 controller: 'DashboardController',
                 templateUrl: baseUrl + 'dashboard.html',
+                data: {
+                    requireLogin: true,
+                    pageLoader: true
+                }
+            })
+            .state('manageplaylist', {
+                url: '/playlist/manage',
+                controller: 'ManagePlaylistController',
+                templateUrl: baseUrl + 'playlist-manage.html',
                 data: {
                     requireLogin: true,
                     pageLoader: true
@@ -124,11 +133,11 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer.playlist', {
-                url: '/playlist?ids',
+                url: '/playlist/:playlistId?ids',
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewPlaylistController',
-                        templateUrl: baseUrl + 'pick-video.html'
+                        templateUrl: baseUrl + 'playlist-view.html'
                     }
                 }
             })
@@ -377,24 +386,39 @@ function ViewSearchController(VideoTagData, $stateParams, PlayerData, SharedData
     PlayerData.stop();
     PlayerData.showListTricks = true;
 //    console.log($stateParams);
-    VideoTagData.reset();
-    VideoTagData.getLoader().setOrder($stateParams.order);
-    VideoTagData.getLoader().setFilter('tag_name', $stateParams.tagName);
-    VideoTagData.getLoader().startLoading().finally(function() {
-        SharedData.pageLoader(false);
-    });
+    VideoTagData.reset()
+            .setOrder($stateParams.order)
+            .setFilter('tag_name', $stateParams.tagName)
+            .startLoading()
+            .finally(function() {
+                SharedData.pageLoader(false);
+            });
 }
 
-ViewPlaylistController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData'];
-function ViewPlaylistController(VideoTagData, $stateParams, PlayerData, SharedData) {
+ViewPlaylistController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'PlaylistItemEntity'];
+function ViewPlaylistController($scope, VideoTagData, $stateParams, PlayerData, SharedData, PlaylistItemEntity) {
     PlayerData.showViewMode();
     PlayerData.stop();
-    PlayerData.showListTricks = true;
+    PlayerData.showListTricks = false;
     VideoTagData.reset();
-    VideoTagData.getLoader().setFilter('video_tag_ids', $stateParams.ids);
-    VideoTagData.getLoader().startLoading().finally(function() {
-        SharedData.pageLoader(false);
-    });
+    $scope.playlist = false;
+
+    var loader = VideoTagData.getLoader();
+    if ($stateParams.playlistId) {
+        loader.setResource(PlaylistItemEntity.playlist)
+                .setFilter('id', $stateParams.playlistId);
+    }
+    else if ($stateParams.ids) {
+        loader.setFilter('video_tag_ids', $stateParams.ids);
+    }
+
+    loader.startLoading()
+            .then(function(){
+                $scope.playlist = loader.data.extra.playlist;
+            })
+            .finally(function() {
+                SharedData.pageLoader(false);
+            });
 }
 
 
@@ -463,7 +487,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     VideoTagData.reset();
     VideoTagData.mode = 'validation';
     loadNext();
-    
+
     $scope.rateAccurate = rateAccurate;
     $scope.rateFake = rateFake;
     $scope.skip = skip;
@@ -524,38 +548,89 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     }
 }
 
-VideoTagPointsController.$inject = ['$scope', 'VideoTagPointEntity'];
-function VideoTagPointsController($scope, VideoTagPointEntity) {
-    $scope.up = up;
-    $scope.down = down;
+ManagePlaylistController.$inject = ['$scope', 'PlaylistEntity', 'SharedData'];
+function ManagePlaylistController($scope, PlaylistEntity, SharedData) {
+    $scope.playlists = [];
 
-    function up(data) {
-        data.user_rate = 'loading';
-        VideoTagPointEntity.up({video_tag_id: data.id}, function(response) {
-            if (data.user_rate === 'up') {
-                return;
-            }
-            data.user_rate = 'up';
-            if (response.success) {
-                data.count_points = data.count_points + 1;
-            }
+    loadPlaylists();
+
+    function loadPlaylists() {
+        // Load user playlists
+        return PlaylistEntity.user({}, function(playlists) {
+            $scope.playlists = playlists;
+        }).$promise.finally(function() {
+            SharedData.pageLoader(false);
         });
     }
-    function down(data) {
-        data.user_rate = 'loading';
-        VideoTagPointEntity.down({video_tag_id: data.id}, function(response) {
-            if (data.user_rate === 'down') {
-                return;
-            }
-            data.user_rate = 'down';
-            if (response.success) {
-                data.count_points = data.count_points - 1;
-            }
+    
+    function remove(playlist){
+        PlaylistEntity.delete({id: playlist.id}, function(){
+            
         });
     }
 }
 
-AddPlaylistController.$inject = ['$scope'];
-function AddPlaylistController($scope){
-    
+ModalPlaylistController.$inject = ['$scope', '$uibModalInstance', 'PlaylistEntity', 'PlaylistItemEntity',
+    'videoTag', 'toaster'];
+function ModalPlaylistController($scope, $uibModalInstance, PlaylistEntity, PlaylistItemEntity,
+        videoTag, toaster) {
+
+    $scope.videoTag = videoTag;
+    $scope.playlists = [];
+    $scope.showAddPlaylistForm = false;
+    $scope.availableStatus = [
+        {code: 'public', name: 'Public', icon: 'world'},
+        {code: 'private', name: 'Private', icon: 'private'}
+    ];
+    $scope.playlist = {
+        status: 'public'
+    };
+    $scope.ok = ok;
+    $scope.cancel = cancel;
+    $scope.addPlaylist = addPlaylist;
+    $scope.toggleForm = function() {
+        $scope.showAddPlaylistForm = !$scope.showAddPlaylistForm;
+    };
+    $scope.addToPlaylist = addToPlaylist;
+    loadPlaylists();
+
+    function ok() {
+        $uibModalInstance.close($scope.videoTag);
+    }
+    function cancel() {
+        $uibModalInstance.dismiss('cancel');
+    }
+    function addPlaylist(playlist) {
+        playlist.video_tag_id = videoTag.id;
+        console.log($scope.addPlaylistForm);
+        $scope.addPlaylistForm
+                .submit(PlaylistEntity.add(playlist).$promise)
+                .then(function(response) {
+                    if (response.success) {
+                        $uibModalInstance.close($scope.videoTag);
+                    }
+                });
+    }
+
+    function loadPlaylists() {
+        // Load user playlists
+        return PlaylistEntity.user({}, function(playlists) {
+            $scope.playlists = playlists;
+        });
+    }
+
+    function addToPlaylist(playlist) {
+        return PlaylistItemEntity.add({
+            video_tag_id: videoTag.id,
+            playlist_id: playlist.id
+        }, function(result) {
+            console.log(result);
+            if (result.success) {
+                ok();
+            }
+            toaster.pop('success', result.message);
+        }, function() {
+            // TODO 
+        });
+    }
 }

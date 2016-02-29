@@ -58,6 +58,7 @@
 <?php if (\Cake\Core\Configure::read('debug')) { ?>
     <?= $this->Html->script('src/shared/shared.module'); ?>
     <?= $this->Html->script('src/shared/directives/copy-this-link.directive'); ?>
+    <?= $this->Html->script('src/shared/directives/up-down-points.directive'); ?>
     <?= $this->Html->script('src/shared/form/shared.form.module'); ?>
     <?= $this->Html->script('src/shared/form/servererror.directive'); ?>
     <?= $this->Html->script('src/shared/form/server-form.directive'); ?>
@@ -87,6 +88,7 @@
     <?= $this->Html->script('src/player/youtube.directive'); ?>
     <?= $this->Html->script('src/player/vimeo.directive'); ?>
     <?= $this->Html->script('src/player/video-item.directive'); ?>
+    <?= $this->Html->script('src/player/playlist-item.directive'); ?>
     <?= $this->Html->script('src/player/rule-provider-video-id.directive'); ?>
     <?= $this->Html->script('src/player/provider-video-info.factory'); ?>
     <?= $this->Html->script('src/tag/app.tag.module'); ?>

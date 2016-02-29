@@ -1,10 +1,10 @@
 angular.module('app.layout')
-        .directive('topSearch', ['RiderEntity', 'TagEntity', 'SharedData', topSearch]);
+        .directive('topSearch', ['RiderEntity', 'TagEntity', 'SharedData', 'PlaylistEntity', topSearch]);
 /**
  * Server form. Extend ng form functionnalities.
  * Add a loader when the form is waiting for a server response.
  */
-function topSearch(RiderEntity, TagEntity, SharedData) {
+function topSearch(RiderEntity, TagEntity, SharedData, PlaylistEntity) {
     return {
         templateUrl: 'js/src/layout/partials/top-search.html',
         controller: ['$scope', function($scope){
@@ -71,6 +71,18 @@ function topSearch(RiderEntity, TagEntity, SharedData) {
                             .finally(function(){
                                 searchDisabled = false;
                             });
+                            
+                    PlaylistEntity
+                            .search({q: search}, function(results){
+                                for (var i = 0; i < results.length; i++){
+                                    var data = mapper()['playlist'](results[i]);
+                                    $scope.results.push(data);
+                                }
+                            })
+                            .$promise
+                            .finally(function(){
+                                searchDisabled = false;
+                            });
                 }
             }
             
@@ -90,6 +102,13 @@ function topSearch(RiderEntity, TagEntity, SharedData) {
                         data.points = data.count_ref;
                         data.type = 'tag';
                         data.category = 'Trick';
+                        return data;
+                    },
+                    playlist: function(data){
+                        data.sub_title = '';
+                        data.points = data.count_points;
+                        data.type = 'playlist';
+                        data.category = 'Playlist';
                         return data;
                     }
                 };

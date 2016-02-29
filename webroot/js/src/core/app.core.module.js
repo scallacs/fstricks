@@ -11,8 +11,10 @@ angular
         .factory('VideoEntity', VideoEntity)
         .factory('SportEntity', SportEntity)
         .factory('TagEntity', TagEntity)
-        .factory('VideoTagPointEntity', VideoTagPointEntity)
+        .factory('UpDownPointEntity', UpDownPointEntity)
         .factory('VideoTagEntity', VideoTagEntity)
+        .factory('PlaylistEntity', PlaylistEntity)
+        .factory('PlaylistItemEntity', PlaylistItemEntity)
         .factory('AuthenticationService', AuthenticationService)
         .factory('ServerConfigEntity', ServerConfigEntity)
         .factory('VideoTagAccuracyRateEntity', VideoTagAccuracyRateEntity)
@@ -210,6 +212,7 @@ function PlayerData(VideoTagData, $q) {
         console.log("RESETING DATA");
         VideoTagData.reset();
         obj.init();
+        return this;
     }
 
     function play() {
@@ -312,7 +315,7 @@ function VideoTagLoader(VideoTagEntity, $q) {
     VideoTagLoader.prototype.setOrder = setOrder;
     VideoTagLoader.prototype.add = add;
     VideoTagLoader.prototype.hasData = hasData;
-    VideoTagLoader.prototype.setMethod = setMethod;
+    VideoTagLoader.prototype.setResource = setResource;
     VideoTagLoader.prototype.setMode = setMode;
     VideoTagLoader.prototype._onSuccessPageLoad = _onSuccessPageLoad;
 
@@ -338,13 +341,13 @@ function VideoTagLoader(VideoTagEntity, $q) {
         this.loading = false;
         this.currentPage = 1;
         this.cachePage = {};
-        this.method = 'search';
+        this.resource = VideoTagEntity.search;
         this.mode = 'append'; // Append to data Other mode: 'replace'
         return this;
     }
 
-    function setMethod(method) {
-        this.method = method;
+    function setResource(r) {
+        this.resource = r;
         return this;
     }
 
@@ -365,6 +368,7 @@ function VideoTagLoader(VideoTagEntity, $q) {
 
     function setOrder(value) {
         this.filters.order = value;
+        return this;
     }
 
     function add(tag) {
@@ -423,7 +427,7 @@ function VideoTagLoader(VideoTagEntity, $q) {
         if (!angular.isDefined(this.cachePage[page])) {
             this.filters.page = page;
             this.loading = true;
-            this.cachePage[page] = VideoTagEntity[this.method](this.filters).$promise;
+            this.cachePage[page] = this.resource(this.filters).$promise;
         }
         this.cachePage[page]
                 .then(function(data) {
@@ -446,6 +450,7 @@ function VideoTagLoader(VideoTagEntity, $q) {
     function _onSuccessPageLoad(data) {
         this.data.perPage = data.perPage;
         this.data.total = data.total;
+        this.data.extra = data.extra;
 
         var tags = data.items;
         console.log('[OK] Loading page ' + this.filters.page + ': ' + tags.length + ' item(s)');
@@ -736,10 +741,10 @@ function TagEntity($resource) {
     });
 }
 
-VideoTagPointEntity.$inject = ['$resource'];
-function VideoTagPointEntity($resource) {
-    var url = API_BASE_URL + '/VideoTagPoints/:action/:id.json';
-    return $resource(url, {id: '@id', action: '@action'}, {
+UpDownPointEntity.$inject = ['$resource'];
+function UpDownPointEntity($resource) {
+    var url = API_BASE_URL + '/:controller/:action/:id.json';
+    return $resource(url, {id: '@id', action: '@action', controller: '@controller'}, {
         up: {
             method: 'POST',
             params: {action: 'up'},
@@ -821,7 +826,71 @@ function VideoTagEntity($resource) {
         }
     });
 }
-
+function PlaylistEntity($resource) {
+    var url = API_BASE_URL + '/Playlists/:action/:id.json';
+    return $resource(url, {id: '@id', action: '@action'}, {
+        user: {
+            method: 'GET',
+            params: {action: 'user'},
+            isArray: true
+        },
+        search: {
+            method: 'GET',
+            params: {action: 'search'},
+            isArray: true
+        },
+        add: {
+            method: 'POST',
+            params: {action: 'add'},
+            isArray: false
+        },
+        view: {
+            method: 'GET',
+            params: {action: 'view'},
+            isArray: false
+        },
+        delete: {
+            method: 'POST',
+            params: {action: 'delete'},
+            isArray: false
+        },
+        edit: {
+            method: 'POST',
+            params: {action: 'edit'},
+            isArray: false
+        }
+    });
+}
+function PlaylistItemEntity($resource) {
+    var url = API_BASE_URL + '/PlaylistVideoTags/:action/:id.json';
+    return $resource(url, {id: '@id', action: '@action'}, {
+        playlist: {
+            method: 'GET',
+            params: {action: 'playlist'},
+            isArray: false
+        },
+        add: {
+            method: 'POST',
+            params: {action: 'add'},
+            isArray: false
+        },
+        delete: {
+            method: 'POST',
+            params: {action: 'delete'},
+            isArray: false
+        },
+        up: {
+            method: 'POST',
+            params: {action: 'up'},
+            isArray: false
+        },
+        down: {
+            method: 'POST',
+            params: {action: 'down'},
+            isArray: false
+        }
+    });
+}
 ServerConfigEntity.$inject = ['$resource'];
 function ServerConfigEntity($resource) {
     var resource = $resource('data/:action.json', {action: '@action'}, {

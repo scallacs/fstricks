@@ -64,7 +64,6 @@ ModalReportErrorController.$inject = ['$scope', '$uibModalInstance', 'ErrorRepor
 function ModalReportErrorController($scope, $uibModalInstance, ErrorReportEntity, videoTag) {
 
     $scope.videoTag = videoTag;
-    $scope.feedback = null;
     $scope.errorReport = {};
 
     $scope.ok = function() {

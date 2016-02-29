@@ -1,7 +1,7 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\VideoTagPoint;
+use App\Model\Entity\PlaylistPoint;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -11,9 +11,9 @@ use Cake\Validation\Validator;
  * VideoTagPoints Model
  *
  * @property \Cake\ORM\Association\BelongsTo $Users
- * @property \Cake\ORM\Association\BelongsTo $VideoTags
+ * @property \Cake\ORM\Association\BelongsTo $Playlists
  */
-class VideoTagPointsTable extends Table
+class PlaylistPointsTable extends Table
 {
 
     /**
@@ -26,7 +26,7 @@ class VideoTagPointsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('video_tag_points');
+        $this->table('playlist_points');
         $this->displayField('id');
         $this->primaryKey('id');
 
@@ -34,8 +34,8 @@ class VideoTagPointsTable extends Table
             'foreignKey' => 'users_id',
             'joinType' => 'INNER'
         ]);
-        $this->belongsTo('VideoTags', [
-            'foreignKey' => 'video_tag_id',
+        $this->belongsTo('Playlists', [
+            'foreignKey' => 'playlist_id',
             'joinType' => 'INNER'
         ]);
     }
@@ -65,7 +65,7 @@ class VideoTagPointsTable extends Table
             ->requirePresence('user_id', 'create')
             ->notEmpty('value');
         $validator
-            ->requirePresence('video_tag_id', 'create')
+            ->requirePresence('playlist_id', 'create')
             ->notEmpty('value');
 
         return $validator;
@@ -81,8 +81,8 @@ class VideoTagPointsTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['users_id'], 'Users'));
-        $rules->add($rules->existsIn(['video_tag_id'], 'VideoTags'));
-        $rules->add($rules->isUnique(['video_tag_id', 'user_id']));
+        $rules->add($rules->existsIn(['playlist_id'], 'Playlists'));
+        $rules->add($rules->isUnique(['playlist_id', 'user_id']));
         return $rules;
     }
 }

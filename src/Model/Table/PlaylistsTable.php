@@ -135,4 +135,16 @@ class PlaylistsTable extends Table {
         ]);
     }
 
+    
+    /**
+     * @param \App\Model\Table\Event $event
+     * @param \Cake\ORM\Entity $entity
+     * @param \App\Model\Table\ArrayObject $options
+     */
+    public function beforeSave($event, $entity, $options) {
+//        if ($entity->dirty('title')){
+//            $entity->slug = \Cake\Utility\Inflector::slug($entity->title);
+//        }
+    }
+
 }

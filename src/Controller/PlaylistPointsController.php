@@ -4,11 +4,11 @@ namespace App\Controller;
 use App\Controller\AppController;
 use App\Lib\ResultMessage;
 /**
- * VideoTagPoints Controller
+ * PlaylistPoints Controller
  *
- * @property \App\Model\Table\VideoTagPointsTable $VideoTagPoints
+ * @property \App\Model\Table\PlaylistPointsTable $PlaylistPoints
  */
-class VideoTagPointsController extends AppController
+class PlaylistPointsController extends AppController
 {
 
 
@@ -40,12 +40,12 @@ class VideoTagPointsController extends AppController
     {
         ResultMessage::setWrapper(true);
         if ($this->request->is('post')) {
-            $videoTagPoint = $this->VideoTagPoints->newEntity();
-            $videoTagPoint->video_tag_id = $id;
-            $videoTagPoint->user_id = $this->Auth->user('id');
-            $videoTagPoint->value = $value;
+            $playlistPoint = $this->PlaylistPoints->newEntity();
+            $playlistPoint->user_id = $this->Auth->user('id');
+            $playlistPoint->playlist_id = $id;
+            $playlistPoint->value = $value;
             
-            if ($this->VideoTagPoints->save($videoTagPoint)) {
+            if ($this->PlaylistPoints->save($playlistPoint)) {
                 ResultMessage::setMessage(__('Points saved!'), true);
             } else {
                 ResultMessage::setMessage(__('Could not save points. Please, try again.'), false);

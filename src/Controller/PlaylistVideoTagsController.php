@@ -14,6 +14,7 @@ class PlaylistVideoTagsController extends AppController {
 
     public function initialize() {
         parent::initialize();
+        $this->loadComponent('Paginator');
         $this->Playlists = \Cake\ORM\TableRegistry::get('Playlists');
     }
 
@@ -28,21 +29,34 @@ class PlaylistVideoTagsController extends AppController {
      * @throws \Cake\Network\Exception\NotFoundException
      */
     public function playlist($playlistId = null) {
+        $this->Paginator->config(\Cake\Core\Configure::read('Pagination.Playlists'));
+        
         $playlist = $this->Playlists
                 ->findVisible($this->Auth->user('id'))
-                ->where(['Playlists.id' => $playlistId]);
+                ->where(['Playlists.id' => $playlistId])
+                ->hydrate(false)
+                ->limit(1)
+                ->first();
         if (empty($playlist)) {
             throw new \Cake\Network\Exception\NotFoundException();
         }
-        $data = $this->PlaylistVideoTags
+        $query = $this->PlaylistVideoTags
                 ->find('all')
                 ->where([
                     'PlaylistVideoTags.playlist_id' => $playlistId
                 ])
+                ->contain([
+                    'VideoTags' => function ($q) {
+                        return \Cake\ORM\TableRegistry::get('VideoTags')->findAndJoin($q);
+                    }
+                ])
                 ->order(['PlaylistVideoTags.position ASC']);
 
-        ResultMessage::setWrapper(false);
-        ResultMessage::overwriteData($data);
+                
+        ResultMessage::setPaginateData(
+                $this->paginate($query),
+                $this->request->params['paging']['PlaylistVideoTags']);
+        ResultMessage::setPaginateExtra('playlist', $playlist);
     }
 
     /**
@@ -107,7 +121,7 @@ class PlaylistVideoTagsController extends AppController {
 
         $playlistVideoTag = $this->PlaylistVideoTags
                 ->getEditabled($id, $this->Auth->user('id'));
-        
+
         if ($this->request->is('post')) {
             $playlistVideoTag->position = $playlistVideoTag->postion + $value;
             if ($this->PlaylistVideoTags->save($playlistVideoTag)) {

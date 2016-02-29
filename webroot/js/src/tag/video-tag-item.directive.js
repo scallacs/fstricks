@@ -14,6 +14,7 @@ function videoTagItem() {
             $scope.view = view;
             $scope.playerData = PlayerData;
             $scope.videoTagData = VideoTagData;
+            $scope.addToPlaylist = addToPlaylist;
 
             $scope.authData = AuthenticationService.authData;
             
@@ -21,6 +22,18 @@ function videoTagItem() {
                 var modal = $uibModal.open({
                     templateUrl: 'js/src/tag/partials/report_error_form.html',
                     controller: 'ModalReportErrorController',
+                    size: 'lg',
+                    resolve: {
+                        videoTag: function() {
+                            return videoTag;
+                        }
+                    }
+                });
+            }
+            function addToPlaylist(videoTag) {
+                var modal = $uibModal.open({
+                    templateUrl: 'js/src/player/partials/playlist-modal.html',
+                    controller: 'ModalPlaylistController',
                     size: 'lg',
                     resolve: {
                         videoTag: function() {
