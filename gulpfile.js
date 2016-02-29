@@ -17,7 +17,8 @@ gulp.task('concat-js-components', function() {
         "webroot/js/components/angular-socialshare/angular-socialshare.min.js",
         "webroot/js/components/satellizer/satellizer.min.js",
         "webroot/js/components/angular-utils-pagination/dirPagination.js",
-        "webroot/js/components/ngInfiniteScroll/build/ng-infinite-scroll.min.js"
+        "webroot/js/components/ngInfiniteScroll/build/ng-infinite-scroll.min.js",
+        "webroot/js/components/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js"
     ])
             .pipe(stripDebug())
             .pipe(concat('components.js'))
