@@ -114,8 +114,13 @@ function PlayerData(VideoTagData, $q) {
         if (this.looping) {
             this.seekTo(this.data.begin);
         }
-        else if (this.playAll && VideoTagData.hasNext()){
-            this.playVideoTag(VideoTagData.next(), false);
+        else if (this.playAll) {
+            if (VideoTagData.hasNext()) {
+                this.playVideoTag(VideoTagData.next(), false);
+            }
+            else{
+                PlayerData.stop();
+            }
         }
     }
     function hasError() {
@@ -197,7 +202,7 @@ function PlayerData(VideoTagData, $q) {
         obj.data.begin = videoTag.begin;
         obj.data.end = videoTag.end;
         obj.showListTricks = false;
-        obj.looping = !angular.isDefined(looping) ? true : looping;
+        obj.looping = !angular.isDefined(looping) ? obj.looping : looping;
         if (videoTag.provider_id === obj.data.provider &&
                 videoTag.video_url === obj.data.video_url) {
             obj.seekTo(videoTag.begin);
@@ -317,6 +322,7 @@ function PaginateDataLoader(VideoTagEntity, $q) {
     PaginateDataLoader.prototype.startLoading = startLoading;
     PaginateDataLoader.prototype.setOrder = setOrder;
     PaginateDataLoader.prototype.add = add;
+    PaginateDataLoader.prototype.prepend = prepend;
     PaginateDataLoader.prototype.hasData = hasData;
     PaginateDataLoader.prototype.setResource = setResource;
     PaginateDataLoader.prototype.setMode = setMode;
@@ -376,6 +382,12 @@ function PaginateDataLoader(VideoTagEntity, $q) {
 
     function add(tag) {
         this.data.items.push(tag);
+        this.data.total += 1;
+    }
+    // Add item in first position
+    function prepend(tag) {
+        this.data.items.unshift(tag);
+        this.data.total += 1;
     }
 
     function loadAll() {
@@ -395,7 +407,7 @@ function PaginateDataLoader(VideoTagEntity, $q) {
                 deferred.resolve(results);
             }
             else {
-                PaginateDataLoader.loadNextPage().then(successCallback);
+                that.loadNextPage().then(successCallback);
             }
         }
     }
@@ -882,16 +894,16 @@ function PlaylistItemEntity($resource) {
             params: {action: 'delete'},
             isArray: false
         },
-        up: {
+        edit: {
             method: 'POST',
-            params: {action: 'up'},
-            isArray: false
-        },
-        down: {
-            method: 'POST',
-            params: {action: 'down'},
+            params: {action: 'edit'},
             isArray: false
         }
+//        down: {
+//            method: 'POST',
+//            params: {action: 'down'},
+//            isArray: false
+//        }
     });
 }
 ServerConfigEntity.$inject = ['$resource'];

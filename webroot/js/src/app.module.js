@@ -47,6 +47,10 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
             $state.go('videoplayer.playlist', {playlistId: data.id});
         }
     });
+    
+    $scope.$on('on-playlist-title-clicked', function(event, playlist){
+        $state.go("videoplayer.playlist", {playlistId: playlist.id});
+    });
 }
 
 Run.$inject = ['$rootScope', 'AuthenticationService', 'loginModal', '$state', 'SharedData'];

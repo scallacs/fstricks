@@ -7,7 +7,8 @@ angular.module('app.player', [
     'shared',
     'angularUtils.directives.dirPagination',
     'infinite-scroll',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'dndLists'
 ])
         .config(ConfigRoute)
         .controller('AddVideoController', AddVideoController)
@@ -584,9 +585,51 @@ function ManagePlaylistController($scope, PlaylistEntity, SharedData, PaginateDa
 
 }
 
-EditPlaylistController.$inject = [];
-function EditPlaylistController() {
+EditPlaylistController.$inject = ['$scope', 'PaginateDataLoader', 'PlaylistItemEntity', 'SharedData', '$stateParams'];
+function EditPlaylistController($scope, PaginateDataLoader, PlaylistItemEntity, SharedData, $stateParams) {
+    $scope.removeOptions = {wait: false, controller: 'PlaylistVideoTags', trigger: '.btn-remove-item', confirm: false};
+    $scope.showEditionForm = false;
+    loadItems();
+    $scope.selectedVideoTag = null;
+    $scope.onDrop = onDrop;
 
+    function loadItems() {
+        $scope.loader = PaginateDataLoader.instance('playlist-edit')
+                .init()
+                .setResource(PlaylistItemEntity.playlist)
+                .setMode('append')
+                .setFilter('id', $stateParams.playlistId)
+//                .setFilter('playlist', true)
+                .setLimit(20);
+
+        $scope.loader
+                .startLoading()
+                .then(function(results) {
+                    $scope.playlist = results.extra.playlist;
+                })
+                .finally(function() {
+                    SharedData.pageLoader(false);
+                });
+    }
+
+    $scope.$on('on-playlist-form-cancel', function(event) {
+        $scope.showEditionForm = false;
+        event.stopPropagation();
+    });
+    $scope.$on('on-playlist-saved', function(event, playlist) {
+        $scope.playlist = playlist;
+        $scope.showEditionForm = false;
+        event.stopPropagation();
+    });
+
+    function onDrop(event, $index, item, type, external) {
+        PlaylistItemEntity.edit({
+            playlist_id: $scope.playlist.id,
+            video_tag_id: item.id,
+            position: $index
+        });
+        return item;
+    }
 }
 
 ModalPlaylistController.$inject = ['$scope', '$uibModalInstance', 'PlaylistEntity', 'PlaylistItemEntity',
@@ -602,11 +645,23 @@ function ModalPlaylistController($scope, $uibModalInstance, PlaylistEntity, Play
         $scope.showAddPlaylistForm = !$scope.showAddPlaylistForm;
     };
     $scope.addToPlaylist = addToPlaylist;
+    $scope.loader = PaginateDataLoader.instance('playlist')
+            .setResource(PlaylistEntity.user)
+            .setMode('replace')
+            .setLimit(12);
 
-    $scope.$on('on-playlist-save', function(event, response) {
+
+    $scope.$on('on-playlist-saved', function(event, playlist) {
         $scope.showAddPlaylistForm = false;
-        addToPlaylist({id: response.data.playlist_id});
+        addToPlaylist(playlist);
+        $scope.loader.prepend(playlist);
         $uibModalInstance.close($scope.videoTag);
+    });
+
+    $scope.$on('on-playlist-title-clicked', function(event, playlist) {
+        event.stopPropagation();
+        console.log('on-playlist-title-clicked');
+        addToPlaylist(playlist);
     });
 
     loadPlaylists();
@@ -619,12 +674,6 @@ function ModalPlaylistController($scope, $uibModalInstance, PlaylistEntity, Play
     }
 
     function loadPlaylists() {
-
-        $scope.loader = PaginateDataLoader.instance('playlist')
-                .setResource(PlaylistEntity.user)
-                .setMode('replace')
-                .setLimit(7);
-
         $scope.loader
                 .startLoading()
                 .finally(function() {
@@ -633,16 +682,17 @@ function ModalPlaylistController($scope, $uibModalInstance, PlaylistEntity, Play
     }
 
     function addToPlaylist(playlist) {
-        return PlaylistItemEntity.add({
+        PlaylistItemEntity.add({
             video_tag_id: videoTag.id,
             playlist_id: playlist.id
         }, function(result) {
             if (result.success) {
-                ok();
+                playlist.count_tags += 1;
             }
-            toaster.pop('success', result.message);
-        }, function() {
-            // TODO 
+        }, function(){
+            // TODO remove playlist
         });
+        toaster.pop('success', 'Added to the playlist!');
+        ok();
     }
 }

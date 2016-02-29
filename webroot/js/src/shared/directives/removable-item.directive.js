@@ -53,8 +53,16 @@ function removableItem($uibModal, RemoveItemEntity, toaster) {
                     if (options.confirm) {
                         var instance = showModal();
                         instance.result.then(function() {
+                            
+                            if (angular.isObject(scope.removableItemId)){
+                                var data = scope.removableItemId;
+                            }
+                            else{
+                                var data = {id: scope.removableItemId};
+                            }
+                            data.controller = options.controller;
                             // Wait for server response
-                            var promise = RemoveItemEntity.delete({id: scope.removableItemId, controller: options.controller})
+                            var promise = RemoveItemEntity.delete(data)
                                     .$promise;
 
                             if (options.wait) {

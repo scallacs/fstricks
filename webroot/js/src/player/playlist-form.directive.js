@@ -4,7 +4,17 @@ angular.module('app.player')
                 restrict: 'EA',
                 templateUrl: 'js/src/player/partials/playlist-form.html',
                 scope: {
-                    playlist: '='
+                    playlistOrigin: '=playlist'
+                },
+                link: function(scope, elem, attr) {
+                    scope.playlist = {
+                        status: 'public',
+                        id: false
+                    };
+                    scope.$watch('playlistOrigin', function() {
+                        console.log(scope.playlistOrigin);
+                        scope.playlist = angular.copy(scope.playlistOrigin);
+                    });
                 },
                 controller: function($scope, PlaylistEntity) {
                     $scope.availableStatus = [
@@ -12,21 +22,26 @@ angular.module('app.player')
                         {code: 'private', name: 'Private', icon: 'private'}
                     ];
 
-                    $scope.addPlaylist = addPlaylist;
+                    $scope.save = save;
+                    $scope.cancel = cancel;
 
-                    if (!$scope.playlist) {
-                        $scope.playlist = {
-                            status: 'public'
-                        };
-                    }
-
-                    function addPlaylist(playlist) {
-                        $scope.addPlaylistForm.submit(PlaylistEntity.add(playlist).$promise)
+                    function save(playlist) {
+                        var method = playlist.id ? PlaylistEntity.edit : PlaylistEntity.add;
+                        $scope.addPlaylistForm.submit(method(playlist).$promise)
                                 .then(function(response) {
                                     if (response.success) {
-                                        $scope.$emit('on-playlist-save', response);
+                                        if (!playlist.id) {
+                                            playlist.id = response.data.playlist_id;
+                                            playlist.count_tags = 0;
+                                            playlist.created = new Date(); 
+                                        }
+                                        $scope.$emit('on-playlist-saved', playlist);
                                     }
                                 });
+                    }
+
+                    function cancel() {
+                        $scope.$emit('on-playlist-form-cancel');
                     }
                 }
             };

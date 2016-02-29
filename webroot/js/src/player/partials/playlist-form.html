@@ -66,12 +66,25 @@
                 </div>
             </div>
             <div class="text-center">
+                <button type="button" 
+                        ng-if="playlist.id"
+                        ng-click="cancel()" 
+                        class="btn btn-default">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    Cancel
+                </button>
                 <button type="submit" 
-                        ng-click="addPlaylist(playlist)" 
+                        ng-click="save(playlist)" 
                         ng-disabled="addPlaylistForm.$invalid"
                         class="btn btn-success">
-                    <span class="glyphicon glyphicon-plus-sign"></span>
-                    Save
+                    
+                    <span ng-show="playlist.id">
+                        <span class="glyphicon glyphicon-save"></span>
+                        Save
+                    </span>
+                    <span ng-show="!playlist.id">
+                        <span class="glyphicon glyphicon-plus-sign"></span> Add
+                    </span>
                 </button>
             </div>
     </fieldset>

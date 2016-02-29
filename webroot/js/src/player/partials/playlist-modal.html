@@ -8,25 +8,21 @@
     </div>
     <div class="modal-body clearfix" ng-show="loader.data.items.length > 0 || showAddPlaylistForm">
 
-        <div ng-show="!showAddPlaylistForm">
+        <div ng-show="!showAddPlaylistForm" class="clearfix">
             <div 
                 dir-paginate="playlist in loader.data.items | itemsPerPage: loader.data.perPage"
                 total-items="loader.data.total"
-                class="clearfix">
-                <div class="col-xs-1">
-                    <a href="#" ng-click="addToPlaylist(playlist)">
-                        <span class="glyphicon glyphicon-check"></span>
-                    </a>
-                </div>
-                <div class="col-xs-11" playlist-item playlist="playlist" shortmode="true"></div>
+                class="col-sm-6" >
+                    <div playlist-item playlist="playlist" shortmode="true"></div>
+                    <div ng-if="$index > 1 && $index % 2 == 0" class="clearfix"></div>
             </div>
-
+            <div class="clearfix"></div>
             <div dir-pagination-controls
                  on-page-change="loader.loadPage(newPageNumber)"
                  class="pagination-container">
             </div>
         </div>
-        
+
         <div playlist-form ng-show="showAddPlaylistForm"></div>
     </div>
     <div class="modal-footer">

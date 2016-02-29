@@ -1,17 +1,17 @@
 <div class="playlist-item clearfix">
-    <div ng-class="{'col-sm-8': !shortmode}">
+    <div ng-class="{'col-sm-8': !shortmode && points}">
         <h4 class="playlist-heading">
-            <a ui-sref="videoplayer.playlist({playlistId: playlist.id})">{{playlist.title}}</a>
+            <a href="#" ng-click="titleClick(playlist)">{{playlist.title}}</a>
         </h4> 
         <p class="text-sm"  ng-if="!shortmode" show-more max-length="300">
             {{playlist.description}}
         </p>
         <p class="text-sm text-muted">
-            <span class="text-bold">{{playlist.status}}</span> - Created {{ playlist.created | timeago}} 
+            <span class="text-bold">{{playlist.status}}</span> - {{ playlist.created | timeago}} 
             - {{playlist.count_tags}} <span class="glyphicon glyphicon-tags"></span>
         </p>
     </div> 
-    <div class="col-sm-4 clearfix text-right" ng-if="!shortmode">
+    <div class="col-sm-4 clearfix text-right" ng-if="!shortmode && points">
         <div up-down-points data="playlist" controller="PlaylistPoints"></div>
     </div>
 </div>

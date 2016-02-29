@@ -51,6 +51,7 @@
     <?= $this->Html->script("components/satellizer/satellizer.min.js"); ?>                    
     <?= $this->Html->script("components/angular-utils-pagination/dirPagination.js"); ?>        
     <?= $this->Html->script("components/ngInfiniteScroll/build/ng-infinite-scroll.min.js"); ?>
+    <?= $this->Html->script("components/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js"); ?>
 <?php } else { ?>
     <?= $this->Html->script('components.js'); ?>
 <?php } ?>

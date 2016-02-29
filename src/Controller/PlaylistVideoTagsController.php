@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use App\Lib\ResultMessage;
+use App\Lib\DataUtil;
 
 /**
  * PlaylistVideoTags Controller
@@ -30,7 +31,7 @@ class PlaylistVideoTagsController extends AppController {
      */
     public function playlist($playlistId = null) {
         $this->Paginator->config(\Cake\Core\Configure::read('Pagination.PlaylistVideoTags'));
-        
+
         $playlist = $this->Playlists
                 ->findVisible($this->Auth->user('id'))
                 ->where(['Playlists.id' => $playlistId])
@@ -47,15 +48,14 @@ class PlaylistVideoTagsController extends AppController {
                 ])
                 ->contain([
                     'VideoTags' => function ($q) {
-                        return \Cake\ORM\TableRegistry::get('VideoTags')->findAndJoin($q);
-                    }
+                return \Cake\ORM\TableRegistry::get('VideoTags')->findAndJoin($q);
+            }
                 ])
                 ->order(['PlaylistVideoTags.position ASC']);
 
-                
+
         ResultMessage::setPaginateData(
-                $this->paginate($query),
-                $this->request->params['paging']['PlaylistVideoTags']);
+                $this->paginate($query), $this->request->params['paging']['PlaylistVideoTags']);
         ResultMessage::setPaginateExtra('playlist', $playlist);
     }
 
@@ -66,7 +66,7 @@ class PlaylistVideoTagsController extends AppController {
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
     public function add() {
-        if ($this->request->is('post') && \App\Lib\DataUtil::isPositiveInt($this->request->data, 'playlist_id')) {
+        if ($this->request->is('post') && DataUtil::isPositiveInt($this->request->data, 'playlist_id')) {
             $playlistId = $this->request->data['playlist_id'];
 
             // Check user authorized to add in this playlist
@@ -78,6 +78,39 @@ class PlaylistVideoTagsController extends AppController {
                 ResultMessage::setMessage(__('Added to playlist.'), true);
             } else {
                 ResultMessage::addValidationErrorsModel($playlistVideoTag, true);
+            }
+        }
+    }
+
+    /**
+     *
+     * @param string|null $id Playlist Video Tag id.
+     * @return void
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
+    public function edit() {
+        if ($this->request->is('post') &&
+                DataUtil::isPositiveInt($this->request->data, 'playlist_id') && 
+                DataUtil::isPositiveInt($this->request->data, 'video_tag_id') && 
+                DataUtil::isPositiveInt($this->request->data, 'position')) {
+            // Check user authorized to add in this playlist
+            $playlistId = DataUtil::getPositiveInt($this->request->data, 'playlist_id');
+            $videoTagId = DataUtil::getPositiveInt($this->request->data, 'video_tag_id');
+            $position = DataUtil::getPositiveInt($this->request->data, 'position');
+            
+            $this->Playlists->getEditabled($playlistId, $this->Auth->user('id')); // @throws NotFoundException
+            
+            $conditions = [
+                'video_tag_id' => $videoTagId,
+                'playlist_id' => $playlistId
+            ];
+            $playlistVideoTag = $this->PlaylistVideoTags->find('all')->where($conditions)->limit(1)->first();
+            if (!empty($playlistVideoTag)){
+                $playlistVideoTag->position = $position;
+                $saved = $this->PlaylistVideoTags->save($playlistVideoTag);
+                if ($saved){
+                    ResultMessage::setMessage(__('Tricks moved'), true);
+                }
             }
         }
     }

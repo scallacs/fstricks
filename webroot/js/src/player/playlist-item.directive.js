@@ -5,8 +5,16 @@ angular.module('app.player')
         templateUrl: 'js/src/player/partials/playlist-item.html',
         scope: {
             playlist: '=',
-            shortmode: '@'
-        }
+            shortmode: '@',
+            points: '@'
+        },
+        controller: ['$scope', function($scope){
+            $scope.titleClick = titleClick;
+            
+            function titleClick(playlist){
+                $scope.$emit('on-playlist-title-clicked', playlist);
+            }
+        }]
     };
 
 });

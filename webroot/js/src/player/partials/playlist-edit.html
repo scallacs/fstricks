@@ -1,3 +1,66 @@
+<div class="container bg-primary margin-top border-radius">
+    <div class="pull-left padding-sm">
+        <a ui-sref="manageplaylist()">
+            <span class="glyphicon glyphicon-arrow-left"></span> 
+            Back
+        </a>
+    </div>
+    <h2 class="page-title">
+        <span class="glyphicon glyphicon-edit"></span> 
+        Edit playlist
+    </h2>
 
-<div playlist-form 
-     playlist="editPlaylist"></div>
+    <div class="clearfix">
+        <div ng-show="!showEditionForm" playlist-item playlist="playlist" short-mode="false">
+        </div>
+        <div 
+            ng-show="showEditionForm" 
+            playlist-form 
+            playlist="playlist">
+        </div>
+        <p class="text-center padding-sm">
+            <a href="#" ng-show="!showEditionForm" ng-click="showEditionForm = true">
+                <span class="glyphicon glyphicon-edit"></span> Edit informations
+            </a>
+        </p>
+    </div>
+
+
+    <h3>
+        <span ng-if="loader.hasData()">Tricks</span>
+        <span ng-if="!loader.hasData()">There is no tricks in this playlist</span>
+    </h3>
+
+    <ul
+        infinite-scroll='loader.loadNextPage()' 
+        infinite-scroll-disabled='loader.disabled' 
+        infinite-scroll-distance='0.1'
+        infinite-scroll-immediate-check="false"
+        dnd-list="loader.data.items"
+        dnd-drop="onDrop(event, index, item, external, type, 'list')"
+        class="list-unstyled"
+        >
+        <li ng-repeat="videoTag in loader.data.items" 
+            class="row clearfix bg-primary"
+            dnd-draggable="videoTag"
+            dnd-effect-allowed="move"
+            dnd-selected="selectedVideoTag = videoTag"
+            dnd-moved="loader.data.items.splice($index, 1)"
+            removable-item
+            removable-item-id="{video_tag_id: videoTag.id, playlist_id: playlist.id}"
+            removable-item-options="removeOptions">
+            <div class="col-xs-1 text-center margin-top">
+                <a class="text-danger btn-remove-item text-big" href="#">
+                    <span class="glyphicon glyphicon-remove"></span> 
+                </a>
+            </div>
+            <div class="col-xs-11">
+                <div video-tag-item video-tag="videoTag"></div>
+            </div>
+        </li>
+    </ul>
+
+    <p class="text-center padding-sm margin-top">
+        <span class="glyphicon glyphicon-info-sign"></span> Drag and drop tricks to order them in the playlist
+    </p>
+</div>
