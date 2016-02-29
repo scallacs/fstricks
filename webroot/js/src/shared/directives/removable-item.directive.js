@@ -82,7 +82,7 @@ function removableItem($uibModal, RemoveItemEntity, toaster) {
                 console.log("Removing item");
                 // Wait for server response
                 data.controller = options.controller;
-                var promise = RemoveItemEntity.delete(data)
+                var promise = RemoveItemEntity['delete'](data)
                         .$promise;
 
                 if (options.wait) {
