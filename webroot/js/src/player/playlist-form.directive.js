@@ -16,7 +16,7 @@ angular.module('app.player')
                         scope.playlist = angular.copy(scope.playlistOrigin);
                     });
                 },
-                controller: function($scope, PlaylistEntity) {
+                controller: ['$scope', 'PlaylistEntity', function($scope, PlaylistEntity) {
                     $scope.availableStatus = [
                         {code: 'public', name: 'Public', icon: 'world'},
                         {code: 'private', name: 'Private', icon: 'private'}
@@ -43,7 +43,7 @@ angular.module('app.player')
                     function cancel() {
                         $scope.$emit('on-playlist-form-cancel');
                     }
-                }
+                }]
             };
 
         });
