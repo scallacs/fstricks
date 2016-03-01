@@ -1,13 +1,14 @@
 angular.module('app.layout')
-        .directive('topSearch', ['RiderEntity', 'TagEntity', 'SharedData', 'PlaylistEntity', topSearch]);
+        .directive('topSearch', topSearch);
 /**
  * Server form. Extend ng form functionnalities.
  * Add a loader when the form is waiting for a server response.
  */
-function topSearch(RiderEntity, TagEntity, SharedData, PlaylistEntity) {
+function topSearch() {
     return {
         templateUrl: 'js/src/layout/partials/top-search.html',
-        controller: ['$scope', function($scope){
+        controller: ['$scope', 'RiderEntity', 'TagEntity', 'SharedData', 'PlaylistEntity', 
+                function($scope, RiderEntity, TagEntity, SharedData, PlaylistEntity){
             var partialSearch = {
                 picture: false,
                 points: false,
