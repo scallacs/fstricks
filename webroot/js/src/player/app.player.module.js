@@ -376,15 +376,17 @@ function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData)
 
 ViewRiderController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'RiderEntity'];
 function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, SharedData, RiderEntity) {
-    $scope.rider = {id: $stateParams.riderId};
-
+    VideoTagData.reset();
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = false;
-    VideoTagData.getLoader().setFilters({rider_id: $stateParams.riderId, order: $stateParams.order});
-    VideoTagData.getLoader().startLoading().finally(function() {
-        SharedData.pageLoader(false);
-    });
+    
+    $scope.rider = {id: $stateParams.riderId};
+    VideoTagData.getLoader()
+            .setFilters({rider_slug: $stateParams.riderId, order: $stateParams.order})
+            .startLoading().finally(function() {
+                SharedData.pageLoader(false);
+            });
 
     RiderEntity.profile({id: $stateParams.riderId}, function(rider) {
         console.log(rider);

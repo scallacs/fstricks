@@ -1,15 +1,18 @@
 <?= $this->Html->charset() ?>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--<meta http-equiv="X-UA-Compatible" content="IE=9" />-->
+
 <title>
     <?php echo \Cake\Core\Configure::read('Company.title'); ?>
 </title>
+
 <?= $this->Html->meta('icon', 'img/favicon.png'); ?>
 
 <script>
-    const WEBROOT = '<?= $this->request->webroot; ?>';
-            const WEBROOT_FULL = '<?= \Cake\Routing\Router::url('/', true); ?>';
-            const API_BASE_URL = '<?= \Cake\Routing\Router::url('/api', true); ?>'
+    var WEBROOT_FULL = '<?= \Cake\Routing\Router::url('/', true); ?>';
+    var API_BASE_URL = '<?= \Cake\Routing\Router::url('/api', true); ?>';
 </script>
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />
 
 <?php if (!\Cake\Core\Configure::read('debug')) { ?>
