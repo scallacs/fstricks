@@ -94,7 +94,7 @@ class VideoTagsController extends AppController {
             if ($tagId !== null) {
                 $videoTag->tag_id = $tagId;
             }
-            
+
             if ($this->VideoTags->save($videoTag)) {
                 ResultMessage::setMessage(__('Your trick has been saved.'), true);
                 ResultMessage::setData('video_tag_id', $videoTag->id);
@@ -209,34 +209,32 @@ class VideoTagsController extends AppController {
             $query = $this->VideoTags->findAndJoin();
             $query->where(['Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC]);
 
-            if (!empty($this->request->query['order'])) {
-                switch ($this->request->query['order']) {
-                    case 'begin_time':
-                        $query->order([
-                            'VideoTags.begin ASC',
-                        ]);
-                        break;
-                    case 'created':
-                        $query->order([
-                            'VideoTags.created DESC',
-                            'VideoTags.count_points DESC',
-                        ]);
-                        break;
-                    case 'modified':
-                        $query->order([
-                            'VideoTags.modified DESC',
-                            'VideoTags.count_points DESC',
-                        ]);
-                        break;
-                    case 'best':
-                    default:
-                        $query->order([
-                            'VideoTags.count_points DESC',
-                            'VideoTags.created DESC'
-                        ]);
-                }
+            $order = empty($this->request->query['order']) ? 'best' : $this->request->query['order'];
+            switch ($order) {
+                case 'begin_time':
+                    $query->order([
+                        'VideoTags.begin ASC',
+                    ]);
+                    break;
+                case 'created':
+                    $query->order([
+                        'VideoTags.created DESC',
+                        'VideoTags.count_points DESC',
+                    ]);
+                    break;
+                case 'modified':
+                    $query->order([
+                        'VideoTags.modified DESC',
+                        'VideoTags.count_points DESC',
+                    ]);
+                    break;
+                case 'best':
+                default:
+                    $query->order([
+                        'VideoTags.count_points DESC',
+                        'VideoTags.created DESC'
+                    ]);
             }
-
             if (DataUtil::isPositiveInt($this->request->query, 'sport_id')) {
                 $query->where(['Tags.sport_id' => $this->request->query['sport_id']]);
             } else if (!empty($this->request->query['sport_name'])) {
@@ -261,8 +259,7 @@ class VideoTagsController extends AppController {
 
             if (DataUtil::isPositiveInt($this->request->query, 'tag_id')) {
                 $query->where(['VideoTags.tag_id' => $this->request->query['tag_id']]);
-            }
-            else if (!empty($this->request->query['tag_slug'])) {
+            } else if (!empty($this->request->query['tag_slug'])) {
                 $query->where(['Tags.slug' => $this->request->query['tag_slug']]);
             }
             if (!empty($this->request->query['video_tag_ids'])) {
@@ -313,8 +310,7 @@ class VideoTagsController extends AppController {
 //            }
 //            debug($query->sql());
             ResultMessage::setPaginateData(
-                    $this->paginate($query),
-                    $this->request->params['paging']['VideoTags']);
+                    $this->paginate($query), $this->request->params['paging']['VideoTags']);
         } catch (NotFoundException $e) {
             ResultMessage::overwriteData([]);
         }
@@ -345,8 +341,7 @@ class VideoTagsController extends AppController {
                     ->distinct(['Videos.id']);
 
             ResultMessage::setPaginateData(
-                    $this->paginate($query, $paginateOptions),
-                    $this->request->params['paging']['VideoTags']);
+                    $this->paginate($query, $paginateOptions), $this->request->params['paging']['VideoTags']);
         } catch (NotFoundException $e) {
             ResultMessage::overwriteData($data);
         }
