@@ -139,20 +139,20 @@ function formAddRiderfunction(Upload) {
             }
 
         }],
-        link: ['$scope', function($scope) {
-            $scope.rider = {};
-            $scope.initRider = initRider;
+        link: function(scope, elem, attrs) {
+            scope.rider = {};
+            scope.initRider = initRider;
 
             initRider();
 
             function initRider() {
-                if (!angular.isDefined($scope.defaultRider)) {
-                    $scope.rider = {firstname: '', lastname: '', nationality: 'fr', level: '1', count_tags: 0};
+                if (!angular.isDefined(scope.defaultRider)) {
+                    scope.rider = {firstname: '', lastname: '', nationality: 'fr', level: '1', count_tags: 0};
                 }
                 else {
-                    $scope.rider = angular.copy($scope.defaultRider());
+                    scope.rider = angular.copy(scope.defaultRider());
                 }
             }
-        }]
+        }
     };
 }
