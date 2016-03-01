@@ -455,6 +455,7 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
     PlayerData.onCurrentTimeUpdate = onCurrentTimeUpdate;
     PlayerData.showListTricks = false;
     PlayerData.playMode = 'video';
+    
     $scope.video = {
         id: $stateParams.videoId
     };
@@ -506,13 +507,10 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
 ViewValidationController.$inject = ['$scope', 'VideoTagData', 'PlayerData', 'SharedData', '$state', 'VideoTagEntity', 'VideoTagAccuracyRateEntity'];
 function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, $state, VideoTagEntity, VideoTagAccuracyRateEntity) {
     var skipped = [];
-
-    PlayerData.stop();
+    VideoTagData.reset();
+    loadNext();
     PlayerData.showValidationMode();
     PlayerData.showListTricks = false;
-    VideoTagData.reset();
-    VideoTagData.mode = 'validation';
-    loadNext();
 
     $scope.rateAccurate = rateAccurate;
     $scope.rateFake = rateFake;

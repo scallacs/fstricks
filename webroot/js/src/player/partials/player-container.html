@@ -1,11 +1,10 @@
-<div
-    resize >
-    <div ng-show="SharedData.loadingState || videoTagData.loading" class="pick-video-message">
+<div resize >
+    <div ng-show="SharedData.loadingState" class="pick-video-message">
         <p>
             Loading...
         <p/>
     </div>
-    <div ng-show="!SharedData.loadingState && !videoTagData.loading">
+    <div ng-show="!SharedData.loadingState">
 
         <div ng-show="playerData.hasError()" 
              class="pick-video-message">
@@ -17,7 +16,7 @@
             </p>
         </div>
         <div ng-show="!playerData.hasError()
-                        && videoTagData.currentTag === null && !videoTagData.getLoader().hasData()" 
+                        && (videoTagData.currentTag === null && !videoTagData.getLoader().hasData())" 
              class="pick-video-message">
             <p ng-if="playerData.isMode('view')">
                 Oups, there is no tricks registered yet... 
@@ -29,7 +28,7 @@
                 <a ui-sref="addvideo"> Add tricks now</a>
             </p>
         </div>
-        <div ng-show="videoTagData.currentTag != null || videoTagData.getLoader().hasData()">
+        <div ng-show="!playerData.hasError() && (videoTagData.currentTag != null || videoTagData.getLoader().hasData())">
             <div class="nopadding player-container"  ng-show="playerData.data.video_url"  >
                 <div 
                     ng-show="videoTagData.hasPrev()"

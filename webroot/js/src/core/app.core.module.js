@@ -114,12 +114,12 @@ function PlayerData(VideoTagData, $q) {
             this.seekTo(this.data.begin);
         }
         //console.log("onEnd() reached !");
-        if (this.playMode === 'playlist'){
+        if (this.playMode === 'playlist' && VideoTagData.getLoader().hasData()){
             if (VideoTagData.hasNext()) {
                 this.playVideoTag(VideoTagData.next(), false);
             }
             else{
-                this.stop();
+                this.playVideoTag(VideoTagData.getLoader().getItem(0));
             }
         }
         else if (this.playMode === 'video'){
@@ -127,8 +127,10 @@ function PlayerData(VideoTagData, $q) {
         }
     }
     function hasError() {
+//        return this.data.provider !== null &&
+//                this.players[this.data.provider] === false;
         return this.data.provider !== null &&
-                this.players[this.data.provider] !== null && !this.players[this.data.provider];
+                this.players[this.data.provider] === false;
     }
     function onPlayProgress(currentTime) {
         if (obj.data.end !== null && currentTime >= obj.data.end) {
@@ -250,7 +252,7 @@ function PlayerData(VideoTagData, $q) {
             return;
         }
         return this.getPromise().then(function() {
-            obj.data.video_url = null
+            obj.data.video_url = null;
             var player = obj.getPlayer();
             if (player !== null) {
                 player.stop();
@@ -330,6 +332,7 @@ function PaginateDataLoader(VideoTagEntity, $q) {
     PaginateDataLoader.prototype.hasData = hasData;
     PaginateDataLoader.prototype.setResource = setResource;
     PaginateDataLoader.prototype.setMode = setMode;
+    PaginateDataLoader.prototype.getItem = getItem;
     PaginateDataLoader.prototype._onSuccessPageLoad = _onSuccessPageLoad;
 
     return {
@@ -357,6 +360,10 @@ function PaginateDataLoader(VideoTagEntity, $q) {
         this.resource = VideoTagEntity.search;
         this.mode = 'append'; // Append to data Other mode: 'replace'
         return this;
+    }
+    
+    function getItem(i){
+        return this.data.items[i];
     }
 
     function setResource(r) {
