@@ -13,6 +13,13 @@ use Cake\Utility\Security;
  */
 class UsersController extends AppController {
 
+    public function initialize() {
+        parent::initialize();
+        if ($this->request->action === 'signup') {
+            $this->loadComponent('Recaptcha.Recaptcha');
+        }
+    }
+
     public function beforeFilter(\Cake\Event\Event $event) {
         $this->Auth->allow(['add', 'token', 'profile', 'login', 'signup', 'username_exists', 'facebook_login']);
     }
@@ -54,13 +61,17 @@ class UsersController extends AppController {
         }
     }
 
-    public function username_exists($username) {
-        $exists = $this->Users->exists(['Users.username' => $username]);
+    public function username_exists() {
+        $username = \App\Lib\DataUtil::getLowerString($this->request->query, 'q', null);
         ResultMessage::setWrapper(false);
-        ResultMessage::setData('exists', $exists);
+        if ($username !== null) {
+            $exists = $this->Users->exists(['Users.username' => $username]);
+            ResultMessage::setData('exists', $exists);
+        } else {
+            ResultMessage::setData('exists', false);
+        }
     }
-    
-    
+
     public function facebook_login() {
         $provider = 'facebook';
         //initialize facebook sdk
@@ -103,14 +114,11 @@ class UsersController extends AppController {
             $this->Auth->setUser($userArray);
             $this->setToken();
             ResultMessage::setSuccess(true);
-        } 
-        catch (\Facebook\Exceptions\FacebookSDKException $ex) {
+        } catch (\Facebook\Exceptions\FacebookSDKException $ex) {
             ResultMessage::setMessage('FacebookSDKException');
-        } 
-        catch (\Facebook\Exceptions\FacebookAuthorizationException $ex) {
+        } catch (\Facebook\Exceptions\FacebookAuthorizationException $ex) {
             ResultMessage::setMessage('FacebookAuthorizationException');
-        } 
-        catch (\Facebook\Exceptions\FacebookAuthenticationException $ex) {
+        } catch (\Facebook\Exceptions\FacebookAuthenticationException $ex) {
             ResultMessage::setMessage('FacebookAuthenticationException');
         }
     }
@@ -157,25 +165,30 @@ class UsersController extends AppController {
         ResultMessage::setMessage("Please correct the form and try again.", false);
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
-            $user = $this->Users->patchEntity($user, $this->request->data);
-            $this->status = \App\Model\Entity\User::STATUS_ACTIVATED;
+            if ($this->Recaptcha->verify()) {
+                $user = $this->Users->patchEntity($user, $this->request->data);
+                $this->status = \App\Model\Entity\User::STATUS_ACTIVATED;
 
-            if ($this->Users->save($user)) {
-                $userArray = [
-                    'id' => $user->id,
-                    'email' => $user->email,
-                    'username' => $user->username,
-                    'created' => $user->created
-                ];
-                $this->Auth->setUser($userArray);
-                $this->setToken();
-                assert($this->Auth->user('id'));
-                ResultMessage::setMessage('The user has been saved.', true);
+                if ($this->Users->save($user)) {
+                    $userArray = [
+                        'id' => $user->id,
+                        'email' => $user->email,
+                        'username' => $user->username,
+                        'created' => $user->created
+                    ];
+                    $this->Auth->setUser($userArray);
+                    $this->setToken();
+                    assert($this->Auth->user('id'));
+                    ResultMessage::setMessage('The user has been saved.', true);
 //                ResultMessage::setRedirectUrl(['action' => 'index']);
-                ResultMessage::setData('user', $userArray);
-            } else {
-                ResultMessage::setMessage('Your account cannot be created. Please check your inputs.', false);
-                ResultMessage::addValidationErrorsModel($user);
+                    ResultMessage::setData('user', $userArray);
+                } else {
+                    ResultMessage::setMessage('Your account cannot be created. Please check your inputs.', false);
+                    ResultMessage::addValidationErrorsModel($user);
+                }
+            }
+            else{
+                ResultMessage::setMessage('Are you a robot ? ', false);
             }
         }
     }
@@ -210,7 +223,6 @@ class UsersController extends AppController {
         ResultMessage::setToken($token);
     }
 
-    
     /**
      * Add method
      *
@@ -254,8 +266,6 @@ class UsersController extends AppController {
 //            ResultMessage::setValidationErrors($user->errors());
 //        }
 //    }
-
-
 //    public function social_login() {
 //        if (!empty($this->request->is('post')) && !empty($this->request->data['provider'])) {
 //            $provider = $this->request->data['provider'];
@@ -281,5 +291,4 @@ class UsersController extends AppController {
 //            ResultMessage::setMessage("Unknown provider. Please try again", false);
 //        }
 //    }
-
 }

@@ -246,6 +246,7 @@ Configure::write('VideoTagValidation', [
     "min_rate" => 6
 ]);
 
+
 // TODO use
 Configure::write('Pagination', [
     'Playlists' => ['maxLimit' => 20, 'limit' => 10],
@@ -271,3 +272,5 @@ Plugin::load('Proffer');
 
 ini_set('memory_limit', '256M');
 Plugin::load('ADmad/Sequence');
+
+Plugin::load('Recaptcha', ['bootstrap' => true, 'routes' => true]);

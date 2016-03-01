@@ -26,6 +26,7 @@
                             <div class="help-block text-danger" 
                                  ng-if="signupForm.username.$dirty" 
                                  ng-messages="signupForm.username.$error">
+                                <div ng-message="unique">This username is not available.</div>
                                 <div ng-message="required">You must enter your name.</div>
                                 <div ng-message="minlength">You must at least 3 caracters.</div>
                                 <div ng-message="maxlength">You cannot enter more than 40 caracters.</div>
@@ -68,10 +69,13 @@
                                 <div ng-message="compareTo"> Password must match.</div>
                             </div>
                         </div>
+
+                        <div class="g-recaptcha" data-sitekey="6Ld3tRkTAAAAADOTCBr8MEMcCO3zZAKQuOslN9_v"></div>
+
                         <p class="text-center text-muted"><small> By clicking on Sign up, you agree to <a ui-sref="gtu">terms & conditions</a> 
                                 and <a ui-sref="privacy_policy">privacy policy</a></small></p>
 
-                        
+
                         <button type="submit" 
                                 ng-disabled="signupForm.$invalid" 
                                 class="btn btn-lg btn-block btn-primary">
@@ -86,3 +90,4 @@
         </div>
     </div>
 </div>
+<script src='https://www.google.com/recaptcha/api.js'></script>

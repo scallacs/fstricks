@@ -324,4 +324,18 @@ return [
     'Session' => [
         'defaults' => 'php',
     ],
+    'Recaptcha' => [
+        // Register API keys at https://www.google.com/recaptcha/admin
+        'sitekey' => '6Ld3tRkTAAAAADOTCBr8MEMcCO3zZAKQuOslN9_v',
+        'secret' => '6Ld3tRkTAAAAANt6_WLUcUG2oH1B_dFUn7iMjfGW',
+        // reCAPTCHA supported 40+ languages listed
+        // here: https://developers.google.com/recaptcha/docs/language
+        'lang' => 'en',
+        // either light or dark
+        'theme' => 'light',
+        // either image or audio
+        'type' => 'image',
+        // either normal or compact
+        'size' => 'normal'
+    ]
 ];

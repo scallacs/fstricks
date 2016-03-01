@@ -7,8 +7,8 @@
             </a> 
         </div>
     </div>
-    <ul id="TopNav" class="nav navbar-nav text-capitalize navbar-no-collapse ">
-        <li class="dropdown">
+    <ul id="TopNav" class="nav navbar-nav navbar-no-collapse ">
+        <li class="dropdown text-capitalize">
             <a data-toggle="dropdown" ng-if="currentSport"  class="text-big">
                 <b class="caret"></b> 
                 {{currentSport.name}}
@@ -43,7 +43,7 @@
         </li>
         <li ng-if="authData.isAuthed()" class="dropdown">
             <a class="" data-toggle="dropdown" >
-                <span class="caret"></span>
+                {{authData.user.username}} <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
                 <li> <a ui-sref="manageplaylist"><span class="glyphicon glyphicon-list"></span> My playlists</a></li>

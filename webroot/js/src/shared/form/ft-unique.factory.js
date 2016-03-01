@@ -1,9 +1,9 @@
 
 angular.module('shared.form')
         .factory('DataExistsService', ['$resource', function($resource) {
-            var url = WEBROOT_FULL + '/:controller/:action/:value.json';
+            var url = API_BASE_URL + '/:controller/:action.json';
 
-            return $resource(url, {controller: '@controller', action: '@action', value: '@value'}, {
+            return $resource(url, {controller: '@controller', action: '@action'}, {
                 check: {
                     method: 'GET',
                     params: {action: 'view'},
@@ -16,6 +16,9 @@ angular.module('shared.form')
                 restrict: 'A',
                 require: 'ngModel',
                 link: function(scope, element, attrs, ngModel) {
+                    element.bind('keyup', function(e) {
+                        ngModel.$setValidity('unique', true);
+                    });
                     element.bind('blur', function(e) {
                         if (!ngModel || !element.val())
                             return;
@@ -24,7 +27,7 @@ angular.module('shared.form')
                         DataExistsService.check({
                             controller: keyProperty.controller,
                             action: keyProperty.action,
-                            value: currentValue
+                            q: currentValue
                         }, function(response) {
                             console.log("Check exists response: " + response.exists);
                             if (currentValue == element.val()) {

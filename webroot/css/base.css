@@ -791,6 +791,10 @@ ul[dnd-list] li.selected {
     height: 15px;
 }
 
+
+.g-recaptcha > div > div{
+    margin: auto;
+}
 /******************************/
 /* FACEBOOK */
 .btn-facebook-share {
