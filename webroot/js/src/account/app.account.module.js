@@ -48,7 +48,7 @@ function ConfigSocialApi($authProvider, Config) {
     $authProvider.facebook({
         clientId: Config.api.facebook,
         url: API_BASE_URL + '/users/facebook_login.json',
-        redirectUri: API_BASE_URL
+        redirectUri: WEBROOT_FULL
     });
 
     $authProvider.withCredentials = true;

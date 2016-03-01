@@ -66,6 +66,7 @@ class UsersController extends AppController {
         //initialize facebook sdk
         try {
             $facebook = new \Facebook\Facebook(array(
+                'redirect_uri' => \Cake\Routing\Router::url('/', true),
                 'app_id' => \Cake\Core\Configure::read('Facebook.id'),
                 'app_secret' => \Cake\Core\Configure::read('Facebook.key')
             ));
@@ -75,7 +76,7 @@ class UsersController extends AppController {
             $accessToken = $oauth2->getAccessTokenFromCode($code, \Cake\Routing\Router::url('/', true));
 
             if (!isset($accessToken)) {
-                ResultMessage::setMessage('Cannot get access token', false);
+                ResultMessage::setMessage('Cannot get Facebook access token', false);
                 return;
             }
             try {
@@ -104,13 +105,13 @@ class UsersController extends AppController {
             ResultMessage::setSuccess(true);
         } 
         catch (\Facebook\Exceptions\FacebookSDKException $ex) {
-            
+            ResultMessage::setMessage('FacebookSDKException');
         } 
         catch (\Facebook\Exceptions\FacebookAuthorizationException $ex) {
-            
+            ResultMessage::setMessage('FacebookAuthorizationException');
         } 
         catch (\Facebook\Exceptions\FacebookAuthenticationException $ex) {
-            
+            ResultMessage::setMessage('FacebookAuthenticationException');
         }
     }
 
