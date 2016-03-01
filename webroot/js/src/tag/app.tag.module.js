@@ -5,7 +5,7 @@ angular.module('app.tag', ['app.core', 'ui.bootstrap', 'ui.select', 'ui.router',
 
 Config.$inject = ['$stateProvider'];
 function Config($stateProvider) {
-    var baseUrl = 'js/src/tag/partials/';
+    var baseUrl = TEMPLATE_URL + '/tag/partials/';
 
     $stateProvider
             .state('addtag', {

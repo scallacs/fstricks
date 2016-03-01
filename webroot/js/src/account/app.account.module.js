@@ -19,7 +19,7 @@ function ConfigRoute($stateProvider) {
     $stateProvider
             .state('login', {
                 url: '/login',
-                templateUrl: 'js/src/account/partials/login.html',
+                templateUrl: TEMPLATE_URL + '/account/partials/login.html',
                 controller: 'UserLoginController',
                 data: {
                     requireLogin: false
@@ -27,7 +27,7 @@ function ConfigRoute($stateProvider) {
             })
             .state('signup', {
                 url: '/signup',
-                templateUrl: 'js/src/account/partials/signup.html',
+                templateUrl: TEMPLATE_URL + '/account/partials/signup.html',
                 controller: 'SignupController',
                 data: {
                     requireLogin: false
@@ -35,7 +35,7 @@ function ConfigRoute($stateProvider) {
             })
             .state('settings', {
                 url: '/settings',
-                templateUrl: 'js/src/account/partials/settings.html',
+                templateUrl: TEMPLATE_URL + '/account/partials/settings.html',
                 controller: 'SettingsController',
                 data: {
                     requireLogin: true
@@ -134,7 +134,7 @@ function loginModal($uibModal) {
             }
             console.log("LoginModal: Open");
             instance = $uibModal.open({
-                templateUrl: 'js/src/account/partials/login_modal.html',
+                templateUrl: TEMPLATE_URL + '/account/partials/login_modal.html',
                 controller: 'LoginModalController',
                 controllerAs: 'LoginModalController'
             });

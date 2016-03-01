@@ -6,7 +6,7 @@ angular.module('app.layout')
  */
 function topSearch() {
     return {
-        templateUrl: 'js/src/layout/partials/top-search.html',
+        templateUrl: TEMPLATE_URL + '/layout/partials/top-search.html',
         controller: ['$scope', 'RiderEntity', 'TagEntity', 'SharedData', 'PlaylistEntity', 
                 function($scope, RiderEntity, TagEntity, SharedData, PlaylistEntity){
             var partialSearch = {

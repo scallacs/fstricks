@@ -2,7 +2,7 @@ angular.module('app.player')
         .directive('playlistForm', function() {
             return {
                 restrict: 'EA',
-                templateUrl: 'js/src/player/partials/playlist-form.html',
+                templateUrl: TEMPLATE_URL + '/player/partials/playlist-form.html',
                 scope: {
                     playlistOrigin: '=playlist'
                 },

@@ -11,6 +11,7 @@
 <script>
     var WEBROOT_FULL = '<?= \Cake\Routing\Router::url('/', true); ?>';
     var API_BASE_URL = '<?= \Cake\Routing\Router::url('/api', true); ?>';
+    var TEMPLATE_URL = '<?= \Cake\Routing\Router::url('/js/src', true); ?>';
 </script>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />

@@ -5,7 +5,7 @@ angular
 
 //ConfigRouting.$inject = ['$stateProvider'];
 //function ConfigRouting($stateProvider) {
-//    var baseUrl = 'js/src/rider/partials/';
+//    var baseUrl = TEMPLATE_URL + '/rider/partials/';
 //    $stateProvider
 //            .state('myriderprofile', {
 //                url: '',

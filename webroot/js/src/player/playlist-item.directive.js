@@ -2,7 +2,7 @@ angular.module('app.player')
     .directive('playlistItem', function() {
     return {
         restrict: 'EA',
-        templateUrl: 'js/src/player/partials/playlist-item.html',
+        templateUrl: TEMPLATE_URL + '/player/partials/playlist-item.html',
         scope: {
             playlist: '=',
             shortmode: '@',

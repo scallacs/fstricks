@@ -5,7 +5,7 @@ angular
 function RiderBox() {
     return {
         restrict: 'EA',
-        templateUrl: 'js/src/rider/partials/rider-box.html',
+        templateUrl: TEMPLATE_URL + '/rider/partials/rider-box.html',
         scope: {
             rider: '=rider'
         },

@@ -66,7 +66,7 @@ function removableItem($uibModal, RemoveItemEntity, toaster) {
 
             function showModal() {
                 var instance = $uibModal.open({
-                    templateUrl: 'js/src/shared/directives/confirm-dialog.html',
+                    templateUrl: TEMPLATE_URL + '/shared/directives/confirm-dialog.html',
                     controller: 'ModalInstanceCtrl'
                 });
                 return instance;

@@ -61,7 +61,7 @@
                 </div>
 
                 <span class="progress" ng-show="uploader.picture.progress >= 0">
-                    <div style="width:{{uploader.picture.progress}}%" 
+                    <div ng-style="width:{{uploader.picture.progress}}%" 
                          ng-bind="uploader.picture.progress + '%'"></div>
                 </span>
             </fieldset>

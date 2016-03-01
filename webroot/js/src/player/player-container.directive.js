@@ -6,7 +6,7 @@ angular.module('app.player')
  */
 function playerContainer($window, $rootScope) {
     return {
-        templateUrl: 'js/src/player/partials/player-container.html',
+        templateUrl: TEMPLATE_URL + '/player/partials/player-container.html',
         controller: ['$scope', 'PlayerData', 'VideoTagData', function($scope, PlayerData, VideoTagData) {
             $scope.playerData = PlayerData;
             $scope.videoTagData = VideoTagData;

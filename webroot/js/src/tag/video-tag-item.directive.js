@@ -4,7 +4,7 @@ angular.module('app.tag')
 function videoTagItem() {
     return {
         restrict: 'EA',
-        templateUrl: 'js/src/tag/partials/video-tag-item.html',
+        templateUrl: TEMPLATE_URL + '/tag/partials/video-tag-item.html',
         scope: {
             videoTag: '=videoTag'
         },
@@ -20,7 +20,7 @@ function videoTagItem() {
             
             function openReportErrorModal(videoTag) {
                 var modal = $uibModal.open({
-                    templateUrl: 'js/src/tag/partials/report_error_form.html',
+                    templateUrl: TEMPLATE_URL + '/tag/partials/report_error_form.html',
                     controller: 'ModalReportErrorController',
                     size: 'lg',
                     resolve: {
@@ -32,7 +32,7 @@ function videoTagItem() {
             }
             function addToPlaylist(videoTag) {
                 var modal = $uibModal.open({
-                    templateUrl: 'js/src/player/partials/playlist-modal.html',
+                    templateUrl: TEMPLATE_URL + '/player/partials/playlist-modal.html',
                     controller: 'ModalPlaylistController',
                     size: 'lg',
                     resolve: {

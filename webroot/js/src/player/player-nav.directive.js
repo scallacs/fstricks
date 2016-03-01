@@ -6,7 +6,7 @@ angular.module('app.player')
  */
 function playerNav() {
     return {
-        templateUrl: 'js/src/player/partials/player-nav.html',
+        templateUrl: TEMPLATE_URL + '/player/partials/player-nav.html',
         controller: ['$scope', 'PlayerData', 'VideoTagData', function($scope, PlayerData, VideoTagData) {
             $scope.toggleListTricks = toggleListTricks;
             $scope.playerData = PlayerData;

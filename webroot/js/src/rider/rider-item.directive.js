@@ -5,7 +5,7 @@ angular
 function RiderItem() {
     return {
         restrict: 'EA',
-        templateUrl: 'js/src/rider/partials/rider-item.html',
+        templateUrl: TEMPLATE_URL + '/rider/partials/rider-item.html',
         scope: {
             rider: '=rider'
         }

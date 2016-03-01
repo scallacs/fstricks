@@ -6,7 +6,7 @@ formAddRiderfunction.$inject = ['Upload'];
 function formAddRiderfunction(Upload) {
     return {
         restrict: 'EA',
-        templateUrl: 'js/src/rider/partials/form-add-rider.html',
+        templateUrl: TEMPLATE_URL + '/rider/partials/form-add-rider.html',
         scope: {
             profilePicture: '=profilePicture',
             saveMethod: '=saveMethod',

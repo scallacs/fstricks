@@ -2,7 +2,7 @@ angular.module('shared')
         .directive('upDownPoints', function() {
             return {
                 restrict: 'A',
-                templateUrl: 'js/src/shared/directives/up-down-points.html',
+                templateUrl: TEMPLATE_URL + '/shared/directives/up-down-points.html',
                 scope: {
                     data: '=',
                     controller: '@'

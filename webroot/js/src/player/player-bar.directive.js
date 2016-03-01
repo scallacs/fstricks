@@ -10,10 +10,10 @@ function playerBar() {
             videoTags: '=videoTags',
             duration: '=duration'
         },
-        templateUrl: 'js/src/player/partials/player-bar.html',
+        templateUrl: TEMPLATE_URL + '/player/partials/player-bar.html',
         controller: ['$scope', 'VideoTagData', function($scope, VideoTagData) {
             $scope.options = {
-                popoverTemplateUrl: 'js/src/player/partials/popover-video-tag.html'
+                popoverTemplateUrl: TEMPLATE_URL + '/player/partials/popover-video-tag.html'
             };
             $scope.view = view;
             $scope.computeStyle = computeStyle;

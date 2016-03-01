@@ -2,7 +2,7 @@ angular.module('app.player')
     .directive('videoItem', function() {
     return {
         restrict: 'EA',
-        templateUrl: 'js/src/player/partials/video-item.html',
+        templateUrl: TEMPLATE_URL + '/player/partials/video-item.html',
         scope: {
             video: '=',
             id: '='

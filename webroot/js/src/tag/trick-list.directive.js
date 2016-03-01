@@ -6,7 +6,7 @@ angular.module('app.tag')
  */
 function trickList() {
     return {
-        templateUrl: 'js/src/tag/partials/player-trick-list.html',
+        templateUrl: TEMPLATE_URL + '/tag/partials/player-trick-list.html',
         controller: ['$scope', 'PlayerData', function($scope, PlayerData) {
             $scope.playerData = PlayerData;
             $scope.addNewTag = addNewTag;
