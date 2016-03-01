@@ -30,5 +30,15 @@
              on-page-change="loader.loadPage(newPageNumber)"
             class="pagination-container">
         </div>
+        <div ng-if="loader.data.items.length === 0">
+            <p class="text-center text-bold" >
+                You don't have any playlist yet!
+            </p>
+            <p>
+                To create one browse the website and once you found a tricks you like, click on the right bottom side button 
+                <button class="btn btn-default btn-sm inline disabeld"><b class="caret"/></button>
+                and then "<strong>Add to playlist</strong>".
+            </p>
+        </div>
     </div>
 </div>

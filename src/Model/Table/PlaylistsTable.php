@@ -102,6 +102,16 @@ class PlaylistsTable extends Table {
     public function findPublic() {
         return $this->find('all')->where(['Playlists.status' => Playlist::STATUS_PUBLIC, 'Playlists.count_tags > 1']);
     }
+    
+    public function findOwner($userId, $query = null) {
+        if ($query === null) {
+            $query = $this->find('all');
+        }
+        return $query->where([
+            'Playlists.status IN ' => [Playlist::STATUS_PRIVATE, Playlist::STATUS_PUBLIC], 
+            'Playlists.user_id' => $userId
+        ]);
+    }
 
     public function findVisible($userId = null, $query = null) {
         if ($query === null) {

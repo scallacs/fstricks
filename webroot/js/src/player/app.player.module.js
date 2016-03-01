@@ -48,7 +48,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('dashboard', {
-                url: '/dashboard',
+                url: '/my-tricks',
                 controller: 'DashboardController',
                 templateUrl: baseUrl + 'dashboard.html',
                 data: {
@@ -203,6 +203,7 @@ function DashboardController($scope, PaginateDataLoader, SharedData, $state) {
             workspace.loader = PaginateDataLoader
                     .instance(workspace.id)
                     .setFilters(workspace.filters)
+                    .setFilter('only_owner', true)
                     .setMode('replace')
                     .setLimit(10);
         }

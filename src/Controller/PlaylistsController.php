@@ -30,7 +30,7 @@ class PlaylistsController extends AppController {
     public function user() {
         $this->Paginator->config(\Cake\Core\Configure::read('Pagination.Playlists'));
         $query = $this->Playlists
-                ->findVisible($this->Auth->user('id'))
+                ->findOwner($this->Auth->user('id'))
                 ->order(['Playlists.modified DESC']);
         ResultMessage::setPaginateData(
                 $this->paginate($query),
