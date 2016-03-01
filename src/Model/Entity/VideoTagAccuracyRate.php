@@ -18,6 +18,7 @@ class VideoTagAccuracyRate extends Entity
 
     const VALUE_FAKE = 'fake';
     const VALUE_ACCURATE = 'accurate';
+    const VALUE_SKIP = 'skip';
     
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().

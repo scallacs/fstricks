@@ -60,7 +60,8 @@ class VideoTagAccuracyRatesTable extends Table {
                 ->notEmpty('value')
                 ->add('value', 'custom', [
                     'rule' => function($value) {
-                return $value === VideoTagAccuracyRate::VALUE_ACCURATE || $value === VideoTagAccuracyRate::VALUE_FAKE;
+                return $value === VideoTagAccuracyRate::VALUE_ACCURATE || $value === VideoTagAccuracyRate::VALUE_FAKE 
+                        || $value === VideoTagAccuracyRate::VALUE_SKIP;
             },
                     'message' => 'Unknown rate'
         ]);

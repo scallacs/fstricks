@@ -396,11 +396,14 @@ function ViewSearchController(VideoTagData, $stateParams, PlayerData, SharedData
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = true;
+    
+    
 //    console.log($stateParams);
     VideoTagData.reset();
     VideoTagData.getLoader()
             .setOrder($stateParams.order)
             .setFilter('tag_name', $stateParams.tagName)
+            .setFilter('sport_id', SharedData.currentSport ? SharedData.currentSport.id : null)
             .startLoading()
             .finally(function() {
                 SharedData.pageLoader(false);
@@ -531,6 +534,9 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     }
 
     function skip() {
+        VideoTagAccuracyRateEntity.skip({
+            video_tag_id: VideoTagData.currentTag.id
+        });
         skipped.push(VideoTagData.currentTag.id);
         PlayerData.pause();
         toNextTag();
@@ -545,7 +551,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     function loadNext() {
         SharedData.pageLoader(true);
         return VideoTagEntity
-                .validation({skipped: skipped.join(',')})
+                .validation({skipped: skipped.join(','), sport_id: SharedData.currentSport ? SharedData.currentSport.id : null})
                 .$promise
                 .then(successLoadCallback)
                 .catch(function() {
@@ -557,7 +563,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
         VideoTagData.getLoader().data.items = tags;
         if (tags.length === 1) {
             PlayerData
-                    .playVideoTag(tags[0])
+                    .playVideoTag(tags[0], true)
                     .finally(function() {
                         SharedData.pageLoader(false);
                     });

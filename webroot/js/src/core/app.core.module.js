@@ -786,6 +786,11 @@ function VideoTagAccuracyRateEntity($resource) {
             method: 'POST',
             params: {action: 'fake'},
             isArray: false
+        },
+        skip: {
+            method: 'POST',
+            params: {action: 'skip'},
+            isArray: false
         }
     });
 }

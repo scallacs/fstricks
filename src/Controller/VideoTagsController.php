@@ -157,6 +157,9 @@ class VideoTagsController extends AppController {
         if (count($skipped) > 0) {
             $query->where(['VideoTags.id NOT IN' => $skipped]);
         }
+        if (DataUtil::isPositiveInt($this->request->query, 'sport_id')) {
+            $query->where(['Tags.sport_id' => DataUtil::getPositiveInt($this->request->query, 'sport_id')]);
+        }
         ResultMessage::overwriteData($query->all());
     }
 

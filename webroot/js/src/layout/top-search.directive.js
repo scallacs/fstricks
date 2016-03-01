@@ -60,8 +60,10 @@ function topSearch() {
                             .finally(function(){
                                 searchDisabled = false;
                             });
-                            
-                    RiderEntity
+                    
+                    // If the search does not contains any number we search for riders
+                    if (!(new RegExp(".*[0-9].*")).test(search)){
+                        RiderEntity
                             .search({q: search}, function(results){
                                 for (var i = 0; i < results.length; i++){
                                     var data = mapper()['rider'](results[i]);
@@ -72,7 +74,8 @@ function topSearch() {
                             .finally(function(){
                                 searchDisabled = false;
                             });
-                            
+                    }
+                    
                     PlaylistEntity
                             .search({q: search}, function(results){
                                 for (var i = 0; i < results.length; i++){

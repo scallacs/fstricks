@@ -11,7 +11,6 @@ use App\Lib\ResultMessage;
 class VideoTagAccuracyRatesController extends AppController {
 
     /**
-     * Add method
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
@@ -20,12 +19,19 @@ class VideoTagAccuracyRatesController extends AppController {
     }
 
     /**
-     * Add method
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
     public function accurate() {
         $this->add(\App\Model\Entity\VideoTagAccuracyRate::VALUE_ACCURATE);
+    }
+    
+    /**
+     *
+     * @return void Redirects on successful add, renders view otherwise.
+     */
+    public function skip() {
+        $this->add(\App\Model\Entity\VideoTagAccuracyRate::VALUE_SKIP);
     }
 
     /**
