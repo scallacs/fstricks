@@ -413,11 +413,11 @@ function ViewSearchController(VideoTagData, $stateParams, PlayerData, SharedData
 
 ViewPlaylistController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'PlaylistItemEntity'];
 function ViewPlaylistController($scope, VideoTagData, $stateParams, PlayerData, SharedData, PlaylistItemEntity) {
-    PlayerData.showViewMode();
     PlayerData.stop();
     VideoTagData.reset();
+    PlayerData.showViewMode();
     PlayerData.showListTricks = false;
-    PlayerData.playAll = true;
+    PlayerData.playMode = 'playlist';
     $scope.playlist = false;
 
     var loader = VideoTagData.getLoader();
@@ -454,6 +454,7 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
     PlayerData.stop();
     PlayerData.onCurrentTimeUpdate = onCurrentTimeUpdate;
     PlayerData.showListTricks = false;
+    PlayerData.playMode = 'video';
     $scope.video = {
         id: $stateParams.videoId
     };

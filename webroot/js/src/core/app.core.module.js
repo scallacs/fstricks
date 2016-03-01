@@ -47,8 +47,8 @@ function PlayerData(VideoTagData, $q) {
             this.visible = true;
             this.showListTricks = true;
             this.mode = 'view';
-            this.looping = false; // True if we want to loop on the current tag
-            this.playAll = false; // True if want to go to the next tag on end
+            this.looping = true; // True if we want to loop on the current tag
+            this.playMode = 'tag'; // tag, playlist, video
             this.onCurrentTimeUpdate = function() {
             };
             this.data = {
@@ -110,17 +110,20 @@ function PlayerData(VideoTagData, $q) {
     }
 
     function onEnd() {
-        //console.log("onEnd() reached !");
         if (this.looping) {
             this.seekTo(this.data.begin);
         }
-        else if (this.playAll) {
+        //console.log("onEnd() reached !");
+        if (this.playMode === 'playlist'){
             if (VideoTagData.hasNext()) {
                 this.playVideoTag(VideoTagData.next(), false);
             }
             else{
-                PlayerData.stop();
+                this.stop();
             }
+        }
+        else if (this.playMode === 'video'){
+            // Do nothing
         }
     }
     function hasError() {
@@ -202,7 +205,8 @@ function PlayerData(VideoTagData, $q) {
         obj.data.begin = videoTag.begin;
         obj.data.end = videoTag.end;
         obj.showListTricks = false;
-        obj.looping = !angular.isDefined(looping) ? obj.looping : looping;
+        obj.looping = !angular.isDefined(looping) ? (obj.playMode === 'tag') : looping;
+        console.log("Play mode: " + obj.playMode + ". Set looping: " + obj.looping);
         if (videoTag.provider_id === obj.data.provider &&
                 videoTag.video_url === obj.data.video_url) {
             obj.seekTo(videoTag.begin);
