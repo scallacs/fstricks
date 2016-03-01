@@ -883,6 +883,7 @@ function PlaylistEntity($resource) {
     });
 }
 
+PlaylistItemEntity.$inject = ['$resource'];
 function PlaylistItemEntity($resource) {
     var url = API_BASE_URL + '/PlaylistVideoTags/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
