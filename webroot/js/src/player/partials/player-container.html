@@ -38,8 +38,9 @@
                 </div>
                 <div class="iframe-wrapper">   
                     <youtube
-                        ng-if="playerData.isProvider('youtube')"
+                        ng-show="playerData.isProvider('youtube')"
                         player-data="playerData" 
+                        id="youtubeplayer"
                         frameborder="0">
                     </youtube> 
                     <vimeo-video  

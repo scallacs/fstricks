@@ -94,7 +94,7 @@ function youtubeDirective($window, VideoEntity, PlayerData, YoutubeCmdMapper) {
                     switch (event.data) {
                         case YT.PlayerState.PLAYING:
                             if (PlayerData.looping && PlayerData.data.end < player.getCurrentTime()) {
-                                PlayerData.onEnd();
+                                PlayerData.onEnd('youtube');
                             }
                             console.log("Setting youtube time event");
                             myTimer = setInterval(function() {
@@ -105,7 +105,7 @@ function youtubeDirective($window, VideoEntity, PlayerData, YoutubeCmdMapper) {
 //                                        console.log(PlayerData.data.end - newTime);
                                 if (PlayerData.looping && (PlayerData.data.end - newTime) < (intervalDuration / 1000)) {
                                     console.log("Pre on end triggerd");
-                                    PlayerData.onEnd();
+                                    PlayerData.onEnd('youtube');
                                 }
                             }, intervalDuration);
                             break

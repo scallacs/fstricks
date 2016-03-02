@@ -113,7 +113,10 @@ function PlayerData(VideoTagData, $q) {
         return this.mode === m;
     }
 
-    function onEnd() {
+    function onEnd(provider) {
+        if (provider !== this.data.provider){
+            return;
+        }
         console.log("PlayerData::onEnd()");
         if (this.looping) {
             this.seekTo(this.data.begin);
@@ -139,7 +142,7 @@ function PlayerData(VideoTagData, $q) {
     }
     function onPlayProgress(currentTime) {
         if (this.data.provider !== null && obj.data.end !== null && currentTime >= obj.data.end) {
-            obj.onEnd();
+            obj.onEnd(this.data.provider);
         }
     }
     function startLooping() {
@@ -184,6 +187,7 @@ function PlayerData(VideoTagData, $q) {
         this.players[type] = player;
         this.deferred[type].resolve(player);
     }
+    // TODO destroy players
     function resetPlayer(type) {
         console.log("Resetting player: " + type);
         this.players[type] = null;
