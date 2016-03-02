@@ -183,7 +183,7 @@ class UsersController extends AppController {
                 if ($this->Users->save($user)) {
                     $this->setToken();
                     assert($this->Auth->user('id'));
-                    ResultMessage::setMessage('The user has been saved.', true);
+                    ResultMessage::setMessage('Welcome!', true);
 //                ResultMessage::setRedirectUrl(['action' => 'index']);
                     $this->setUserResponse($user);
                 } else {

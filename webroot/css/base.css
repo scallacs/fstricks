@@ -497,14 +497,15 @@ ul[dnd-list] li.selected {
 }
 .player-bar-tag{
     background: #aaa;
-    height: 15px;
+    height: 16px;
     position: absolute;
     min-width: 3px;
     border-radius: 5px;
     z-index: 2;
+    margin-top: -1px;
 } 
 .player-bar-tag-validated{
-    background: orange;
+    background: #388EA2;
 }
 
 .player-bar-tag:hover{
@@ -960,4 +961,4 @@ ul[dnd-list] li.selected {
     top: -7px;
 }
 
-
+  

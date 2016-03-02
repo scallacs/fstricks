@@ -14,7 +14,7 @@ angular.module('app.player')
                     });
                     scope.playlist = {
                         status: 'public',
-                        id: false
+                        id: null
                     };
                 },
                 controller: ['$scope', 'PlaylistEntity', function($scope, PlaylistEntity) {
