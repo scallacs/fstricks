@@ -111,8 +111,8 @@ class UsersController extends AppController {
             }
             $userArray = $user->toArray();
             $userArray['access_token'] = $accessToken;
-            $this->Auth->setUser($userArray);
             $this->setToken();
+            $this->setUserResponse($user);
             ResultMessage::setSuccess(true);
         } catch (\Facebook\Exceptions\FacebookSDKException $ex) {
             ResultMessage::setMessage('FacebookSDKException');
@@ -121,6 +121,17 @@ class UsersController extends AppController {
         } catch (\Facebook\Exceptions\FacebookAuthenticationException $ex) {
             ResultMessage::setMessage('FacebookAuthenticationException');
         }
+    }
+
+    private function setUserResponse($user) {
+        $userArray = [
+            'id' => $user->id,
+            'email' => $user->email,
+            'username' => $user->username,
+            'created' => $user->created
+        ];
+        ResultMessage::setData('user', $userArray);
+        $this->Auth->setUser($userArray);
     }
 
     public function logout() {
@@ -170,24 +181,16 @@ class UsersController extends AppController {
                 $this->status = \App\Model\Entity\User::STATUS_ACTIVATED;
 
                 if ($this->Users->save($user)) {
-                    $userArray = [
-                        'id' => $user->id,
-                        'email' => $user->email,
-                        'username' => $user->username,
-                        'created' => $user->created
-                    ];
-                    $this->Auth->setUser($userArray);
                     $this->setToken();
                     assert($this->Auth->user('id'));
                     ResultMessage::setMessage('The user has been saved.', true);
 //                ResultMessage::setRedirectUrl(['action' => 'index']);
-                    ResultMessage::setData('user', $userArray);
+                    $this->setUserResponse($user);
                 } else {
                     ResultMessage::setMessage('Your account cannot be created. Please check your inputs.', false);
                     ResultMessage::addValidationErrorsModel($user);
                 }
-            }
-            else{
+            } else {
                 ResultMessage::setMessage('Are you a robot ? ', false);
             }
         }

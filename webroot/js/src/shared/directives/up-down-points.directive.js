@@ -5,7 +5,8 @@ angular.module('shared')
                 templateUrl: TEMPLATE_URL + '/shared/directives/up-down-points.html',
                 scope: {
                     data: '=',
-                    controller: '@'
+                    controller: '@',
+                    allowedToVote: '='
                 },
                 controller: ['$scope', 'UpDownPointEntity', function($scope, UpDownPointEntity) {
                         $scope.up = up;
@@ -34,6 +35,9 @@ angular.module('shared')
                                 }
                             });
                         }
-                    }]
+                    }],
+                link: function(scope){
+                    console.log(scope.allowedToVote);
+                }
             };
         });

@@ -40,5 +40,12 @@
         "description": {
             "max_length": 1000
         }
+    },
+    "users" : {
+        "username": {
+            "regex": "/[^A-Za-z0-9Þßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ -_]/",
+            "min_length": 2, 
+            "max_length": 30
+        }
     }
 }

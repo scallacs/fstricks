@@ -218,7 +218,7 @@ h3, h2, h1{
     background: #000;
     opacity: 0.9;
     filter: alpha(opacity=80);
-    z-index: 9999;
+    z-index: 1050;
 }
 
 .clickable:hover{
@@ -354,6 +354,13 @@ header .navbar-nav > li > a{
     margin-right: 5px;
 }
 
+.video-tag-item-btn-remove{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 1.5em;
+    font-weight: bold;
+}
 
 /* ------------------------------------------------------------ */
 /* DRAG AND DROP  */

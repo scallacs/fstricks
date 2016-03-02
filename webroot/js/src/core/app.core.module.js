@@ -98,31 +98,36 @@ function PlayerData(VideoTagData, $q) {
         onPlayProgress: onPlayProgress,
         getCurrentTime: getCurrentTime,
         updateCurrentTag: updateCurrentTag,
-        resetPlayer: resetPlayer
+        resetPlayer: resetPlayer,
+        toggleLooping: toggleLooping
     };
 
     obj.init();
 
     return obj;
 
+    function toggleLooping(){
+        obj.looping ? obj.stopLooping() : obj.startLooping();
+    }
     function isMode(m) {
         return this.mode === m;
     }
 
     function onEnd() {
+        console.log("PlayerData::onEnd()");
         if (this.looping) {
             this.seekTo(this.data.begin);
         }
         //console.log("onEnd() reached !");
-        if (this.playMode === 'playlist' && VideoTagData.getLoader().hasData()){
+        else if (this.playMode === 'playlist' && VideoTagData.getLoader().hasData()) {
             if (VideoTagData.hasNext()) {
                 this.playVideoTag(VideoTagData.next(), false);
             }
-            else{
+            else {
                 this.playVideoTag(VideoTagData.getLoader().getItem(0));
             }
         }
-        else if (this.playMode === 'video'){
+        else if (this.playMode === 'video') {
             // Do nothing
         }
     }
@@ -361,8 +366,8 @@ function PaginateDataLoader(VideoTagEntity, $q) {
         this.mode = 'append'; // Append to data Other mode: 'replace'
         return this;
     }
-    
-    function getItem(i){
+
+    function getItem(i) {
         return this.data.items[i];
     }
 
@@ -613,7 +618,8 @@ function SharedData() {
         pageLoader: function(val) {
             //console.log('Set loading sate: ' + val);
             this.loadingState = val ? true : false;
-        }
+        },
+        currentSearch: {}
     };
     return data;
 }

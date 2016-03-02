@@ -52,11 +52,8 @@
                         ng-model="playlist.status"
                         name="status"
                         class="form-control"
-                        servererror>
-                        <option ng-repeat="status in availableStatus" name="playlistStatus{{status.code}}" 
-                                value="{{status.code}}">
-                            {{status.name}}
-                        </option>
+                        servererror
+                        ng-options="status.code as status.name for status in availableStatus">
                     </select>
                     <span class="ion-person form-control-feedback"></span>
                     <div class="help-block text-danger" 

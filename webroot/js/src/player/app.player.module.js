@@ -153,7 +153,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer.search', {
-                url: '/search?tagName',
+                url: '/search?q',
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewSearchController',
@@ -175,8 +175,10 @@ function ConfigRoute($stateProvider) {
 DashboardController.$inject = ['$scope', 'PaginateDataLoader', 'SharedData', '$state'];
 function DashboardController($scope, PaginateDataLoader, SharedData, $state) {
 
+    $scope.removeOptions = {trigger: '.btn-remove-item', controller: 'VideoTags', confirm: true, wait: false};
+
     $scope.workspaces = [
-        {id: 'pending', name: "Pendings", active: true, filters: {status: 'pending', order: 'modified'}},
+        {id: 'pending', name: "Pendings", removable: true, active: true, filters: {status: 'pending', order: 'modified'}},
         {id: 'rejected', name: "Rejected", active: false, filters: {status: 'rejected,duplicate', order: 'modified'}},
         {id: 'official', name: "Officials", active: false, filters: {status: 'validated', order: 'modified'}},
     ];
@@ -306,10 +308,11 @@ function AddVideoController($scope, ProviderVideoInfo, $state,
 
 }
 
-PlayerController.$inject = ['$scope', 'PlayerData'];
-function PlayerController($scope, PlayerData) {
+PlayerController.$inject = ['$scope', 'PlayerData', 'SharedData', 'TopSearchMapper'];
+function PlayerController($scope, PlayerData, SharedData, TopSearchMapper) {
     PlayerData.showViewMode();
     PlayerData.showListTricks = true;
+
 
     $scope.$on('view-video-tag', function(event, tag) {
         event.stopPropagation();
@@ -324,6 +327,8 @@ function PlayerController($scope, PlayerData) {
 
 ViewRealizationController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', '$state'];
 function ViewRealizationController(VideoTagData, $stateParams, PlayerData, SharedData, $state) {
+    SharedData.currentSearch.title = 'realization';
+    SharedData.currentSearch.category = 'Trick';
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = false;
@@ -346,27 +351,38 @@ function ViewRealizationController(VideoTagData, $stateParams, PlayerData, Share
             });
 }
 
-ViewTagController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData'];
-function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData) {
+ViewTagController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'TopSearchMapper'];
+function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData, TopSearchMapper) {
+    SharedData.currentSearch.category = 'Trick';
     PlayerData.showViewMode();
     PlayerData.stop();
     VideoTagData.getLoader().setFilters({tag_slug: $stateParams.tagSlug, order: $stateParams.order});
     VideoTagData.getLoader().startLoading().then(function(results) {
-        if (results.length === 1) {
-            PlayerData.showListTricks = false;
-            PlayerData.playVideoTag(results[0]);
+        if (results.items.length > 0) {
+            var firstTag = results.items[0];
+            SharedData.currentSearch = TopSearchMapper['trick'](firstTag);
+            // Auto play if there is only one realization for the trick
+            if (results.items.length === 1) {
+                PlayerData.showListTricks = false;
+                PlayerData.playVideoTag(firstTag);
+            }
         }
     }).finally(function() {
         SharedData.pageLoader(false);
     });
 }
 
-ViewSportController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData'];
-function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData) {
+ViewSportController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'TopSearchMapper'];
+function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData, TopSearchMapper) {
 //    console.log("View sport: " + $stateParams.sportName);
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = true;
+
+    SharedData.currentSearch = TopSearchMapper['sport']({
+        name: $stateParams.sportName
+    });
+
     console.log("Viewing sport: " + $stateParams.sportName);
     VideoTagData.getLoader().setFilters({sport_name: $stateParams.sportName, order: $stateParams.order});
     VideoTagData.getLoader().startLoading().finally(function() {
@@ -374,38 +390,48 @@ function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData)
     });
 }
 
-ViewRiderController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'RiderEntity'];
-function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, SharedData, RiderEntity) {
+ViewRiderController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'RiderEntity', 'TopSearchMapper'];
+function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, SharedData, RiderEntity, TopSearchMapper) {
     VideoTagData.reset();
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = false;
-    
+
     $scope.rider = {id: $stateParams.riderId};
     VideoTagData.getLoader()
             .setFilters({rider_slug: $stateParams.riderId, order: $stateParams.order})
-            .startLoading().finally(function() {
+            .startLoading()
+            .finally(function() {
                 SharedData.pageLoader(false);
             });
 
     RiderEntity.profile({id: $stateParams.riderId}, function(rider) {
         console.log(rider);
         $scope.rider = rider;
+        SharedData.currentSearch = TopSearchMapper['rider'](rider);
     });
 }
 
-ViewSearchController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData'];
-function ViewSearchController(VideoTagData, $stateParams, PlayerData, SharedData) {
+ViewSearchController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'TopSearchMapper'];
+function ViewSearchController(VideoTagData, $stateParams, PlayerData, SharedData, TopSearchMapper) {
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = true;
-    
-    
+
+    if ($stateParams.q){
+        SharedData.currentSearch = TopSearchMapper['search']($stateParams.q);
+    }
+    else{
+        SharedData.currentSearch = TopSearchMapper['sport']({
+            name: 'all sports'
+        });
+    }
+
 //    console.log($stateParams);
     VideoTagData.reset();
     VideoTagData.getLoader()
             .setOrder($stateParams.order)
-            .setFilter('tag_name', $stateParams.tagName)
+            .setFilter('tag_name', $stateParams.q)
             .setFilter('sport_id', SharedData.currentSport ? SharedData.currentSport.id : null)
             .startLoading()
             .finally(function() {
@@ -413,8 +439,8 @@ function ViewSearchController(VideoTagData, $stateParams, PlayerData, SharedData
             });
 }
 
-ViewPlaylistController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'PlaylistItemEntity'];
-function ViewPlaylistController($scope, VideoTagData, $stateParams, PlayerData, SharedData, PlaylistItemEntity) {
+ViewPlaylistController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'PlaylistItemEntity', 'TopSearchMapper'];
+function ViewPlaylistController($scope, VideoTagData, $stateParams, PlayerData, SharedData, PlaylistItemEntity, TopSearchMapper) {
     PlayerData.stop();
     VideoTagData.reset();
     PlayerData.showViewMode();
@@ -434,6 +460,7 @@ function ViewPlaylistController($scope, VideoTagData, $stateParams, PlayerData, 
     loader.startLoading()
             .then(function() {
                 $scope.playlist = loader.data.extra.playlist;
+                SharedData.currentSearch = TopSearchMapper['playlist']($scope.playlist);
             })
             .finally(function() {
                 SharedData.pageLoader(false);
@@ -449,15 +476,15 @@ function ViewPlaylistController($scope, VideoTagData, $stateParams, PlayerData, 
 }
 
 
-ViewVideoController.$inject = ['$scope', 'VideoTagData', 'PlayerData', '$stateParams', 'SharedData', '$state'];
-function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, SharedData, $state) {
+ViewVideoController.$inject = ['$scope', 'VideoTagData', 'PlayerData', '$stateParams', 'SharedData', '$state', 'TopSearchMapper', 'ProviderVideoInfo'];
+function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, SharedData, $state, TopSearchMapper, ProviderVideoInfo) {
 
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.onCurrentTimeUpdate = onCurrentTimeUpdate;
     PlayerData.showListTricks = false;
     PlayerData.playMode = 'video';
-    
+
     $scope.video = {
         id: $stateParams.videoId
     };
@@ -488,20 +515,26 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
             });
             $scope.videoDuration = first.video_duration;
             $scope.videoTags = response.items;
-//                YoutubeVideoInfo.snippet(response[0].video_url, function(data) {
-//                    //console.log(data);
-//                    if (data !== null) {
-//                        PlayerData.title = data.title;
-//                    }
-//                    else {
-//                        PlayerData.title = '';
-//                    }
-//                });
+
         }
         else {
             console.log("This video has no trick");
             $state.go('notfound');
         }
+
+        var video = response.extra.video;
+
+        var providerFactory = ProviderVideoInfo.get(video.provider_id);
+        
+        providerFactory
+                .create()
+                .addVideo(video.video_url)
+                .load()
+                .then(function(results) {
+                    var item = providerFactory.createItem(results);
+                    console.log(item);
+                    SharedData.currentSearch = TopSearchMapper['video']({title: item.title()});
+                });
     }
 }
 
@@ -702,7 +735,7 @@ function ModalPlaylistController($scope, $uibModalInstance, PlaylistEntity, Play
             if (result.success) {
                 playlist.count_tags += 1;
             }
-        }, function(){
+        }, function() {
             // TODO remove playlist
         });
         toaster.pop('success', 'Added to the playlist!');

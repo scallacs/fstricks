@@ -6,7 +6,8 @@ function videoTagItem() {
         restrict: 'EA',
         templateUrl: TEMPLATE_URL + '/tag/partials/video-tag-item.html',
         scope: {
-            videoTag: '=videoTag'
+            videoTag: '=',
+            options: '='
         },
         controller: ['$scope', '$uibModal', 'PlayerData', 'VideoTagData', 'AuthenticationService', 
                 function($scope, $uibModal, PlayerData, VideoTagData, AuthenticationService) {
@@ -57,6 +58,7 @@ function videoTagItem() {
             else if ($scope.videoTag.provider_id === 'vimeo'){
                 $scope.videoTag.thumbnail = "https://i.vimeocdn.com/video/"+$scope.videoTag.video_url+".jpg";
             }
+            
         }
     };
 }

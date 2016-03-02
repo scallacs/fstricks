@@ -11,17 +11,7 @@ function playerNav() {
             $scope.toggleListTricks = toggleListTricks;
             $scope.playerData = PlayerData;
             $scope.videoTagData = VideoTagData;
-            $scope.togglePlayerMode = togglePlayerMode;
 
-            function togglePlayerMode(){
-                if (PlayerData.looping){
-                    PlayerData.stopLooping();
-                }
-                else{
-                    PlayerData.startLooping();
-                }
-            }
-            
             function toggleListTricks() {
                 PlayerData.showListTricks = !PlayerData.showListTricks;
             }

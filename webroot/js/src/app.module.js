@@ -34,7 +34,7 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
         if (data.type === 'partial') {
             console.log("Start partial seach");
             $state.go('videoplayer.search', {
-                tagName: data.search
+                q: data.search
             });
         }
         else if (data.type === 'rider') {
@@ -57,6 +57,8 @@ Run.$inject = ['$rootScope', 'AuthenticationService', 'loginModal', '$state', 'S
 function Run($rootScope, AuthenticationService, loginModal, $state, SharedData) {
 
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
+        SharedData.currentSearch = {};
+        
         if (toState.redirectTo) {
             event.preventDefault();
             $state.go(toState.redirectTo, toParams);

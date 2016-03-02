@@ -111,12 +111,16 @@ function SignupController($scope, $state, AuthenticationService) {
     $scope.signup = signup;
 
     function signup(data) {
+        data['g-recaptcha-response'] = grecaptcha.getResponse();
         var promise = $scope.signupForm.submit(AuthenticationService.signup(data));
         promise.then(successCallback);
 
         function successCallback(response) {
             if (response.success) {
                 $state.go('home');
+            }
+            else{
+                grecaptcha.reset();
             }
         }
     }

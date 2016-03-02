@@ -7,6 +7,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use App\Lib\JsonConfigHelper;
 
 /**
  * Users Model
@@ -56,10 +57,26 @@ class UsersTable extends TableWithTags {
         $validator
                 ->requirePresence('username', 'create')
                 ->notEmpty('username')
+                ->add('username', [
+                    'minLength' => [
+                        'rule' => ['minLength', JsonConfigHelper::rules('users', 'username', 'min_length')],
+                        'message' => 'Choose a longer name.'
+                    ],
+                    'maxLength' => [
+                        'rule' => ['maxLength', JsonConfigHelper::rules('users', 'username', 'max_length')],
+                        'message' => 'Choose a shorter name.'
+                    ],
+                    'allowedChars' => [
+                        'rule' => function($value, $context) {
+                            return !preg_match(JsonConfigHelper::rules('users', 'username', 'regex'), $value);
+                        },
+                        'message' => 'Only alpha numeric chars with accents.'
+                ]])
                 ->add('username', 'unique', [
                     'rule' => 'validateUnique',
                     'provider' => 'table',
-                    'message' => 'This user name is not available. Please choose another one.']);
+                    'message' => 'This user name is not available. Please choose another one.'
+                ]);
 
         return $validator;
     }
@@ -117,7 +134,7 @@ class UsersTable extends TableWithTags {
         if ($user) {
             return $user;
         }
-        
+
         $entity = $this->newEntity();
         $entity->username = $data['displayName'];
         $entity->provider = $provider;

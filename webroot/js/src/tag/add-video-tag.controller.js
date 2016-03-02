@@ -279,6 +279,7 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
         VideoTagData, EditionTag, AuthenticationService, PaginateDataLoader) {
 
     PlayerData.showEditionMode();
+    $scope.riderToCreate = {id: null, firstname: '', lastname: '', count_tags: 0};
 
     // -------------------------------------------------------------------------
     // Properties: TODO match with server side
@@ -325,12 +326,14 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
     $scope.refreshSuggestedTags = refreshSuggestedTags;
     $scope.refreshSuggestedCategories = refreshSuggestedCategories;
     $scope.refreshSuggestedRiders = refreshSuggestedRiders;
+    $scope.onSelectRider = onSelectRider;
 
     $scope.addStartRange = addStartRange;
     $scope.addEndRange = addEndRange;
     $scope.setStartRangeNow = setStartRangeNow;
     $scope.setEndRangeNow = setEndRangeNow;
     $scope.loadSimilarTags = loadSimilarTags;
+    $scope.selectGroupBySport = selectGroupBySport;
 
     $scope.$on('view-video-tag', function(event, tag) {
         event.stopPropagation();
@@ -400,7 +403,7 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
         }, onError);
 
 
-        changeSliderValues([0, 0], 1);
+        changeSliderValues([0, 10], 1);
     }
 
     function playVideo(video) {
@@ -431,6 +434,7 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
 
         promise.then(function(response) {
             if (response.success) {
+                // TODO check is removing
                 VideoTagData.getLoader().remove(editionTag.getId());
                 addNewTag();
             }
@@ -580,9 +584,9 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
                 playEditionTag();
             }
             else {
-                PlayerData.seekTo(output[1]);
-                PlayerData.pause();
                 PlayerData.data.end = output[1];
+                PlayerData.pause();
+                PlayerData.seekTo(output[1] - 0.01); // Prevent vimeo to redirect to the begining of the tag
             }
         }
 
@@ -667,15 +671,39 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
         }
     }
 
+    var lastRefreshSuggestedRidersCall = null;
     function refreshSuggestedRiders(name) {
+        if (lastRefreshSuggestedRidersCall !== null && !lastRefreshSuggestedRidersCall.$resolved) {
+            lastRefreshSuggestedRidersCall.$cancelRequest();
+            lastRefreshSuggestedRidersCall = null;
+        }
         if (name.length >= 2) {
-            RiderEntity.search({
+            lastRefreshSuggestedRidersCall = RiderEntity.search({
                 q: name
-            }, function(results) {
-//                console.log(results);
-                $scope.suggestedRiders = results.data;
+            }, function(items) {
+                if (items.length === 0) {
+                    $scope.suggestedRiders = [{
+                            display_name: name,
+                            id: null
+                        }];
+                }
+                else {
+                    $scope.suggestedRiders = items;
+                }
             });
         }
     }
 
+    function onSelectRider(rider) {
+        if (rider.id === null) {
+            var splitIndice = rider.display_name.trim().indexOf(' ');
+            $scope.riderToCreate.firstname = splitIndice > 0 ? rider.display_name.substring(0, splitIndice).trim() : rider.display_name;
+            $scope.riderToCreate.lastname = splitIndice > 0 ? rider.display_name.substring(splitIndice + 1).trim() : '';
+            $scope.showCreateRiderForm = true; // @warning: MUST show the form after having initialized riderToCreate
+        }
+    }
+
+    function selectGroupBySport(item) {
+        return item.sport_name;
+    }
 }

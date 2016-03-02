@@ -277,11 +277,14 @@ class VideoTagsController extends AppController {
                 $query->where(['Riders.slug' => $this->request->query['rider_slug']]);
             }
             if (DataUtil::isPositiveInt($this->request->query, 'video_id')) {
-                $query->where(['VideoTags.video_id' => (int) $this->request->query['video_id']]);
+                $videoId = DataUtil::getPositiveInt($this->request->query, 'video_id');
+                $query->where(['VideoTags.video_id' => $videoId]);
+                $videosTable = \Cake\ORM\TableRegistry::get('Videos');
+                ResultMessage::setPaginateExtra('video', $videosTable->getPublic($videoId));
             }
             if (isset($this->request->query['only_owner'])) {
                 if (!$this->Auth->user('id')){
-                    throw \Cake\Network\Exception\UnauthorizedException();
+                    throw new \Cake\Network\Exception\UnauthorizedException();
                 }
                 $query->where(['VideoTags.user_id' => $this->Auth->user('id')]);
             }

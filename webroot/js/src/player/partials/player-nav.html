@@ -8,11 +8,9 @@
     <div
         ng-if="videoTagData.currentTag && !playerData.isMode('validation')"
         class="toggle-player-mode btn-player-nav" 
-        ng-click="togglePlayerMode()"
+        ng-click="playerData.toggleLooping()"
         ng-class="{disabled:!playerData.looping}">
-
-        <span class="glyphicon glyphicon-repeat text-big" title="Repeat tricks"></span>
-        <!--<span ng-if="playerData.looping" class="glyphicon glyphicon-play" title="Play normally"></span>-->
+        <span class="glyphicon glyphicon-repeat text-big" title="Repeat trick"></span>
     </div>
     <div class="toggle-list-tricks  btn-player-nav"  
          ng-if="!playerData.isMode('validation')"

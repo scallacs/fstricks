@@ -12,8 +12,8 @@
                         <div class="form-group has-feedback" 
                              ng-class="{ 'has-error' : signupForm.username.$invalid && signupForm.username.$dirty }">
                             <input class="form-control input-lg" 
-                                   ng-minlength="3"
-                                   ng-maxlength="40"
+                                   ng-minlength="2"
+                                   ng-maxlength="30"
                                    type="text" 
                                    name="username" 
                                    ng-model="user.username" 
@@ -70,7 +70,7 @@
                             </div>
                         </div>
 
-                        <div class="g-recaptcha" data-sitekey="6Ld3tRkTAAAAADOTCBr8MEMcCO3zZAKQuOslN9_v"></div>
+                        <div class="g-recaptcha" id="rcaptcha"  data-sitekey="6Ld3tRkTAAAAADOTCBr8MEMcCO3zZAKQuOslN9_v"></div>
 
                         <p class="text-center text-muted"><small> By clicking on Sign up, you agree to <a ui-sref="gtu">terms & conditions</a> 
                                 and <a ui-sref="privacy_policy">privacy policy</a></small></p>
@@ -90,4 +90,5 @@
         </div>
     </div>
 </div>
+
 <script src='https://www.google.com/recaptcha/api.js'></script>

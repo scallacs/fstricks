@@ -44,4 +44,8 @@ class User extends Entity
     protected function _getAvatarUrl(){
         return \Cake\Routing\Router::url('/img/icon_avatar.png', true);
     }
+    protected function _setUsername($value){
+        return mb_strtolower($value);
+    }
+    
 }

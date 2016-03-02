@@ -1,4 +1,4 @@
-<div class="item item-video-tag bg-primary clickable clearfix" 
+<div class="item item-video-tag bg-primary clearfix" 
      ng-class="{ 'active': videoTagData.currentTag.id === videoTag.id}" >
 
     <div class="item-sport">
@@ -12,8 +12,8 @@
         <img src="{{videoTag.thumbnail}}"/>
     </div>
     <div class="col-xs-9 item-content">
-        <div class="clickable">
-            <div class="col-xs-10"  ng-click="view(videoTag)">
+        <div class="">
+            <div class="col-xs-10 clickable"  ng-click="view(videoTag)">
                 <p class="item-title text-capitalize" ng-if="videoTag.tag_name">
                     {{videoTag.tag_name}} ({{videoTag.category_name}})
                 </p>
@@ -94,17 +94,17 @@
                         </span>
                     </p>
 
-                    <fieldset up-down-points
+                    <div up-down-points
                          ng-show="videoTag.time_to_play == null || videoTag.time_to_play == 0"
-                         ng-disabled="videoTagData.currentTag.id !== videoTag.id"
                          data="videoTag"
                          controller="VideoTagPoints"
+                         allowed-to-vote="videoTagData.currentTag.id === videoTag.id"
                         >
-                    </fieldset>
+                    </div>
                 </div>
             </div>
             <div class="col-xs-2">
-                <div class="dropdown" ng-if="videoTag.mode !==  'edition'">
+                <div class="dropdown" ng-show="videoTag.mode !==  'edition'">
                     <button class="btn btn-primary" data-toggle="dropdown">
                         <b class="caret"></b>
                     </button>
@@ -122,13 +122,16 @@
                             </a>
                         </li>           
                         <li>
-                            <a href="" ng-click="openReportErrorModal(videoTag)">
+                            <a href="" 
+                               ng-if="videoTag.status === 'validated'"
+                               ng-click="openReportErrorModal(videoTag)">
                                 <span class="glyphicon glyphicon-warning-sign"></span>  
                                 Report an error
                             </a>
                         </li>      
                         <li>
-                            <a href="" ng-click="addToPlaylist(videoTag)">
+                            <a href="" 
+                               ng-click="addToPlaylist(videoTag)">
                                 <span class="glyphicon glyphicon-plus-sign"></span> 
                                 Add to playlist...
                             </a>
@@ -138,6 +141,13 @@
                             <a ui-sref="addtag({videoId:videoTag.video_id, tagId:videoTag.id})">
                                 <span class="glyphicon glyphicon-edit"></span> 
                                 Edit
+                            </a>
+                        </li>
+                        <li ng-show="(videoTag.status === 'pending' || videoTag.status === 'rejected') &&
+                            videoTag.user_id === authData.user.id">
+                            <a href="#" class="btn-remove-item text-danger">
+                                <span class="glyphicon glyphicon-trash"></span> 
+                                Remove
                             </a>
                         </li>
                     </ul>

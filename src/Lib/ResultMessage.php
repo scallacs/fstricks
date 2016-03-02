@@ -71,11 +71,9 @@ class ResultMessage {
      */
     public static function setPaginateData($results, $paginateInfo) {
         self::$wrapper = false;
-        self::$data = [
-            'total' => $paginateInfo['count'],
-            'perPage' => $paginateInfo['perPage'],
-            'items' => $results,
-        ];
+        self::$data['total'] = $paginateInfo['count'];
+        self::$data['perPage'] = $paginateInfo['perPage'];
+        self::$data['items'] = $results;
     }
     
     public static function setPaginateExtra($key, $value){

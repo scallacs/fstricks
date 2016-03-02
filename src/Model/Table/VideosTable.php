@@ -139,4 +139,8 @@ class VideosTable extends Table {
         }
         return true;
     }
+    
+    public function getPublic($id){
+        return $this->get($id);
+    }
 }

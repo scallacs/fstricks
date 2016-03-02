@@ -2,13 +2,14 @@
     <div  class="input-group">
         <ui-select 
             id="SearchBar"
-            ng-model="data.search"
+            ng-model="currentSearch"
             theme="bootstrap"
             on-select="onSelect($item, $model)"
             reset-search-input="false">
-            <ui-select-match placeholder="Search tricks, riders, playlists">
+            <ui-select-match placeholder="Search tricks, riders, playlists" >
+                <span  ng-if="$select.selected.category" class="text-bold text-uppercase" >{{$select.selected.category}}: </span> 
                 <span class="text-bold text-capitalize" >{{$select.selected.title}} </span> 
-                <span> - {{$select.selected.sub_title}} </span>
+                <span ng-if="$select.selected.sub_title"> - {{$select.selected.sub_title}} </span>
             </ui-select-match>
             <ui-select-choices
                 repeat="data in results"
@@ -29,7 +30,7 @@
             </ui-select-choices>
         </ui-select>              
         <div class="input-group-btn" style="width:1%">
-            <button class="btn btn-default" type="submit">
+            <button class="btn btn-default" type="button" ng-click="onSearchButtonClick()">
                 <span class="glyphicon glyphicon-search"></span>
             </button>
         </div>

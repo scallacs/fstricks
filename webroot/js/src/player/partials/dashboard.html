@@ -54,8 +54,11 @@
                 <ul class="list-unstyled">
                     <li pagination-id="workspace.id"
                         dir-paginate="videoTag in workspace.loader.data.items | itemsPerPage: workspace.loader.data.perPage"
-                        total-items="workspace.loader.data.total">
-                    <video-tag-item video-tag="videoTag"></video-tag-item>
+                        total-items="workspace.loader.data.total"
+                        removable-item
+                        removable-item-id="{{videoTag.id}}"
+                        removable-item-options="removeOptions">
+                        <video-tag-item video-tag="videoTag"></video-tag-item>
                     </li>
                 </ul>
                 <div pagination-id="workspace.id"

@@ -23,7 +23,7 @@
     </div>
     <div class="col-md-6 col-md-pull-6 clearfix nopadding">
         <div class="panel-add-video-tag">
-            <div ng-show="showCreateRiderForm">
+            <div ng-if="showCreateRiderForm">
                 <h3 class="page-title">
                     Create rider
                 </h3>
@@ -31,6 +31,7 @@
                      profile-picture="false"  
                      save-method="'add'"
                      similar-riders="true"
+                     rider="riderToCreate"
                      form-group-class="'col-xs-12 col-sm-6 col-md-12'"></div>
             </div>
 
@@ -122,6 +123,27 @@
                                 </div>
                             </div>-->
                         </div>
+                        <div class="form-group clearfix">
+                            <div class="col-xs-3"></div>
+                            <div class="col-xs-9">
+                                <div class="btn-group">
+                                    <button class="btn btn-sm" 
+                                            type="button"
+                                            ng-click="playerData.startLooping()"
+                                            ng-class="playerData.looping ? 'btn-primary' : 'btn-default'">
+                                        <span class="glyphicon glyphicon-repeat text-big" title="Repeating trick"></span> 
+                                        &nbsp; Repeat time range
+                                    </button>
+                                    <button class="btn btn-sm" 
+                                            type="button"
+                                            ng-click="playerData.stopLooping()"
+                                            ng-class="!playerData.looping ? 'btn-primary' : 'btn-default'">
+                                        <span class="glyphicon glyphicon-play text-big" title="Playing video"></span> 
+                                        &nbsp; Play video normally
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="clearfix">
                             <div class="form-group col-md-12 col-sm-6 clearfix">
                                 <label class="control-label  col-xs-3">Sport</label>
@@ -134,19 +156,16 @@
                                         on-select="editionTag.resetTag()"
                                         on-remove="onRemoveCategory($item, $model)"
                                         required>
-                                        <ui-select-match placeholder="Sport and category">{{$select.selected.sport_name}} {{$select.selected.category_name}} </ui-select-match>
+                                        <ui-select-match placeholder="Sport and category">
+                                            {{$select.selected.sport_name}} 
+                                            {{$select.selected.category_name}} 
+                                        </ui-select-match>
                                         <ui-select-choices
+                                            group-by="selectGroupBySport"
                                             repeat="category in suggestedCategories"
                                             refresh="refreshSuggestedCategories($select.search)"
                                             refresh-delay="0">
-                                            <div class="clearfix">
-                                                <div class="col-xs-6">
-                                                    <span class="">{{category.sport_name}}</span>
-                                                </div>
-                                                <div class="col-xs-6">
-                                                    <span class="">{{category.category_name}}</span>
-                                                </div>
-                                            </div>
+                                            <span class="">{{category.category_name}}</span>
                                         </ui-select-choices>
                                     </ui-select>
                                 </div>
@@ -196,6 +215,7 @@
                                         theme="bootstrap"
                                         ng-disabled="!editionTag.isFieldEditabled('rider')"
                                         reset-search-input="false"
+                                        on-select="onSelectRider($item, $model)"
                                         on-remove="onRemoveRider($item, $model)"
                                         >
                                         <ui-select-match placeholder="Rider..." class="text-capitalize">
@@ -210,8 +230,8 @@
                                             <div class="clearfix" style="text-transform: capitalize;">
                                                 <img ng-src="{{rider.picture_round_xs}}" alt=""/>  
                                                 <span class="text-bold">{{rider.display_name}}</span>  
-                                                <span class="">({{rider.nationality}})</span> 
-                                                <!--<a class="text-sm" href="http://www.facebook.com/" target="_blank" >(View on facebook)</a>-->
+                                                <span ng-if="rider.id" class="">({{rider.nationality}})</span> 
+                                                <span ng-if="!rider.id" class=""> New !</span> 
                                             </div>
                                         </ui-select-choices>
                                     </ui-select>
