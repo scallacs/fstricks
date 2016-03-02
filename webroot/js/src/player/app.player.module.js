@@ -529,6 +529,7 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
         providerFactory
                 .create()
                 .addVideo(video.video_url)
+                .addPart('snippet')
                 .load()
                 .then(function(results) {
                     var item = providerFactory.createItem(results);
