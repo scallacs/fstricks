@@ -238,6 +238,9 @@ h3, h2, h1{
     text-align: center;
     padding-bottom: 20px;
 }
+.text-xs{
+    font-size: 0.5em;
+}
 
 body{
     background: #000;
@@ -519,6 +522,13 @@ ul[dnd-list] li.selected {
 }
 .player-bar .popover{
     opacity: 0.8;
+}
+/* ------------------------------------------------------------ */
+/* MEDIA  */
+/* ------------------------------------------------------------ */
+.media .thumbnail{
+    width: 100%;
+    max-width: 150px;
 }
 /* ------------------------------------------------------------ */
 /* ITEM  */

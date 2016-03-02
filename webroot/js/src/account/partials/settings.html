@@ -15,7 +15,7 @@
                 Your are logged in with facebook.
             </p>
             
-            <div class="text-center" ng-if="!isSociaLogin()">
+            <div class="text-center" ng-show="!isSociaLogin()">
 
                 <hr/>
 
@@ -29,7 +29,8 @@
 
                 <div class="" ng-show="showConfirmPassword">
                     <!-- TODO -->
-                    <form class="form" name="formDeleteAccount" server-form>
+                    <form class="form" name="formDeleteAccount" server-form
+                          ng-submit="removeAccount(password)">
                         <fieldset>
                             <div class="alert alert-danger">
                                 <span class="glyphicon glyphicon-warning-sign"></span> 
@@ -44,11 +45,13 @@
                             <div class="form-group  col-sm-4">
                                 <button class="btn btn-danger" 
                                         ng-disabled="false"
-                                        ng-click="removeAccount(password)">
+                                        type="submit">
                                     <span class="glyphicon glyphicon-remove-circle"></span> 
                                     Delete my account 
                                 </button>
-                                <button class="btn btn-default" ng-click="showConfirmPassword = false">
+                                <button class="btn btn-default" 
+                                        type="button"
+                                        ng-click="showConfirmPassword = false">
                                     <span class="glyphicon glyphicon-arrow-left"></span> 
                                     Cancel
                                 </button>

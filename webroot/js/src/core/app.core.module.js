@@ -343,6 +343,9 @@ function PaginateDataLoader(VideoTagEntity, $q) {
                 this.instances[name] = new PaginateDataLoader();
             }
             return this.instances[name];
+        },
+        clear: function(){
+            this.instances = {};
         }
     };
 
@@ -500,11 +503,13 @@ function PaginateDataLoader(VideoTagEntity, $q) {
     }
 
     function remove(id) {
-        for (var i = 0; i < this.data.length; i++) {
-            if (this.data[i].id === id) {
-                this.data.splice(i, 1);
+        for (var i = 0; i < this.data.items.length; i++) {
+            if (this.data.items[i].id === id) {
+                this.data.items.splice(i, 1);
+                return;
             }
         }
+        console.log("Cannot find item to remove: " + id);
     }
 }
 
@@ -684,14 +689,19 @@ function UserEntity($resource) {
             params: {action: 'login'},
             isArray: false
         },
+        logout: {
+            method: 'POST',
+            params: {action: 'logout', id: null},
+            isArray: false
+        },
         signup: {
             method: 'POST',
             params: {action: 'signup'},
             isArray: false
         },
-        logout: {
+        requestPassword: {
             method: 'POST',
-            params: {action: 'logout', id: null},
+            params: {action: 'request_password', id: null},
             isArray: false
         }
     });
@@ -960,8 +970,8 @@ function ServerConfigEntity($resource) {
 
 }
 
-AuthenticationService.$inject = ['$http', '$cookies', '$rootScope', 'UserEntity', '$state'];
-function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state) {
+AuthenticationService.$inject = ['$http', '$cookies', '$rootScope', 'UserEntity', '$state', 'PaginateDataLoader'];
+function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, PaginateDataLoader) {
 
     var service = {};
 
@@ -974,6 +984,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state) 
     service.socialLogin = socialLogin;
     service.signup = signup;
     service.requireLogin = requireLogin;
+    service.requestPassword = requestPassword;
     service.authData = {
         user: null,
         isAuthed: function() {
@@ -1018,8 +1029,15 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state) 
         return UserEntity.signup(data, function(response) {
             console.log(response);
             if (response.success) {
+                response.data.provider = null;
                 service.setCredentials(response.data);
             }
+        }).$promise;
+    }
+    
+    function requestPassword(email){
+        return UserEntity.requestPassword({email: email}, function(response) {
+            console.log(response);
         }).$promise;
     }
 
@@ -1046,7 +1064,12 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state) 
     }
 
     function logout() {
-        clearCredentials();
+        UserEntity.logout(function(){
+            clearCredentials();
+        }, function(){
+            
+        });
+        PaginateDataLoader.clear();
     }
 
     function clearCredentials() {

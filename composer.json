@@ -20,7 +20,8 @@
         "flowjs/flow-php-server": "^1.0",
         "vimeo/vimeo-api": "^1.2",
         "admad/cakephp-sequence": "^2.0",
-        "cakephp-fr/recaptcha": "~0.4"
+        "cakephp-fr/recaptcha": "~0.4",
+        "burzum/cakephp-user-tools": "^1.0"
     },
     "require-dev": {
         "psy/psysh": "@stable",

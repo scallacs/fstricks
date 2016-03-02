@@ -27,7 +27,7 @@ angular.module('app.player')
             function getCurrentTime() {
                 return $q.when(this._player.getCurrentTime());
             }
-            function loadVideo(data) {
+            function loadVideo(data, play) {
                 this._player.loadVideoById({
                     videoId: data.video_url,
                     startSeconds: data.begin

@@ -15,13 +15,48 @@ class UsersController extends AppController {
 
     public function initialize() {
         parent::initialize();
+//
+//        $this->loadComponent('Burzum/UserTools.UserTool', [
+//            'requestPassword' => [
+//                'successFlashOptions' => [],
+//                'successRedirectUrl' => false,
+//                'errorFlashOptions' => [],
+//                'errorRedirectUrl' => false,
+//                'field' => 'email',
+//                'setEntity' => true,
+//            ],
+//            'resetPassword' => [
+//                'successFlashOptions' => [],
+//                'successRedirectUrl' => '/login',
+//                'errorFlashOptions' => [],
+//                'errorRedirectUrl' => '/login',
+//                'invalidErrorFlashOptions' => [],
+//                'invalidErrorRedirectUrl' => '/login',
+//                'expiredErrorFlashOptions' => [],
+//                'expiredErrorRedirectUrl' => '/login',
+//                'queryParam' => 'token',
+//                'tokenOptions' => [],
+//            ],
+////            'actionMap' => [
+////                'reset_password' => [
+////                    'method' => 'resetPassword',
+////                    'view' => false,
+////                ],
+////                'request_password' => [
+////                    'method' => 'requestPassword',
+////                    'view' => false
+////                ],
+////            ],
+//        ]);
+
         if ($this->request->action === 'signup') {
             $this->loadComponent('Recaptcha.Recaptcha');
         }
     }
 
     public function beforeFilter(\Cake\Event\Event $event) {
-        $this->Auth->allow(['add', 'token', 'profile', 'login', 'signup', 'username_exists', 'facebook_login']);
+        $this->Auth->allow(['add', 'token', 'profile', 'login', 'signup', 'username_exists', 'facebook_login',
+            'logout', 'reset_password', 'request_password']);
     }
 
     /* ========================================================================
@@ -92,7 +127,7 @@ class UsersController extends AppController {
             }
             try {
                 // Proceed knowing you have a logged in user who's authenticated.
-                $response = $facebook->get('/me', $accessToken); //user
+                $response = $facebook->get('/me?scope=email', $accessToken); //user
                 $me = $response->getGraphUser();
             } catch (\Facebook\Exceptions\FacebookApiException $e) {
                 //echo error_log($e);
@@ -100,10 +135,11 @@ class UsersController extends AppController {
                 return;
             }
             // TODO catch all
-
+            
             $providerInfo = [
                 'displayName' => $me->getName(),
-                'identifier' => $me->getId()
+                'identifier' => $me->getId(),
+                'email' => $me->getEmail()
             ];
             if (!$user = $this->Users->createSocialAccount($provider, $providerInfo)) {
                 ResultMessage::setMessage('Sorry but we cannot create your account right now.', false);
@@ -135,9 +171,10 @@ class UsersController extends AppController {
     }
 
     public function logout() {
-        ResultMessage::setMessage('You are now logged out.', true);
-        $this->Auth->logout();
-        return;
+        if ($this->request->is('post')) {
+            $this->Auth->logout();
+            ResultMessage::setMessage('You are now logged out.', true);
+        }
     }
 
     public function remove_account() {
@@ -194,6 +231,34 @@ class UsersController extends AppController {
                 ResultMessage::setMessage('Are you a robot ? ', false);
             }
         }
+    }
+
+    /**
+     * 
+     */
+    public function request_password() {
+        try{
+            $entity = $this->Users->newEntity(null, ['validate' => 'requestPassword']);
+            if ($this->request->is('post')) {
+                $entity = $this->Users->patchEntity($entity, $this->request->data, ['validate' => 'requestPassword']);
+
+                if (!$entity->errors('email')) {
+                    $this->Users->initPasswordReset($this->request->data['email']);
+                    ResultMessage::setSuccess();
+                }
+                ResultMessage::setSuccess(false);
+            }
+        }
+        catch(\Exception $ex){
+            ResultMessage::setMessage("Sorry but, we cannot send you an email right now. Please try again later", false);
+            if (\Cake\Core\Configure::read('debug')){
+                throw $ex;
+            }
+        }
+    }
+
+    public function reset_password() {
+        debug('ij');
     }
 
     /**

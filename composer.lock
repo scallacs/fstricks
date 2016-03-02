@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "86c80bad6dc40e583505926c66752ec2",
-    "content-hash": "b55266baa21783bba9b3549422b97441",
+    "hash": "e6eaf3fce483580d8cfe7b6b4660f241",
+    "content-hash": "95a41466db97dae4c5693d5e06528951",
     "packages": [
         {
             "name": "admad/cakephp-hybridauth",
@@ -252,6 +252,57 @@
                 "localization"
             ],
             "time": "2014-08-24 00:00:00"
+        },
+        {
+            "name": "burzum/cakephp-user-tools",
+            "version": "1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/burzum/cakephp-user-tools.git",
+                "reference": "f33602d0daba00c44479b07ee4176335d43e6d4d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/burzum/cakephp-user-tools/zipball/f33602d0daba00c44479b07ee4176335d43e6d4d",
+                "reference": "f33602d0daba00c44479b07ee4176335d43e6d4d",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/cakephp": "3.*",
+                "cakephp/plugin-installer": "*",
+                "php": ">=5.4.16"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "Burzum\\UserTools\\": "src",
+                    "Burzum\\UserTools\\Test\\Fixture\\": "tests\\Fixture"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Florian Krämer",
+                    "homepage": "http://florian-kraemer.net",
+                    "role": "Author"
+                }
+            ],
+            "description": "This plugin is a set of tools for user handling like registration, login, email verification, password reset and much more.",
+            "homepage": "http://github.com/burzum/cakephp-user-tools",
+            "keywords": [
+                "Users",
+                "login",
+                "registration",
+                "signup",
+                "user-management"
+            ],
+            "time": "2016-02-17 10:06:34"
         },
         {
             "name": "cakephp-fr/recaptcha",

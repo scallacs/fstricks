@@ -418,10 +418,10 @@ function ViewSearchController(VideoTagData, $stateParams, PlayerData, SharedData
     PlayerData.stop();
     PlayerData.showListTricks = true;
 
-    if ($stateParams.q){
+    if ($stateParams.q) {
         SharedData.currentSearch = TopSearchMapper['search']($stateParams.q);
     }
-    else{
+    else {
         SharedData.currentSearch = TopSearchMapper['sport']({
             name: 'all sports'
         });
@@ -525,7 +525,7 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
         var video = response.extra.video;
 
         var providerFactory = ProviderVideoInfo.get(video.provider_id);
-        
+
         providerFactory
                 .create()
                 .addVideo(video.video_url)
@@ -598,6 +598,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     function successLoadCallback(tags) {
         VideoTagData.getLoader().data.items = tags;
         if (tags.length === 1) {
+            console.log('Auto play video tag');
             PlayerData
                     .playVideoTag(tags[0], true)
                     .finally(function() {

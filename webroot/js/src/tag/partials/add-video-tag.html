@@ -39,7 +39,8 @@
                 ng-show="!showCreateRiderForm">
                 <h3 class="page-title" ng-switch on="editionTag.isNew()">
                     <div ng-switch-when="true" >
-                        <span class="glyphicon glyphicon-plus-sign"></span>  Create
+                        <span class="glyphicon glyphicon-plus-sign"></span>  Create &nbsp; 
+                        <a class="text-xs" href="#AddTrickRules"> (How it works ?) </a>
                     </div>
                     <div ng-switch-default>
                         <span class="glyphicon glyphicon-edit"></span> Edit
@@ -275,7 +276,6 @@
                             This trick is being validated. If you make changes, the validation process 
                             will start over. 
                         </p>
-
                         <div class="text-right form-group"
                              ng-if="editionTag.isEditabled()">
                             <!--
@@ -336,7 +336,7 @@
                             <p class="text-center" ng-if="!hasSimilarValidatedTag">
                                 <span class="glyphicon glyphicon-info-sign"></span> 
                                 There is already a trick suggested here being validated. 
-                                Feel free to create a new one if you think it is not a valid one.
+                                Feel free to create a new one if you think it is not valid.
                             </p>
                             <!--
                             <p class="text-center">
@@ -367,8 +367,17 @@
         </div>
     </div>
 </div>
-<p class="text-center padding-sm ">
-    <a ui-sref="edition_rules">Check out edition rules before adding new tricks</a>
-</p>
 
-<!--{{editionTag._video_tag}}-->
+
+<div class="container margin-top">
+    <div class="bg-primary padding-sm border-radius" id="AddTrickRules">
+        <h3 class="page-title">Rules</h3>
+        
+        <h4>One trick at a time</h4>
+        <p>
+            
+        </p>
+        <h4>Time range from the beginning to the end of the trick</h4>
+        <h4>Be precise</h4>
+    </div>
+</div>

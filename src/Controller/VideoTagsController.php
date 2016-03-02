@@ -147,7 +147,8 @@ class VideoTagsController extends AppController {
         }
         $query = $this->VideoTags->findAndJoin()
                 ->where([
-                    'VideoTags.status' => VideoTag::STATUS_PENDING
+                    'VideoTags.status' => VideoTag::STATUS_PENDING,
+                    'VideoTags.modified < ' => time() - \Cake\Core\Configure::read('VideoTagValidation.delay_before_validation')
                 ])
                 ->notMatching('VideoTagAccuracyRates', function ($q) {
                     return $q->where(['VideoTagAccuracyRates.user_id' => $this->Auth->user('id')]);

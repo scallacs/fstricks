@@ -270,6 +270,7 @@ class VideoTagsTable extends Table {
                 $entity->status = VideoTag::STATUS_DUPLICATE;
             } 
         }
+        $this->modified = date('c');
     }
 
     /**

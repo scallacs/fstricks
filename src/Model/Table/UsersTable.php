@@ -12,6 +12,8 @@ use App\Lib\JsonConfigHelper;
 /**
  * Users Model
  *
+ * https://github.com/burzum/cakephp-user-tools/blob/master/docs/Documentation/The-User-Behavior.md
+ * 
  * @property \Cake\ORM\Association\HasMany $Spots
  */
 class UsersTable extends TableWithTags {
@@ -24,6 +26,18 @@ class UsersTable extends TableWithTags {
      */
     public function initialize(array $config) {
         parent::initialize($config);
+
+        $this->addBehavior('Burzum/UserTools.User', [
+            'emailConfig' => 'default',
+            'initPasswordReset' => [
+                'tokenLength' => 32,
+                'expires' => '+1 day'
+            ],
+            'loginFields' => [
+                'username' => 'email',
+                'password' => 'password'
+            ],
+        ]);
 
         $this->table('users');
         $this->displayField('username');
@@ -68,15 +82,15 @@ class UsersTable extends TableWithTags {
                     ],
                     'allowedChars' => [
                         'rule' => function($value, $context) {
-                            return !preg_match(JsonConfigHelper::rules('users', 'username', 'regex'), $value);
-                        },
+                    return !preg_match(JsonConfigHelper::rules('users', 'username', 'regex'), $value);
+                },
                         'message' => 'Only alpha numeric chars with accents.'
-                ]])
+            ]])
                 ->add('username', 'unique', [
                     'rule' => 'validateUnique',
                     'provider' => 'table',
                     'message' => 'This user name is not available. Please choose another one.'
-                ]);
+        ]);
 
         return $validator;
     }

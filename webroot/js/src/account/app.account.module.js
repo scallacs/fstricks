@@ -43,10 +43,10 @@ function ConfigRoute($stateProvider) {
             });
 }
 
-ConfigSocialApi.$inject = ['$authProvider', 'Config'];
-function ConfigSocialApi($authProvider, Config) {
+ConfigSocialApi.$inject = ['$authProvider'];
+function ConfigSocialApi($authProvider) {
     $authProvider.facebook({
-        clientId: Config.api.facebook,
+        clientId: APIS.facebook,
         url: API_BASE_URL + '/users/facebook_login.json',
         redirectUri: WEBROOT_FULL
     });

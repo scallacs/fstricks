@@ -44,7 +44,7 @@ function EditionTag() {
         return 'validated' === this._video_tag.status;
     }
     function isDirty() {
-        if (!angular.isDefined(this._original) || this._original === null) {
+        if (!angular.isDefined(this._original) || this._original === null || !this._video_tag.id) {
             return true;
         }
         var a = this._video_tag;
@@ -299,7 +299,7 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
         values: [0, MIN_TAG_DURATION],
         stop: function(event, ui) {
             if (editionTag.isNew()) {
-                $scope.similarTags = findSimilarTags(editionTag._video_tag);
+                updateSimilarTags();
             }
         },
         slide: function(event, ui) {
@@ -434,11 +434,15 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
 
         promise.then(function(response) {
             if (response.success) {
-                // TODO check is removing
-                VideoTagData.getLoader().remove(editionTag.getId());
+                VideoTagData.getLoader()
+                        .remove(editionTag.getId())
                 addNewTag();
             }
         });
+    }
+
+    function updateSimilarTags() {
+        $scope.similarTags = findSimilarTags(editionTag._video_tag);
     }
 
     function addNewTag() {
@@ -446,7 +450,7 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
         editionTag.resetTag()
                 .setId(null)
                 .setVideo($scope.video);
-        $scope.similarTags = findSimilarTags(editionTag._video_tag);
+        updateSimilarTags();
         playEditionTag();
     }
 
@@ -474,6 +478,7 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
                     console.log("Creating a new tag!'");
                     editionTag.setStatus(response.data.status);
                     editionTag.setId(response.data.video_tag_id);
+                    $scope.similarTags = [];
                     var newTag = editionTag.toVideoTag();
                     editionTag._original = newTag;
                     VideoTagData.getLoader().add(newTag);
@@ -491,7 +496,7 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
     function editVideoTag(videoTag) {
         editionTag.fromVideoTag(videoTag);
         playEditionTag();
-        $scope.similarTags = editionTag.isNew() ? findSimilarTags(editionTag._video_tag) : [];
+        editionTag.isNew() ? updateSimilarTags() : $scope.similarTags = [];
     }
 
     function loadSimilarTags() {

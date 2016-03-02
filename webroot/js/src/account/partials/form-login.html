@@ -1,23 +1,29 @@
-<form id="LoginForm" method="post" ng-submit="login(user)" name="loginForm" server-form>
+<form id="LoginForm" 
+      method="post" 
+      ng-submit="login(user)" 
+      name="loginForm" 
+      server-form>
     <fieldset>
         <div class="form-group has-feedback">
             <input class="form-control input-lg" type="text" name="email" ng-model="user.email" placeholder="Email" required autofocus>
             <span class="ion-at form-control-feedback"></span>
         </div>
-        <div class="form-group has-feedback">
+        <div class="form-group has-feedback" ng-if="!resetPassword">
             <input class="form-control input-lg" type="password" name="password" ng-model="user.password" placeholder="Password" required>
             <span class="ion-key form-control-feedback"></span>
         </div>
         <button type="submit" 
                 ng-disabled="loginForm.$invalid" 
-                class="btn btn-lg  btn-block btn-success">Log in
-
-            <div ng-loading-icon is-loading="isFormLoading"></div>
+                class="btn btn-lg  btn-block btn-success">
+            <span ng-show="!resetPassword"> Log in</span> 
+            <span ng-show="resetPassword"> Reset password </span>
         </button>
     </fieldset>
     <br/>
     <p class="text-center text-muted">
-        <small>Don't have an account yet? <a ui-sref="signup">Sign up</a></small>
+        <small>Don't have an account yet? <a ui-sref="signup">Sign up</a></small> <br/>
+        <small ng-show="!resetPassword">Forgot password? <a href="#" ng-click="resetPassword = true">Reset password</a></small>
+        <small ng-show="resetPassword">Found your password ? <a href="#" ng-click="resetPassword = false">login</a></small>
     </p>
 </form>
 

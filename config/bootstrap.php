@@ -226,24 +226,14 @@ Configure::write('Company', [
     'title' => 'Freestyle Tricks',
     'name' => 'FS tricks'
 ]);
-Configure::write('Youtube', [
-    'key' => 'AIzaSyC851NBlFCigGum0qdk04GHGVYF_tqd-M4'
-]);
-Configure::write('Vimeo', [
-    'id' => 'f941f4c31738338a894c2b547ab6a9d1255d63d1',
-    'key' => 'rR8YpMiWxBtkvk6QHjKbj8MK+4EpWJXevpCQTUgsy5RtYgoskrcCbvZUoju1MRzhZXZBpETrX1XvS4Nrr8EW2evFf76/Kz2fNiYsCDL/8tRu1YYbCU666kkoaWMZbr5a'
-]);
-Configure::write('Facebook', [
-    'key' => '079e8ce1830a2177f3a10b939615a7f6', 
-    'id' => '1536208040040285'
-]);
 Configure::write('JsonConfigFolder', WWW_ROOT . DS . 'data' . DS);
 Configure::write('TokenExpirationTime', 30 * (86400 * 1000)); // 30 jour
 
 Configure::write('VideoTagValidation', [
     "threshold_reject" => 0.7,
     "threshold_accept" => 0.7,
-    "min_rate" => 6
+    "min_rate" => 6,
+    "delay_before_validation" => 1800 // Number of seconds before the trick will be suggested for review
 ]);
 
 
@@ -274,3 +264,4 @@ ini_set('memory_limit', '256M');
 Plugin::load('ADmad/Sequence');
 
 Plugin::load('Recaptcha', ['bootstrap' => true, 'routes' => true]);
+Plugin::load('Burzum/UserTools');
