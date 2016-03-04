@@ -88,7 +88,6 @@ class UsersController extends AppController {
             if ($user) {
                 $this->Auth->setUser($user);
                 $this->setUserResponse($user);
-                $this->setToken();
 //                ResultMessage::setRedirectUrl($this->Auth->redirectUrl());
                 ResultMessage::setMessage("Welcome back !", true);
             } else {
@@ -148,8 +147,7 @@ class UsersController extends AppController {
             }
 //            $userArray = $user->toArray();
 //            $userArray['access_token'] = $accessToken;
-            $this->setToken();
-            $this->setUserResponse($user);
+            $this->setUserResponse($user, true);
             ResultMessage::setSuccess(true);
         } catch (\Facebook\Exceptions\FacebookSDKException $ex) {
             ResultMessage::setMessage('FacebookSDKException');
@@ -161,26 +159,27 @@ class UsersController extends AppController {
     }
 
     private function setUserResponse($user, $auth = false) {
-        if (!is_array($user)){
+        if (!is_array($user)) {
             $user = [
                 'id' => $user->id,
                 'email' => $user->email,
                 'username' => $user->username,
                 'created' => $user->created
             ];
-        }
-        else {
+        } else {
             $user = [
                 'id' => $user['id'],
-                'email' =>  $user['email'],
-                'username' =>  $user['username'],
-                'created' =>  $user['created'],
+                'email' => $user['email'],
+                'username' => $user['username'],
+                'created' => $user['created'],
             ];
         }
-        if ($auth){
+        if ($auth) {
             $this->Auth->setUser($user);
         }
         ResultMessage::setData('user', $user);
+
+        $this->setToken();
     }
 
     public function logout() {
@@ -231,7 +230,6 @@ class UsersController extends AppController {
                 $this->status = \App\Model\Entity\User::STATUS_ACTIVATED;
 
                 if ($this->Users->save($user)) {
-                    $this->setToken();
                     $this->setUserResponse($user, true);
                     assert($this->Auth->user('id'));
                     ResultMessage::setMessage('Welcome!', true);
