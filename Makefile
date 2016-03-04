@@ -4,7 +4,7 @@ CSS_FILES = $(filter-out %.min.css,$(wildcard \
 ))
 CSS_MINIFIED = $(CSS_FILES:.css=.min.css)
 GULP_BIN = node_modules/gulp/bin/gulp.js
-DB_SOURCE = resources/database/trickers.sql
+DB_SOURCE = resources/database/prod.sql
 DB_PROD_NAME = trickers 
 # For end to end tests
 DB_DEV_NAME = trickers
