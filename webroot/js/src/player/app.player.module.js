@@ -20,6 +20,7 @@ angular.module('app.player', [
         .controller('ViewSearchController', ViewSearchController)
         .controller('ViewRealizationController', ViewRealizationController)
         .controller('ViewValidationController', ViewValidationController)
+        .controller('StartValidationController', StartValidationController)
         .controller('ViewPlaylistController', ViewPlaylistController)
         .controller('DashboardController', DashboardController)
         .controller('ManagePlaylistController', ManagePlaylistController)
@@ -126,12 +127,21 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer.validation', {
-                url: '/validation',
+                url: '/validate',
                 views: {
                     videoPlayerExtra: {
                         templateUrl: baseUrl + 'view-validation.html',
                         controller: 'ViewValidationController'
-                    },
+                    }
+                }
+            })
+            .state('startvalidation', {
+                url: '/start-validation',
+                templateUrl: baseUrl + 'start-validation.html',
+                controller: 'StartValidationController',
+                data: {
+                    requireLogin: true,
+                    pageLoader: true
                 }
             })
             .state('videoplayer.best', {
@@ -314,10 +324,11 @@ function PlayerController($scope, PlayerData, SharedData, TopSearchMapper) {
     PlayerData.showListTricks = true;
 
 
-    $scope.$on('view-video-tag', function(event, tag) {
+    $scope.$on('play-video-tag', function(event, tag) {
         event.stopPropagation();
 //        $state.transitionTo($state.$current, {realization: tag.id}, {notify: false, reload: false});
         PlayerData.playVideoTag(tag);
+        PlayerData.startLooping();
     });
 
 //    if (angular.isDefined($stateParams.realization)) {
@@ -481,9 +492,9 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
 
     PlayerData.showViewMode();
     PlayerData.stop();
-    PlayerData.onCurrentTimeUpdate = onCurrentTimeUpdate;
     PlayerData.showListTricks = false;
     PlayerData.playMode = 'video';
+    PlayerData.stopLooping();
 
     $scope.video = {
         id: $stateParams.videoId
@@ -497,18 +508,11 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
                 SharedData.pageLoader(false);
             });
 
-    // TODO only for first page
-
-    function onCurrentTimeUpdate(newVal) {
-        PlayerData.updateCurrentTag(newVal);
-    }
-
     function autoPlayVideo(response) {
         console.log("Autho play video");
         if (response.items.length > 0) {
             var first = response.items[0];
-            PlayerData.loadVideo({
-                provider: first.provider_id,
+            PlayerData.loadVideo(first.provider_id, {
                 video_url: first.video_url
             }).finally(function() {
                 SharedData.pageLoader(false);
@@ -539,10 +543,26 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
     }
 }
 
+ViewValidationController.$inject = ['$scope', 'VideoTagData', 'PlayerData', 'SharedData', '$state',
+    'VideoTagEntity', 'VideoTagAccuracyRateEntity', '$uibModal'];
+function StartValidationController($scope, VideoTagData, PlayerData, SharedData, $state, VideoTagEntity,
+        VideoTagAccuracyRateEntity, $uibModal) {
+    SharedData.pageLoader(false);
+
+}
+
 // TODO add current sport ...
-ViewValidationController.$inject = ['$scope', 'VideoTagData', 'PlayerData', 'SharedData', '$state', 'VideoTagEntity', 'VideoTagAccuracyRateEntity'];
-function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, $state, VideoTagEntity, VideoTagAccuracyRateEntity) {
+ViewValidationController.$inject = ['$scope', 'VideoTagData', 'PlayerData', 'SharedData', '$state',
+    'VideoTagEntity', 'VideoTagAccuracyRateEntity', '$uibModal'];
+function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, $state, VideoTagEntity,
+        VideoTagAccuracyRateEntity, $uibModal) {
     var skipped = [];
+    
+    if (!SharedData.currentSport){
+        $state.go('startvalidation');
+        return;
+    }
+    
     VideoTagData.reset();
     loadNext();
     PlayerData.showValidationMode();
@@ -552,6 +572,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     $scope.rateFake = rateFake;
     $scope.skip = skip;
 
+    
     function rateAccurate() {
         $scope.isButtonsLoading = true;
         VideoTagAccuracyRateEntity.accurate({

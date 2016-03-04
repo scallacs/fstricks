@@ -55,9 +55,11 @@
                         this._player.api('play');
                     }
                     function stop() {
-                        this._player.api('stop');
+                        console.log('VimeoCmdMapper::stop()');
+                        this._player.api('pause');
                     }
                     function pause() {
+                        console.log('VimeoCmdMapper::pause()');
                         this._player.api('pause');
                     }
 
@@ -79,11 +81,13 @@
                 var playerId = attrs.playerId || element[0].id;
                 element[0].id = playerId + 'Container';
                 var PlayerData = scope.playerData;
-                var ready = false;
 
+                element.on('$destroy', function() {
+                    PlayerData.resetPlayer('vimeo');
+                });
+                
                 scope.$watch('playerData.data.video_url', function(newVal) {
-                    if (newVal !== null && !ready) {
-                        ready = true;
+                    if ($('#' + playerId).length === 0 && newVal !== null){
                         loadPlayer(newVal);
                     }
                 });
@@ -97,6 +101,7 @@
                     var iframe = $('#' + playerId);
                     var player = $f(iframe[0]);
                     // When the player is ready, add listeners for pause, finish, and playProgress
+
                     player.addEvent('ready', function(playerId) {
                         var player = $f(playerId);
                         console.log('VIMEO PLAYER: ready');
@@ -104,21 +109,12 @@
                         player.addEvent('playProgress', function(data) {
                             PlayerData.onPlayProgress(data.seconds);
                         });
+                        player.addEvent('pause', PlayerData.onPause);
+                        player.addEvent('play', PlayerData.onPlay);
+                        player.addEvent('finished', PlayerData.onFinish);
                     });
+
                 }
-
-//                function onPause(id) {
-//                    console.log('paused');
-//                }
-//
-//                function onFinish(id) {
-//                    console.log('finished');
-//                }
-//
-//                function onPlayProgress(data, id) {
-//                    console.log(data.seconds + 's played');
-//                }
-
             }
         };
     }

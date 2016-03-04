@@ -258,7 +258,20 @@ body{
     text-transform: uppercase;
     letter-spacing: 1px;
 }
-.section-separator h1,h2,h3,h4{
+
+.bg-primary h1, .bg-primaryh2, .bg-primary h3,.bg-primary h4{
+    color: #EEE;
+}
+h1, h2, h3, h4{
+    margin: 0px;
+    font-weight: bold;
+    padding-bottom: 7px;
+    padding-top: 8px;
+}
+.section-separator h1,
+.section-separator h2,
+.section-separator h3,
+.section-separator h4{
     font-size: 2em;
     margin: 0px;
     font-weight: bold;

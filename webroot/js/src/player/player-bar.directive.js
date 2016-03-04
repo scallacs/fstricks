@@ -20,7 +20,7 @@ function playerBar() {
             $scope.videoTagData = VideoTagData;
 
             function view(tag) {
-                $scope.$emit('view-video-tag', tag);
+                $scope.$emit('play-video-tag', tag);
             }
 
 

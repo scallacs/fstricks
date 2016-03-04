@@ -28,8 +28,8 @@
                 <a ui-sref="addvideo"> Add tricks now</a>
             </p>
         </div>
-        <div ng-show="!playerData.hasError() && (videoTagData.currentTag != null || videoTagData.getLoader().hasData())">
-            <div class="nopadding player-container"  ng-show="playerData.data.video_url"  >
+        <div ng-show="playerData.hasVideo()">
+            <div class="nopadding player-container" >
                 <div 
                     ng-show="videoTagData.hasPrev()"
                     class="player-prev-trick" 

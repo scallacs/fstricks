@@ -335,9 +335,9 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
     $scope.loadSimilarTags = loadSimilarTags;
     $scope.selectGroupBySport = selectGroupBySport;
 
-    $scope.$on('view-video-tag', function(event, tag) {
+    $scope.$on('play-video-tag', function(event, tag) {
         event.stopPropagation();
-        editVideoTag(tag);
+        editVideoTag(tag); // TODO check
     });
     $scope.$on('view-video-tag-broadcast', function(event, tag) {
         editVideoTag(tag);
@@ -407,7 +407,7 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
     }
 
     function playVideo(video) {
-        return PlayerData.loadVideo({provider: video.provider_id, video_url: video.video_url})
+        return PlayerData.loadVideo(video.provider_id, {video_url: video.video_url})
                 .then(addNewTag)
                 .finally(function() {
                     SharedData.pageLoader(false);

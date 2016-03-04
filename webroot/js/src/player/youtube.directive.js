@@ -1,51 +1,50 @@
 angular.module('app.player')
         .factory('YoutubeCmdMapper', ['$q', function($q) {
-            function YoutubeCmdMapper(player) {
-                this._player = player;
-            }
-            YoutubeCmdMapper.prototype = {
-                seekTo: seekTo,
-                getCurrentTime: getCurrentTime,
-                loadVideo: loadVideo,
-                play: play,
-                stop: stop,
-                pause: pause
-            };
-
-            function seekTo(seconds) {
-                this._player.seekTo(seconds);
-            }
-            function play() {
-                this._player.playVideo();
-            }
-            function stop() {
-                this._player.stopVideo();
-            }
-            function pause() {
-                this._player.pauseVideo();
-            }
-            function getCurrentTime() {
-                return $q.when(this._player.getCurrentTime());
-            }
-            function loadVideo(data, play) {
-                this._player.loadVideoById({
-                    videoId: data.video_url,
-                    startSeconds: data.begin
-                });
-            }
-            return {
-                create: function(player) {
-                    return new YoutubeCmdMapper(player);
+                function YoutubeCmdMapper(player) {
+                    this._player = player;
                 }
-            };
+                YoutubeCmdMapper.prototype = {
+                    seekTo: seekTo,
+                    getCurrentTime: getCurrentTime,
+                    loadVideo: loadVideo,
+                    play: play,
+                    stop: stop,
+                    pause: pause
+                };
 
-        }])
+                function seekTo(seconds) {
+                    this._player.seekTo(seconds);
+                }
+                function play() {
+                    this._player.playVideo();
+                }
+                function stop() {
+                    this._player.stopVideo();
+                }
+                function pause() {
+                    this._player.pauseVideo();
+                }
+                function getCurrentTime() {
+                    return $q.when(this._player.getCurrentTime());
+                }
+                function loadVideo(data, play) {
+                    this._player.loadVideoById({
+                        videoId: data.video_url,
+                        startSeconds: data.begin
+                    });
+                }
+                return {
+                    create: function(player) {
+                        return new YoutubeCmdMapper(player);
+                    }
+                };
+
+            }])
         .directive('youtube', youtubeDirective);
 
 youtubeDirective.$inject = ['$window', 'VideoEntity', 'PlayerData', 'YoutubeCmdMapper'];
 function youtubeDirective($window, VideoEntity, PlayerData, YoutubeCmdMapper) {
 
-    var myTimer;
     function initPlayer(element, scope) {
         var player;
         var playerContainer = element.children()[0];
@@ -90,26 +89,36 @@ function youtubeDirective($window, VideoEntity, PlayerData, YoutubeCmdMapper) {
                 },
                 onStateChange: function(event) {
                     var intervalDuration = 100; // TODO constant 100 means repeat in 100 ms
-                    clearInterval(myTimer);
+                    clearInterval(PlayerData.timer);
+
                     switch (event.data) {
+                        case YT.PlayerState.PAUSED:
+                            PlayerData.onPause();
+                            break;
+                        case YT.PlayerState.ENDED:
+                            PlayerData.onFinish();
+                            break;
                         case YT.PlayerState.PLAYING:
+                            PlayerData.onPlay();
                             if (PlayerData.looping && PlayerData.data.end < player.getCurrentTime()) {
-                                PlayerData.onEnd('youtube');
+                                PlayerData.onTimeRangeEnd('youtube',  player.getCurrentTime());
                             }
                             console.log("Setting youtube time event");
-                            myTimer = setInterval(function() {
-                                var newTime = player.getCurrentTime();
-                                PlayerData.onPlayProgress(newTime);
-                                PlayerData.onCurrentTimeUpdate(newTime);
-                                PlayerData.data.currentTime = newTime;
+                            PlayerData.timer = setInterval(function() {
+                                PlayerData.onPlayProgress(player.getCurrentTime());
 //                                        console.log(PlayerData.data.end - newTime);
-                                if (PlayerData.looping && (PlayerData.data.end - newTime) < (intervalDuration / 1000)) {
-                                    console.log("Pre on end triggerd");
-                                    PlayerData.onEnd('youtube');
-                                }
+//                                if (PlayerData.looping 
+//                                        && (PlayerData.data.end - newTime) < (intervalDuration / 1000)) {
+//                                    PlayerData.onTimeRangeEnd('youtube');
+//                                }
                             }, intervalDuration);
                             break
                     }
+//                    YT.PlayerState.ENDED
+//                    YT.PlayerState.PLAYING
+//                    YT.PlayerState.PAUSED
+//                    YT.PlayerState.BUFFERING
+//                    YT.PlayerState.CUED
                 }
             }
         });
@@ -132,6 +141,10 @@ function youtubeDirective($window, VideoEntity, PlayerData, YoutubeCmdMapper) {
             $window.onYouTubeIframeAPIReady = function() {
                 initPlayer(element, scope);
             };
+
+            element.on('$destroy', function() {
+                PlayerData.resetPlayer('youtube');
+            });
         }
     };
 }

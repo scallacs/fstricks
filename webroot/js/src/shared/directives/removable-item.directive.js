@@ -6,7 +6,6 @@
  */
 
 angular.module('shared')
-        .controller('ModalInstanceCtrl', ModalInstanceCtrl)
         .factory('RemoveItemEntity', RemoveItemEntity)
         .directive('removableItem', removableItem);
 
@@ -22,16 +21,6 @@ function RemoveItemEntity($resource) {
     });
 }
 
-ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance'];
-function ModalInstanceCtrl($scope, $uibModalInstance) {
-    $scope.ok = function() {
-        $uibModalInstance.close('close');
-    };
-
-    $scope.cancel = function() {
-        $uibModalInstance.dismiss('cancel');
-    };
-}
 
 removableItem.$inject = ['$uibModal', 'RemoveItemEntity', 'toaster'];
 function removableItem($uibModal, RemoveItemEntity, toaster) {

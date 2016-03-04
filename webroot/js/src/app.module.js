@@ -13,8 +13,20 @@ angular.module('app', [
 ])
         .config(ConfigRouting)
         .config(ConfigInterceptor)
+        .controller('ModalInstanceCtrl', ModalInstanceCtrl)
         .controller('MainController', MainController)
         .run(Run);
+
+ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance'];
+function ModalInstanceCtrl($scope, $uibModalInstance) {
+    $scope.ok = function() {
+        $uibModalInstance.close('close');
+    };
+
+    $scope.cancel = function() {
+        $uibModalInstance.dismiss('cancel');
+    };
+}
 
 MainController.$inject = ['$scope', 'PlayerData', 'VideoTagData', 'SharedData', 'AuthenticationService', '$state', 'Config'];
 function MainController($scope, PlayerData, VideoTagData, SharedData, AuthenticationService, $state, Config) {

@@ -60,6 +60,7 @@ function topnav() {
             }
 
             function setCurrentSport(sport) {
+                console.log('Setting current sport: ' + sport.name);
                 $scope.currentSport = sport;
                 SharedData.currentSport = sport;
             }

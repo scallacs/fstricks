@@ -1,0 +1,32 @@
+
+<div class="container bg-primary margin-top border-radius">
+    <h2 class="page-title">Start reviewing tricks</h2>
+    <p>
+        You can review tricks added by other members for a sport.
+    </p>
+    <p class="text-danger"  ng-if="!SharedData.currentSport">
+        Pick the from you want to review.
+    </p>
+    <ul class="nav nav-pills">
+        <li ng-repeat="sport in sports"
+            ng-class="{'active': SharedData.currentSport.id == sport.id}" >
+            <a  href="#" 
+                ng-click="setCurrentSport(sport)"
+                >
+                {{sport.name}} 
+            </a>
+        </li>
+    </ul>
+    <div class="text-center padding-sm margin-top">
+        <button ui-sref="home" class="btn btn-danger">
+            Another time... 
+        </button>
+        <button  ui-sref="videoplayer.validation"  
+                 class="btn btn-success"
+                 ng-disabled="!SharedData.currentSport">
+            Okay, let's go!
+        </button>
+    </div>
+</div>
+
+

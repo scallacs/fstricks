@@ -34,8 +34,7 @@ function NotifyOnLoad($rootScope, $timeout) {
 PlayerData.$inject = ['VideoTagData', '$q'];
 function PlayerData(VideoTagData, $q) {
     var obj = {
-        init: function() {
-            console.log("Init PlayerData");
+        initPlayers: function() {
             this.deferred = {
                 youtube: $q.defer(),
                 vimeo: $q.defer()
@@ -44,13 +43,15 @@ function PlayerData(VideoTagData, $q) {
                 youtube: null,
                 vimeo: null
             };
+        },
+        initData: function() {
+            this.state = 'pause';
+            this.timer = null;
             this.visible = true;
             this.showListTricks = true;
             this.mode = 'view';
             this.looping = true; // True if we want to loop on the current tag
             this.playMode = 'tag'; // tag, playlist, video
-            this.onCurrentTimeUpdate = function() {
-            };
             this.data = {
                 begin: 0,
                 end: 0,
@@ -60,19 +61,19 @@ function PlayerData(VideoTagData, $q) {
                 id: null,
                 provider: null
             };
-            this.onFinish = function() {
-            };
-            this.onPause = function() {
-            };
-            this.onSeek = function() {
-                obj.getCurrentTime().then(function(currentTime) {
-                    if ((obj.data.begin !== null && currentTime < obj.data.begin)
-                            || (obj.data.end !== null && currentTime > obj.data.end)) {
-                        obj.looping = false;
-                    }
-                });
-            };
-
+//            this.onSeek = function() {
+//                obj.getCurrentTime().then(function(currentTime) {
+//                    if ((obj.data.begin !== null && currentTime < obj.data.begin)
+//                            || (obj.data.end !== null && currentTime > obj.data.end)) {
+//                        obj.looping = false;
+//                    }
+//                });
+//            };
+        },
+        init: function() {
+            console.log("Init PlayerData");
+            this.initPlayers();
+            this.initData();
         },
         showEditionMode: showEditionMode,
         showViewMode: showViewMode,
@@ -94,17 +95,51 @@ function PlayerData(VideoTagData, $q) {
         seekTo: seekTo,
         loadVideo: loadVideo,
         hasError: hasError,
-        onEnd: onEnd,
-        onPlayProgress: onPlayProgress,
         getCurrentTime: getCurrentTime,
-        updateCurrentTag: updateCurrentTag,
         resetPlayer: resetPlayer,
-        toggleLooping: toggleLooping
+        toggleLooping: toggleLooping,
+        setProvider: setProvider,
+        onTimeRangeEnd: onTimeRangeEnd,
+        onPlayProgress: onPlayProgress,
+        onFinish: onFinish,
+        onPause: onPause,
+        onPlay: onPlay,
+        hasVideo: hasVideo
     };
 
     obj.init();
 
     return obj;
+
+    function hasVideo() {
+        return this.data.video_url !== null && this.data.provider !== null && this.state !== 'stop';
+    }
+
+    function onFinish() {
+        console.log('Player::onFinish');
+        obj.state = 'stop';
+    }
+    function onPause() {
+        console.log('Player::onPause');
+        obj.state = 'pause';
+    }
+    function onPlay() {
+        console.log('Player::onPlay');
+        obj.state = 'play';
+    }
+
+    function setProvider(p) {
+        if (this.data.provider !== p) {
+            if (this.data.provider) {
+                obj.stop(this.data.provider);
+            }
+            clearInterval(PlayerData.timer);
+            console.log('Changing provider to: ' + p + '(before: ' + this.data.provider + ')');
+            obj.data.provider = p;
+            obj.data.video_url = null;
+            obj.state = 'pause';
+        }
+    }
 
     function toggleLooping() {
         obj.looping ? obj.stopLooping() : obj.startLooping();
@@ -113,25 +148,23 @@ function PlayerData(VideoTagData, $q) {
         return this.mode === m;
     }
 
-    function onEnd(provider) {
-        if (provider !== this.data.provider){
+    function onTimeRangeEnd(provider, currentTime) {
+        console.log("PlayerData::onTimeRangeEnd() mode: " + obj.playMode + ', state: ' + obj.state);
+        if (obj.state !== 'play') {
             return;
         }
-        console.log("PlayerData::onEnd()");
-        if (this.looping) {
-            this.seekTo(this.data.begin);
+        if (obj.looping) {
+            console.log('Looping on video tag');
+            obj.seekTo(this.data.begin);
         }
-        //console.log("onEnd() reached !");
-        else if (this.playMode === 'playlist' && VideoTagData.getLoader().hasData()) {
+        //console.log("onTimeRangeEnd() reached !");
+        else if (obj.playMode === 'playlist' && VideoTagData.getLoader().hasData()) {
             if (VideoTagData.hasNext()) {
-                this.playVideoTag(VideoTagData.next(), false);
+                obj.playVideoTag(VideoTagData.next(), false);
             }
             else {
-                this.playVideoTag(VideoTagData.getLoader().getItem(0));
+                obj.playVideoTag(VideoTagData.getLoader().getItem(0));
             }
-        }
-        else if (this.playMode === 'video') {
-            // Do nothing
         }
     }
     function hasError() {
@@ -141,8 +174,32 @@ function PlayerData(VideoTagData, $q) {
                 this.players[this.data.provider] === false;
     }
     function onPlayProgress(currentTime) {
-        if (this.data.provider !== null && obj.data.end !== null && currentTime >= obj.data.end) {
-            obj.onEnd(this.data.provider);
+//        console.log(currentTime);
+        obj.data.currentTime = currentTime;
+//        console.log( obj.data);
+        if (obj.data.provider !== null
+                && obj.data.end !== null
+                && currentTime >= obj.data.end) {
+            obj.onTimeRangeEnd(this.data.provider, currentTime);
+        }
+        else if (this.playMode === 'video') {
+//        console.log(VideoTagData.currentTag);
+            var current = VideoTagData.currentTag;
+            if (angular.isDefined(current) && current !== null) {
+                //console.log("current tag is defined: " + newVal + " in ? " + current.id + " [" + current.begin+", "+current.end+"]");
+                if (current.begin <= currentTime && current.end >= currentTime) {
+                    current.time_to_play = 0;
+                    obj.data.end = current.end;
+                    obj.data.begin = current.begin;
+                    return;
+                }
+                else if (current.begin > currentTime) {
+                    current.time_to_play = Math.round(current.begin - currentTime, 0);
+                    return;
+                }
+            }
+            console.log("Searching for next tag...");
+            VideoTagData.setCurrentTag(VideoTagData.findNextTagToPlay(currentTime));
         }
     }
     function startLooping() {
@@ -183,13 +240,16 @@ function PlayerData(VideoTagData, $q) {
     }
 
     function setPlayer(type, player) {
-        console.log("Setting player: " + type);
+        console.log("PlayerData::setPlayer : " + type);
         this.players[type] = player;
         this.deferred[type].resolve(player);
     }
-    // TODO destroy players
+    // TODO reset players
     function resetPlayer(type) {
-        console.log("Resetting player: " + type);
+        if (this.deferred[type]) {
+            console.log("Resetting player: " + type);
+            this.deferred[type].reject("player reset");
+        }
         this.players[type] = null;
         this.deferred[type] = $q.defer();
     }
@@ -198,31 +258,22 @@ function PlayerData(VideoTagData, $q) {
         return this.players[this.data.provider];
     }
     function playVideoTag(videoTag, looping) {
-        this.data.provider = videoTag.provider_id;
         return _view(videoTag, looping);
     }
     function _view(videoTag, looping) {
-        //console.log("PlayerData._view: " + videoTag.id);
-//        console.log(videoTag);
+        console.log("PlayerData._view: " + videoTag.id);
+        console.log(videoTag);
         VideoTagData.setCurrentTag(videoTag);
         if (videoTag === null) {
             console.log("Try to view a null videoTag");
             return;
         }
-        obj.data.provider = videoTag.provider_id;
         obj.data.id = videoTag.id;
-        obj.data.begin = videoTag.begin;
-        obj.data.end = videoTag.end;
         obj.showListTricks = false;
         obj.looping = !angular.isDefined(looping) ? (obj.playMode === 'tag') : looping;
-        console.log("Play mode: " + obj.playMode + ". Set looping: " + obj.looping);
-        if (videoTag.provider_id === obj.data.provider &&
-                videoTag.video_url === obj.data.video_url) {
-            return obj.seekTo(videoTag.begin);
-        }
-        else {
-            return obj.loadVideo(videoTag);
-        }
+//        console.log("Play mode: " + obj.playMode + ". Set looping: " + obj.looping);
+
+        return obj.loadVideo(videoTag.provider_id, videoTag);
     }
 
     function replay(videoTag) {
@@ -230,9 +281,11 @@ function PlayerData(VideoTagData, $q) {
     }
 
     function reset() {
-        console.log("RESETING DATA");
+        console.log("PlayerData::reset()");
         VideoTagData.reset();
-        obj.init();
+        obj.stop();
+        clearInterval(obj.timer);
+        obj.initData();
         return this;
     }
 
@@ -253,63 +306,54 @@ function PlayerData(VideoTagData, $q) {
         });
     }
 
-    function stop() {
-        this.looping = false;
-        if (this.data.provider === null) {
-            return;
+    function stop(provider) {
+        if (!angular.isDefined(provider) && this.data.provider === null) {
+            return $q.defer();
         }
-        return this.getPromise().then(function(player) {
-            obj.data.video_url = null;
+        else if (!angular.isDefined(provider)) {
+            provider = this.data.provider;
+        }
+        console.log('Stoping video from provider: ' + provider);
+        this.looping = false;
+        return this.deferred[provider].promise.then(function(player) {
             player.stop();
         });
     }
 
-    function loadVideo(data) {
-        console.log('Require video to load: ' + data.video_url);
-        if (angular.isDefined(data.provider)) {
-            this.data.provider = data.provider;
+    function loadVideo(provider, data) {
+        if (obj.isProvider(provider) &&
+                data.video_url === obj.data.video_url) {
+            console.log('Same video, same provider');
+            obj.data.begin = data.begin;
+            obj.data.end = data.end;
+            return obj.seekTo(data.begin);
         }
-        obj.data.video_url = data.video_url;
-        return this.getPromise().then(function(player) {
-            console.log('Load video in playerData: ' + data.video_url);
-            var toLoad = {
-                video_url: data.video_url,
-            };
-            obj.data.begin = angular.isDefined(data.begin) ? data.begin : 0;
-            toLoad.begin = obj.data.begin;
+        else {
+            console.log('Load video: ' + data.video_url + ' with ' + provider);
+            obj.setProvider(provider);
+            obj.data.video_url = data.video_url;
+            return this.getPromise().then(function(player) {
+                console.log('Load video in playerData: ' + data.video_url);
+                var toLoad = {
+                    video_url: data.video_url,
+                };
+                obj.data.begin = angular.isDefined(data.begin) ? data.begin : 0;
+                toLoad.begin = obj.data.begin;
 
-            obj.data.end = angular.isDefined(data.end) ? data.end : null;
-            toLoad.end = obj.data.end;
+                obj.data.end = angular.isDefined(data.end) ? data.end : null;
+                toLoad.end = obj.data.end;
 
-            player.loadVideo(toLoad);
-        });
+                player.loadVideo(toLoad);
+            });
+        }
     }
 
+
     function getPromise() {
-        //console.log("Getting promise for: " + this.data.provider);
+        console.log("Getting promise for: " + this.data.provider);
         return this.deferred[this.data.provider].promise;
     }
 
-    function updateCurrentTag(newVal) {
-//        console.log(VideoTagData.currentTag);
-        var current = VideoTagData.currentTag;
-        if (angular.isDefined(current) && current !== null) {
-            //console.log("current tag is defined: " + newVal + " in ? " + current.id + " [" + current.begin+", "+current.end+"]");
-            if (current.mode === 'edition') {
-                return;
-            }
-            if (current.begin <= newVal && current.end >= newVal) {
-                current.time_to_play = 0;
-                return;
-            }
-            else if (current.begin > newVal) {
-                current.time_to_play = Math.round(current.begin - newVal, 0);
-                return;
-            }
-        }
-        console.log("Searching for next tag...");
-        VideoTagData.setCurrentTag(VideoTagData.findNextTagToPlay(newVal));
-    }
 
     function getCurrentTime() {
         return obj.getPlayer().getCurrentTime();
@@ -348,7 +392,7 @@ function PaginateDataLoader(VideoTagEntity, $q) {
             }
             return this.instances[name];
         },
-        clear: function(){
+        clear: function() {
             this.instances = {};
         }
     };
@@ -1038,8 +1082,8 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
             }
         }).$promise;
     }
-    
-    function requestPassword(email){
+
+    function requestPassword(email) {
         return UserEntity.requestPassword({email: email}, function(response) {
             console.log(response);
         }).$promise;
@@ -1068,10 +1112,10 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
     }
 
     function logout() {
-        UserEntity.logout(function(){
+        UserEntity.logout(function() {
             clearCredentials();
-        }, function(){
-            
+        }, function() {
+
         });
         PaginateDataLoader.clear();
     }
