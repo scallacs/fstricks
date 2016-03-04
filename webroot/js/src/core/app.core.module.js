@@ -1102,8 +1102,9 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
     }
 
     function setCredentials(data) {
-        service.authData.user = data;
-        $rootScope.globals = {currentUser: data};
+        console.log('Setting credential: ');
+        console.log(data);
+        service.authData.user = data.user;
         $http.defaults.headers.common['Authorization'] = 'Bearer ' + data.token;
         $cookies.remove('globals');
         $cookies.putObject('globals', $rootScope.globals);

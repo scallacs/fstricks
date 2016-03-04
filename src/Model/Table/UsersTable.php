@@ -137,19 +137,29 @@ class UsersTable extends TableWithTags {
       'coverInfoURL' => ''
      */
     public function createSocialAccount($provider, $data) {
+        $condition = [
+            'provider' => $provider,
+            'provider_uid' => $data['identifier']
+        ];
+        if (!empty($data['email'])) {
+            $condition = [
+                'OR' => [
+                    $condition,
+                    ['email' => $data['email']]
+                ]
+            ];
+        }
         $user = $this->find()
-                ->where([
-                    'provider' => $provider,
-                    'provider_uid' => $data['identifier']
-                ])
+                ->where($condition)
                 ->limit(1)
                 ->first();
 
-        if ($user) {
+        if (!empty($user) && !empty($user->email) ) {
             return $user;
         }
-
+        
         $entity = $this->newEntity();
+        $entity->email = $data['email'];
         $entity->username = $data['displayName'];
         $entity->provider = $provider;
         $entity->status = \App\Model\Entity\User::STATUS_ACTIVATED;

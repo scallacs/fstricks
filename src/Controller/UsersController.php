@@ -87,6 +87,7 @@ class UsersController extends AppController {
             $user = $this->Auth->identify();
             if ($user) {
                 $this->Auth->setUser($user);
+                $this->setUserResponse($user);
                 $this->setToken();
 //                ResultMessage::setRedirectUrl($this->Auth->redirectUrl());
                 ResultMessage::setMessage("Welcome back !", true);
@@ -127,7 +128,7 @@ class UsersController extends AppController {
             }
             try {
                 // Proceed knowing you have a logged in user who's authenticated.
-                $response = $facebook->get('/me?scope=email', $accessToken); //user
+                $response = $facebook->get('/me?scope=email&fields=name,email', $accessToken); //user
                 $me = $response->getGraphUser();
             } catch (\Facebook\Exceptions\FacebookApiException $e) {
                 //echo error_log($e);
@@ -135,7 +136,7 @@ class UsersController extends AppController {
                 return;
             }
             // TODO catch all
-            
+
             $providerInfo = [
                 'displayName' => $me->getName(),
                 'identifier' => $me->getId(),
@@ -159,15 +160,27 @@ class UsersController extends AppController {
         }
     }
 
-    private function setUserResponse($user) {
-        $userArray = [
-            'id' => $user->id,
-            'email' => $user->email,
-            'username' => $user->username,
-            'created' => $user->created
-        ];
-        ResultMessage::setData('user', $userArray);
-        $this->Auth->setUser($userArray);
+    private function setUserResponse($user, $auth = false) {
+        if (!is_array($user)){
+            $user = [
+                'id' => $user->id,
+                'email' => $user->email,
+                'username' => $user->username,
+                'created' => $user->created
+            ];
+        }
+        else {
+            $user = [
+                'id' => $user['id'],
+                'email' =>  $user['email'],
+                'username' =>  $user['username'],
+                'created' =>  $user['created'],
+            ];
+        }
+        if ($auth){
+            $this->Auth->setUser($user);
+        }
+        ResultMessage::setData('user', $user);
     }
 
     public function logout() {
@@ -219,10 +232,9 @@ class UsersController extends AppController {
 
                 if ($this->Users->save($user)) {
                     $this->setToken();
+                    $this->setUserResponse($user, true);
                     assert($this->Auth->user('id'));
                     ResultMessage::setMessage('Welcome!', true);
-//                ResultMessage::setRedirectUrl(['action' => 'index']);
-                    $this->setUserResponse($user);
                 } else {
                     ResultMessage::setMessage('Your account cannot be created. Please check your inputs.', false);
                     ResultMessage::addValidationErrorsModel($user);
@@ -237,7 +249,7 @@ class UsersController extends AppController {
      * 
      */
     public function request_password() {
-        try{
+        try {
             $entity = $this->Users->newEntity(null, ['validate' => 'requestPassword']);
             if ($this->request->is('post')) {
                 $entity = $this->Users->patchEntity($entity, $this->request->data, ['validate' => 'requestPassword']);
@@ -248,10 +260,9 @@ class UsersController extends AppController {
                 }
                 ResultMessage::setSuccess(false);
             }
-        }
-        catch(\Exception $ex){
+        } catch (\Exception $ex) {
             ResultMessage::setMessage("Sorry but, we cannot send you an email right now. Please try again later", false);
-            if (\Cake\Core\Configure::read('debug')){
+            if (\Cake\Core\Configure::read('debug')) {
                 throw $ex;
             }
         }
@@ -284,10 +295,10 @@ class UsersController extends AppController {
                     'iat' => time()
                         ], Security::salt());
 
-        ResultMessage::setData('id', $userId);
-        ResultMessage::setData('username', $this->Auth->user('username'));
-        ResultMessage::setData('email', $this->Auth->user('email'));
-        ResultMessage::setData('created', $this->Auth->user('created'));
+//        ResultMessage::setData('id', $userId);
+//        ResultMessage::setData('username', $this->Auth->user('username'));
+//        ResultMessage::setData('email', $this->Auth->user('email'));
+//        ResultMessage::setData('created', $this->Auth->user('created'));
         ResultMessage::setToken($token);
     }
 
