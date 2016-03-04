@@ -1077,7 +1077,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
         return UserEntity.signup(data, function(response) {
             console.log(response);
             if (response.success) {
-                response.data.provider = null;
+                response.data.provider = null;                
                 service.setCredentials(response.data);
             }
         }).$promise;

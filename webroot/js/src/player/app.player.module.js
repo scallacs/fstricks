@@ -543,12 +543,9 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
     }
 }
 
-ViewValidationController.$inject = ['$scope', 'VideoTagData', 'PlayerData', 'SharedData', '$state',
-    'VideoTagEntity', 'VideoTagAccuracyRateEntity', '$uibModal'];
-function StartValidationController($scope, VideoTagData, PlayerData, SharedData, $state, VideoTagEntity,
-        VideoTagAccuracyRateEntity, $uibModal) {
+StartValidationController.$inject = ['SharedData'];
+function StartValidationController(SharedData) {
     SharedData.pageLoader(false);
-
 }
 
 // TODO add current sport ...
