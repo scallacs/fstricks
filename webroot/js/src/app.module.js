@@ -59,18 +59,19 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
             $state.go('videoplayer.playlist', {playlistId: data.id});
         }
     });
-    
-    $scope.$on('on-playlist-title-clicked', function(event, playlist){
+
+    $scope.$on('on-playlist-title-clicked', function(event, playlist) {
         $state.go("videoplayer.playlist", {playlistId: playlist.id});
     });
 }
 
 Run.$inject = ['$rootScope', 'AuthenticationService', 'loginModal', '$state', 'SharedData'];
 function Run($rootScope, AuthenticationService, loginModal, $state, SharedData) {
+    AuthenticationService.init();
 
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
         SharedData.currentSearch = {};
-        
+
         if (toState.redirectTo) {
             event.preventDefault();
             $state.go(toState.redirectTo, toParams);

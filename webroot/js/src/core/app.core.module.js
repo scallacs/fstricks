@@ -1033,7 +1033,11 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
     service.signup = signup;
     service.requireLogin = requireLogin;
     service.requestPassword = requestPassword;
+    service.logFromCookie = logFromCookie;
+    service.init = init;
+    
     service.authData = {
+        token: null,
         user: null,
         isAuthed: function() {
             return service.isAuthed();
@@ -1042,26 +1046,30 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
 
     return service;
 
+    function init(){
+        service.logFromCookie();
+    }
+
     function isAuthed() {
-        return service.getCurrentUser() !== null;
+        return service.authData.token !== null && service.authData.user !== null;
     }
 
     function getCurrentUser() {
-        if (service.authData.user === false) {
-            return null;
-        }
-        if (service.authData.user !== null) {
-            return service.authData.user;
-        }
-
+        return service.authData.user;
+    }
+    
+    function logFromCookie(){
         var globals = $cookies.getObject('globals');
         if (!globals) {
-            return null;
+            console.log("Getting current user from cookies: NO COOKIES");
+            service.authData.user = null;
+            service.authData.token = null;
+            return;
         }
+        console.log("Getting current user from cookies");
         service.authData.user = globals.user;
-        console.log("Getting current user: ");
-        console.log(service.authData);
-        return service.authData.user;
+        service.authData.token = globals.token;
+        setHttpHeader();
     }
 
     function login(username, password) {
@@ -1102,15 +1110,22 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
         }).$promise;
     }
 
+    function setHttpHeader(){
+        console.log('Setting auth header with token: ' +  service.authData.token);
+        $http.defaults.headers.common['Authorization'] = 'Bearer ' +  service.authData.token;
+    }
+
     function setCredentials(data) {
         console.log('Setting credential: ');
         console.log(data);
         service.authData.user = data.user;
-        $http.defaults.headers.common['Authorization'] = 'Bearer ' + data.token;
+        service.authData.token = data.token;
+        console.log(service.authData);
+        $rootScope.globals = {currentUser: data}; // TODO useless ? 
         $cookies.remove('globals');
         $cookies.putObject('globals', service.authData);
-
-        console.log("Setting credential for user: " + data.email + " - stored: " + getCurrentUser().email);
+        console.log("Setting credential for user: " + data.user.email + " - stored: " + getCurrentUser().email);
+        setHttpHeader();
     }
 
     function logout() {
@@ -1124,6 +1139,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
 
     function clearCredentials() {
         service.authData.user = false;
+        service.authData.token = null;
         $rootScope.globals = {};
         $cookies.remove('globals');
         $http.defaults.headers.common.Authorization = 'Basic';

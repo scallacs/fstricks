@@ -146,8 +146,8 @@ class UsersController extends AppController {
                 ResultMessage::setMessage('Sorry but we cannot create your account right now.', false);
                 return;
             }
-            $userArray = $user->toArray();
-            $userArray['access_token'] = $accessToken;
+//            $userArray = $user->toArray();
+//            $userArray['access_token'] = $accessToken;
             $this->setToken();
             $this->setUserResponse($user);
             ResultMessage::setSuccess(true);
