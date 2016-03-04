@@ -82,6 +82,9 @@ function SettingsController($scope, AuthenticationService, UserEntity) {
     $scope.data.user = AuthenticationService.getCurrentUser();
 
     function isSocialLogin() {
+        if (!AuthenticationService.isAuthed()){
+            return false;
+        }
         return AuthenticationService.getCurrentUser().provider !== null;
     }
 

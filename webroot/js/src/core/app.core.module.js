@@ -1058,8 +1058,9 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
         if (!globals) {
             return null;
         }
-        service.authData.user = globals.currentUser;
-        console.log("Getting current user: " + service.authData.email);
+        service.authData.user = globals.user;
+        console.log("Getting current user: ");
+        console.log(service.authData);
         return service.authData.user;
     }
 
@@ -1077,7 +1078,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
         return UserEntity.signup(data, function(response) {
             console.log(response);
             if (response.success) {
-                response.data.provider = null;                
+                response.data.provider = null;   
                 service.setCredentials(response.data);
             }
         }).$promise;
@@ -1107,7 +1108,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
         service.authData.user = data.user;
         $http.defaults.headers.common['Authorization'] = 'Bearer ' + data.token;
         $cookies.remove('globals');
-        $cookies.putObject('globals', $rootScope.globals);
+        $cookies.putObject('globals', service.authData);
 
         console.log("Setting credential for user: " + data.email + " - stored: " + getCurrentUser().email);
     }
