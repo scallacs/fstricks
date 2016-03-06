@@ -38,6 +38,7 @@ class MyIntegrationTestCase extends \Cake\TestSuite\IntegrationTestCase {
     }
     
     public function assertResultMessageSuccess($result = null, $message = null){
+        $this->assertResponseOk();
         if ($result === null){
             $result = json_decode($this->_response->body(), true);
         }

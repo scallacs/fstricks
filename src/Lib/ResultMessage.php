@@ -40,6 +40,17 @@ class ResultMessage {
         self::$result['validationErrors'] = $errors;
     }
 
+    public static function addValidationError($model, $field, $rule, $message) {
+        $v = &self::$result['validationErrors'];
+        foreach ([$model, $field, $rule] as $key) {
+            if (!isset($v[$key])) {
+                $v[$key] = [];
+            }
+            $v = &$v[$key];
+        }
+        $v[] = $message;
+    }
+
     public static function addValidationErrorsModel(\Cake\ORM\Entity $entity, $autoMessage = false) {
         if (!isset(self::$result['validationErrors'])) {
             self::$result['validationErrors'] = [];
@@ -51,23 +62,23 @@ class ResultMessage {
     }
 
     /**
-    $paginateInfo = [
+      $paginateInfo = [
       'VideoTags' =>  [
-          'finder' =>  'all',
-          'page' =>  (int) 1,
-          'current' =>  (int) 5,
-          'count' =>  (int) 30,
-          'perPage' =>  (int) 5,
-          'prevPage' =>  false,
-          'nextPage' =>  true,
-          'pageCount' =>  (int) 6,
-          'sort' =>  null,
-          'direction' =>  false,
-          'limit' =>  null,
-          'sortDefault' =>  false,
-          'directionDefault' =>  false
-        ]
-      ] 
+      'finder' =>  'all',
+      'page' =>  (int) 1,
+      'current' =>  (int) 5,
+      'count' =>  (int) 30,
+      'perPage' =>  (int) 5,
+      'prevPage' =>  false,
+      'nextPage' =>  true,
+      'pageCount' =>  (int) 6,
+      'sort' =>  null,
+      'direction' =>  false,
+      'limit' =>  null,
+      'sortDefault' =>  false,
+      'directionDefault' =>  false
+      ]
+      ]
      */
     public static function setPaginateData($results, $paginateInfo) {
         self::$wrapper = false;
@@ -75,9 +86,9 @@ class ResultMessage {
         self::$data['perPage'] = $paginateInfo['perPage'];
         self::$data['items'] = $results;
     }
-    
-    public static function setPaginateExtra($key, $value){
-        if (!isset(self::$data['extra'])){
+
+    public static function setPaginateExtra($key, $value) {
+        if (!isset(self::$data['extra'])) {
             self::$data['extra'] = [];
         }
         self::$data['extra'][$key] = $value;

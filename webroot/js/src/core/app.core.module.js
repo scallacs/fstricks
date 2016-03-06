@@ -751,6 +751,16 @@ function UserEntity($resource) {
             method: 'POST',
             params: {action: 'request_password', id: null},
             isArray: false
+        },
+        resetPassword: {
+            method: 'POST',
+            params: {action: 'reset_password', id: null},
+            isArray: false
+        },
+        changePassword: {
+            method: 'POST',
+            params: {action: 'change_password', id: null},
+            isArray: false
         }
     });
 }

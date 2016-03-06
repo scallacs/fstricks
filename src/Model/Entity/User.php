@@ -1,17 +1,17 @@
 <?php
+
 namespace App\Model\Entity;
 
-use Cake\Auth\DefaultPasswordHasher;
 use Cake\ORM\Entity;
+use Cake\Auth\PasswordHasherFactory;
 
 /**
  * User Entity.
  */
-class User extends Entity
-{
-    
+class User extends Entity {
+
     const STATUS_ACTIVATED = 'activated';
-    
+
     protected $_virtual = ['avatar_url'];
 
     /**
@@ -29,23 +29,13 @@ class User extends Entity
         'email' => true
     ];
     
-    public static function hashPassword($value){
-        $hasher = new DefaultPasswordHasher();
-        return $hasher->hash($value);        
-    }
-    public static function checkPassword($one, $two){
-        $hasher = new DefaultPasswordHasher();
-        return $hasher->check($one, $two);        
-    }
-    protected function _setPassword($value){
-        return self::hashPassword($value);
-    }
-    
-    protected function _getAvatarUrl(){
+
+    protected function _getAvatarUrl() {
         return \Cake\Routing\Router::url('/img/icon_avatar.png', true);
     }
-    protected function _setUsername($value){
+
+    protected function _setUsername($value) {
         return mb_strtolower($value);
     }
-    
+
 }

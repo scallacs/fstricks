@@ -12,6 +12,7 @@ angular.module('app.account', [
         .controller('LoginModalController', LoginModalController)
         .controller('SettingsController', SettingsController)
         .controller('UserLoginController', UserLoginController)
+        .controller('ResetPasswordController', ResetPasswordController)
         .controller('SignupController', SignupController);
 
 ConfigRoute.$inject = ['$stateProvider'];
@@ -39,6 +40,14 @@ function ConfigRoute($stateProvider) {
                 controller: 'SettingsController',
                 data: {
                     requireLogin: true
+                }
+            })
+            .state('resetpassword', {
+                url: '/reset-password?token',
+                templateUrl: TEMPLATE_URL + '/account/partials/reset-password.html',
+                controller: 'ResetPasswordController',
+                data: {
+                    requireLogin: false
                 }
             });
 }
@@ -82,7 +91,7 @@ function SettingsController($scope, AuthenticationService, UserEntity) {
     $scope.data.user = AuthenticationService.getCurrentUser();
 
     function isSocialLogin() {
-        if (!AuthenticationService.isAuthed()){
+        if (!AuthenticationService.isAuthed()) {
             return false;
         }
         return AuthenticationService.getCurrentUser().provider !== null;
@@ -122,7 +131,7 @@ function SignupController($scope, $state, AuthenticationService) {
             if (response.success) {
                 $state.go('home');
             }
-            else{
+            else {
                 grecaptcha.reset();
             }
         }
@@ -134,7 +143,9 @@ function loginModal($uibModal) {
     var instance = null;
 
     return {
-        isset: function(){ return instance !== null; },
+        isset: function() {
+            return instance !== null;
+        },
         open: function() {
             if (instance !== null) {
                 return instance;
@@ -156,6 +167,19 @@ function loginModal($uibModal) {
             }
         }
     };
+}
+
+ResetPasswordController.$inject = ['$scope', '$state', '$stateParams', 'UserEntity'];
+function ResetPasswordController($scope, $state, $stateParams) {
+    if (!angular.isDefined($stateParams.token)) {
+        $state.$go('home');
+        return;
+    }
+    $scope.token = $stateParams.token;
+
+    $scope.$on("change-password-success", function(event, data) {
+        $state.go('login');
+    });
 }
 
 LoginModalController.$inject = ['$scope'];
