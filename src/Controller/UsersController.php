@@ -247,8 +247,11 @@ class UsersController extends AppController {
                 $entity = $this->Users->patchEntity($entity, $this->request->data, ['validate' => 'requestPassword']);
 
                 if (!$entity->errors('email')) {
-                    $this->Users->initPasswordReset($this->request->data['email']);
-                    ResultMessage::setMessage("Email has been sent to you with the instructions to reset your password.", true);
+                    if ($this->Users->initPasswordReset($entity->email)) {
+                        ResultMessage::setMessage("Email has been sent to you with the instructions to reset your password.", true);
+                    } else {
+                        ResultMessage::setMessage("We cannot reset your password for now. Please try again later.", false);
+                    }
                 } else {
                     ResultMessage::setMessage("This email is invalid", false);
                     ResultMessage::addValidationErrorsModel($entity);
@@ -297,8 +300,7 @@ class UsersController extends AppController {
                 $entity = $this->Users->patchEntity($entity, $this->request->data);
 //                debug($entity);
                 $this->_change_password($entity);
-            } 
-            catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
+            } catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
                 ResultMessage::addValidationError('Users', 'old_password', 'invalid', 'Invalid password');
                 ResultMessage::setMessage('Invalid password', false);
                 return;
