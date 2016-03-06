@@ -104,7 +104,8 @@ function PlayerData(VideoTagData, $q) {
         onFinish: onFinish,
         onPause: onPause,
         onPlay: onPlay,
-        hasVideo: hasVideo
+        hasVideo: hasVideo,
+        hide: hide
     };
 
     obj.init();
@@ -112,9 +113,13 @@ function PlayerData(VideoTagData, $q) {
     return obj;
 
     function hasVideo() {
-        return this.data.video_url !== null && this.data.provider !== null && this.state !== 'stop';
+        return this.data.video_url !== null && this.data.provider !== null && this.state !== 'hide';
     }
 
+    function hide(){
+        this.state = 'hide';
+    }
+    
     function onFinish() {
         console.log('Player::onFinish');
         obj.state = 'stop';

@@ -259,7 +259,7 @@ class UsersController extends AppController {
             }
         } catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
             ResultMessage::setMessage("Email has been sent to you with the instructions to reset your password.", true);
-            if (\Cake\Core\Configure::read('debug')){
+            if (\Cake\Core\Configure::read('debug')) {
                 ResultMessage::appendMessage(' Email does not exists in db');
             }
         } catch (\Exception $ex) {
@@ -302,7 +302,6 @@ class UsersController extends AppController {
 
                 $oldPassword = \App\Lib\DataUtil::getString($this->request->data, 'old_password');
                 $entity = $this->Users->getUserWithPassword($this->Auth->user('id'), $oldPassword);
-                $entity = $this->Users->patchEntity($entity, $this->request->data);
 //                debug($entity);
                 $this->_change_password($entity);
             } catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
@@ -314,6 +313,7 @@ class UsersController extends AppController {
     }
 
     private function _change_password($entity) {
+        $entity = $this->Users->patchEntity($entity, $this->request->data);
         if ($this->Users->resetPassword($entity)) {
             ResultMessage::setMessage('Your new password has been saved!', true);
         } else {

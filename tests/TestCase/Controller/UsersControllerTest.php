@@ -165,6 +165,13 @@ class UsersControllerTest extends MyIntegrationTestCase {
         $this->post('/api/users/reset_password.json', $data);
         $result = json_decode($this->_response->body(), true);
         $this->assertResultMessageSuccess($result, "Should be possible to change password with the valid token");
+        
+        // Connect with the new password
+        unset($data['token']);
+        $this->post('/api/users/login.json', $data);
+        $result = json_decode($this->_response->body(), true);
+        $this->assertResultMessageSuccess($result, "Should be possible to login with the reseted password");
+                
     }
 
     // Test adding a place when not logged in

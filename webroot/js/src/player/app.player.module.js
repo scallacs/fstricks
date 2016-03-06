@@ -625,6 +625,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
         }
         else {
             VideoTagData.currentTag = null;
+            PlayerData.hide();
             SharedData.pageLoader(false);
         }
     }
