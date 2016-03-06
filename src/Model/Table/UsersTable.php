@@ -37,6 +37,9 @@ class UsersTable extends TableWithTags {
                 'username' => 'email',
                 'password' => 'password'
             ],
+            'sendPasswordResetToken' => [
+                'template' => 'password_reset',
+            ],
         ]);
 
         $this->table('users');
@@ -154,10 +157,10 @@ class UsersTable extends TableWithTags {
                 ->limit(1)
                 ->first();
 
-        if (!empty($user) && !empty($user->email) ) {
+        if (!empty($user) && !empty($user->email)) {
             return $user;
         }
-        
+
         $entity = $this->newEntity();
         $entity->email = $data['email'];
         $entity->username = $data['displayName'];
@@ -167,8 +170,7 @@ class UsersTable extends TableWithTags {
         return $this->save($entity, ['checkRules' => false]);
     }
 
-    
-    public function getUserWithPassword($id, $password){
+    public function getUserWithPassword($id, $password) {
         $data = $this->get($id);
 //        debug($password);
 //        debug($data->password);
@@ -178,4 +180,5 @@ class UsersTable extends TableWithTags {
         }
         return $data;
     }
+
 }
