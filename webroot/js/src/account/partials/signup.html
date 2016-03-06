@@ -46,7 +46,7 @@
                             <div class="help-block text-danger" 
                                  ng-if="signupForm.email.$dirty" 
                                  ng-messages="signupForm.email.$error">
-                                <div ng-message="type">You must enter a valid email address.</div>
+                                <div ng-message="email">You must enter a valid email address.</div>
                                 <div ng-message="required">Your email address is required.</div>
                                 <div ng-message="pattern">Your email address is invalid.</div>
                                 <div ng-message="server">{{signupForm.email.$error.server}}</div>

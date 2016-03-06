@@ -86,3 +86,11 @@ sudo service httpd restart
 
 
 
+################################################################################
+# EMAIL
+sudo yum install sendmail
+sudo yum install m4
+chkconfig sendmail on
+service sendmail restart
+
+

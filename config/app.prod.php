@@ -196,6 +196,19 @@ return [
             //'charset' => 'utf-8',
             //'headerCharset' => 'utf-8',
         ],
+        'gmail' => [
+            'transport' => 'Smtp',
+            'from' => array('gmailUsername@gmail.com' => 'Sender name'),
+            'host' => 'ssl://smtp.gmail.com',
+            'port' => 465,
+            'timeout' => 30,
+            'username' => 'gmailUsername@gmail.com',
+            'password' => 'PASSWORD',
+            'client' => null,
+            'log' => false,
+            'charset' => 'utf-8',
+            'headerCharset' => 'utf-8',
+        ],
     ],
 
     /**

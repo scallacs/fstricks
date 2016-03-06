@@ -254,9 +254,12 @@ class UsersController extends AppController {
 
                 if (!$entity->errors('email')) {
                     $this->Users->initPasswordReset($this->request->data['email']);
-                    ResultMessage::setSuccess();
+                    ResultMessage::setMessage("Email has been sent to you with the instructions to reset your password.", true);
                 }
-                ResultMessage::setSuccess(false);
+                else{
+                    ResultMessage::setMessage("This email is invalid", false);
+                    ResultMessage::addValidationErrorsModel($entity);
+                }
             }
         } catch (\Exception $ex) {
             ResultMessage::setMessage("Sorry but, we cannot send you an email right now. Please try again later", false);
