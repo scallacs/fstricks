@@ -105,6 +105,10 @@ class ResultMessage {
         }
     }
 
+    public static function appendMessage($msg) {
+        self::$result['message'] .= $msg;
+    }
+
     public static function setData($key, $value) {
         self::$data[$key] = $value;
     }

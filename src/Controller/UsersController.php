@@ -257,6 +257,11 @@ class UsersController extends AppController {
                     ResultMessage::addValidationErrorsModel($entity);
                 }
             }
+        } catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
+            ResultMessage::setMessage("Email has been sent to you with the instructions to reset your password.", true);
+            if (\Cake\Core\Configure::read('debug')){
+                ResultMessage::appendMessage(' Email does not exists in db');
+            }
         } catch (\Exception $ex) {
             ResultMessage::setMessage("Sorry but, we cannot send you an email right now. Please try again later", false);
             if (\Cake\Core\Configure::read('debug')) {
@@ -313,7 +318,6 @@ class UsersController extends AppController {
             ResultMessage::setMessage('Your new password has been saved!', true);
         } else {
             ResultMessage::setMessage('Choose a valid password.', false);
-            debug($entity);
             ResultMessage::addValidationErrorsModel($entity);
         }
     }
