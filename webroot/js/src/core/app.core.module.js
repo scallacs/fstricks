@@ -45,7 +45,7 @@ function PlayerData(VideoTagData, $q) {
             };
         },
         initData: function() {
-            this.state = 'pause';
+            this.state = 'hide';
             this.timer = null;
             this.visible = true;
             this.showListTricks = true;
@@ -113,7 +113,7 @@ function PlayerData(VideoTagData, $q) {
     return obj;
 
     function hasVideo() {
-        return this.data.video_url !== null && this.data.provider !== null && this.state !== 'hide';
+        return !this.hasError() && this.state !== 'hide';
     }
 
     function hide(){
