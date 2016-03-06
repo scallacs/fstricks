@@ -1,5 +1,5 @@
 <div class="container margin-top">
-    
+
     <div class="panel panel-primary bg-primary">
         <div class="panel-heading">
             <h2 class="panel-title"> <span class="glyphicon glyphicon-cog"></span> Settings </h2>
@@ -8,57 +8,44 @@
             <h2 class="page-title"> {{data.user.username}} </h2>
 
             <p class="padding-sm text-center">
-                Account created {{data.user.created | timeago}}.
+                Account created {{data.user.created| timeago}}.
             </p>
 
             <p class="text-center" ng-if="isSociaLogin()">
                 Your are logged in with facebook.
             </p>
-            
-            <div class="text-center" ng-show="!isSociaLogin()">
 
-                <hr/>
+            <div class="text-center" ng-show="isSociaLogin()">
+                <uib-tabset >
+                    <uib-tab heading="Change password">
+                        <div form-change-password class="padding-sm"></div>
+                    </uib-tab>
+                    <uib-tab heading="Delete account">
+                        <form class="form padding-sm" name="formDeleteAccount" server-form
+                              ng-submit="removeAccount(password)">
+                            <fieldset>
+                                <div class="alert alert-danger">
+                                    <span class="glyphicon glyphicon-warning-sign"></span> 
+                                    Be carefull, this action cannot be undone! 
+                                </div>
+                                <div class="form-group col-sm-8">
+                                    <input class="form-control" 
+                                           ng-model="password" 
+                                           type="password" 
+                                           placeholder="Your password"/>
+                                </div>
+                                <div class="form-group  col-sm-4">
+                                    <button class="btn btn-danger" 
+                                            ng-disabled="false"
+                                            type="submit">
+                                        <span class="glyphicon glyphicon-remove-circle"></span> 
+                                        Delete my account 
+                                    </button>
+                                </div>
+                        </form>
+                    </uib-tab>
+                </uib-tabset>
 
-                <button class="btn btn-danger" 
-                        ng-show="!showConfirmPassword"
-                        ng-click="showConfirmPassword = !showConfirmPassword" 
-                        ng-init="showConfirmPassword = false;">
-                    <span class="glyphicon glyphicon-warning-sign"></span> 
-                    Delete my account
-                </button>
-
-                <div class="" ng-show="showConfirmPassword">
-                    <!-- TODO -->
-                    <form class="form" name="formDeleteAccount" server-form
-                          ng-submit="removeAccount(password)">
-                        <fieldset>
-                            <div class="alert alert-danger">
-                                <span class="glyphicon glyphicon-warning-sign"></span> 
-                                Be carefull, this action cannot be undone! 
-                            </div>
-                            <div class="form-group col-sm-8">
-                                <input class="form-control" 
-                                       ng-model="password" 
-                                       type="password" 
-                                       placeholder="Your password"/>
-                            </div>
-                            <div class="form-group  col-sm-4">
-                                <button class="btn btn-danger" 
-                                        ng-disabled="false"
-                                        type="submit">
-                                    <span class="glyphicon glyphicon-remove-circle"></span> 
-                                    Delete my account 
-                                </button>
-                                <button class="btn btn-default" 
-                                        type="button"
-                                        ng-click="showConfirmPassword = false">
-                                    <span class="glyphicon glyphicon-arrow-left"></span> 
-                                    Cancel
-                                </button>
-                            </div>
-                            
-                    </form>
-                </div>
             </div>
         </div>
     </div>

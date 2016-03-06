@@ -194,15 +194,9 @@ class UsersController extends AppController {
         ResultMessage::setWrapper(true);
         ResultMessage::setMessage("Wrong password", false);
         if ($this->request->is('post') && !empty($this->request->data['password'])) {
-            $query = $this->Users->find()
-                    ->select(['Users.password'])
-                    ->where([
-                'id' => $this->Auth->user('id'),
-                'provider_uid IS NULL'
-            ]);
-            $data = $query->first();
-
-            if (empty($data) || !\App\Model\Entity\User::checkPassword($this->request->data['password'], $data->password)) {
+            try {
+                $this->Users->getUserWithPassword($this->Auth->user('id'), $this->request->data['password']);
+            } catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
                 return;
             }
 
@@ -228,7 +222,7 @@ class UsersController extends AppController {
             if ($this->Recaptcha->verify()) {
                 $user = $this->Users->patchEntity($user, $this->request->data);
                 $this->status = \App\Model\Entity\User::STATUS_ACTIVATED;
-
+                $user->password = $this->Users->hashPassword($user->password);
                 if ($this->Users->save($user)) {
                     $this->setUserResponse($user, true);
                     assert($this->Auth->user('id'));
@@ -255,8 +249,7 @@ class UsersController extends AppController {
                 if (!$entity->errors('email')) {
                     $this->Users->initPasswordReset($this->request->data['email']);
                     ResultMessage::setMessage("Email has been sent to you with the instructions to reset your password.", true);
-                }
-                else{
+                } else {
                     ResultMessage::setMessage("This email is invalid", false);
                     ResultMessage::addValidationErrorsModel($entity);
                 }
@@ -269,8 +262,58 @@ class UsersController extends AppController {
         }
     }
 
-    public function reset_password() {
-        debug('ij');
+    public function reset_password($token = null) {
+        if (!$this->request->is('post')) {
+            return;
+        }
+        try {
+            $token = \App\Lib\DataUtil::getString($this->request->data, 'token', null);
+            $entity = $this->Users->verifyPasswordResetToken($token);
+        } catch (\Cake\Datasource\Exception\RecordNotFoundException $e) {
+
+            ResultMessage::setMessage('Sorry but this token is invalid. Open the link sent to you by email.', false);
+            return;
+        }
+
+        if (isset($entity->token_is_expired) && $entity->token_is_expired === true) {
+            ResultMessage::setMessage('Sorry but this token is expired. You must ask to reset your password again', false);
+            return;
+        }
+
+        $this->_change_password($entity);
+    }
+
+    public function change_password() {
+        if ($this->request->is('post')) {
+            try {
+//                $oldPassword = \App\Lib\DataUtil::getString($this->request->data, 'old_password');
+//                $newPassword = \App\Lib\DataUtil::getString($this->request->data, 'password');
+//                $entity = $this->Users->getUserWithPassword($this->Auth->user('id'), $oldPassword);
+//                $entity->password = $this->Users->hashPassword($newPassword);
+//                $this->_change_password($entity);
+
+                $oldPassword = \App\Lib\DataUtil::getString($this->request->data, 'old_password');
+                $entity = $this->Users->getUserWithPassword($this->Auth->user('id'), $oldPassword);
+                $entity = $this->Users->patchEntity($entity, $this->request->data);
+//                debug($entity);
+                $this->_change_password($entity);
+            } 
+            catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
+                ResultMessage::addValidationError('Users', 'old_password', 'invalid', 'Invalid password');
+                ResultMessage::setMessage('Invalid password', false);
+                return;
+            }
+        }
+    }
+
+    private function _change_password($entity) {
+        if ($this->Users->resetPassword($entity)) {
+            ResultMessage::setMessage('Your new password has been saved!', true);
+        } else {
+            ResultMessage::setMessage('Choose a valid password.', false);
+            debug($entity);
+            ResultMessage::addValidationErrorsModel($entity);
+        }
     }
 
     /**

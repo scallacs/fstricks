@@ -85,6 +85,7 @@
     <?= $this->Html->script('src/core/app.core.module'); ?>
     <?= $this->Html->script('src/account/app.account.module'); ?>
     <?= $this->Html->script('src/account/form-login.directive'); ?>
+    <?= $this->Html->script('src/account/form-change-password.directive'); ?>
     <?= $this->Html->script('src/layout/app.layout.module'); ?>
     <?= $this->Html->script('src/layout/topnav.directive'); ?>
     <?= $this->Html->script('src/layout/top-search.directive'); ?>
