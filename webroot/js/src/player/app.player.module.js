@@ -597,7 +597,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     }
 
     function toNextTag() {
-        PlayerData.pause();
+        PlayerData.stop();
         SharedData.pageLoader(true);
         loadNext();
     }

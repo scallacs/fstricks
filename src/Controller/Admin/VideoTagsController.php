@@ -12,6 +12,36 @@ use App\Lib\ResultMessage;
  */
 class VideoTagsController extends AppController {
 
+    
+    public function initialize() {
+        parent::initialize();
+        $this->loadComponent('Paginator');
+    }
+
+    public function beforeFilter(\Cake\Event\Event $event) {
+        parent::beforeFilter($event);
+    }
+    
+    /**
+     * Video tags to validate
+     *
+     * @return void Redirects on successful add, renders view otherwise.
+     */
+    public function to_validate() {
+        $this->Paginator->config(Configure::read('Pagination.VideoTags'));
+        ResultMessage::setWrapper(false);
+        try {
+            $query = $this->VideoTags->findAndJoin();
+            $query->where(['Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC]);
+
+            ResultMessage::setPaginateData(
+                    $this->paginate($query), 
+                    $this->request->params['paging']['VideoTags']);
+        } catch (NotFoundException $e) {
+            ResultMessage::overwriteData([]);
+        }
+    }
+    
     /**
      * Index method
      *

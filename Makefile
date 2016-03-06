@@ -23,7 +23,7 @@ reset-repo:
 
 # target: mv2prod - Moving to production
 mv2prod: 
-	rm -rf /var/www/html/*
+	sudo rm -rf /var/www/html/*
 	cp -r ./* /var/www/html
 	cp .htaccess /var/www/html
 	cp webroot/.htaccess /var/www/html/webroot

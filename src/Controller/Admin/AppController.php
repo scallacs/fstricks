@@ -60,6 +60,12 @@ class AppController extends \Cake\Controller\Controller {
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
         $this->Auth->deny();
+        $this->viewBuilder()->layout('admin');
+    }
+    
+    
+    public function beforeRender(\Cake\Event\Event $event) {
+        parent::beforeRender($event);
     }
 
 }

@@ -41,8 +41,12 @@ use Cake\Routing\Router;
  */
 Router::defaultRouteClass('Route');
 
-Router::prefix('Admin', function ($routes) {
+Router::prefix('admin', function ($routes) {
     $routes->extensions(['json']);
+    $routes->connect('/**', ['controller' => 'Users', 'action' => 'login']);
+    $routes->fallbacks('InflectedRoute');
+});
+Router::scope('/admin', function ($routes) {
     $routes->fallbacks('InflectedRoute');
 });
 
@@ -58,13 +62,13 @@ Router::scope('/', function ($routes) {
      * its action called 'display', and we pass a param to select the view file
      * to use (in this case, src/Template/Pages/home.ctp)...
      */
-
     /**
      * ...and connect the rest of 'Pages' controller's URLs.
      */
     //$routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
-    $routes->connect('/**', ['controller' => 'Pages', 'action' => 'app']);
 
+
+    $routes->connect('/**', ['controller' => 'Pages', 'action' => 'app']);
     /**
      * Connect catchall routes for all controllers.
      *

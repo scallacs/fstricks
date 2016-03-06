@@ -9,9 +9,9 @@
     <?= $this->fetch('script') ?>
 
 </head>
-<body ng-app="AdminModule" ng-controller="SpotsController">
+<body ng-app="AdminModule" >
     
-    <?= $this->Element('Common/header');?>
+    <?= $this->Element('Admin/header');?>
     
     <div id="container" class="container-fluid">
         <div id="content" class="container-fluid">
