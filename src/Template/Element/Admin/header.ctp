@@ -26,19 +26,19 @@
                             <li ng-repeat="sport in sports">
                                 <a ui-sref="videoplayer.sport({sportName: sport.name})" 
                                    ng-click="setCurrentSport(sport)">
-                                    <img ng-src="{{sport.name| imageUrl}}"> &nbsp;
+                                    <img ng-src="{{sport.name}}"> &nbsp;
                                     {{sport.name}}
                                 </a>
                             </li>
                         </ul>
                     </li>
                     <li>
-                        <a ui-sref="test">
+                        <a ui-sref="videotag.index">
                             Validation
                         </a>
                     </li>
                     <li>
-                        <a ui-sref="test">
+                        <a ui-sref="users.index">
                             Users
                         </a>
                     </li>

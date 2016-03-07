@@ -4,7 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Controller\AppController;
 use App\Lib\ResultMessage;
-
+use Cake\Core\Configure;
 /**
  * VideoTags Controller
  *
@@ -27,12 +27,46 @@ class VideoTagsController extends AppController {
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
-    public function to_validate() {
+    public function index() {
         $this->Paginator->config(Configure::read('Pagination.VideoTags'));
         ResultMessage::setWrapper(false);
         try {
-            $query = $this->VideoTags->findAndJoin();
-            $query->where(['Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC]);
+            $query = $this->VideoTags->findAndJoin()
+                    ->select([
+                        'modified' => 'VideoTags.modified',
+                        'count_fake' => 'VideoTags.count_fake',
+                        'count_accurate' => 'VideoTags.count_accurate',
+                    ])
+                    ->contain([
+                        'Users' => function ($q) {
+                            return $q->select([
+                                    'username' => 'Users.username',
+                                    'user_id' => 'Users.id'
+                                ]);
+                        }
+                    ]);
+                        
+            $searchHelper = new \App\Lib\SearchHelper($this->request->query, $query);
+            $searchHelper
+                        ->optional('status', 'VideoTags.status', [
+//                            'rule' => 'number',
+                            'split' => ',',
+                        ])
+                        ->optional('user_id', 'VideoTags.user_id', [
+//                            'rule' => 'number',
+                            'condition' => '='
+                        ])
+                        ->optional('sports', 'Tags.sport_id', [
+//                            'rule' => 'number',
+                            'split' => ',',
+                        ])
+                        ->orders('order', [
+                            'modified' => ['VideoTags.modified DESC'],
+                            'created' => ['VideoTags.created DESC'],
+                            'best' => ['VideoTags.count_points DESC']
+                        ]);
+//            debug($query->sql());
+//            die();
 
             ResultMessage::setPaginateData(
                     $this->paginate($query), 
@@ -42,18 +76,6 @@ class VideoTagsController extends AppController {
         }
     }
     
-    /**
-     * Index method
-     *
-     * @return void
-     */
-    public function index() {
-        $this->paginate = [
-            'contain' => ['Videos', 'Tags', 'Users']
-        ];
-        $this->set('videoTags', $this->paginate($this->VideoTags));
-        $this->set('_serialize', ['videoTags']);
-    }
 
     /**
      * View method
@@ -62,32 +84,32 @@ class VideoTagsController extends AppController {
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function view($id = null) {
-        $videoTag = $this->VideoTags->get($id, [
-            'contain' => ['Videos', 'Tags', 'Users', 'VideoTagPoints']
-        ]);
-        $this->set('videoTag', $videoTag);
-        $this->set('_serialize', ['videoTag']);
-    }
+//    public function view($id = null) {
+//        $videoTag = $this->VideoTags->get($id, [
+//            'contain' => ['Videos', 'Tags', 'Users', 'VideoTagPoints']
+//        ]);
+//        $this->set('videoTag', $videoTag);
+//        $this->set('_serialize', ['videoTag']);
+//    }
 
     /**
      * Add method
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
-    public function add() {
-        $videoTag = $this->VideoTags->newEntity();
-        if ($this->request->is('post')) {
-            $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data);
-            $videoTag->user_id = $this->Auth->user('id');
-
-            if ($this->VideoTags->save($videoTag)) {
-                ResultMessage::setMessage(__(ResultMessage::MESSAGE_SAVED));
-            } else {
-                ResultMessage::addValidationErrorsModel($videoTag, true);
-            }
-        }
-    }
+//    public function add() {
+//        $videoTag = $this->VideoTags->newEntity();
+//        if ($this->request->is('post')) {
+//            $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data);
+//            $videoTag->user_id = $this->Auth->user('id');
+//
+//            if ($this->VideoTags->save($videoTag)) {
+//                ResultMessage::setMessage(__(ResultMessage::MESSAGE_SAVED));
+//            } else {
+//                ResultMessage::addValidationErrorsModel($videoTag, true);
+//            }
+//        }
+//    }
 
     /**
      * Edit method
@@ -98,23 +120,18 @@ class VideoTagsController extends AppController {
      */
     public function edit($id = null) {
         try {
-            $videoTag = $this->VideoTags->get($id, [
-                'contain' => []
-            ]);
+            $videoTag = $this->VideoTags->get($id);
             if ($this->request->is(['patch', 'post', 'put'])) {
-                $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data);
+                
+                $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data, 
+                    ['accessibleFields' => ['status' => true]]);
+                
                 if ($this->VideoTags->save($videoTag)) {
-                    $this->Flash->success(__('The video tag has been saved.'));
-                    return $this->redirect(['action' => 'index']);
+                    ResultMessage::setMessage(__('The video tag has been saved.'), true);
                 } else {
-                    $this->Flash->error(__('The video tag could not be saved. Please, try again.'));
+                    ResultMessage::setMessage(__('The video tag could not be saved. Please, try again.'), false);
                 }
             }
-            $videos = $this->VideoTags->Videos->find('list', ['limit' => 200]);
-            $tags = $this->VideoTags->Tags->find('list', ['limit' => 200]);
-            $users = $this->VideoTags->Users->find('list', ['limit' => 200]);
-            $this->set(compact('videoTag', 'videos', 'tags', 'users'));
-            $this->set('_serialize', ['videoTag']);
         } 
         catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
             throw new \Cake\Network\Exception\NotFoundException();
@@ -132,11 +149,10 @@ class VideoTagsController extends AppController {
         $this->request->allowMethod(['post', 'delete']);
         $videoTag = $this->VideoTags->get($id);
         if ($this->VideoTags->delete($videoTag)) {
-            $this->Flash->success(__('The video tag has been deleted.'));
+            ResultMessage::setMessage(__('The video tag has been deleted.'), true);
         } else {
-            $this->Flash->error(__('The video tag could not be deleted. Please, try again.'));
+            ResultMessage::setMessage(__('The video tag could not be deleted. Please, try again.'), false);
         }
-        return $this->redirect(['action' => 'index']);
     }
 
 }

@@ -41,18 +41,21 @@ use Cake\Routing\Router;
  */
 Router::defaultRouteClass('Route');
 
-Router::prefix('admin', function ($routes) {
-    $routes->extensions(['json']);
-    $routes->connect('/**', ['controller' => 'Users', 'action' => 'login']);
-    $routes->fallbacks('InflectedRoute');
+Router::prefix('Admin', function ($routes) {
+    $routes->scope('/api', function ($routes) {
+        $routes->extensions(['json']);
+        $routes->fallbacks('InflectedRoute');
+    });
+    $routes->connect('/login', ['controller' => 'users', 'action' => 'login']);    
+    $routes->connect('/**', ['controller' => 'Pages', 'action' => 'app']);    
 });
-Router::scope('/admin', function ($routes) {
-    $routes->fallbacks('InflectedRoute');
-});
+//Router::scope('/admin', function ($routes) {
+//    $routes->connect('/**', ['controller' => 'Pages', 'action' => 'app']);
+//    $routes->fallbacks('InflectedRoute');
+//});
 
 Router::scope('/api', function ($routes) {
     $routes->extensions(['json']);
-//    $routes->resources('Playlists');
     $routes->fallbacks('InflectedRoute');
 });
 
@@ -66,7 +69,6 @@ Router::scope('/', function ($routes) {
      * ...and connect the rest of 'Pages' controller's URLs.
      */
     //$routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
-
 
     $routes->connect('/**', ['controller' => 'Pages', 'action' => 'app']);
     /**

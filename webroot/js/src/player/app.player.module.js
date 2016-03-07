@@ -182,8 +182,8 @@ function ConfigRoute($stateProvider) {
             });
 }
 
-DashboardController.$inject = ['$scope', 'PaginateDataLoader', 'SharedData', '$state'];
-function DashboardController($scope, PaginateDataLoader, SharedData, $state) {
+DashboardController.$inject = ['$scope', 'PaginateDataLoader', 'SharedData', '$state', 'VideoTagEntity'];
+function DashboardController($scope, PaginateDataLoader, SharedData, $state, VideoTagEntity) {
 
     $scope.removeOptions = {trigger: '.btn-remove-item', controller: 'VideoTags', confirm: true, wait: false};
 
@@ -213,7 +213,7 @@ function DashboardController($scope, PaginateDataLoader, SharedData, $state) {
         for (var i = 0; i < $scope.workspaces.length; i++) {
             var workspace = $scope.workspaces[i];
             workspace.loader = PaginateDataLoader
-                    .instance(workspace.id)
+                    .instance(workspace.id, VideoTagEntity.search)
                     .setFilters(workspace.filters)
                     .setFilter('only_owner', true)
                     .setMode('replace')
@@ -367,20 +367,22 @@ function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData, T
     SharedData.currentSearch.category = 'Trick';
     PlayerData.showViewMode();
     PlayerData.stop();
-    VideoTagData.getLoader().setFilters({tag_slug: $stateParams.tagSlug, order: $stateParams.order});
-    VideoTagData.getLoader().startLoading().then(function(results) {
-        if (results.items.length > 0) {
-            var firstTag = results.items[0];
-            SharedData.currentSearch = TopSearchMapper['trick'](firstTag);
-            // Auto play if there is only one realization for the trick
-            if (results.items.length === 1) {
-                PlayerData.showListTricks = false;
-                PlayerData.playVideoTag(firstTag);
+    VideoTagData.getLoader()
+        .setFilters({tag_slug: $stateParams.tagSlug, order: $stateParams.order})
+        .startLoading().then(function(results) {
+            if (results.items.length > 0) {
+                var firstTag = results.items[0];
+                SharedData.currentSearch = TopSearchMapper['trick'](firstTag);
+                // Auto play if there is only one realization for the trick
+                if (results.items.length === 1) {
+                    PlayerData.showListTricks = false;
+                    PlayerData.playVideoTag(firstTag);
+                }
             }
-        }
-    }).finally(function() {
-        SharedData.pageLoader(false);
-    });
+        })
+        .finally(function() {
+            SharedData.pageLoader(false);
+        });
 }
 
 ViewSportController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'TopSearchMapper'];
@@ -635,8 +637,7 @@ ManagePlaylistController.$inject = ['$scope', 'PlaylistEntity', 'SharedData', 'P
 function ManagePlaylistController($scope, PlaylistEntity, SharedData, PaginateDataLoader) {
     $scope.removeOptions = {trigger: '.btn-remove-item', 'controller': 'Playlists', confirm: true, wait: false};
 
-    $scope.loader = PaginateDataLoader.instance('playlist')
-            .setResource(PlaylistEntity.user)
+    $scope.loader = PaginateDataLoader.instance('playlist', PlaylistEntity.user)
             .setMode('replace');
 
     $scope.loader
@@ -656,9 +657,8 @@ function EditPlaylistController($scope, PaginateDataLoader, PlaylistItemEntity, 
     $scope.onDrop = onDrop;
 
     function loadItems() {
-        $scope.loader = PaginateDataLoader.instance('playlist-edit')
+        $scope.loader = PaginateDataLoader.instance('playlist-edit', PlaylistItemEntity.playlist)
                 .init()
-                .setResource(PlaylistItemEntity.playlist)
                 .setMode('append')
                 .setFilter('id', $stateParams.playlistId)
 //                .setFilter('playlist', true)
@@ -712,8 +712,7 @@ function ModalPlaylistController($scope, $uibModalInstance, PlaylistEntity, Play
         $scope.showAddPlaylistForm = !$scope.showAddPlaylistForm;
     };
     $scope.addToPlaylist = addToPlaylist;
-    $scope.loader = PaginateDataLoader.instance('playlist')
-            .setResource(PlaylistEntity.user)
+    $scope.loader = PaginateDataLoader.instance('playlist', PlaylistEntity.user)
             .setMode('replace')
             .setLimit(12);
 

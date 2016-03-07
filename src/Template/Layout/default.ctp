@@ -10,8 +10,6 @@
     </head>
     <body ng-app="app" ng-controller="MainController as main" id="ng-app">
     <base href="<?= \Cake\Routing\Router::url('/'); ?>"/>
-
-
     <toaster-container toaster-options="{'close-button': true}"></toaster-container>
 
     <?= $this->Element('Common/header_ajs'); ?>

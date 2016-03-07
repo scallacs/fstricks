@@ -180,5 +180,14 @@ class UsersTable extends TableWithTags {
         }
         return $data;
     }
+    
+    
+    public function search($q, $limit = 10){
+        return $this->find('all')
+                ->where([
+                    'Users.username LIKE ' => '%'.$q.'%'
+                ])
+                ->limit($limit);
+    }
 
 }

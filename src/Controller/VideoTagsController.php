@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Controller\AppController;
 use App\Lib\ResultMessage;
 use App\Lib\DataUtil;
 use App\Model\Entity\VideoTag;

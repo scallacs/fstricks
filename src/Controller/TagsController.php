@@ -61,10 +61,14 @@ class TagsController extends AppController {
      * Return a list of the most famous tag begining by the search term $term
      * @param string $term
      */
-    public function suggest($term = '') {
+    public function suggest() {
+        $term = \App\Lib\DataUtil::getString($this->request->query, 'q', null);
         $countRef = \App\Lib\DataUtil::getPositiveInt($this->request->query, 'count_ref_min', 1);
         $sportId = \App\Lib\DataUtil::getPositiveInt($this->request->query, 'sport_id', null);
         $categoryId = \App\Lib\DataUtil::getPositiveInt($this->request->query, 'category_id', null);
+        if ($term === null){
+            throw new \Cake\Network\Exception\NotFoundException();
+        }
         $query = $this->Tags->find('all')
                 ->select([
                     'name' => 'Tags.name',

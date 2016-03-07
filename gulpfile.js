@@ -60,6 +60,24 @@ gulp.task('concat-js', function() {
             .pipe(gulp.dest('./webroot/js/'))
 });
 
+
+gulp.task('concat-js-admin', function() {
+    gulp.src([
+        '!webroot/js/admin/*.spec.js',
+        '!webroot/js/admin/**/*.spec.js',
+        '!webroot/js/admin/**/**/*.spec.js',
+        'webroot/js/admin/**/*.module.js',
+        'webroot/js/admin/**/*.js',
+        'webroot/js/admin/app.admin.module.js',
+        'webroot/js/admin/*.js'
+    ])
+            .pipe(wrap('(function(){\n"use strict";\n<%= contents %>\n})();'))
+            .pipe(stripDebug())
+            .pipe(concat('moFEJPQQS320909j2309923II2ODI2993.js'))
+            .pipe(uglify())
+            .pipe(gulp.dest('./webroot/js/'));
+});
+
 gulp.task('concat-css', function() {
     return gulp.src([
         'webroot/css/select.css',

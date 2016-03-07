@@ -116,10 +116,10 @@ function PlayerData(VideoTagData, $q) {
         return !this.hasError() && this.state !== 'hide';
     }
 
-    function hide(){
+    function hide() {
         this.state = 'hide';
     }
-    
+
     function onFinish() {
         console.log('Player::onFinish');
         obj.state = 'stop';
@@ -365,10 +365,11 @@ function PlayerData(VideoTagData, $q) {
     }
 }
 
-PaginateDataLoader.$inject = ['VideoTagEntity', '$q'];
-function PaginateDataLoader(VideoTagEntity, $q) {
+PaginateDataLoader.$inject = ['$q'];
+function PaginateDataLoader($q) {
 
-    function PaginateDataLoader() {
+    function PaginateDataLoader(r) {
+        this.resource = r;
         this.init();
     }
     PaginateDataLoader.prototype.init = init;
@@ -390,10 +391,13 @@ function PaginateDataLoader(VideoTagEntity, $q) {
     PaginateDataLoader.prototype._onSuccessPageLoad = _onSuccessPageLoad;
 
     return {
+        create: function(r){
+            return new PaginateDataLoader(r);
+        },
         instances: {},
-        instance: function(name) {
+        instance: function(name, r) {
             if (!angular.isDefined(this.instances[name])) {
-                this.instances[name] = new PaginateDataLoader();
+                this.instances[name] = new PaginateDataLoader(r);
             }
             return this.instances[name];
         },
@@ -414,7 +418,7 @@ function PaginateDataLoader(VideoTagEntity, $q) {
         this.loading = false;
         this.currentPage = 1;
         this.cachePage = {};
-        this.resource = VideoTagEntity.search;
+        //this.resource = null; VideoTagEntity.search; DO NOT RESET
         this.mode = 'append'; // Append to data Other mode: 'replace'
         return this;
     }
@@ -566,19 +570,19 @@ function PaginateDataLoader(VideoTagEntity, $q) {
     }
 }
 
-VideoTagData.$inject = ['PaginateDataLoader'];
-function VideoTagData(PaginateDataLoader) {
+VideoTagData.$inject = ['PaginateDataLoader', 'VideoTagEntity'];
+function VideoTagData(PaginateDataLoader, VideoTagEntity) {
 
     var obj = {
         getLoader: function() {
-            return PaginateDataLoader.instance('default');
+            return PaginateDataLoader.instance('default', VideoTagEntity.search);
         },
         currentTag: null,
         setCurrentTag: function(tag) {
             this.currentTag = tag;
         },
         reset: function() {
-            PaginateDataLoader.instance('default').init();
+            PaginateDataLoader.instance('default', VideoTagEntity.search).init();
             this.currentTag = null;
         },
         next: function() {
@@ -624,6 +628,8 @@ function VideoTagData(PaginateDataLoader) {
             return 0;
         }
     };
+    
+    obj.getLoader().setResource(VideoTagEntity.search);
 
     return obj;
 }
@@ -666,16 +672,60 @@ function getSportByName() {
 
 }
 
-function SharedData() {
-    var data = {
+SharedData.$inject = ['SportEntity'];
+function SharedData(SportEntity) {
+    var self = {
         loadingState: true,
-        pageLoader: function(val) {
-            //console.log('Set loading sate: ' + val);
-            this.loadingState = val ? true : false;
-        },
-        currentSearch: {}
+        currentSearch: {},
+        sports: [],
+        categories: [],
+        
+        _callbacks: [],
+        
+        onReady: onReady,
+        pageLoader: pageLoader,
+        init: init,
+        _execCallbacks: _execCallbacks
     };
-    return data;
+    return self;
+    
+    function _execCallbacks(){
+        for (var i = 0; i < self._callbacks.length; i++){
+            self._callbacks[i]();
+        }
+        self._callbacks = [];
+    }
+    
+    function onReady(fct){
+        self._callbacks.push(fct);
+    }
+    
+    function pageLoader(val) {
+        //console.log('Set loading sate: ' + val);
+        self.loadingState = val ? true : false;
+    }
+    
+    function init() {
+        SportEntity.index({}, function(response) {
+            self.sports = response;
+            self.categories = [];
+            for (var i = 0; i < response.length; i++) {
+                var sport = response[i];
+                for (var j = 0; j < sport.categories.length; j++) {
+                    var category = sport.categories[j];
+                    self.categories.push({
+                        category_name: category.name,
+                        category_id: category.id,
+                        sport_name: sport.name,
+                        sport_image: sport.image,
+                        sport_id: sport.id
+                    });
+                }
+            }
+
+            self._execCallbacks();
+        });
+    }
 }
 
 NationalityEntity.$inject = ['$resource'];
@@ -1050,7 +1100,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
     service.requestPassword = requestPassword;
     service.logFromCookie = logFromCookie;
     service.init = init;
-    
+
     service.authData = {
         token: null,
         user: null,
@@ -1061,7 +1111,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
 
     return service;
 
-    function init(){
+    function init() {
         service.logFromCookie();
     }
 
@@ -1072,8 +1122,8 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
     function getCurrentUser() {
         return service.authData.user;
     }
-    
-    function logFromCookie(){
+
+    function logFromCookie() {
         var globals = $cookies.getObject('globals');
         if (!globals) {
             console.log("Getting current user from cookies: NO COOKIES");
@@ -1101,7 +1151,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
         return UserEntity.signup(data, function(response) {
             console.log(response);
             if (response.success) {
-                response.data.provider = null;   
+                response.data.provider = null;
                 service.setCredentials(response.data);
             }
         }).$promise;
@@ -1125,9 +1175,9 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
         }).$promise;
     }
 
-    function setHttpHeader(){
-        console.log('Setting auth header with token: ' +  service.authData.token);
-        $http.defaults.headers.common['Authorization'] = 'Bearer ' +  service.authData.token;
+    function setHttpHeader() {
+        console.log('Setting auth header with token: ' + service.authData.token);
+        $http.defaults.headers.common['Authorization'] = 'Bearer ' + service.authData.token;
     }
 
     function setCredentials(data) {

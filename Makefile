@@ -53,6 +53,7 @@ clean-prod:
 	rm -rf webroot/js/e2e-tests
 	rm -rf webroot/js/components
 	rm -rf webroot/js/lib
+	find webroot/js/admin -type f ! -name '*.html' -delete
 	find webroot/js/src -type f ! -name '*.html' -delete
 	find webroot/css -type f ! -name 'style.css' -delete
 
@@ -76,7 +77,9 @@ minify: minify-css minify-js
 minify-js:
 	$(GULP_BIN) concat-js
 	$(GULP_BIN) concat-js-components
-	$(GULP_BIN) concat-js-lib
+	$(GULP_BIN) concat-js-lib	
+        $(GULP_BIN) concat-js-admin
+
 	
 # target: minify-css - Minifies CSS.
 minify-css:

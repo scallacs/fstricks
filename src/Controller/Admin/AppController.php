@@ -24,7 +24,7 @@ namespace App\Controller\Admin;
  *
  * @link http://book.cakephp.org/3.0/en/controllers.html#the-app-controller
  */
-class AppController extends \Cake\Controller\Controller {
+class AppController extends \App\Controller\AppController {
 
     /**
      * Initialization hook method.
@@ -35,22 +35,22 @@ class AppController extends \Cake\Controller\Controller {
      */
     public function initialize() {
         parent::initialize();
-        
-        $this->loadComponent('Auth', [
-            'authenticate' => [
-                'Form' => [
-                    'fields' => [
-                        'username' => 'email',
-                        'password' => 'password'
-                    ]
-                ],
-            ],
-            'loginAction' => [
-                'controller' => 'Users',
-                'action' => 'login'
-            ],
-            'authorize' => 'Controller'
-        ]);
+//        
+//        $this->loadComponent('Auth', [
+//            'authenticate' => [
+//                'Form' => [
+//                    'fields' => [
+//                        'username' => 'email',
+//                        'password' => 'password'
+//                    ]
+//                ],
+//            ],
+//            'loginAction' => [
+//                'controller' => 'Users',
+//                'action' => 'login'
+//            ],
+//            'authorize' => 'Controller'
+//        ]);
     }
 
     public function isAuthorized($user) {

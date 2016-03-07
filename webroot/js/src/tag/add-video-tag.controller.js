@@ -501,9 +501,8 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
 
     function loadSimilarTags() {
         var videoTag = editionTag._video_tag;
-        PaginateDataLoader.instance('similarTags')
+        PaginateDataLoader.instance('similarTags', VideoTagEntity.similar)
                 .init()
-                .setResource(VideoTagEntity.similar)
                 .setFilter('VideoTag', videoTag)
                 .startLoading()
                 .then(function(data) {

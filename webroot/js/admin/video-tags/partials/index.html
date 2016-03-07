@@ -1,0 +1,111 @@
+
+
+<div class="bg-primary padding-sm">
+
+    <div class="padding-sm">
+        <form class="form-horizontal" ng-submit="submitSearch(search)">
+            <div class="form-group">
+                <label class="col-sm-4">Status</label>
+                <div class="col-sm-8 checkbox">
+                    <label ng-repeat="(status,selected) in search.status">
+                        <input type="checkbox" ng-model="search.status[status]">
+                        {{status}} &nbsp;
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4">User</label>
+                <ui-select 
+                    class="col-sm-8"
+                    ng-model="search.user" 
+                    theme="bootstrap"
+                    reset-search-input="true"
+                    required>
+                    <ui-select-match placeholder="Users...">
+                        {{$select.selected.username}} 
+                    </ui-select-match>
+                    <ui-select-choices
+                        repeat="user in users"
+                        refresh="refreshUsers($select.search)"
+                        refresh-delay="400">
+                        <span class="text-bold">{{user.username}}</span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4">Sport</label>
+                <div class="col-sm-8 checkbox">
+                    <label ng-repeat="sport in sports">
+                        <input type="checkbox" ng-model="search.sports[sport.id]">
+                        {{sport.name}} &nbsp;
+                    </label> 
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4">Order</label>
+                <div class="col-sm-8 checkbox">
+                    <select 
+                        ng-model="search.order"
+                        name="order"
+                        class="form-control"
+                        ng-options="order.code as order.label for order in orders">
+                    </select>
+                </div>
+            </div>
+            <div class="form-group clearfix text-center">
+                <button type="submit" class="btn btn-primary">
+                    Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Video tag</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>User</th>
+                <th>Score</th>
+                <th>Options</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="videoTag in videoTags" removable-item removable-item-options="removeOptions">
+                <td video-tag-item video-tag="videoTag"></td>
+                <td>{{videoTag.modified| timeago}}</td>
+                <td class="text-bold" ng-class="video-tag-status-{{videoTag.status}}">
+                    {{videoTag.status}}
+                </td>
+                <td><a ui-sref="user({userId: videoTag.user_id})">{{videoTag.username}}</a></td>
+                <td>
+                    {{computeRatio(videoTag)}} % <br/>
+                    <span class="text-danger">{{videoTag.count_fake}} fake </span> / 
+                    <span class="text-success">{{videoTag.count_accurate}} ok </span>
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <button class="btn btn-success" title="Validate" ng-click="validateVideoTag(videoTag)">
+                            <span class="glyphicon glyphicon-check"></span>
+                        </button>
+                        <button class="btn btn-warning" title="Reject" ng-click="rejectVideoTag(videoTag)">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                        <button class="btn btn-danger" title="Block"  ng-click="blockVideoTag(videoTag)">
+                            <span class="glyphicon glyphicon-stop"></span>
+                        </button>
+                    </div>
+                    &nbsp;
+                    <button class="btn btn-primary" ng-click="edit(videoTag)">
+                        <span class="glyphicon glyphicon-edit"></span>
+                    </button>
+                    &nbsp;
+                    <button class="btn btn-danger btn-remove-item">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
