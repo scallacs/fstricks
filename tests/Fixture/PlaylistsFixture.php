@@ -39,7 +39,7 @@ class PlaylistsFixture extends TestFixture
             'user_id' => 1,
             'status' => \App\Model\Entity\Playlist::STATUS_PUBLIC,
             'count_points' => 1,
-            'count_tags' => 0,
+            'count_tags' => 3,
             'slug' => self::SLUG_PUBLIC
         ],
         [

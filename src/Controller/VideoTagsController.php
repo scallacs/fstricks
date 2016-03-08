@@ -328,6 +328,12 @@ class VideoTagsController extends AppController {
         }
     }
 
+    public function trending(){
+        ResultMessage::setWrapper(false);
+        $query = $this->VideoTags->findTrending();
+        ResultMessage::overwriteData($query->all());
+    }
+    
     /**
      * Return recently tagged video by user
      * UPDATE tags T SET count_ref = (SELECT count(*) FROM video_tags WHERE tag_id = T.id)

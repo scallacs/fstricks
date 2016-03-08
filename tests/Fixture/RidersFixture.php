@@ -30,7 +30,7 @@ class RidersFixture extends TestFixture
             'picture' => null,
             'user_id' => 1,
             'level' => 1,
-            'slug' =>'stephane-leonard'
+            'slug' => 'stephane-leonard'
         ],
         [
             'id' => 2,

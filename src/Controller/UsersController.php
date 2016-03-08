@@ -70,15 +70,10 @@ class UsersController extends AppController {
         if ($id === null) {
             $id = $this->Auth->user('username');
         }
-
-        if (!$this->request->is('json')) {
-            $this->set('profileId', $id);
-        } else {
-            $data = $this->Users->find('all')
-                    ->where(['Users.username' => $id]);
-            ResultMessage::overwriteData($data->first());
-            ResultMessage::setWrapper(false);
-        }
+        $data = $this->Users->find('all')
+                ->where(['Users.username' => $id]);
+        ResultMessage::overwriteData($data->first());
+        ResultMessage::setWrapper(false);
     }
 
     public function login() {
@@ -219,7 +214,7 @@ class UsersController extends AppController {
         ResultMessage::setMessage("Please correct the form and try again.", false);
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
-            if ($this->Recaptcha->verify()) {
+            if (\Cake\Core\Configure::read('debug') || $this->Recaptcha->verify()) {
                 $user = $this->Users->patchEntity($user, $this->request->data);
                 $this->status = \App\Model\Entity\User::STATUS_ACTIVATED;
                 $user->password = $this->Users->hashPassword($user->password);
@@ -264,31 +259,28 @@ class UsersController extends AppController {
             }
         } catch (\Exception $ex) {
             ResultMessage::setMessage("Sorry but, we cannot send you an email right now. Please try again later", false);
-            if (\Cake\Core\Configure::read('debug')) {
-                throw $ex;
-            }
+//            if (\Cake\Core\Configure::read('debug')) {
+//                throw $ex;
+//            }
         }
     }
 
     public function reset_password($token = null) {
-        if (!$this->request->is('post')) {
-            return;
-        }
+        $this->request->allowMethod(['post']);
+
         try {
             $token = \App\Lib\DataUtil::getString($this->request->data, 'token', null);
             $entity = $this->Users->verifyPasswordResetToken($token);
+
+            if (isset($entity->token_is_expired) && $entity->token_is_expired === true) {
+                ResultMessage::setMessage('Sorry but this token is expired. You must ask to reset your password again', false);
+                return;
+            }
+
+            $this->_change_password($entity);
         } catch (\Cake\Datasource\Exception\RecordNotFoundException $e) {
-
             ResultMessage::setMessage('Sorry but this token is invalid. Open the link sent to you by email.', false);
-            return;
         }
-
-        if (isset($entity->token_is_expired) && $entity->token_is_expired === true) {
-            ResultMessage::setMessage('Sorry but this token is expired. You must ask to reset your password again', false);
-            return;
-        }
-
-        $this->_change_password($entity);
     }
 
     public function change_password() {

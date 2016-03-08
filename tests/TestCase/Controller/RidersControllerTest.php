@@ -19,6 +19,7 @@ class RidersControllerTest extends MyIntegrationTestCase {
         'app.users',
     ];
 
+    
     /**
      * Test index method
      *
@@ -27,6 +28,30 @@ class RidersControllerTest extends MyIntegrationTestCase {
     public function testUnauthorizedSave() {
         $this->post('/api/riders/save');
         $this->assertResponseError("Should raise a not authorh");
+    }
+    
+    
+    public function testProfile(){
+        $this->get('/api/riders/profile/stephane-leonard.json');
+        $this->assertResponseOk();
+    }
+
+    /**
+     * Test index method
+     *
+     * @return void
+     */
+    public function testCreateNewProfileWithErrors() {
+        $this->logUser(3);
+        $data = [
+            'firstname' => '',
+            'lastname' => 'this name is too definitely long for a lastname of a rider and should retrun the appropriate error I hope so',
+            'nationality' => 'fr',
+            'level' => 1
+        ];
+        $this->post('/api/riders/save.json', $data);
+        $this->assertResponseOk();
+        $this->assertValidationErrors('Riders', ['firstname', 'lastname']);
     }
 
     /**
@@ -127,13 +152,12 @@ class RidersControllerTest extends MyIntegrationTestCase {
     public function testLocalSearch(){
         $this->get('/api/riders/local_search.json?q=Stephane');
         $this->assertResponseOk();
-        $result = json_decode($this->_response->body(), true);
-
-        $this->get('/api/riders/local_search.json?firstname=Stephane');
-        $this->assertResponseOk();
         
         $this->get('/api/riders/local_search.json?firstname=Stephane&lastname=test');
         $this->assertResponseOk();
+        
+        $this->get('/api/riders/local_search.json');
+        $this->assertResponseError();
     }
     
     public function testLocalSearchResults(){

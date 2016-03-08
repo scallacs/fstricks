@@ -252,10 +252,16 @@ Cache::config('veryLongCache', [
     'duration' => '+1 days',
     'group' => ['sports']
 ]);
-Cache::config('onDayCache', [
+Cache::config('oneDayCache', [
     'className' => 'File',
     'duration' => '+1 days',
     'group' => ['sports']
+]);
+
+Cache::config('oneHourCache', [
+    'className' => 'File',
+    'duration' => '+1 hours',
+    'group' => ['sports', 'videotags', 'playlists']
 ]);
 
 Plugin::load('ADmad/HybridAuth', ['bootstrap' => true, 'routes' => true]);

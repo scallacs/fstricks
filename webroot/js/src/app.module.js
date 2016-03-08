@@ -114,10 +114,10 @@ ConfigRouting.$inject = ['$stateProvider'];
 function ConfigRouting($stateProvider) {
     'use strict';
     $stateProvider
-            .state('home', {
-                url: "/",
-                redirectTo: 'videoplayer.best'
-            })
+//            .state('home', {
+//                url: "/",
+//                redirectTo: 'videoplayer.best'
+//            })
             .state("otherwise", {
                 url: "*path",
                 templateUrl: "js/src/views/error-not-found.html",

@@ -945,6 +945,11 @@ function VideoTagEntity($resource) {
             params: {action: 'add'},
             isArray: false
         },
+        trending: {
+            method: 'GET',
+            params: {action: 'trending'},
+            isArray: true
+        },
         edit: {
             method: 'POST',
             params: {action: 'edit'},
@@ -990,6 +995,11 @@ function PlaylistEntity($resource) {
             method: 'GET',
             params: {action: 'user'},
             isArray: false
+        },
+        trending: {
+            method: 'GET',
+            params: {action: 'trending'},
+            isArray: true
         },
         search: {
             method: 'GET',

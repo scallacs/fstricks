@@ -157,4 +157,11 @@ class PlaylistsTable extends Table {
 //        }
     }
 
+    public function findTrending($limit = 5){
+        return $this->findPublic()
+                    ->where(['Playlists.count_points >=' => 2])
+                    ->order(['Playlists.count_points DESC'])
+                    ->limit($limit)
+                    ->cache('playlists', 'oneHourCache');
+    }
 }

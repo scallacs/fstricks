@@ -73,7 +73,7 @@ function youtubeDirective($window, VideoEntity, PlayerData, YoutubeCmdMapper) {
                         case 101: // Video is private
                         case 150: // Same, video is private
                             VideoEntity.reportDeadLink({
-                                id: PlayerData.data.video_url,
+                                video_url: PlayerData.data.video_url,
                                 provider: 'youtube'
                             }, function() {
                                 // ignore results

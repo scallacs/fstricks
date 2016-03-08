@@ -1,6 +1,7 @@
-angular.module('app.page', ['ui.router'])
+angular.module('app.page', ['ui.router', 'app.core', 'app.tag', 'app.player'])
         .config(ConfigRoute)
-        .controller('PagesController', PagesController);
+        .controller('PagesController', PagesController)
+        .controller('HomeController', HomeController);
 
 ConfigRoute.$inject = ['$stateProvider'];
 function ConfigRoute($stateProvider) {
@@ -38,9 +39,37 @@ function ConfigRoute($stateProvider) {
                 data: {
                     requireLogin: false
                 }
+            })
+            .state('home', {
+                url: '/',
+                templateUrl: baseUrl + '/home.html',
+                controller: 'HomeController',
+                data: {
+                    requireLogin: false,
+                    loader: true
+                }
             });
 }
 
-function PagesController() {
+function PagesController() {}
+
+
+HomeController.$inject = ['$scope', 'SharedData', 'VideoTagEntity', 'PlaylistEntity', '$state'];
+function HomeController($scope, SharedData, VideoTagEntity, PlaylistEntity, $state) {
+    SharedData.pageLoader(false);
+    
+    VideoTagEntity.trending({}, function(results){
+        $scope.videoTags = results;
+    });
+    
+    PlaylistEntity.trending({}, function(results){
+        $scope.playlists = results;
+    });
+    
+    $scope.$on('play-video-tag', function(event, data){
+        $state.go('videoplayer.realization', {
+            videoTagId: data.id
+        });
+    });
     
 }

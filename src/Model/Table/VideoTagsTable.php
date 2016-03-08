@@ -58,6 +58,13 @@ class VideoTagsTable extends Table {
         ]);
     }
 
+    public function findTrending($limit = 5){
+        return $this->findAndJoin()
+                ->order(['VideoTags.count_points DESC'])
+                ->where(['VideoTags.status ' => VideoTag::STATUS_VALIDATED])
+                ->limit($limit)
+                ->cache('videotags', 'oneHourCache');
+    }
     /**
      * Find data for tags and do joins 
      * 

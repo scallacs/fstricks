@@ -379,6 +379,24 @@ header .navbar-nav > li > a{
 }
 
 /* ------------------------------------------------------------ */
+/* HOME PAGE  */
+/* ------------------------------------------------------------ */
+.about-fstricks{
+    text-align: center;
+    padding: 20px;
+}
+.about-fstricks .website-name{
+    font-size: 3.5em;
+}
+.about-fstricks .moto{
+    font-size: 2em;
+    font-weight: bold;
+    color: #a94442;
+}
+.about-fstricks .description{
+    font-size: 1.3em;
+}
+/* ------------------------------------------------------------ */
 /* DRAG AND DROP  */
 /* ------------------------------------------------------------ */
 

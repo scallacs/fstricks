@@ -28,13 +28,38 @@ class UsersControllerTest extends MyIntegrationTestCase {
         parent::setUp();
         $this->Users = \Cake\ORM\TableRegistry::get('Users');
     }
+    
+    public function testCheckToken() {
+        $this->get('/api/users/check_token.json');
+        $this->assertResponseError();
+        
+        $this->logUser();
+        $this->get('/api/users/check_token.json');
+        $this->assertResultMessageSuccess();
+    }
+    
+    public function testUsernameExists() {
+        $this->get('/api/users/username_exists.json?q=scallacs');
+        $result = json_decode($this->_response->body(), true);
+        $this->assertArrayHasKey('exists', $result);
+        $this->assertEquals($result['exists'], true);
+        
+        $this->get('/api/users/username_exists.json?q=inexistant');
+        $result = json_decode($this->_response->body(), true);
+        $this->assertArrayHasKey('exists', $result);
+        $this->assertEquals($result['exists'], false);
+        
+        $this->get('/api/users/username_exists.json');
+        $result = json_decode($this->_response->body(), true);
+        $this->assertArrayHasKey('exists', $result);
+        $this->assertEquals($result['exists'], false);
+    }
 
     // Test adding duplicate account
     public function testProfile() {
         $this->logUser();
         $this->get('/api/users/profile.json');
         $this->assertResponseOk();
-        $result = json_decode($this->_response->body(), true);
     }
 
     // Test adding duplicate account
@@ -58,11 +83,7 @@ class UsersControllerTest extends MyIntegrationTestCase {
             "password" => 'testtest',
         ];
         $this->post('/api/users/login.json', $data);
-        $this->assertResponseOk();
-
-        $result = json_decode($this->_response->body(), true);
-        $this->assertArrayHasKey('success', $result);
-        $this->assertFalse($result['success']);
+        $this->assertResultMessageFailure();
     }
 
     // Test adding duplicate account
@@ -139,25 +160,46 @@ class UsersControllerTest extends MyIntegrationTestCase {
         $this->post('/api/users/change_password.json', $data);
         $this->assertResultMessageFailure(null, "Should not be possible to change the password with the old one");
 
-        // Should be possible to change password with the new one
+        
         $data['old_password'] = 'abcdefgh';
+        // Should not be possible to change password with a weak one
+        $data['password'] = 'a';
+        $this->post('/api/users/change_password.json', $data);
+        $this->assertResultMessageFailure(null, "Should not be possible to change password with a weak one");
+        
+        // Should be possible to change password with the new one
         $data['password'] = 'newnewnew';
         $this->post('/api/users/change_password.json', $data);
         $this->assertResultMessageSuccess(null, "Should be possible to change password with the new one");
     }
+    public function testRequestPassword() {
+        
+        // Request password with invalid email
+        $data = [
+            'email' => 'cenes\'estpas un email'
+        ];
+        $this->post('/api/users/request_password.json', $data);
+        $this->assertResultMessageFailure();
+        
+        // Request password with inexistant email
+        $data = [
+            'email' => 'validemailthatisnotindb@mail.com'
+        ];
+        $this->post('/api/users/request_password.json', $data);
+        $this->assertResultMessageSuccess();
+        
+    }
 
     // Test adding duplicate account
     public function testResetPassword() {
+        // Valid email
         $record = \App\Test\Fixture\UsersFixture::$RECORD_RESET_PASSWORD;
         $data = [
             'email' => $record['email']
         ];
-        try {
-            $this->post('/api/users/request_password.json', $data);
-            $this->assertResultMessageSuccess(null, "Should be possible to request a new password");
-        } catch (\Exception $ex) {
-            
-        }
+        $this->post('/api/users/request_password.json', $data);
+        $this->assertResultMessageSuccess(null, "Should be possible to request a new password");
+        
         // Should be possible to reset password with the new one
         $record = $this->Users->get($record['id']);
         $data['password'] = 'newnewnew';

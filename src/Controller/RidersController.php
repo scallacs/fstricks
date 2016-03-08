@@ -23,7 +23,7 @@ class RidersController extends AppController {
      * 
      * Get user rider profile is $profileId is null. Otherwise rider profile for $profileId
      */
-    public function profile($profileId = null) {
+    public function profile($slug = null) {
         ResultMessage::setWrapper(false);
 //        if ($profileId === null && $this->Auth->user('id')) {
 //            $query = $this->Riders->find()
@@ -31,10 +31,10 @@ class RidersController extends AppController {
 //                    ->where(['Riders.user_id' => $this->Auth->user('id')]);
 //            $data = $query->first();
 //        } else 
-        if (!empty($profileId)) {
+        if (!empty($slug)) {
             $query = $this->Riders->find()
                     ->limit(1)
-                    ->where(['Riders.slug' => $profileId]);
+                    ->where(['Riders.slug' => $slug]);
             $data = $query->first();
             // TODO add cache //->cache('riders', 'veryLongCache')
         } 
@@ -107,8 +107,12 @@ class RidersController extends AppController {
      */
     public function local_search() {
         ResultMessage::setWrapper(false);
-        if ($this->request->is('get') && !empty($this->request->query)) {
+        if ($this->request->is('get')) {
             $data = $this->request->query;
+            
+            if (!isset($data['q']) && (!isset($data['firstname']) || !isset($data['lastname']))) {
+                throw new \Cake\Network\Exception\NotFoundException();
+            }
             $query = $this->Riders->find('all')
                     ->select([
                         'firstname' => 'Riders.firstname',
@@ -121,20 +125,16 @@ class RidersController extends AppController {
                     ])
                     ->order(['Riders.count_tags DESC','Riders.level DESC'])
                     ->limit(20);
+            
             if (isset($data['q'])) {
                 \App\Model\Table\TableUtil::multipleWordSearch($query, $data['q'],  
                         'CONCAT(Riders.firstname, \' \', Riders.lastname)');
-            } else if (isset($data['firstname']) ||
-                    isset($data['lastname'])) {
-
+            } else {
                 $query->where([
                     'Riders.firstname LIKE "%' . DataUtil::getLowerString($data, 'firstname') . '%"',
                     'Riders.lastname LIKE "%' . DataUtil::getLowerString($data, 'lastname') . '%"',
                 ]);
-            } else {
-                return;
-            }
-//                    ->order(['Riders.count_video_tags DESC']);
+            } 
             ResultMessage::overwriteData($query->all());
         }
     }

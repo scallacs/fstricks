@@ -1,0 +1,35 @@
+<div class="about-fstricks section bg-primary">
+    <div class="container">
+        <h1 class="website-name">
+            Freestyle Tricks
+        </h1>
+        <p class="moto">
+            Be inspired by the best !
+        </p>
+        <p class="description">
+            FSTricks allow you to watch tricks from many freestyle sports! 
+            Quickly find the inspiration you need or simply admire the performance.
+        </p>
+    </div>
+</div>
+
+<div class="container margin-top">
+    <div class="col-md-6">
+        <div class="bg-primary border-radius padding-sm">
+            <h3 class="page-title">Trending playlists</h3>
+
+            <div ng-repeat="playlist in playlists"   playlist-item playlist="playlist" ></div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="bg-primary border-radius padding-sm">
+            <h3 class="page-title">Trending performances</h3>
+            <div ng-repeat="videoTag in videoTags" video-tag-item video-tag="videoTag"></div>
+
+            <p class="padding-sm text-center">
+                <a ui-sref="videoplayer.best()">view more</a>
+            </p>
+        </div>
+    </div>
+</div>

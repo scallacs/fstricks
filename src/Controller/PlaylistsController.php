@@ -151,9 +151,16 @@ class PlaylistsController extends AppController {
         $playlist = $this->Playlists->getEditabled($id, $this->Auth->user('id'));
         if ($this->Playlists->delete($playlist)) {
             ResultMessage::setMessage('This playlist has been successfully removed', true);
-        } else {
-            ResultMessage::setMessage('Sorry but you are not allowed to remove it', false);
-        }
+        } 
+//        else {
+//            ResultMessage::setMessage('Sorry but we cannot delete this playlist', false);
+//        }
     }
 
+    
+    public function trending(){
+        ResultMessage::setWrapper(false);
+        $query = $this->Playlists->findTrending();
+        ResultMessage::overwriteData($query->all());
+    }
 }

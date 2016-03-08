@@ -75,15 +75,20 @@ class SearchHelper {
         return isset($this->data[$name]);
     }
 
-    public function _keywords($search, $field, $separator = ' ', $minLength = 1) {
+    public function _keywords($search, $field, $separator = ' ', $minLength = 1, $maxWords = 5) {
         $search = DataUtil::toLowerString($search);
         $terms = explode($separator, $search);
         $conditions = [
             'AND' => []
         ];
+        $i = 0;
         foreach ($terms as $term) {
+            if ($i >= $maxWords){
+                break;
+            }
             if (strlen($term) >= $minLength) {
-                $conditions['AND'][] = [$field . ' LIKE ' => '%' . trim($term) . '%'];
+                $i++;
+                $conditions['AND'][] = ['LOWER('.$field . ') LIKE ' => '%' . trim($term) . '%'];
             }
         }
 //        print_r($conditions);

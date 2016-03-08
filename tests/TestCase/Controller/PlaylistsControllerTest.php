@@ -78,30 +78,30 @@ class PlaylistsControllerTest extends MyIntegrationTestCase {
      * @return void
      */
     public function testViewPublic() {
-        $this->get('/api/Playlists/view/' . \App\Test\Fixture\PlaylistsFixture::SLUG_PUBLIC . '.json');
+        $this->get('/api/Playlists/view/' . \App\Test\Fixture\PlaylistsFixture::ID_PUBLIC . '.json');
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
         $this->assertArrayHasKeys(['id', 'title', 'description', 'count_tags', 'created', 'status'], $result);
     }
 
     public function testViewPrivate() {
-        $this->get('/api/Playlists/view/' . \App\Test\Fixture\PlaylistsFixture::SLUG_PRIVATE . '.json');
+        $this->get('/api/Playlists/view/' . \App\Test\Fixture\PlaylistsFixture::ID_PRIVATE . '.json');
         $this->assertResponseError(404, "It should not be possible to view a private playlist if not logged in");
 
         $playlist = $this->Playlists->get(\App\Test\Fixture\PlaylistsFixture::ID_PRIVATE);
         $this->logUser($playlist->user_id);
-        $this->get('/api/Playlists/view/' . \App\Test\Fixture\PlaylistsFixture::SLUG_PRIVATE . '.json');
+        $this->get('/api/Playlists/view/' . \App\Test\Fixture\PlaylistsFixture::ID_PRIVATE . '.json');
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
         $this->assertArrayHasKeys(['id', 'title', 'description', 'count_tags', 'created', 'status'], $result);
 
         $this->logUser($playlist->user_id + 1);
-        $this->get('/api/Playlists/view/' . \App\Test\Fixture\PlaylistsFixture::SLUG_PRIVATE . '.json');
+        $this->get('/api/Playlists/view/' . \App\Test\Fixture\PlaylistsFixture::ID_PRIVATE . '.json');
         $this->assertResponseError(404, "It should not be possible to view a private playlist if it's not the owner");
     }
 
     public function testViewBlocked() {
-        $this->get('/api/Playlists/view/' . \App\Test\Fixture\PlaylistsFixture::SLUG_BLOCKED . '.json');
+        $this->get('/api/Playlists/view/' . \App\Test\Fixture\PlaylistsFixture::ID_BLOCKED . '.json');
         $this->assertResponseError(404, "It should not be possible to view a blocked playlist");
     }
 
@@ -139,6 +139,21 @@ class PlaylistsControllerTest extends MyIntegrationTestCase {
         $this->assertEquals($userId, $playlist->user_id);
     }
 
+    
+    /**
+     * Test add method
+     *
+     * @return void
+     */
+    public function testAddWithErrors() {
+        $this->logUser(1);
+        $data = [
+            'title' => 'T',
+            'status' => \App\Model\Entity\Playlist::STATUS_PRIVATE,
+        ];
+        $this->post('/api/Playlists/add.json', $data);
+        $this->assertValidationErrors('Playlists', ['title']);
+    }
     /**
      * Test edit method
      *
@@ -169,6 +184,17 @@ class PlaylistsControllerTest extends MyIntegrationTestCase {
         $this->assertEquals($playlistOrigin->user_id, $playlist->user_id);
     }
 
+    public function testEditWithErrors() {
+        $tagId = \App\Test\Fixture\PlaylistsFixture::ID_PUBLIC;
+        $playlistOrigin = $this->Playlists->get($tagId);
+
+        $this->logUser($playlistOrigin->user_id);
+        $data = [
+            'title' => 't'
+        ];
+        $this->post('/api/Playlists/edit/' . $tagId . '.json', $data);
+        $this->assertValidationErrors('Playlists', ['title']);
+    }
     /**
      * Test edit method
      *

@@ -190,7 +190,25 @@ class VideosControllerTest extends MyIntegrationTestCase {
         $this->assertArrayHasKey('id', $result);
     }
 
-    public function report_dead_link(){
-        $this->markTestIncomplete('Not implemented yet.');
+    public function testReportDeadLink(){
+        // Invalid provider / video
+        $this->post("/api/Videos/report_dead_link.json", [
+            'video_url' => 'blblzrele',
+            'provider' => 'oupsy doupsy'
+        ]);
+        $this->assertResponseOk();
+        
+        $this->post("/api/Videos/report_dead_link.json", [
+            'video_url' => \App\Test\Fixture\VideosFixture::VALID_YOUTUBE_ID,
+            'provider' => 'youtube'
+        ]);
+        $this->assertResponseOk();
+                
+        // Vimeo
+        $this->post("/api/Videos/report_dead_link.json", [
+            'video_url' => \App\Test\Fixture\VideosFixture::VALID_VIMEO_ID,
+            'provider' => 'vimeo'
+        ]);
+        $this->assertResponseOk();
     }
 }

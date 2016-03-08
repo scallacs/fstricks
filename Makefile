@@ -78,7 +78,7 @@ minify-js:
 	$(GULP_BIN) concat-js
 	$(GULP_BIN) concat-js-components
 	$(GULP_BIN) concat-js-lib	
-        $(GULP_BIN) concat-js-admin
+	$(GULP_BIN) concat-js-admin
 
 	
 # target: minify-css - Minifies CSS.
@@ -90,7 +90,9 @@ minify-css:
 # TESTS
 
 tests: test-backend test-frontend
-	
+
+test-controller: 
+	vendor/bin/phpunit --coverage-html webroot/coverage tests/TestCase/Controller/$(q)ControllerTest.php
 
 start-webdriver:
 	$(WEBDRIVER_MANAGER_BIN) start 

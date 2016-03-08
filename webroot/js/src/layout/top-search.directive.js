@@ -89,7 +89,8 @@ function topSearchDirective(TopSearchMapper, ApiFactory) {
 
                 var searchEndpoint = ApiFactory.endpoint('Searchs', 'search').query;
 
-                var searchDisabled = false;
+//                var searchIdCounter = 0;
+                var currentRequest = null;
                 /**
                  * Header search bar function
                  * @param {type} trick
@@ -98,34 +99,44 @@ function topSearchDirective(TopSearchMapper, ApiFactory) {
                  * TODO history
                  */
                 function refresh(search) {
-                    $scope.results = [];
                     search = search.trim();
-                    if (search.length >= 2 && !searchDisabled) {
-                        searchDisabled = true;
-                        searchData = {q: search};
+                    if (search.length >= 2) {
+//                        if (currentRequest!== null){
+//                            console.log("Cancelling search");
+//                            currentRequest.$cancel();
+//                            currentRequest = null;
+//                        }
+//                        searchIdCounter += 1;
+//                        var searchId = searchIdCounter;
+                        $scope.results = [TopSearchMapper['search'](search)];
+                        var searchData = {q: search};
                         if (SharedData.currentSport) {
                             searchData.sport_id = SharedData.currentSport.id;
                         }
-                        searchEndpoint(searchData, function(results) {
-                                for (var i = 0; i < results.length; i++) {
-                                    switch (results[i].type){
-                                        case 'playlist':
-                                            results[i].category = 'Playlist';
-                                            break;
-                                        case 'rider':
-                                            results[i].category = 'Rider';
-                                            break;
-                                        default:
-                                            results[i].category = 'Trick';
-                                            break;
-                                    }
-                                    $scope.results.push(results[i]);
+                        currentRequest = searchEndpoint(searchData, function(results) {
+//                            if (searchId !== searchIdCounter){
+//                                return;
+//                            }
+                            for (var i = 0; i < results.length; i++) {
+                                switch (results[i].type) {
+                                    case 'playlist':
+                                        results[i].category = 'Playlist';
+                                        break;
+                                    case 'rider':
+                                        results[i].category = 'Rider';
+                                        break;
+                                    default:
+                                        results[i].category = 'Trick';
+                                        break;
                                 }
-                            })
-                            .$promise
-                            .finally(function() {
-                                searchDisabled = false;
-                            });
+                                $scope.results.push(results[i]);
+                            }
+                        });
+                        currentRequest
+                                .$promise
+                                .finally(function() {
+                                    searchDisabled = false;
+                                });
 
 //                        if (SharedData.currentSport) {
 //                            searchData.sport_id = SharedData.currentSport.id;

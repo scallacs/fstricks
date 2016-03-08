@@ -327,8 +327,8 @@ return [
         'key' => 'AIzaSyAiz1-BkVPdVOLtDyR_Fi8gUAhrU8wXrSE'
     ],
     'Vimeo'  => [
-        'id' => 'f941f4c31738338a894c2b547ab6a9d1255d63d1',
-        'key' => 'rR8YpMiWxBtkvk6QHjKbj8MK+4EpWJXevpCQTUgsy5RtYgoskrcCbvZUoju1MRzhZXZBpETrX1XvS4Nrr8EW2evFf76/Kz2fNiYsCDL/8tRu1YYbCU666kkoaWMZbr5a'
+        'id' => '9bf172126a2ffd8ec0c9bafcac8183e2450f079c',
+        'key' => 'GIHpP3bkais02fTvXsRLNnW3qH6fcgnINaf2cD7Ukapc36rXTvaIUKptWJreztJgXA7dWbTHGedBY0CMwYtL6LVLQpGXiSv31AGkwZfJv2qsNhoey7KGeEJIxlmDYefE'
     ],
     'Facebook' => [
         'key' => '4efeb5e024d7ecbc9905d6c528929e7e',

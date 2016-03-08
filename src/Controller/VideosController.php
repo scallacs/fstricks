@@ -139,16 +139,15 @@ class VideosController extends AppController {
      * @param type $provider
      * @return type
      */
-    public function report_dead_link($videoUrl, $provider) {
+    public function report_dead_link() {
+        $this->request->allowMethod(['post']);
         ResultMessage::setWrapper(false);
-        if (!$this->request->is('post')){
-            return ;
-        }
-        ResultMessage::overwriteData(['success' => true]);
+        $provider = \App\Lib\DataUtil::getString($this->request->data, 'provider');
+        $videoUrl = \App\Lib\DataUtil::getString($this->request->data, 'video_url');
         switch ($provider) {
             case 'youtube':
                 $exists = \App\Lib\YoutubeRequest::instance()->exists($videoUrl);
-                if ($exists) {
+                if (!$exists) {
                     $this->Videos->updateAll([
                         'status' => \App\Model\Entity\Video::STATUS_PRIVATE
                             ], [
@@ -159,10 +158,11 @@ class VideosController extends AppController {
                 }
                 break;
             case 'vimeo': 
-                // TODO 
+                // TODO add report dead link for vimeo video
                     \Cake\Log\Log::write('info', 'Removing video ' . $videoUrl . ' from ' . $provider);
                 break;
         }
+        ResultMessage::overwriteData(['success' => true]);
     }
 
 }

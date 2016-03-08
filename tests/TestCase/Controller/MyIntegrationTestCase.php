@@ -46,11 +46,19 @@ class MyIntegrationTestCase extends \Cake\TestSuite\IntegrationTestCase {
         $this->assertTrue($result['success'], $message);
     }
     public function assertResultMessageFailure($result = null, $message = null){
+        $this->assertResponseOk();
         if ($result === null){
             $result = json_decode($this->_response->body(), true);
         }
         $this->assertArrayHasKey('success', $result, $message);
         $this->assertFalse($result['success'], $message);
+    }
+    public function assertValidationErrors($model, $fields, $result = null, $message = null){
+        $this->assertResultMessageFailure($result);
+        if ($result === null){
+            $result = json_decode($this->_response->body(), true);
+        }
+        $this->assertArrayHasKeys(['validationErrors' => [$model => $fields]], $result, $message);
     }
 
 }
