@@ -21,7 +21,7 @@ class VideoTagsController extends AppController {
 
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['view', 'search']);
+        $this->Auth->allow(['view', 'search', 'trending']);
     }
 
     /**
