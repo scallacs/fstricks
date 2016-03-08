@@ -14,10 +14,12 @@ class TableUtil {
     public static function multipleWordSearch(&$query, $search, $field, $separator = ' ', $minLength = 1) {
         $search = DataUtil::toLowerString($search);
         $terms = explode($separator, $search);
-        $conditions = [];
+        $conditions = [
+            'AND' => []
+        ];
         foreach ($terms as $term) {
             if (strlen($term) >= $minLength) {
-                $conditions[] = $field.' LIKE "%' . trim($term) . '%"';
+                $conditions['AND'][] = [$field . ' LIKE ' => '%' . trim($term) . '%'];
             }
         }
         $query->where([$conditions]);

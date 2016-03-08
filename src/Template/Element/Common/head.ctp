@@ -83,6 +83,7 @@
     <?= $this->Html->script('src/shared/filters/time.filter'); ?>
     <?= $this->Html->script('src/shared/directives/page-loader.directive'); ?>
     <?= $this->Html->script('src/core/app.core.module'); ?>
+    <?= $this->Html->script('src/core/app.core.api'); ?>
     <?= $this->Html->script('src/account/app.account.module'); ?>
     <?= $this->Html->script('src/account/form-login.directive'); ?>
     <?= $this->Html->script('src/account/form-change-password.directive'); ?>

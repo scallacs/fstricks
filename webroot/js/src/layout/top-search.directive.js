@@ -74,8 +74,8 @@ function TopSearchMapper(SharedData) {
  * Server form. Extend ng form functionnalities.
  * Add a loader when the form is waiting for a server response.
  */
-topSearchDirective.$inject = ['TopSearchMapper'];
-function topSearchDirective(TopSearchMapper) {
+topSearchDirective.$inject = ['TopSearchMapper', 'ApiFactory'];
+function topSearchDirective(TopSearchMapper, ApiFactory) {
     return {
         templateUrl: TEMPLATE_URL + '/layout/partials/top-search.html',
         scope: {
@@ -86,6 +86,8 @@ function topSearchDirective(TopSearchMapper) {
                 $scope.results = [];
                 $scope.onSelect = onSelect;
                 $scope.refresh = refresh;
+
+                var searchEndpoint = ApiFactory.endpoint('Searchs', 'search').query;
 
                 var searchDisabled = false;
                 /**
@@ -100,54 +102,80 @@ function topSearchDirective(TopSearchMapper) {
                     search = search.trim();
                     if (search.length >= 2 && !searchDisabled) {
                         searchDisabled = true;
-                        var searchData = {q: search};
+                        searchData = {q: search};
                         if (SharedData.currentSport) {
                             searchData.sport_id = SharedData.currentSport.id;
                         }
-                        $scope.results.push(TopSearchMapper['search'](search));
-
-                        TagEntity
-                                .suggest(searchData, function(results) {
-                                    for (var i = 0; i < results.length; i++) {
-                                        var data = TopSearchMapper['tag'](results[i]);
-                                        $scope.results.push(data);
+                        searchEndpoint(searchData, function(results) {
+                                for (var i = 0; i < results.length; i++) {
+                                    switch (results[i].type){
+                                        case 'playlist':
+                                            results[i].category = 'Playlist';
+                                            break;
+                                        case 'rider':
+                                            results[i].category = 'Rider';
+                                            break;
+                                        default:
+                                            results[i].category = 'Trick';
+                                            break;
                                     }
-                                })
-                                .$promise
-                                .finally(function() {
-                                    searchDisabled = false;
-                                });
+                                    $scope.results.push(results[i]);
+                                }
+                            })
+                            .$promise
+                            .finally(function() {
+                                searchDisabled = false;
+                            });
 
-                        // If the search does not contains any number we search for riders
-                        if (!(new RegExp(".*[0-9].*")).test(search)) {
-                            RiderEntity
-                                    .search({q: search}, function(results) {
-                                        for (var i = 0; i < results.length; i++) {
-                                            var data = TopSearchMapper['rider'](results[i]);
-                                            $scope.results.push(data);
-                                        }
-                                    })
-                                    .$promise
-                                    .finally(function() {
-                                        searchDisabled = false;
-                                    });
-                        }
-
-                        PlaylistEntity
-                                .search({q: search}, function(results) {
-                                    for (var i = 0; i < results.length; i++) {
-                                        var data = TopSearchMapper['playlist'](results[i]);
-                                        $scope.results.push(data);
-                                    }
-                                })
-                                .$promise
-                                .finally(function() {
-                                    searchDisabled = false;
-                                });
+//                        if (SharedData.currentSport) {
+//                            searchData.sport_id = SharedData.currentSport.id;
+//                        }
+//                        $scope.results.push(TopSearchMapper['search'](search));
+//
+//                        TagEntity
+//                                .suggest(searchData, function(results) {
+//                                    for (var i = 0; i < results.length; i++) {
+//                                        var data = TopSearchMapper['tag'](results[i]);
+//                                        $scope.results.push(data);
+//                                    }
+//                                })
+//                                .$promise
+//                                .finally(function() {
+//                                    searchDisabled = false;
+//                                });
+//
+//                        // If the search does not contains any number we search for riders
+//                        if (!(new RegExp(".*[0-9].*")).test(search)) {
+//                            RiderEntity
+//                                    .search({q: search}, function(results) {
+//                                        for (var i = 0; i < results.length; i++) {
+//                                            var data = TopSearchMapper['rider'](results[i]);
+//                                            $scope.results.push(data);
+//                                        }
+//                                    })
+//                                    .$promise
+//                                    .finally(function() {
+//                                        searchDisabled = false;
+//                                    });
+//                        }
+//
+//                        PlaylistEntity
+//                                .search({q: search}, function(results) {
+//                                    for (var i = 0; i < results.length; i++) {
+//                                        var data = TopSearchMapper['playlist'](results[i]);
+//                                        $scope.results.push(data);
+//                                    }
+//                                })
+//                                .$promise
+//                                .finally(function() {
+//                                    searchDisabled = false;
+//                                });
                     }
                 }
 
                 function onSelect(event, data) {
+                    console.log("on-search-item-selected");
+                    console.log(data);
                     $scope.$emit("on-search-item-selected", data);
                 }
 
