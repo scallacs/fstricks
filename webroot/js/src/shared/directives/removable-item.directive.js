@@ -10,7 +10,7 @@ angular.module('shared')
         .directive('removableItem', removableItem);
 
 
-RemoveItemEntity.$injector = ['$resource'];
+RemoveItemEntity.$inject = ['$resource'];
 function RemoveItemEntity($resource) {
     var url = API_BASE_URL + '/:controller/delete/:id.json';
     return $resource(url, {id: '@id', controller: '@controller'}, {
@@ -31,9 +31,6 @@ function removableItem($uibModal, RemoveItemEntity, toaster) {
             removableItemOptions: '=',
             removableItemId: '@'
         },
-//        controller: function($scope){
-//            $scope.remove =  remove;
-//        },
         link: function(scope, elem, attrs) {
             var options = scope.removableItemOptions;
             var btn = $(elem).find(options.trigger);
