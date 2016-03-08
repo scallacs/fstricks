@@ -66,7 +66,7 @@ function HomeController($scope, SharedData, VideoTagEntity, PlaylistEntity, $sta
         $scope.playlists = results;
     });
     
-    $scope.$on('play-video-tag', function(event, data){
+    $scope.$on('view-video-tag', function(event, data){
         $state.go('videoplayer.realization', {
             videoTagId: data.id
         });
