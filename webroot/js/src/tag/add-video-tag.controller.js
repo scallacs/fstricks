@@ -301,6 +301,9 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
             if (editionTag.isNew()) {
                 updateSimilarTags();
             }
+            else{
+                $scope.updateSimilarTags = [];
+            }
         },
         slide: function(event, ui) {
             changeSliderValues(ui.values, ui.values[1] === ui.value ? 1 : 0);
@@ -649,7 +652,7 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
             var categoryId = editionTag._extra.category.category_id;
             var sportId = editionTag._extra.category.sport_id;
             TagEntity.suggest({
-                id: trick,
+                q: trick,
                 category_id: categoryId,
                 sport_id: sportId,
                 count_ref_min: 0
