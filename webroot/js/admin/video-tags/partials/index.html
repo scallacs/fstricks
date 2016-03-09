@@ -72,7 +72,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="videoTag in videoTags" removable-item removable-item-options="removeOptions">
+            <tr ng-repeat="videoTag in videoTags" removable-item removable-item-options="removeOptions"
+                    removable-item-id="{_id: videoTag.id}">
                 <td video-tag-item video-tag="videoTag"></td>
                 <td>{{videoTag.modified}}</td>
                 <td class="text-bold" ng-class="video-tag-status-{{videoTag.status}}">
