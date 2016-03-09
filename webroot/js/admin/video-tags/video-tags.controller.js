@@ -8,7 +8,7 @@ function VideoTagsController() {
 
 VideoTagIndexController.$inject = ['$scope', 'AdminApiFactory', 'SharedData', 'toaster', 'PaginateDataLoader'];
 function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, PaginateDataLoader) {
-    $scope.removeOptions = {trigger: '.btn-remove-item', controller: 'VideoTags', confirm: true, wait: false};
+    $scope.removeOptions = {trigger: '.btn-remove-item', endpoint: AdminApiFactory.endpoint('VideoTags', 'delete').delete, confirm: true, wait: false};
     $scope.refreshUsers = refreshUsers;
     $scope.search = {
         status: {'pending': true, 'rejected': false, 'validated': false, 'blocked': false},
@@ -27,6 +27,7 @@ function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, P
     $scope.rejectVideoTag = rejectVideoTag;
     $scope.blockVideoTag = blockVideoTag;
     $scope.submitSearch = submitSearch;
+    $scope.loadMore = loadMore;
 
     $scope.videoTags = [];
     
@@ -38,7 +39,8 @@ function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, P
     });
 
     var api = AdminApiFactory.api();
-    var dataLoader = PaginateDataLoader.create(AdminApiFactory.endpoint('VideoTags', 'index').get);
+    var dataLoader = PaginateDataLoader.create(AdminApiFactory.endpoint('VideoTags', 'index').get)
+            .setMode('append');
 
     submitSearch($scope.search);
 
@@ -50,6 +52,10 @@ function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, P
                     $scope.videoTags = results.items;
                     SharedData.pageLoader(false);
                 });
+    }
+
+    function loadMore(){
+        dataLoader.loadNextPage();
     }
 
     function updateFilters(s) {
