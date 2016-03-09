@@ -13,7 +13,8 @@ angular.module('app.account', [
         .controller('SettingsController', SettingsController)
         .controller('UserLoginController', UserLoginController)
         .controller('ResetPasswordController', ResetPasswordController)
-        .controller('SignupController', SignupController);
+        .controller('SignupController', SignupController)
+        .controller('DeleteAccountController', DeleteAccountController);
 
 ConfigRoute.$inject = ['$stateProvider'];
 function ConfigRoute($stateProvider) {
@@ -80,12 +81,11 @@ function ConfigSocialApi($authProvider) {
 //    });
 }
 
-SettingsController.$inject = ['$scope', 'AuthenticationService', 'UserEntity']
-function SettingsController($scope, AuthenticationService, UserEntity) {
+SettingsController.$inject = ['$scope', 'AuthenticationService']
+function SettingsController($scope, AuthenticationService) {
 
     $scope.data = {};
     $scope.password = '';
-    $scope.removeAccount = removeAccount;
     $scope.isFormDeleteAccountLoading = false;
     $scope.isSociaLogin = isSocialLogin;
     $scope.data.user = AuthenticationService.getCurrentUser();
@@ -94,11 +94,16 @@ function SettingsController($scope, AuthenticationService, UserEntity) {
         if (!AuthenticationService.isAuthed()) {
             return false;
         }
-        return AuthenticationService.getCurrentUser().provider !== null;
+        return AuthenticationService.getCurrentUser().provider;
     }
+}
+
+DeleteAccountController.$inject = ['$scope', 'UserEntity'];
+function DeleteAccountController($scope, UserEntity) {
+    $scope.removeAccount = removeAccount;
 
     function removeAccount(password) {
-        $scope.isFormDeleteAccountLoading = true;
+        alert('deleteAccountCtrl');
         $scope.formDeleteAccount.submit(UserEntity.removeAccount({password: password}).$promise).then(function(response) {
             if (response.success) {
                 $scope.$parent.logout();

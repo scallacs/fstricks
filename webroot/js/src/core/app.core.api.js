@@ -11,7 +11,7 @@ function ApiResourceFactory($resource) {
                 'get': {method: 'GET', _id: null},
                 'save': {method: 'POST'},
                 'query': {method: 'GET', isArray: true, _id: null},
-                'remove': {method: 'DELETE', _id: null}
+                'remove': {method: 'DELETE'}
             });
         }
     };
@@ -71,13 +71,12 @@ function ApiFactory(Api, ApiResourceFactory ) {
         },
         endpoint: function(controller, action, id, extra){
             var url = API_BASE_URL + '/' + controller + '/' + action;
-            if (angular.isDefined(id)){
-                url += '/' + id;
-            }
+            url += angular.isDefined(id) ? '/' + id : '/:_id';
             url += '.json';
             if (!angular.isDefined(extra)){
                 extra = {};
             }
+            console.log("Creating endpoint: " + url);
             return ApiResourceFactory.create(url, extra);
         }
     };

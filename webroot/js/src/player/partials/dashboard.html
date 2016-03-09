@@ -56,7 +56,7 @@
                         dir-paginate="videoTag in workspace.loader.data.items | itemsPerPage: workspace.loader.data.perPage"
                         total-items="workspace.loader.data.total"
                         removable-item
-                        removable-item-id="{{videoTag.id}}"
+                        removable-item-id="{_id: videoTag.id}"
                         removable-item-options="removeOptions">
                         <video-tag-item video-tag="videoTag"></video-tag-item>
                     </li>

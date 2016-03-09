@@ -7,15 +7,17 @@ angular.module('app.player')
                     playlistOrigin: '=playlist'
                 },
                 link: function(scope, elem, attr) {
+                    scope.playlist = {
+                        status: 'public',
+                        id: null,
+                        count_points: 0,
+                        count_tags: 0
+                    };
                     scope.$watch('playlistOrigin', function() {
                         if (angular.isDefined(scope.playlistOrigin)) {
                             scope.playlist = angular.copy(scope.playlistOrigin);
                         }
                     });
-                    scope.playlist = {
-                        status: 'public',
-                        id: null
-                    };
                 },
                 controller: ['$scope', 'PlaylistEntity', function($scope, PlaylistEntity) {
                         $scope.availableStatus = [

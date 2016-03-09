@@ -119,7 +119,7 @@ class PlaylistsTable extends Table {
         }
         return $query->where([
                     'OR' => [
-                        ['Playlists.status' => Playlist::STATUS_PUBLIC, 'Playlists.count_tags > 0'],
+                        ['Playlists.status' => Playlist::STATUS_PUBLIC],
                         ['Playlists.status IN ' => [Playlist::STATUS_PRIVATE,Playlist::STATUS_PUBLIC], 'Playlists.user_id' => $userId]]
         ]);
     }

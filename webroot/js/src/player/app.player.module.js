@@ -182,10 +182,15 @@ function ConfigRoute($stateProvider) {
             });
 }
 
-DashboardController.$inject = ['$scope', 'PaginateDataLoader', 'SharedData', '$state', 'VideoTagEntity'];
-function DashboardController($scope, PaginateDataLoader, SharedData, $state, VideoTagEntity) {
+DashboardController.$inject = ['$scope', 'PaginateDataLoader', 'SharedData', '$state', 'VideoTagEntity', 'ApiFactory'];
+function DashboardController($scope, PaginateDataLoader, SharedData, $state, VideoTagEntity, ApiFactory) {
 
-    $scope.removeOptions = {trigger: '.btn-remove-item', controller: 'VideoTags', confirm: true, wait: false};
+    $scope.removeOptions = {
+        trigger: '.btn-remove-item', 
+        endpoint: ApiFactory.endpoint('VideoTags', 'delete').remove, 
+        confirm: true, 
+        wait: false
+    };
 
     $scope.workspaces = [
         {id: 'pending', name: "Pendings", removable: true, active: true, filters: {status: 'pending', order: 'modified'}},
@@ -633,9 +638,9 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     }
 }
 
-ManagePlaylistController.$inject = ['$scope', 'PlaylistEntity', 'SharedData', 'PaginateDataLoader'];
-function ManagePlaylistController($scope, PlaylistEntity, SharedData, PaginateDataLoader) {
-    $scope.removeOptions = {trigger: '.btn-remove-item', 'controller': 'Playlists', confirm: true, wait: false};
+ManagePlaylistController.$inject = ['$scope', 'PlaylistEntity', 'SharedData', 'PaginateDataLoader', 'ApiFactory'];
+function ManagePlaylistController($scope, PlaylistEntity, SharedData, PaginateDataLoader, ApiFactory) {
+    $scope.removeOptions = {trigger: '.btn-remove-item', endpoint: ApiFactory.endpoint('Playlists', 'delete').remove, confirm: true, wait: false};
 
     $scope.loader = PaginateDataLoader.instance('playlist', PlaylistEntity.user)
             .setMode('replace');
@@ -648,9 +653,15 @@ function ManagePlaylistController($scope, PlaylistEntity, SharedData, PaginateDa
 
 }
 
-EditPlaylistController.$inject = ['$scope', 'PaginateDataLoader', 'PlaylistItemEntity', 'SharedData', '$stateParams'];
-function EditPlaylistController($scope, PaginateDataLoader, PlaylistItemEntity, SharedData, $stateParams) {
-    $scope.removeOptions = {wait: false, controller: 'PlaylistVideoTags', trigger: '.btn-remove-item', confirm: false};
+EditPlaylistController.$inject = ['$scope', 'PaginateDataLoader', 'PlaylistItemEntity', 'SharedData', '$stateParams', 'ApiFactory'];
+function EditPlaylistController($scope, PaginateDataLoader, PlaylistItemEntity, SharedData, $stateParams, ApiFactory) {
+    var removeEndpoint = ApiFactory.endpoint('PlaylistVideoTags', 'delete').remove;
+    $scope.removeOptions = {
+        wait: false, 
+        endpoint: removeEndpoint, 
+        trigger: '.btn-remove-item',
+        confirm: false
+    };
     $scope.showEditionForm = false;
     loadItems();
     $scope.selectedVideoTag = null;

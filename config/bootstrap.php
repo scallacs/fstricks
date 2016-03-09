@@ -236,6 +236,19 @@ Configure::write('VideoTagValidation', [
     "delay_before_validation" => 1800 // Number of seconds before the trick will be suggested for review
 ]);
 
+Configure::write('Users.default_playlists', [
+    [
+        'title' => 'Learning',
+        'description' => 'Tricks I\'m learning right now',
+        'status' => 'private'
+    ],
+    [
+        'title' => 'Favorites',
+        'description' => 'My favorite tricks',
+        'status' => 'private'
+    ]
+]);
+
 
 // TODO use
 Configure::write('Pagination', [
@@ -272,3 +285,4 @@ Plugin::load('ADmad/Sequence');
 
 Plugin::load('Recaptcha', ['bootstrap' => true, 'routes' => true]);
 Plugin::load('Burzum/UserTools');
+

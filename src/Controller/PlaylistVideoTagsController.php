@@ -142,6 +142,7 @@ class PlaylistVideoTagsController extends AppController {
      */
     public function delete($id = null) {
         $this->request->allowMethod(['post', 'delete']);
+        $data = $this->request->is('post') ? $this->request->data : $this->request->query;
 
         if ($id !== null) {
             $playlistVideoTag = $this->PlaylistVideoTags->getEditabled($id, $this->Auth->user('id'));
@@ -150,13 +151,14 @@ class PlaylistVideoTagsController extends AppController {
             } else {
                 ResultMessage::setMessage(__('Cannot remove from playlist. Please, try again.'), false);
             }
-        } else if (DataUtil::isPositiveInt($this->request->data, 'playlist_id') &&
-                DataUtil::isPositiveInt($this->request->data, 'video_tag_id')) {
-            $playlistId = DataUtil::getPositiveInt($this->request->data, 'playlist_id');
+        } 
+        else if (DataUtil::isPositiveInt($data, 'playlist_id') &&
+                DataUtil::isPositiveInt($data, 'video_tag_id')) {
+            $playlistId = DataUtil::getPositiveInt($data, 'playlist_id');
             $this->Playlists->getEditabled($playlistId, $this->Auth->user('id'));
             $this->PlaylistVideoTags->deleteAll([
                 'playlist_id' => $playlistId,
-                'video_tag_id' => DataUtil::getPositiveInt($this->request->data, 'video_tag_id'),
+                'video_tag_id' => DataUtil::getPositiveInt($data, 'video_tag_id'),
             ]);
             ResultMessage::setMessage(__('Removed from playlist'), true);
         }

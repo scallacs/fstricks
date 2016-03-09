@@ -46,7 +46,7 @@ class UsersTable extends TableWithTags {
         $this->displayField('username');
         $this->primaryKey('id');
 
-        $this->hasMany('Spots', [
+        $this->hasMany('Playlists', [
             'foreignKey' => 'user_id'
         ]);
     }
@@ -190,4 +190,13 @@ class UsersTable extends TableWithTags {
                 ->limit($limit);
     }
 
+    public function beforeSave($event, $entity, $options) {
+        if ($entity->isNew()){
+            $entity->playlists = [];
+            $tablePlaylists = \Cake\ORM\TableRegistry::get('Playlists');
+            foreach (\Cake\Core\Configure::read('Users.default_playlists') as $data){
+                $entity->playlists[] = $tablePlaylists->newEntity($data);
+            }
+        }
+    }
 }

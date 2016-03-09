@@ -166,7 +166,7 @@ class UsersController extends AppController {
                 'id' => $user['id'],
                 'email' => $user['email'],
                 'username' => $user['username'],
-                'created' => $user['created'],
+                'created' => !empty($user['created']) ? $user['created'] : date('c'),
             ];
         }
         if ($auth) {

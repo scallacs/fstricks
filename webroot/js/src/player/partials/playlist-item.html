@@ -1,5 +1,5 @@
 <div class="playlist-item clearfix">
-    <div ng-class="{'col-sm-8': !shortmode && points}">
+    <div ng-class="{'col-sm-8': showPoints}">
         <h4 class="playlist-heading">
             <a href="#" ng-click="titleClick(playlist)">{{playlist.title}}</a>
         </h4> 
@@ -11,7 +11,7 @@
             - {{playlist.count_tags}} <span class="glyphicon glyphicon-tags"></span>
         </p>
     </div> 
-    <div class="col-sm-4 clearfix text-right" ng-if="!shortmode && points">
+    <div class="col-sm-4 clearfix text-right" ng-if="showPoints">
         <div up-down-points data="playlist" controller="PlaylistPoints" allowed-to-vote="1"></div>
     </div>
 </div>

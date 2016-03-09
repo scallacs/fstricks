@@ -11,17 +11,19 @@
                 Account created {{data.user.created| timeago}}.
             </p>
 
-            <p class="text-center" ng-if="isSociaLogin()">
+            <p class="text-center" ng-show="isSociaLogin()">
                 Your are logged in with facebook.
             </p>
 
-            <div class="text-center" ng-show="isSociaLogin()">
+            <div class="text-center" ng-show="!isSociaLogin()">
                 <uib-tabset >
                     <uib-tab heading="Change password">
                         <div form-change-password class="padding-sm"></div>
                     </uib-tab>
                     <uib-tab heading="Delete account">
+
                         <form class="form padding-sm" name="formDeleteAccount" server-form
+                              ng-controller="DeleteAccountController"
                               ng-submit="removeAccount(password)">
                             <fieldset>
                                 <div class="alert alert-danger">
@@ -42,7 +44,9 @@
                                         Delete my account 
                                     </button>
                                 </div>
+                            </fieldset>
                         </form>
+
                     </uib-tab>
                 </uib-tabset>
 

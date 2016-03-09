@@ -14,7 +14,12 @@ angular.module('app.player')
             function titleClick(playlist){
                 $scope.$emit('on-playlist-title-clicked', playlist);
             }
-        }]
+        }],
+        link: function (scope){
+            //console.log(scope);
+            scope.showPoints = !scope.shortmode 
+                && (scope.playlist && scope.playlist.status === 'public') && scope.points;
+        }
     };
 
-});
+}); 

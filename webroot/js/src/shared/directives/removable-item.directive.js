@@ -4,32 +4,17 @@
  *  - waitResponse: true if we want to wait request result before deleting this item
  *  - trigger: 
  */
-
 angular.module('shared')
-        .factory('RemoveItemEntity', RemoveItemEntity)
         .directive('removableItem', removableItem);
 
-
-RemoveItemEntity.$inject = ['$resource'];
-function RemoveItemEntity($resource) {
-    var url = API_BASE_URL + '/:controller/delete/:id.json';
-    return $resource(url, {id: '@id', controller: '@controller'}, {
-        delete: {
-            isArray: false,
-            method: 'POST'
-        }
-    });
-}
-
-
-removableItem.$inject = ['$uibModal', 'RemoveItemEntity', 'toaster'];
-function removableItem($uibModal, RemoveItemEntity, toaster) {
+removableItem.$inject = ['$uibModal', 'toaster'];
+function removableItem($uibModal, toaster) {
 
     return {
         restrict: 'A',
         scope: {
             removableItemOptions: '=',
-            removableItemId: '@'
+            removableItemId: '='
         },
         link: function(scope, elem, attrs) {
             var options = scope.removableItemOptions;
@@ -59,17 +44,8 @@ function removableItem($uibModal, RemoveItemEntity, toaster) {
             }
 
             function removeItem() {
-                if (angular.isObject(scope.removableItemId)) {
-                    var data = scope.removableItemId;
-                }
-                else {
-                    var data = {id: scope.removableItemId};
-                }
-                console.log("Removing item");
-                // Wait for server response
-                data.controller = options.controller;
-                var promise = RemoveItemEntity['delete'](data)
-                        .$promise;
+                var data = scope.removableItemId;
+                var promise = options.endpoint(data).$promise;
 
                 if (options.wait) {
                     promise.then(function(result) {
