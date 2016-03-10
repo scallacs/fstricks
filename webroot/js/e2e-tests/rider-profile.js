@@ -8,7 +8,7 @@ describe('Rider profile: ', function() {
 
     beforeEach(function() {
         application.login().then(function() {
-            browser.get('http://localhost:8082/Tricker/#/profile');
+            browser.get('/profile');
             btnEditProfile = element(by.id('buttonEditProfile'));
         });
     });

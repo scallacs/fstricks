@@ -5,37 +5,68 @@ describe('Account signup', function() {
     var app = new Application();
     var nav = app.topNav();
 
-    var validCredential = {
-        username: "newuservalid",
-        email: "stef@tricker34.com",
-        password: "testtest"
-    };
-    
-    var invalidCredential = {
-        username: "scallacs",
-        email: "stef@tricker.com",
-        password: "testtest"
-    };
+    var crendentials = [
+        {
+            message: "Should be possible to sign in with this valid user",
+            btnEnabled: true,
+            success: true,
+            data: {
+                username: "newuservalid",
+                email: "newmail@mail.com",
+                password: "testtest",
+                passwordConfirm: "testtest"
+            }
+        },
+        {
+            btnEnabled: false,
+            message: 'Should not be possible to sign in when username is not available',
+            data: {
+                username: "stef",
+                email: "availablemail@mail.com",
+                password: "testtest",
+                passwordConfirm: "testtest"
+            }
+        },
+        {
+            btnEnabled: true,
+            success: false,
+            message: 'Should not be possible to sign in when email is already used',
+            data: {
+                username: "availableusername",
+                email: "stef@fstricks.com",
+                password: "testtest",
+                passwordConfirm: "testtest"
+            }
+        },
+        {
+            btnEnabled: false,
+            success: false,
+            message: 'Should not be possible to sign in when password does not match',
+            data: {
+                username: "availableusername",
+                email: "availablemail@mail.com",
+                password: "testtest",
+                passwordConfirm: "testtest2"
+            }
+        }
+    ];
+
     var form, submitBtn;
 
-    function fillForm(data, samePassword) {
+    function fillForm(data) {
         form.element(by.model("user.username")).sendKeys(data.username);
         form.element(by.model("user.email")).sendKeys(data.email);
         form.element(by.model("user.password")).sendKeys(data.password);
-        form.element(by.model("confirmPassword")).sendKeys(samePassword ? data.password : data.password + "A");
+        form.element(by.model("confirmPassword")).sendKeys(data.passwordConfirm);
     }
 
-    function init() {
+    beforeEach(function() {
         app.get('/signup');
         form = element(by.id('FormSignup'));
         submitBtn = form.element(by.css('button[type="submit"]'));
-    }
+    });
 
     describe('Elements', function() {
-        beforeEach(function() {
-            init();
-        });
-
         it('should have the form', function() {
             expect(form.isPresent()).toBe(true);
         });
@@ -43,42 +74,28 @@ describe('Account signup', function() {
 
 
 
-    describe('with invalid credential', function() {
+    describe('Fill in in form... ', function() {
 
-        beforeEach(function() {
-            init();
-        });
+        crendentials.forEach(function(test) {
+            it(test.message, function() {
+                fillForm(test.data);
 
-        it('submit button should not be enable if the password do not match', function() {
-            fillForm(validCredential, false);
-            expect(submitBtn.isEnabled()).toBe(false);
-        });
+                expect(submitBtn.isEnabled()).toBe(test.btnEnabled);
 
-        it('should not be able to signup if username is already used', function() {
-            fillForm(invalidCredential, true);
-            browser.waitForAngular();
-            expect(submitBtn.isEnabled()).toBe(false);
-        });
+                if (test.btnEnabled && submitBtn.isEnabled()) {
+                    submitBtn.click().then(function() {
+                        if (test.success) {
+                            expect(browser.getLocationAbsUrl()).not.toContain('/signup');
+                        }
+                        else {
 
-    });
-
-    describe('with valid credential', function() {
-
-        beforeAll(function() {
-            init();
-            fillForm(validCredential, true);
-        });
-
-        // @warning validCredential user must not be set otherwise it will fail
-        it('submit button should be enabled', function() {
-            expect(submitBtn.isEnabled()).toBe(true);
-        });
-
-        it('click on submit button should signup and redirect to another page', function() {
-            submitBtn.click().then(function() {
-                expect(browser.getLocationAbsUrl()).not.toContain('/signup');
+                            expect(browser.getLocationAbsUrl()).toContain('/signup');
+                        }
+                    });
+                }
             });
         });
+
     });
 
 

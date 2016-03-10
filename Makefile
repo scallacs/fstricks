@@ -6,10 +6,11 @@ CSS_MINIFIED = $(CSS_FILES:.css=.min.css)
 GULP_BIN = node_modules/gulp/bin/gulp.js
 DB_SOURCE = resources/database/prod.sql
 DB_PROD_NAME = trickers 
-# For end to end tests
 DB_DEV_NAME = trickers
+DB_TEST_NAME = trickers_test_e2e
  
 DB_DEV_CREDENTIAL = -uroot -hlocalhost -hlocalhost
+DB_TEST_CREDENTIAL = -uroot -hlocalhost -hlocalhost
 DB_PROD_CREDENTIAL = -uroot -pr4xc3oSFSTDB -hlocalhost
 
 KARMA_BIN = node_modules/karma/bin/karma
@@ -35,11 +36,14 @@ prod: build clean-prod config-prod
 
 
 # target: dev - build the project for dev
-dev: build 
+config-dev: build 
 	cp config/app.dev.php config/app.php
 
 config-prod:
 	cp config/app.prod.php config/app.php
+	
+config-test:
+	cp config/app.test.php config/app.php
 	
 .PHONY: database
 database: $(DB_SOURCE)
@@ -99,7 +103,9 @@ start-webdriver:
 	
 # target : - test-frontend run test on backend 
 .PHONY: test-frontend
-test-frontend: 
+test-frontend: config-test
+	mysql $(DB_TEST_CREDENTIAL) $(DB_TEST_NAME) < './resources/database/test/delete.sql'
+	mysql $(DB_TEST_CREDENTIAL) $(DB_TEST_NAME) < './resources/database/test/insert.sql'
 	$(PROTRACTOR_BIN) webroot/js/e2e-tests/protractor-conf.js
 
 

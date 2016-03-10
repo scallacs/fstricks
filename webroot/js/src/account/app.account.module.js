@@ -103,7 +103,6 @@ function DeleteAccountController($scope, UserEntity) {
     $scope.removeAccount = removeAccount;
 
     function removeAccount(password) {
-        alert('deleteAccountCtrl');
         $scope.formDeleteAccount.submit(UserEntity.removeAccount({password: password}).$promise).then(function(response) {
             if (response.success) {
                 $scope.$parent.logout();

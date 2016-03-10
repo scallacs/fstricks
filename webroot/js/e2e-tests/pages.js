@@ -12,7 +12,7 @@
         
         app.webroot = 'http://localhost:8082/Tricker/#';
 
-        app.credential = {username: "stef@tricker.com", password: "test"};
+        app.credential = {email: "stef@fstricks.com", password: "test"};
 
         app.get = function(name){
 //            console.log("Loading location: " + app.webroot + name);
@@ -30,12 +30,15 @@
             expect(browser.getLocationAbsUrl()).not.toContain(app.states[state]);
         };
 
-        app.login = function() {
+        app.login = function(credentials) {
+            if (!credentials){
+                credentials = app.credential;
+            }
             app.get('/login');
             var loginForm = element(by.id('LoginForm'));
             var loginBtn = loginForm.element(by.css('button[type="submit"]'));
-            loginForm.element(by.model("user.email")).sendKeys(app.credential.username);
-            loginForm.element(by.model("user.password")).sendKeys(app.credential.password);
+            loginForm.element(by.model("user.email")).sendKeys(credentials.email);
+            loginForm.element(by.model("user.password")).sendKeys(credentials.password);
             var promise = loginBtn.click().then(function() {
                 app.assertNotLocation('login');
             });

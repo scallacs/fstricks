@@ -22,7 +22,10 @@
                     </uib-tab>
                     <uib-tab heading="Delete account">
 
-                        <form class="form padding-sm" name="formDeleteAccount" server-form
+                        <form class="form padding-sm" 
+                              name="formDeleteAccount" 
+                              id="DeleteAccountForm"
+                              server-form
                               ng-controller="DeleteAccountController"
                               ng-submit="removeAccount(password)">
                             <fieldset>

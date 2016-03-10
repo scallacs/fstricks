@@ -2,14 +2,29 @@ var Application = require('./pages.js');
 
 describe('Account login', function() {
 
-    var validCredential = {username: "stef@tricker.com", password: "test"};
-    var invalidCredential = {username: "invalid@tricker.com", password: "test"};
+    var credentials = [
+        {
+            data: {email: "stef@fstricks.com", password: "test"},
+            success: true,
+            message: 'Should be possible to log in with a valid account'
+        },
+        {
+            data: {email: "invalidemail@mail.com", password: "test"},
+            success: false,
+            message: 'Should NOT be possible to log in with an invalid mail'
+        },
+        {
+            data: {email: "stef@fstricks.com", password: "test2"},
+            success: false,
+            message: 'Should NOT be possible to log in with wrong password'
+        }
+    ];
     var form, submitBtn, inputEmail, inputPassword;
 
     var app = new Application();
     var nav = app.topNav();
 
-    function initInputs() {
+    function init() {
         form = element(by.id('LoginForm'));
         submitBtn = form.element(by.css('button[type="submit"]'));
         inputEmail = form.element(by.model("user.email"));
@@ -27,33 +42,14 @@ describe('Account login', function() {
     }
 
     beforeEach(function() {
-
+        app.get('/login');
+        browser.waitForAngular();
+        init();
     });
+    describe('Elements', function() {
 
-
-    describe('modal login: ', function() {
-        it('should work', function() {
-            app.getState('addvideo');
-            browser.waitForAngular();
-            initInputs();
-            tryLogin(invalidCredential).then(function() {
-                browser.waitForAngular();
-                app.assertLocation('addvideo');
-                expect(nav.isAuthNav()).toBe(false);
-            });
-        });
-    });
-
-    describe('with wrong credential', function() {
-        beforeEach(function() {
-            app.getState('login');
-            browser.waitForAngular();
-            initInputs();
-            tryLogin(invalidCredential);
-        });
-
-        it('user cannot login with wrong credential', function() {
-            app.assertLocation('login');
+        it('should have the form', function() {
+            expect(form.isPresent()).toBe(true);
         });
     });
 
@@ -66,28 +62,39 @@ describe('Account login', function() {
                 app.assertLocation('signup');
             });
         });
+
     });
 
-    describe('with good credential: ', function() {
-        var loginPromise;
-        beforeAll(function() {
-            app.getState('login');
-            initInputs();
-            loginPromise = tryLogin(validCredential);
+
+    describe('Fill in in form... ', function() {
+
+        credentials.forEach(function(test) {
+            it(test.message, function() {
+                tryLogin(test.data);
+
+                expect(submitBtn.isEnabled()).toBe(true);
+                var loginPromise = submitBtn.click();
+
+                if (test.success) {
+                    it(test.message, function() {
+                        loginPromise.then(function() {
+                            app.assertNotLocation('login');
+                        });
+                    });
+                }
+                else {
+                    it(test.message, function() {
+                        loginPromise.then(function() {
+                            browser.waitForAngular();
+                            expect(nav.isAuthNav()).toBe(false);
+                        });
+                    });
+                }
+            });
         });
 
-        it('login should work and be redirected to another page', function() {
-            loginPromise.then(function() {
-                app.assertNotLocation('login');
-            });
-        });
-        it('Navigation should not contain login and signup links anymore', function() {
-            loginPromise.then(function() {
-                browser.waitForAngular();
-                expect(nav.isAuthNav()).toBe(false);
-            });
-        });
     });
+
 
 
     // TODO
