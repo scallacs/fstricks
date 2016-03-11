@@ -1,7 +1,7 @@
 <div class="clearfix bg-secondary padding-sm-side">
-    <div class="navbar-header">
+    <div class="navbar-header" id="BrandContainer">
         <div class="header-title pull-left hidden-sm hidden-xs">
-            <a href="" ui-sref="home()">
+            <a href="" ui-sref="home()" id="HomeLink">
                 <span class="hidden-sm hidden-xs">{{config.name}}</span>
                 <span class="hidden-lg hidden-md">{{config.short_name}}</span>
             </a> 
@@ -9,15 +9,15 @@
     </div>
     <ul id="TopNav" class="nav navbar-nav navbar-no-collapse ">
         <li class="dropdown text-capitalize">
-            <a data-toggle="dropdown" ng-if="currentSport"  class="text-big">
+            <a data-toggle="dropdown" ng-if="currentSport"  class="text-big" id="ToggleSportLink">
                 <b class="caret"></b> 
                 {{currentSport.name}}
             </a>
-            <a data-toggle="dropdown" ng-if="!currentSport"  class="text-big">
+            <a data-toggle="dropdown" ng-if="!currentSport"  class="text-big" id="ToggleSportLink">
                 <b class="caret"></b> 
                 All sports
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu" id="DropDownMenuSports">
                 <li><a ui-sref="videoplayer.best" ng-click="setCurrentSport(null)">All sports</a></li>
                 <li ng-repeat="sport in sports">
                     <a ui-sref="videoplayer.sport({sportName: sport.name})" 

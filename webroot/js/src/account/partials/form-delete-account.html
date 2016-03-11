@@ -1,0 +1,25 @@
+<form class="form padding-sm" name="formDeleteAccount" server-form
+      ng-controller="SettingsController
+                                      as settingCtrl"
+      ng-submit="settingCtrl.removeAccount(password)">
+    <fieldset>
+        <div class="alert alert-danger">
+            <span class="glyphicon glyphicon-warning-sign"></span> 
+            Be carefull, this action cannot be undone! 
+        </div>
+        <div class="form-group col-sm-8">
+            <input class="form-control" 
+                   ng-model="password" 
+                   type="password" 
+                   placeholder="Your password"/>
+        </div>
+        <div class="form-group  col-sm-4">
+            <button class="btn btn-danger" 
+                    ng-disabled="false"
+                    type="submit">
+                <span class="glyphicon glyphicon-remove-circle"></span> 
+                Delete my account 
+            </button>
+        </div>
+    </fieldset>
+</form>

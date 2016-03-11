@@ -81,8 +81,8 @@ function topSearchDirective(TopSearchMapper, ApiFactory) {
         scope: {
             currentSearch: '='
         },
-        controller: ['$scope', 'RiderEntity', 'TagEntity', 'SharedData', 'PlaylistEntity',
-            function($scope, RiderEntity, TagEntity, SharedData, PlaylistEntity) {
+        controller: ['$scope', 'SharedData',
+            function($scope, SharedData) {
                 $scope.results = [];
                 $scope.onSelect = onSelect;
                 $scope.refresh = refresh;
@@ -135,7 +135,7 @@ function topSearchDirective(TopSearchMapper, ApiFactory) {
                         currentRequest
                                 .$promise
                                 .finally(function() {
-                                    searchDisabled = false;
+//                                    searchDisabled = false;
                                 });
 
 //                        if (SharedData.currentSport) {

@@ -169,7 +169,7 @@ function ConfigInterceptor($httpProvider, $locationProvider) {
                                 return $http(rejection.config);
                             })
                             .catch(function() {
-                                $state.go('home');
+//                                $state.go('home');
                                 deferred.reject(rejection);
                             });
 //                    alert('ok');
