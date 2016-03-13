@@ -70,12 +70,19 @@ function ApiFactory(Api, ApiResourceFactory ) {
             return new Api(ApiResourceFactory.create(API_BASE_URL + '/:controller/:action/:_id.json', {_id: '@_id', action: '@action', controller: '@controller'}));
         },
         endpoint: function(controller, action, id, extra){
-            var url = API_BASE_URL + '/' + controller + '/' + action;
-            url += angular.isDefined(id) ? '/' + id : '/:_id';
-            url += '.json';
             if (!angular.isDefined(extra)){
                 extra = {};
             }
+            var url = API_BASE_URL + '/' + controller + '/' + action;
+            if (angular.isDefined(id)){
+                url += '/' + id;
+            }
+            else{
+                url += '/:_id';
+                extra._id = '@_id';
+            }
+//            url += angular.isDefined(id) ? '/' + id : '/:_id';
+            url += '.json';
             console.log("Creating endpoint: " + url);
             return ApiResourceFactory.create(url, extra);
         }

@@ -33,6 +33,14 @@ function ConfigRouting($stateProvider) {
                     pageLoader: true
                 }
             })
+            .state("videotag.edit", {
+                url: "/edit/:videoTagId",
+                controller: 'VideoTagEditController',
+                templateUrl: TEMPLATE_URL + "/../admin/video-tags/partials/edit.html",
+                data: {
+                    pageLoader: true
+                }
+            })
             .state("otherwise", {
                 url: "*path",
                 templateUrl: TEMPLATE_URL + "/views/error-not-found.html",

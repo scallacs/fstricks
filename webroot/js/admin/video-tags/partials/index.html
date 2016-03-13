@@ -2,7 +2,7 @@
 
 <div class="bg-primary padding-sm">
 
-    <div class="padding-sm">
+    <div class="padding-sm container">
         <form class="form-horizontal" ng-submit="submitSearch(search)">
             <div class="form-group">
                 <label class="col-sm-4">Status</label>
@@ -73,7 +73,7 @@
         </thead>
         <tbody>
             <tr ng-repeat="videoTag in videoTags" removable-item removable-item-options="removeOptions"
-                    removable-item-id="{_id: videoTag.id}">
+                removable-item-id="{_id: videoTag.id}">
                 <td video-tag-item video-tag="videoTag"></td>
                 <td>{{videoTag.modified}}</td>
                 <td class="text-bold" ng-class="video-tag-status-{{videoTag.status}}">
@@ -98,9 +98,9 @@
                         </button>
                     </div>
                     &nbsp;
-                    <button class="btn btn-primary" ng-click="edit(videoTag)">
+                    <a class="btn btn-primary" ui-sref="videotag.edit({videoTagId:videoTag.id})">
                         <span class="glyphicon glyphicon-edit"></span>
-                    </button>
+                    </a>
                     &nbsp;
                     <button class="btn btn-danger btn-remove-item">
                         <span class="glyphicon glyphicon-trash"></span>
@@ -108,10 +108,11 @@
                 </td>
             </tr>
         </tbody>
-        <p class="text-center">
-            <button type="button" class="btn btn-primary" ng-click="loadMore()">
-                Load more
-            </button>
-        </p>
     </table>
+
+    <p class="text-center">
+        <button type="button" class="btn btn-primary" ng-click="loadMore()">
+            Load more
+        </button>
+    </p>
 </div>

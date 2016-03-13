@@ -1,6 +1,7 @@
 angular.module('app.admin')
         .controller('VideoTagsController', VideoTagsController)
-        .controller('VideoTagIndexController', VideoTagIndexController);
+        .controller('VideoTagIndexController', VideoTagIndexController)
+        .controller('VideoTagEditController', VideoTagEditController);
 
 function VideoTagsController() {
 
@@ -21,7 +22,7 @@ function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, P
         {code: 'created', label: 'created'},
         {code: 'best', label: 'best'}
     ];
-    
+
     $scope.computeRatio = computeRatio;
     $scope.validateVideoTag = validateVideoTag;
     $scope.rejectVideoTag = rejectVideoTag;
@@ -30,10 +31,10 @@ function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, P
     $scope.loadMore = loadMore;
 
     $scope.videoTags = [];
-    
-    SharedData.onReady(function(){
+
+    SharedData.onReady(function() {
         $scope.sports = SharedData.sports;
-        angular.forEach(SharedData.sports, function(data){
+        angular.forEach(SharedData.sports, function(data) {
             $scope.search.sports[data.id] = true;
         });
     });
@@ -54,7 +55,7 @@ function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, P
                 });
     }
 
-    function loadMore(){
+    function loadMore() {
         dataLoader.loadNextPage();
     }
 
@@ -71,7 +72,7 @@ function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, P
             }
         });
         dataLoader.setFilter('status', selected.join());
-        
+
         var selected = [];
         var allSelected = true;
         angular.forEach(s.sports, function(isSelected, sportId) {
@@ -125,4 +126,13 @@ function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, P
                     }
                 });
     }
+}
+
+VideoTagEditController.$inject = ['SharedData', '$stateParams'];
+function VideoTagEditController(SharedData, $stateParams) {
+    SharedData.pageLoader(false);
+    
+    var id = $stateParams.videoTagId;
+
+    
 }

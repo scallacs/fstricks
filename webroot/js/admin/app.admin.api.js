@@ -7,13 +7,22 @@ function AdminApiFactory(Api, ApiResourceFactory ) {
         api: function() {
             return new Api(ApiResourceFactory.create(ADMIN_API_BASE_URL + '/:controller/:action/:_id.json', {_id: '@_id', action: '@action', controller: '@controller'}));
         },
-        endpoint: function(controller, action, id){
+        endpoint: function(controller, action, id, extra){
+            if (!angular.isDefined(extra)){
+                extra = {};
+            }
             var url = ADMIN_API_BASE_URL + '/' + controller + '/' + action;
             if (angular.isDefined(id)){
                 url += '/' + id;
             }
+            else{
+                url += '/:_id';
+                extra._id = '@_id';
+            }
+//            url += angular.isDefined(id) ? '/' + id : '/:_id';
             url += '.json';
-            return ApiResourceFactory.create(url, {});
+            console.log("Creating endpoint: " + url);
+            return ApiResourceFactory.create(url, extra);
         }
     };
 }
