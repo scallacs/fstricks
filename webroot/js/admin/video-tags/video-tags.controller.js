@@ -8,7 +8,7 @@ function VideoTagsController() {
 
 VideoTagIndexController.$inject = ['$scope', 'AdminApiFactory', 'SharedData', 'toaster', 'PaginateDataLoader'];
 function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, PaginateDataLoader) {
-    $scope.removeOptions = {trigger: '.btn-remove-item', endpoint: AdminApiFactory.endpoint('VideoTags', 'delete').delete, confirm: true, wait: false};
+    $scope.removeOptions = {trigger: '.btn-remove-item', endpoint: AdminApiFactory.endpoint('VideoTags', 'delete').save, confirm: true, wait: false};
     $scope.refreshUsers = refreshUsers;
     $scope.search = {
         status: {'pending': true, 'rejected': false, 'validated': false, 'blocked': false},
