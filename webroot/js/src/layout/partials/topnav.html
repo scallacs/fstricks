@@ -8,7 +8,7 @@
         </div>
     </div>
     <ul id="TopNav" class="nav navbar-nav navbar-no-collapse ">
-        <li class="dropdown text-capitalize">
+        <li class="dropdown text-capitalize" id="SportsNav">
             <a data-toggle="dropdown" ng-if="currentSport"  class="text-big" id="ToggleSportLink">
                 <b class="caret"></b> 
                 {{currentSport.name}}
@@ -38,7 +38,7 @@
         <li ng-if="!authData.isAuthed()">
             <a ui-sref="signup">Sign up</a>
         </li>
-        <li ng-if="authData.isAuthed()" class="dropdown">
+        <li ng-if="authData.isAuthed()" class="dropdown" id="UserNav">
             <a class="" data-toggle="dropdown" >
                 {{authData.user.username}} <span class="caret"></span>
             </a>

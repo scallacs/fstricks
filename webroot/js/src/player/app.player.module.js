@@ -374,7 +374,8 @@ function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData, T
     PlayerData.stop();
     VideoTagData.getLoader()
         .setFilters({tag_slug: $stateParams.tagSlug, order: $stateParams.order})
-        .startLoading().then(function(results) {
+        .startLoading()
+        .then(function(results) {
             if (results.items.length > 0) {
                 var firstTag = results.items[0];
                 SharedData.currentSearch = TopSearchMapper['trick'](firstTag);

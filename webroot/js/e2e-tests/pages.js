@@ -1,16 +1,22 @@
 'use strict';
-
 (function() {
+
+    var Util = require('./util.js');
+    var util = new Util();
+
     var Application = function() {
         var app = this;
 
         app.states = {
             login: '/login',
             sinup: '/signup',
-            addvideo: '/video/add'
+            addvideo: '/video/add',
+            'videoplayer.best': '/player/best/',
+            'videoplayer.video': '/player/video/',
+            'videoplayer.sport': '/player/sport/'
         };
 
-        app.webroot = 'http://localhost:8082/Tricker/#';
+        app.webroot = 'http://localhost:8082/Tricker/';
 
         app.credential = {email: "stef@fstricks.com", password: "test"};
 
@@ -23,6 +29,9 @@
             browser.get(app.webroot + app.states[name]);
         };
 
+        app.assertUrl = function(url) {
+            expect(browser.getLocationAbsUrl()).toContain(url);
+        };
         app.assertLocation = function(state) {
             expect(browser.getLocationAbsUrl()).toContain(app.states[state]);
         };
@@ -51,6 +60,7 @@
         app.footer = function() {
             return new Footer();
         };
+
     };
 
     var Navigation = function() {
@@ -61,16 +71,16 @@
         nav.topNavElement = element(by.id('TopNav'));
 
         nav.getLink = function(state, assert) {
-            // TODO begin by state
-            var link = nav.topNavElement.element(by.css('a[ui-sref^="' + state + '"]'));
-            if (assert) {
-                expect(link.isPresent()).toBe(true);
-            }
-            return link;
+            return new ElementHelper(nav.topNavElement).linkByState(state, assert);
         };
 
         nav.isAuthNav = function() {
             return (!nav.getLink("login").isPresent()) && !nav.getLink("signup").isPresent();
+        };
+
+        nav.openUserNav = function() {
+            var dropdown = new util.dropdown(element(by.id('UserNav')));
+            return dropdown.open();
         };
 
         nav.getHomeLink = function(assert) {
@@ -82,17 +92,14 @@
         };
 
         nav.changeSport = function(name) {
-            var toggleSport = element(by.id('ToggleSportLink'));
-            expect(toggleSport.isPresent()).toBe(true);
-            // TODO return deferer
             var deferred = protractor.promise.defer();
-            toggleSport.click().then(function() {
-                var dropDownMenuSport = element(by.id('DropDownMenuSports'));
-                expect(dropDownMenuSport.isVisible()).toBe(true);
-                var link = dropDownMenuSport.element(by.css('a[href^="' + name + '"]'));
+            var dropdown = new util.dropdown(element(by.id('SportsNav')));
+
+            dropdown.open().then(function() {
+                var link = dropdown.menu().getLinkByHref(name);
                 expect(link.isPresent()).toBe(true);
-                link.click(function(){
-                    deferred.resolve();
+                link.click().then(function() {
+                    deferred.fulfill();
                 });
             });
             return deferred.promise;
@@ -104,7 +111,25 @@
         var footer = this;
 
         footer.footer = element(by.css('footer'));
-    }
+    };
+
+
+    var ElementHelper = function(elem) {
+        var self = this;
+
+        self.container = elem;
+
+        expect(elem.isPresent()).toBe(true);
+
+        self.linkByState = function(state, assert) {
+            // TODO begin by state
+            var link = elem.element(by.css('a[ui-sref^="' + state + '"]'));
+            if (assert) {
+                expect(link.isPresent()).toBe(true);
+            }
+            return link;
+        };
+    };
 
     module.exports = function() {
         return new Application();

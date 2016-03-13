@@ -1,14 +1,16 @@
 var Application = require('./pages.js');
+var Util = require('./util.js');
 
 describe('Navigation', function() {
 
     var app = new Application();
+    var util = new Util();
     var nav = app.topNav();
 
 
 //    it('should have a title', function() {
 //        expect(browser.getTitle()).toEqual('Freestyle Tricks');
-//    });
+////    });
     describe(' as visitor: ', function() {
         beforeAll(function() {
             app.get('/');
@@ -38,20 +40,58 @@ describe('Navigation', function() {
             });
         });
 
+        it("Should be possible to navigate to sports pages", function() {
+            nav.changeSport('snowboard').then(function() {
+                app.assertLocation('videoplayer.sport');
+            });
+        });
+
         // View full video
         // View all video for this trick 
     });
 
+    describe(' with a video tag item: ', function() {
+        beforeAll(function(){
+            app.getState('videoplayer.best');
+            browser.waitForAngular();
+        });
+        
+        // TODO 
+        it(' should be possible to view the full video', function() {
+            var videoTagItem = element.all(by.css('.item-video-tag')).get(0);
+            expect(videoTagItem.isPresent()).toBe(true);
+            var dropdown = new util.dropdown(videoTagItem.element(by.css('.item-video-tag-options')));
+//                        console.log('feozk');
+            dropdown.open().then(function() {
+//                        console.log('Opening dropdown');
+                dropdown.menu().getLinkByState('videoplayer.video').click().then(function() {
+//                        console.log('OK OOOOOOK');
+                    app.assertLocation('videoplayer.video');
+                });
+            });
+            
+                // videoplayer.tag
+
+                // addToPlaylist
+        });
+    });
+
     describe(' as logged in user: ', function() {
+        var nav;
+
         beforeAll(function() {
             app.login();
+            browser.waitForAngular();
+            nav = app.topNav();
         });
 
-        var nav = app.topNav();
-        var managePlaylistLink = nav.getLink('manageplaylist', true);
-        // Manage playlist
-        managePlaylistLink.click().then(function() {
-
+        it("Should be possible to navigate to manage playlist", function() {
+            nav.openUserNav().then(function() {
+                var managePlaylistLink = nav.getLink('manageplaylist', true);
+                managePlaylistLink.click().then(function() {
+                    app.assertUrl('playlist/manage');
+                });
+            });
         });
     });
 });

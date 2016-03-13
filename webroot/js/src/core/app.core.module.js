@@ -391,18 +391,21 @@ function PaginateDataLoader($q) {
     PaginateDataLoader.prototype._onSuccessPageLoad = _onSuccessPageLoad;
 
     return {
-        create: function(r){
+        _instances: {},
+        create: function(r) {
             return new PaginateDataLoader(r);
         },
-        instances: {},
         instance: function(name, r) {
-            if (!angular.isDefined(this.instances[name])) {
-                this.instances[name] = new PaginateDataLoader(r);
+            if (!angular.isDefined(this._instances[name])) {
+                this._instances[name] = new PaginateDataLoader(r);
             }
-            return this.instances[name];
+            else {
+                this._instances[name].setResource(r);
+            }
+            return this._instances[name];
         },
         clear: function() {
-            this.instances = {};
+            this._instances = {};
         }
     };
 
@@ -486,6 +489,7 @@ function PaginateDataLoader($q) {
 
     function startLoading() {
         this.disabled = false;
+        this.currentPage = 1;
         return this.loadNextPage();
     }
 
@@ -628,7 +632,7 @@ function VideoTagData(PaginateDataLoader, VideoTagEntity) {
             return 0;
         }
     };
-    
+
     obj.getLoader().setResource(VideoTagEntity.search);
 
     return obj;
@@ -679,32 +683,30 @@ function SharedData(SportEntity) {
         currentSearch: {},
         sports: [],
         categories: [],
-        
         _callbacks: [],
-        
         onReady: onReady,
         pageLoader: pageLoader,
         init: init,
         _execCallbacks: _execCallbacks
     };
     return self;
-    
-    function _execCallbacks(){
-        for (var i = 0; i < self._callbacks.length; i++){
+
+    function _execCallbacks() {
+        for (var i = 0; i < self._callbacks.length; i++) {
             self._callbacks[i]();
         }
         self._callbacks = [];
     }
-    
-    function onReady(fct){
+
+    function onReady(fct) {
         self._callbacks.push(fct);
     }
-    
+
     function pageLoader(val) {
         //console.log('Set loading sate: ' + val);
         self.loadingState = val ? true : false;
     }
-    
+
     function init() {
         SportEntity.index({}, function(response) {
             self.sports = response;
