@@ -1,5 +1,5 @@
-var Application = require('./pages.js');
-var Util = require('./util.js');
+var Application = require('./includes/pages.js');
+var Util = require('./includes/util.js');
 
 describe('Navigation', function() {
 
@@ -86,11 +86,9 @@ describe('Navigation', function() {
         });
 
         it("Should be possible to navigate to manage playlist", function() {
-            nav.openUserNav().then(function() {
-                var managePlaylistLink = nav.getLink('manageplaylist', true);
-                managePlaylistLink.click().then(function() {
-                    app.assertUrl('playlist/manage');
-                });
+            
+            nav.navigateTo('manageplaylist').then(function(){
+                app.assertUrl('playlist/manage');
             });
         });
     });

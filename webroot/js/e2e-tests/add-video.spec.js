@@ -1,4 +1,5 @@
-var Application = require('./pages.js');
+var Application = require('./includes/pages.js');
+var FormAddVideo = require('./includes/form-add-video.js');
 
 describe('Add video: ', function() {
 
@@ -42,31 +43,24 @@ describe('Add video: ', function() {
     var app = new Application();
 
     beforeAll(function() {
-        app.login().then(function() {
-
-        });
+        app.login();
     });
     
     beforeEach(function() {
         app.get('/video/add');
         browser.waitForAngular();
-        form = element(by.id('FormAddVideo'));
-        expect(form.isPresent()).toBe(true);
-        submitBtn = form.element(by.css('button[type="submit"]'));
-        expect(submitBtn.isPresent()).toBe(true);
+        form = new FormAddVideo(element(by.id('FormAddVideo')));
     });
 
     tests.forEach(function(test){
         it(test.message, function() {
 //            console.log('Testing link: ' + test.url);
             // Selecting the tab:
-            var tabLink = form.element(by.css('li[heading="' + test.provider + '"] a'));
-            expect(tabLink.isPresent()).toBe(true);
-            tabLink.click().then(function() {
-                form.element(by.model('data.video_url')).sendKeys(test.url);
-
-                expect(submitBtn.isEnabled()).toBe(true);
-                submitBtn.click().then(function() {
+            form.changeTab(test.provider).click().then(function() {
+                form.setUrl(test.url);
+                expect(form.isValid()).toBe(true);
+                
+                form.submit().then(function() {
                     if (test.success) {
                         expect(browser.getLocationAbsUrl()).toContain('/tag/add');
                     }
@@ -74,6 +68,7 @@ describe('Add video: ', function() {
                         expect(browser.getLocationAbsUrl()).toContain('/video/add');
                     }
                 });
+                
             });
 
         });

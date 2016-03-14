@@ -1,33 +1,41 @@
-var Application = require('./pages.js');
+var Application = require('./includes/pages.js');
+var FormAddVideo = require('./includes/form-add-video.js');
+var FormAddTag = require('./includes/form-add-tag.js');
 
 describe('Add tag on video: ', function() {
+    var app = new Application();
+    var nav = app.topNav();
 
-    var validYoutubeId = "Ofc9hh0NWe8";
+    var validYoutubeId = "GF6Ct6B1yfM";
     var videoId = 45;
-    var form, submitBtn;
+    var formAddVideoTag;
 
-    var application = new Application();
-    
-    beforeEach(function() {
-        application.login().then(function() {
-            browser.get('http://localhost:8082/Tricker/#/tag/add/' + videoId);
-            expect(browser.getLocationAbsUrl()).toContain('/tag/add');
-            form = element(by.id('FormAddVideoTag'));
-            submitBtn = form.element(by.css('button[type="submit"]'));
+    beforeAll(function() {
+        app.login().then(function() {
+            nav.navigateTo('addvideo');
+            browser.waitForAngular();
+            var videoForm = new FormAddVideo(element(by.id('FormAddVideo')));
+            videoForm.changeTab('Youtube').then(function(){
+                videoForm.setUrl(validYoutubeId);
+                videoForm.submit().then(function(){
+                    formAddVideoTag = new FormAddTag(element(by.id('FormAddVideoTag')));
+                });
+            });
         });
-    });
-
-    it('should display the form', function() {
-        expect(form.isPresent()).toBe(true);
     });
 
     it('should controller player time with plus and minus button', function() {
-        var plusBeginBtn = element(by.id('ButtonBeginTimePlus'));
-        var minuBeginsBtn = element(by.id('ButtonBeginTimeMinus'));
-        var beginTime = plusBeginBtn.getText();
-        plusBeginBtn.click().then(function(){
-            expect(plusBeginBtn.getText()).not.toEqual(beginTime);
-        });
+        formAddVideoTag.increaseBeginTime();
+        formAddVideoTag.increaseEndTime();
+        
+        formAddVideoTag.setRider('Torstein');
+        browser.driver.sleep(4000);
+        
+        formAddVideoTag.setCategory('snowboard kicker');
+        browser.driver.sleep(4000);
+        
+        formAddVideoTag.setTag('double backflip');
+        browser.driver.sleep(4000);
     });
-    
+
 });

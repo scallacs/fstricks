@@ -1,0 +1,28 @@
+VIDEOS:
+http://localhost:8082/Tricker/player/video/60
+    -> Video must changed
+    -> 
+
+ADD TAG:
+    -> Same tag
+    -> 
+
+FACEBOOK LOGIN
+    -> Cannot edit password 
+    
+
+SI PEUX DE RESULTAT DANS LA BAR DE RECHERCHE 
+    -> Suggerer recherche pour tous les sports
+
+
+Check token with server if last update is too late ? 
+
+
+Token plus long
+
+
+Problème de pagination, ne remet pas a la première page
+
+Ajout de tests sur les playlist
+
+WHEN LOGIN 401: enregistré les requetes qui ont échoué et les relancer

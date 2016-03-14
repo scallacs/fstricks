@@ -1,4 +1,4 @@
-var Application = require('./pages.js');
+var Application = require('./includes/pages.js');
 
 describe('Account login', function() {
 
@@ -33,7 +33,7 @@ describe('Account login', function() {
 
     function tryLogin(crendentials) {
         expect(form.isPresent()).toBe(true);
-        inputEmail.sendKeys(crendentials.username);
+        inputEmail.sendKeys(crendentials.email);
         expect(inputEmail.isPresent()).toBe(true);
         inputPassword.sendKeys(crendentials.password);
         expect(inputPassword.isPresent()).toBe(true);
@@ -66,7 +66,7 @@ describe('Account login', function() {
     });
 
 
-    describe('Fill in in form... ', function() {
+    describe('Fill in the form... ', function() {
 
         credentials.forEach(function(test) {
             it(test.message, function() {
@@ -95,14 +95,14 @@ describe('Account login', function() {
 
     });
 
-
-
-    // TODO
+    // TODO 
 //    it('should be able to login with facebook', function() {
 //        element(by.css("button.btn-facebook")).click().then(function() {
-//            browser.waitForAngular();
-//            expect(browser.getLocationAbsUrl()).not.toContain('/login');
+//            browser.driver.sleep(4000).then(function() {
+//                browser.waitForAngular();
+//                expect(browser.getLocationAbsUrl()).not.toContain('/login');
+//            });
 //        });
-//    });   
+//    });
 
 });

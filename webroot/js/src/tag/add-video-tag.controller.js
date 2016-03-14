@@ -680,10 +680,10 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
 
     var lastRefreshSuggestedRidersCall = null;
     function refreshSuggestedRiders(name) {
-        if (lastRefreshSuggestedRidersCall !== null && !lastRefreshSuggestedRidersCall.$resolved) {
-            lastRefreshSuggestedRidersCall.$cancelRequest();
-            lastRefreshSuggestedRidersCall = null;
-        }
+//        if (lastRefreshSuggestedRidersCall !== null && !lastRefreshSuggestedRidersCall.$resolved) {
+//            lastRefreshSuggestedRidersCall.$cancelRequest();
+//            lastRefreshSuggestedRidersCall = null;
+//        }
         if (name.length >= 2) {
             lastRefreshSuggestedRidersCall = RiderEntity.search({
                 q: name

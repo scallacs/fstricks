@@ -12,25 +12,10 @@
                     </div>
                 </div>
                 <ul id="TopNav" class="nav navbar-nav navbar-no-collapse ">
-                    <li class="dropdown text-capitalize">
-                        <a data-toggle="dropdown" ng-if="currentSport"  class="text-big">
-                            <b class="caret"></b> 
-                            {{currentSport.name}}
+                    <li>
+                        <a ui-sref="home">
+                            ADMINISTRATION
                         </a>
-                        <a data-toggle="dropdown" ng-if="!currentSport"  class="text-big">
-                            <b class="caret"></b> 
-                            All sports
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a ui-sref="videoplayer.best" ng-click="setCurrentSport(null)">All sports</a></li>
-                            <li ng-repeat="sport in sports">
-                                <a ui-sref="videoplayer.sport({sportName: sport.name})" 
-                                   ng-click="setCurrentSport(sport)">
-                                    <img ng-src="{{sport.name}}"> &nbsp;
-                                    {{sport.name}}
-                                </a>
-                            </li>
-                        </ul>
                     </li>
                     <li>
                         <a ui-sref="videotag.index">
@@ -40,6 +25,11 @@
                     <li>
                         <a ui-sref="users.index">
                             Users
+                        </a>
+                    </li>
+                    <li>
+                        <a ui-sref="logout">
+                            Logout
                         </a>
                     </li>
                 </ul>

@@ -182,16 +182,12 @@ function PlayerData(VideoTagData, $q) {
 //        console.log(currentTime);
         obj.data.currentTime = currentTime;
 //        console.log( obj.data);
-        if (obj.data.provider !== null
-                && obj.data.end !== null
-                && currentTime >= obj.data.end) {
-            obj.onTimeRangeEnd(this.data.provider, currentTime);
-        }
-        else if (this.playMode === 'video') {
+        
+        if (this.playMode === 'video' && !obj.looping) {
 //        console.log(VideoTagData.currentTag);
             var current = VideoTagData.currentTag;
             if (angular.isDefined(current) && current !== null) {
-                //console.log("current tag is defined: " + newVal + " in ? " + current.id + " [" + current.begin+", "+current.end+"]");
+                console.log("current tag is defined: " + currentTime + " in ? " + current.id + " [" + current.begin+", "+current.end+"]");
                 if (current.begin <= currentTime && current.end >= currentTime) {
                     current.time_to_play = 0;
                     obj.data.end = current.end;
@@ -205,6 +201,11 @@ function PlayerData(VideoTagData, $q) {
             }
             console.log("Searching for next tag...");
             VideoTagData.setCurrentTag(VideoTagData.findNextTagToPlay(currentTime));
+        }
+        else if (obj.data.provider !== null
+                && obj.data.end !== null
+                && currentTime >= obj.data.end) {
+            obj.onTimeRangeEnd(this.data.provider, currentTime);
         }
     }
     function startLooping() {

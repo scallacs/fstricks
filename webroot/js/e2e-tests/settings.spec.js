@@ -1,4 +1,4 @@
-var Application = require('./pages.js');
+var Application = require('./includes/pages.js');
 
 describe('Settings ', function() {
 

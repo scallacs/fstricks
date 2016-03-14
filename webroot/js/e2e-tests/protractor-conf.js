@@ -5,8 +5,10 @@ exports.config = {
 //        'signup.spec.js',
 //        'login.spec.js',
 //        'add-video.spec.js',
-//        'settings.spec.js'
-        'navigation.spec.js'
+//        'settings.spec.js',
+//        'navigation.spec.js',
+//        'playlists.spec.js',
+          'add-tag.spec.js'
     ],
     defaultTimeoutInterval: 40000,
     multiCapabilities: [{

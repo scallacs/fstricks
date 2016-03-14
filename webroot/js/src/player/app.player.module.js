@@ -403,11 +403,13 @@ function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData,
     });
 
     console.log("Viewing sport: " + $stateParams.sportName);
-    VideoTagData.getLoader().setFilters({sport_name: $stateParams.sportName, order: $stateParams.order});
-    VideoTagData.getLoader().startLoading().finally(function() {
-        SharedData.pageLoader(false);
-    });
-}
+    console.log(SharedData.currentSearch);
+    VideoTagData.getLoader()
+            .setFilters({sport_name: $stateParams.sportName, order: $stateParams.order})
+            .startLoading().finally(function() {
+                SharedData.pageLoader(false);
+            });
+        }
 
 ViewRiderController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'RiderEntity', 'TopSearchMapper'];
 function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, SharedData, RiderEntity, TopSearchMapper) {

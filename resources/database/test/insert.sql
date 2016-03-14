@@ -66,16 +66,7 @@ INSERT INTO `playlists` (`id`, `title`, `description`, `created`, `modified`, `u
 (3, 'Amazing flips', 'Gather the most amazing flips in all sports !', '2016-02-29 08:00:24', '2016-02-29 17:15:22', 2, 'public', 2, 2, '', 8),
 (4, 'Learning', 'All the tricks that I''m currently learning', '2016-02-29 09:59:25', '2016-02-29 09:59:25', 2, 'private', 1, 1, '', 2),
 (5, 'Quadruples', 'Gather all quadruples ever landed. Becarefull it''s powerfull! You will be amzed!', '2016-02-29 11:05:08', '2016-02-29 16:49:07', 2, 'public', 1, 1, '', 1),
-(7, 'Lot of description', 'Lorem ipsum dolor sit amet, dolor legendos et eos, vis ex quis intellegebat. Elitr aperiam reformidans nec ex. Aperiri eruditi in mei, veritus feugait ad mea. Has ut iudico albucius rationibus, eam voluptua vulputate pertinacia an, mea wisi persius imperdiet at.\n\nUt mel albucius constituam conclusionemque. Dolor insolens tincidunt pro ad. Eos delenit platonem ei, ex ornatus albucius pro, modo sint his te. Tacimates omittantur mei ut, debitis volumus neglegentur ex nec. Perfecto deserunt vis ne, ex vel ipsum vocibus suavitate.\n\nId sed case dictas eloquentiam. Qui ubique urbanitas ad, per cu soluta inermis fabellas. Ea aliquam dissentias referrentur sit, id labores postulant incorrupte sed. Eum in paulo scaevola sensibus, id graecis vivendum est.\n\nUt mel albucius constituam conclusionemque. Dolor insolens tincidunt pro ad. Eos delenit platonem ei, ex ornatus albucius pro, modo sint his te. Tacimates omittantur mei ut, debitis volumus neglegentur ex nec. Perfecto deserunt vis ne.', '2016-02-29 12:08:28', '2016-02-29 12:08:28', 2, 'public', 0, 0, '', 0),
-(19, 'Amazing flips', 'Gather the most amazing flips in all sports !', '2016-02-29 16:26:09', '2016-02-29 16:26:09', 2, 'public', 0, 0, '', 0),
-(21, 'Test create and ad', 'yep', '2016-02-29 21:02:03', '2016-02-29 21:02:03', 2, 'public', 0, 0, '', 1),
-(22, 'fezfez', 'fezfezfez', '2016-02-29 21:02:52', '2016-02-29 21:02:52', 2, 'public', 0, 0, '', 1),
-(23, 'AAAAAAAAAAA', 'test', '2016-02-29 21:05:53', '2016-02-29 21:05:53', 2, 'public', 0, 0, '', 2),
-(24, 'fezfez', 'fezfezfezff', '2016-02-29 21:17:02', '2016-02-29 21:17:02', 2, 'private', 0, 0, '', 1),
-(25, 'Teste', 'ETzt', '2016-02-29 21:17:39', '2016-02-29 21:17:39', 2, 'public', 0, 0, '', 2),
-(26, 'zaraz', 'rzaraz', '2016-02-29 21:18:55', '2016-02-29 21:18:55', 2, 'public', 0, 0, '', 2),
-(27, 'My new plaulist', 'test', '2016-02-29 21:46:09', '2016-02-29 21:46:09', 2, 'public', 0, 0, '', 2);
-
+(7, 'Lot of description', 'Lorem ipsum dolor sit amet, dolor legendos et eos, vis ex quis intellegebat. Elitr aperiam reformidans nec ex. Aperiri eruditi in mei, veritus feugait ad mea. Has ut iudico albucius rationibus, eam voluptua vulputate pertinacia an, mea wisi persius imperdiet at.\n\nUt mel albucius constituam conclusionemque. Dolor insolens tincidunt pro ad. Eos delenit platonem ei, ex ornatus albucius pro, modo sint his te. Tacimates omittantur mei ut, debitis volumus neglegentur ex nec. Perfecto deserunt vis ne, ex vel ipsum vocibus suavitate.\n\nId sed case dictas eloquentiam. Qui ubique urbanitas ad, per cu soluta inermis fabellas. Ea aliquam dissentias referrentur sit, id labores postulant incorrupte sed. Eum in paulo scaevola sensibus, id graecis vivendum est.\n\nUt mel albucius constituam conclusionemque. Dolor insolens tincidunt pro ad. Eos delenit platonem ei, ex ornatus albucius pro, modo sint his te. Tacimates omittantur mei ut, debitis volumus neglegentur ex nec. Perfecto deserunt vis ne.', '2016-02-29 12:08:28', '2016-02-29 12:08:28', 2, 'public', 0, 0, '', 0);
 INSERT INTO `playlist_points` (`id`, `user_id`, `playlist_id`, `value`) VALUES
 (8, 2, 3, 1),
 (9, 2, 4, 1),
@@ -407,10 +398,6 @@ INSERT INTO `playlist_video_tags` (`id`, `playlist_id`, `video_tag_id`, `positio
 (29, 4, 71, 2),
 (30, 3, 126, 7),
 (31, 3, 170, 8),
-(32, 21, 186, 1),
-(33, 22, 186, 1),
-(34, 23, 186, 1),
-(35, 24, 18, 1),
 (45, 3, 200, 1);
 
 INSERT INTO `video_tag_accuracy_rates` (`user_id`, `video_tag_id`, `value`, `created`) VALUES

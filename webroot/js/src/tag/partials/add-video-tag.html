@@ -78,7 +78,9 @@
                                             <span class="glyphicon glyphicon-plus"></span>
                                         </button>
                                     </div>
-                                    <button type="button" class="btn btn-primary" 
+                                    <button type="button" 
+                                            class="btn btn-primary" 
+                                            id="ButtonBeginTimeFromVideo"
                                             ng-disabled="!editionTag.isFieldEditabled('begin')"
                                             ng-click="setStartRangeNow()">
                                         Now
@@ -108,6 +110,7 @@
                                     </div>
                                     <button  type="button"  
                                              class="btn btn-primary" 
+                                             id="ButtonEndTimeFromVideo"
                                              ng-disabled="!editionTag.isFieldEditabled('end')"
                                              ng-click="setEndRangeNow()">
                                         Now  
@@ -150,6 +153,7 @@
                                 <label class="control-label  col-xs-3">Sport</label>
                                 <div class="col-xs-9">
                                     <ui-select 
+                                        class="ui-select-category"
                                         ng-model="editionTag._extra.category" 
                                         ng-disabled="!editionTag.isFieldEditabled('category')"
                                         theme="bootstrap"
@@ -175,6 +179,7 @@
                                 <label class="control-label col-xs-3">Trick</label>
                                 <div class="col-xs-9">
                                     <ui-select 
+                                        class="ui-select-tag"
                                         ng-model="editionTag._extra.tag" 
                                         theme="bootstrap"
                                         ng-disabled="!editionTag.hasCategory() || !editionTag.isFieldEditabled('tag')"
@@ -212,6 +217,7 @@
                                 <label class="control-label col-xs-3">Rider</label>
                                 <div  class="col-xs-8">
                                     <ui-select 
+                                        class="ui-select-rider"
                                         ng-model="editionTag._extra.rider" 
                                         theme="bootstrap"
                                         ng-disabled="!editionTag.isFieldEditabled('rider')"
@@ -380,21 +386,21 @@
             In the meantime, you still can edit or remove the trick if you like.
         </p>
         <h3 class="page-title">Rules</h3>
-        
+
         <h4>One trick at a time</h4>
         <p>
             Each time range should contain only one trick at a time. 
         </p>
         <h4>Time range from the beginning to the end of the trick</h4>
         <p>
-            It's important to be precise on the time range. You must set the start time a few seconds before the beginning of the trick.
+            It's important to be accurate on the time range. You must set the start time a few seconds before the beginning of the trick.
             It's better if it's in the same video shot. <br/>
             The end time must be a few seconds after the landing. 
             If there are multiple shots or replay in raw, include them all. 
         </p>
-        <h4>Be precise</h4>
+        <h4>Be accurate</h4>
         <p>
-            When you fill the rider name and trick name be as precise as possible. Use existing riders and tricks in priority. 
+            When you fill the rider name and trick name be as accurate as possible. Use existing riders and tricks in priority. 
             If you need to create a new one, do not use abbreviations, use the full name.  
         </p>
     </div>

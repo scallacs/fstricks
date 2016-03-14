@@ -10,6 +10,11 @@ function ConfigRouting($stateProvider) {
                 controller: 'DashboardController',
                 templateUrl: TEMPLATE_URL + "/../admin/dashboard/partials/home.html"
             })
+            .state('logout', {
+                url: "/logout",
+                controller: 'LogoutController',
+//                templateUrl: TEMPLATE_URL + "/../admin/dashboard/partials/home.html"
+            })
             .state("users", {
                 url: "/users",
                 controller: 'UsersController',

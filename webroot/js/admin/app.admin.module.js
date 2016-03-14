@@ -10,6 +10,7 @@ angular.module('app.admin', [
         .config(ConfigInterceptor)
         .controller('ModalInstanceCtrl', ModalInstanceCtrl)
         .controller('MainAdminController', MainAdminController)
+        .controller('LogoutController', LogoutController)
         .run(Run);
 
 ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance'];
@@ -73,22 +74,13 @@ function Run($rootScope, AuthenticationService, $state, SharedData) {
             $state.go(toState.redirectTo, toParams);
             return;
         }
-        //console.log('$stateChangeStart: ' + event);
-        var requireLogin = angular.isDefined(toState.data) ? 
-            toState.data.requireLogin
-            : false;
 
-        if (requireLogin && !AuthenticationService.isAuthed()) {
+        if (!AuthenticationService.isAuthed()) {
             console.log('DENY USER ACCESS FOR THIS LOCATION');
             event.preventDefault();
-
-            var wasLoading = SharedData.loadingState;
             SharedData.pageLoader(false);
-            // REDIRECT TO LOGIN
         }
-        else {
-
-        }
+        
         SharedData.pageLoader(angular.isDefined(toState.data) ? 
             toState.data.pageLoader: false);
     });
@@ -156,4 +148,11 @@ function ConfigInterceptor($httpProvider, $locationProvider) {
             };
         }];
     $httpProvider.interceptors.push(interceptor);
+}
+
+
+LogoutController.$inject = ['$state', 'AuthenticationService'];
+function LogoutController($state, AuthenticationService){
+    AuthenticationService.logout();
+    $state.go('home');
 }

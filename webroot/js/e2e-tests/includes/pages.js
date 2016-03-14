@@ -11,9 +11,10 @@
             login: '/login',
             sinup: '/signup',
             addvideo: '/video/add',
-            'videoplayer.best': '/player/best/',
-            'videoplayer.video': '/player/video/',
-            'videoplayer.sport': '/player/sport/'
+            'videoplayer.best': '/player/best',
+            'videoplayer.video': '/player/video',
+            'videoplayer.sport': '/player/sport',
+            'editplaylist': '/playlist/edit'
         };
 
         app.webroot = 'http://localhost:8082/Tricker/';
@@ -66,12 +67,11 @@
     var Navigation = function() {
         var nav = this;
 
-        nav.brandElement = element(by.id('BrandContainer'));
-
-        nav.topNavElement = element(by.id('TopNav'));
+        nav._brandElement = element(by.id('BrandContainer'));
+        nav._topNavElement = element(by.id('TopNav'));
 
         nav.getLink = function(state, assert) {
-            return new ElementHelper(nav.topNavElement).linkByState(state, assert);
+            return new ElementHelper(nav._topNavElement).linkByState(state, assert);
         };
 
         nav.isAuthNav = function() {
@@ -84,7 +84,7 @@
         };
 
         nav.getHomeLink = function(assert) {
-            var homeLink = nav.brandElement.element(by.id('HomeLink'));
+            var homeLink = nav._brandElement.element(by.id('HomeLink'));
             if (assert) {
                 expect(homeLink.isPresent()).toBe(true);
             }
@@ -103,6 +103,13 @@
                 });
             });
             return deferred.promise;
+        };
+        
+        nav.navigateTo = function(state){
+            return nav.openUserNav().then(function() {
+                var link = nav.getLink(state, true);
+                return link.click();
+            });
         };
 
     };
@@ -123,7 +130,7 @@
 
         self.linkByState = function(state, assert) {
             // TODO begin by state
-            var link = elem.element(by.css('a[ui-sref^="' + state + '"]'));
+            var link = elem.element(by.css('[ui-sref^="' + state + '"]'));
             if (assert) {
                 expect(link.isPresent()).toBe(true);
             }
