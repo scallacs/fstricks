@@ -31,7 +31,7 @@
         <div style='clear: both;'></div>
     </div>
 
-    <div class="text-center padding-sm">
+    <div class="text-center padding-sm" ng-if="videoTagData.getLoader().hasNextPage()">
         <button ng-disabled='videoTagData.getLoader().loading' class="btn btn-primary" ng-click="videoTagData.getLoader().loadNextPage()">
             <span ng-show='videoTagData.getLoader().loading'> Loading data...</span>
             <span ng-show='!videoTagData.getLoader().loading'> Load more</span>

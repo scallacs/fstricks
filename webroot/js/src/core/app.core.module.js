@@ -376,6 +376,7 @@ function PaginateDataLoader($q) {
     PaginateDataLoader.prototype.init = init;
     PaginateDataLoader.prototype.loadAll = loadAll;
     PaginateDataLoader.prototype.loadNextPage = loadNextPage;
+    PaginateDataLoader.prototype.hasNextPage = hasNextPage;
     PaginateDataLoader.prototype.loadPage = loadPage;
     PaginateDataLoader.prototype.setFilters = setFilters;
     PaginateDataLoader.prototype.setFilter = setFilter;
@@ -425,6 +426,10 @@ function PaginateDataLoader($q) {
         //this.resource = null; VideoTagEntity.search; DO NOT RESET
         this.mode = 'append'; // Append to data Other mode: 'replace'
         return this;
+    }
+
+    function hasNextPage(){
+        return this.mode === 'append' && this.total > this.items.length;
     }
 
     function getItem(i) {

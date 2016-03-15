@@ -1,5 +1,7 @@
 var Application = require('./includes/pages.js');
 
+// TODO REDO LOGIN!
+
 describe('Account login', function() {
 
     var credentials = [

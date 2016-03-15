@@ -31,12 +31,7 @@
         <span ng-if="!loader.hasData()">There is no tricks in this playlist</span>
     </h3>
 
-    <ul
-        infinite-scroll='loader.loadNextPage()' 
-        infinite-scroll-disabled='loader.disabled' 
-        infinite-scroll-distance='0.1'
-        infinite-scroll-immediate-check="false"
-        dnd-list="loader.data.items"
+    <ul dnd-list="loader.data.items"
         dnd-drop="onDrop(event, index, item, external, type, 'list')"
         class="list-unstyled"
         >
@@ -59,6 +54,13 @@
             </div>
         </li>
     </ul>
+
+    <div class="text-center padding-sm" ng-if="loader.hasNextPage()">
+        <button ng-disabled='loader.loading' class="btn btn-primary" ng-click="loader.loadNextPage()">
+            <span ng-show='loader.loading'> Loading data...</span>
+            <span ng-show='!loader.loading'> Load more</span>
+        </button>
+    </div>
 
     <p class="text-center padding-sm margin-top">
         <span class="glyphicon glyphicon-info-sign"></span> Drag and drop tricks to order them in the playlist
