@@ -250,7 +250,6 @@ Configure::write('Users.default_playlists', [
 ]);
 
 
-// TODO use
 Configure::write('Pagination', [
     'Playlists' => ['maxLimit' => 20, 'limit' => 10],
     'Riders' => ['maxLimit' => 20, 'limit' => 10],

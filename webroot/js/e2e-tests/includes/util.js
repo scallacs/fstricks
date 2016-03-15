@@ -25,9 +25,10 @@
                 return self._selectInput.sendKeys(val);
             };
             
-            self.pickResult = function(index){
+            self.pickChoice = function(index){
+                browser.waitForAngular();
                 expect(self._choices.count()).not.toBeLessThan(index + 1);
-                return self._choices.get(index);
+                return self._choices.get(index).click();
             };
         };
 

@@ -40,7 +40,7 @@ var Util = require('./util.js');
             return self._title.click();
         };
 
-        self.rider = function(){
+        self.clickRider = function(){
             return self._rider.click();
         };
 

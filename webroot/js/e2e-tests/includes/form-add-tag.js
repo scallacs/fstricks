@@ -19,15 +19,15 @@ var Util = require('./util.js');
 
         self.setCategory = function(name){
             self._categoryInput.sendKeys(name);
-            self._categoryInput.pickResult(0);
+            self._categoryInput.pickChoice(0);
         };
         self.setRider = function(name){
             self._riderInput.sendKeys(name);
-            self._riderInput.pickResult(0);
+            self._riderInput.pickChoice(0);
         };
         self.setTag = function(name){
             self._tagInput.sendKeys(name);
-            self._tagInput.pickResult(0);
+            self._tagInput.pickChoice(0);
         };
         
         self.setEndTimeFromVideo = function(){

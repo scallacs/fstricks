@@ -24,18 +24,28 @@ describe('Add tag on video: ', function() {
         });
     });
 
-    it('should controller player time with plus and minus button', function() {
+    it('Should be possible to create a tag', function() {
         formAddVideoTag.increaseBeginTime();
+        formAddVideoTag.decreaseBeginTime();
+        
         formAddVideoTag.increaseEndTime();
+        formAddVideoTag.decreaseEndTime();
+        
+        expect(formAddVideoTag.isValid()).toBe(false);
         
         formAddVideoTag.setRider('Torstein');
-        browser.driver.sleep(4000);
+        expect(formAddVideoTag.isValid()).toBe(false);
         
         formAddVideoTag.setCategory('snowboard kicker');
-        browser.driver.sleep(4000);
+        expect(formAddVideoTag.isValid()).toBe(false);
         
         formAddVideoTag.setTag('double backflip');
-        browser.driver.sleep(4000);
+        expect(formAddVideoTag.isValid()).toBe(true);
+
+        formAddVideoTag.submit().then(function(){
+            browser.waitForAngular();
+        });
+        
     });
 
 });

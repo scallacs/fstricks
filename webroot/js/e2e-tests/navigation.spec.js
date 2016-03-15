@@ -1,5 +1,7 @@
 var Application = require('./includes/pages.js');
 var Util = require('./includes/util.js');
+var VideoTagItem = require('./includes/video-tag-item.js');
+var PlayerContainer = require('./includes/player-container.js');
 
 describe('Navigation', function() {
 
@@ -51,29 +53,60 @@ describe('Navigation', function() {
     });
 
     describe(' with a video tag item: ', function() {
+        var videoTagItem;
+        
+        beforeEach(function(){
+            app.getState('videoplayer.best');
+            browser.waitForAngular();
+            videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(0));
+            expect(videoTagItem.isPresent()).toBe(true);
+        });
+        
+        it(' should be possible to view trick', function() {
+            videoTagItem.watch().then(function(){
+                expect(element(by.css('.table-current-trick')).isPresent()).toBe(true);
+            });
+        });
+        
+        it(' should be possible to view the full video', function() {
+            videoTagItem.openOptionLinkByState('videoplayer.video').then(function(){
+                app.assertLocation('videoplayer.video');
+            });
+        });
+        it(' should be possible to view all video for this', function() {
+            videoTagItem.openOptionLinkByState('videoplayer.tag').then(function(){
+                app.assertLocation('videoplayer.tag');
+            });
+        });
+        it(' should be possible to view rider', function() {
+            videoTagItem.clickRider().then(function(){
+                app.assertLocation('videoplayer.rider');
+            });
+        });
+    });
+
+    describe('Watching videos ', function(){
+        var videoTagItem, playerContainer;
         beforeAll(function(){
             app.getState('videoplayer.best');
             browser.waitForAngular();
+            videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(0));
+            expect(videoTagItem.isPresent()).toBe(true);
+            playerContainer = new PlayerContainer(element(by.css('.player-container')));
         });
         
-        // TODO 
-        it(' should be possible to view the full video', function() {
-            var videoTagItem = element.all(by.css('.item-video-tag')).get(0);
-            expect(videoTagItem.isPresent()).toBe(true);
-            var dropdown = new util.dropdown(videoTagItem.element(by.css('.item-video-tag-options')));
-//                        console.log('feozk');
-            dropdown.open().then(function() {
-//                        console.log('Opening dropdown');
-                dropdown.menu().getLinkByState('videoplayer.video').click().then(function() {
-//                        console.log('OK OOOOOOK');
-                    app.assertLocation('videoplayer.video');
-                });
-            });
-            
-                // videoplayer.tag
-
-                // addToPlaylist
+        it('Should NOT be possible to play prev trick when fist element selected', function(){
+            expect(playerContainer.hasPrev()).toBe(false);
         });
+        it('Should be possible to play next trick', function(){
+            playerContainer.next();
+        });
+        it('Should be possible to play previous trick', function(){
+            playerContainer.prev();
+        });
+//        it('Should NOT be possible to play next trick when last element selected', function(){
+//            
+//        });
     });
 
     describe(' as logged in user: ', function() {

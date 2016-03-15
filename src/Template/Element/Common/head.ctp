@@ -41,9 +41,9 @@
     <?= $this->Html->script('lib/bootstrap.min.js'); ?>
     <?= $this->Html->script("lib/ui-bootstrap-custom-tpls-0.14.3.min.js"); ?>
     <?= $this->Html->script("lib/slider.min.js"); ?>
-    <?= $this->Html->script("debug/froogaloop.js"); ?>
+    <?= $this->Html->script("lib/froogaloop.js"); ?>
 <?php } else { ?>
-    <?= $this->Html->script("https://f.vimeocdn.com/js/froogaloop2.min.js"); ?>
+    <?php // $this->Html->script("https://f.vimeocdn.com/js/froogaloop2.min.js"); ?>
     <?= $this->Html->script('lib.js'); ?>
 <?php } ?>
 

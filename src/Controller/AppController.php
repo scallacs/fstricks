@@ -106,21 +106,6 @@ class AppController extends Controller {
 
         if ($this->request->is('json')) {
             $this->set('data', ResultMessage::render());
-//                $this->set('debug', array(
-//                    'request' => $this->request
-//                ));
-//                if (ResultMessage::$token) {
-//                    $this->set('token', ResultMessage::$token);
-//                }
-//
-//            if (isset($this->request->params['paging'])) {
-//                $this->set('paginate', current($this->request->params['paging']));
-//                $serialize = ['paginate', 'data'];
-//            }
-//            else{
-//                $serialize = 'data';
-//            }
-
             $this->set('_serialize', 'data');
             $this->response->type('json');
         } else {
