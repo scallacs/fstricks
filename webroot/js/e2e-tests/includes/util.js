@@ -32,17 +32,19 @@
             };
         };
 
-        this.modal = function(elem) {
-            expect(elem.isPresent()).toBe(true);
+        this.modalDialog = function() {
             var self = this;
-            self.container = elem;
+            self._container = element(by.css('.modal-dialog'));
+            expect(self._container.isPresent()).toBe(true);
+            self._ok = element(by.css('[ng-click="ok()"]'));
+            self._cancel = element(by.css('[ng-click="cancel()"]'));
 
-            self.open = function() {
-                // TODO 
+            self.cancel = function() {
+                return self._cancel.click();
             };
-
-            self.close = function() {
-                // TODO 
+            
+            self.ok = function() {
+                return self._ok.click();
             };
         };
 
@@ -127,6 +129,10 @@
                     }
                     elem.sendKeys(options.value);
                 });
+            };
+
+            self.read = function(model){
+                return form.element(by.model(model)).getAttribute('value');
             };
 
             self.isValid = function() {

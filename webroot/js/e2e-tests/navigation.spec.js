@@ -59,7 +59,6 @@ describe('Navigation', function() {
             app.getState('videoplayer.best');
             browser.waitForAngular();
             videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(0));
-            expect(videoTagItem.isPresent()).toBe(true);
         });
         
         it(' should be possible to view trick', function() {
@@ -86,13 +85,16 @@ describe('Navigation', function() {
     });
 
     describe('Watching videos ', function(){
-        var videoTagItem, playerContainer;
+        
+        var videoTagItem = null;
+        var playerContainer = null;
         beforeAll(function(){
             app.getState('videoplayer.best');
             browser.waitForAngular();
             videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(0));
-            expect(videoTagItem.isPresent()).toBe(true);
-            playerContainer = new PlayerContainer(element(by.css('.player-container')));
+            videoTagItem.watch().then(function(){
+                playerContainer = new PlayerContainer(element(by.css('.player-container')));
+            });
         });
         
         it('Should NOT be possible to play prev trick when fist element selected', function(){

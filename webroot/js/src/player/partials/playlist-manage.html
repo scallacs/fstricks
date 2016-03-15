@@ -1,5 +1,3 @@
-
-
 <div class="container margin-top bg-primary ">
 
     <div class="section">
@@ -14,7 +12,7 @@
             removable-item 
             removable-item-id="{_id: playlist.id}" 
             removable-item-options="removeOptions"
-            class="clearfix">
+            class="clearfix playlist-edition-item">
             <div class="item-top-btns">
                 <a class="text-info" ui-sref="editplaylist({playlistId: playlist.id})">
                     <span class="glyphicon glyphicon-edit"></span>
@@ -23,7 +21,8 @@
                     <span class="glyphicon glyphicon-trash"></span>
                 </a>
             </div>
-            <div playlist-item playlist="playlist" short-mode="true" points="false"></div>
+            <div playlist-item playlist="playlist" short-mode="true" points="false" edition="true">
+            </div>
         </div>
 
         <div dir-pagination-controls

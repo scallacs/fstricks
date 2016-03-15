@@ -14,6 +14,7 @@ var Util = require('./util.js');
         if (mode === 'edition') {
             self._edit = self.container.element(by.css('[ui-sref^="editplaylist"]'));
             expect(self._edit.isPresent()).toBe(true);
+            
             self._remove = self.container.element(by.css('.btn-remove-item'));
             expect(self._remove.isPresent()).toBe(true);
 
@@ -25,7 +26,10 @@ var Util = require('./util.js');
                 return self._edit.click();
             };
         }
-        
+        else {
+            
+        }
+
         self._title = self.container.element(by.css('.playlist-heading'));
         expect(self._title.isPresent()).toBe(true);
 

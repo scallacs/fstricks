@@ -10,16 +10,18 @@ var Util = require('./util.js');
         expect(container.isPresent()).toBe(true);
         var self = this;
         self._container = container;
-        self._next = self._container.element(by.css('player-next-trick'));
-        self._prev = self._container.element(by.css('player-prev-trick'));
+        self._next = self._container.element(by.css('.player-next-trick'));
+        expect(self._next.isPresent());
+        self._prev = self._container.element(by.css('.player-prev-trick'));
+        expect(self._prev.isPresent());
         self._iframe = self._container.element(by.css('.iframe-wrapper'));
 
         self.hasPrev = function(){
-            return self._prev.isPresent();
+            return self._prev.isDisplayed();
         };
         
         self.hasNext = function(){
-            return self._next.isPresent();
+            return self._next.isDisplayed();
         };
 
         self.next = function(){

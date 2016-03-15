@@ -64,6 +64,9 @@
             return new Footer();
         };
 
+        app.searchBar = function(){
+            return new util.uiSelect(element(by.id('SearchBar')));
+        };
     };
 
     var Navigation = function() {

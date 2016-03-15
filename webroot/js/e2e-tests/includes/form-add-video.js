@@ -27,6 +27,7 @@ var Util = require('./util.js');
             input.sendKeys(url);
         };
 
+        
         self.submit = function() {
             return self._submit.click();
         };

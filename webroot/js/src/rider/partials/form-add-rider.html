@@ -65,17 +65,6 @@
                          ng-bind="uploader.picture.progress + '%'"></div>
                 </span>
             </fieldset>
-
-            <!--
-                      <div flow-name="uploader.flow"
-                           flow-init="uploader.init" 
-                           flow-file-added="!!{png:1,gif:1,jpg:1,jpeg:1}[$file.getExtension()]" 
-                           flow-file-success="onUploadSuccess($file, $message, $flow )"
-                           flow-error="onUploadError( $file, $message, $flow )"
-                           flow-complete="onUploadComplete()"
-                           class="ng-scope">-->
-
-
         </div>
 
         <div ng-class="{'col-sm-8': profilePicture}">
@@ -96,7 +85,7 @@
                                ng-maxlength="20"/>
                         <span class="ion-person form-control-feedback"></span>
                         <div class="help-block text-danger" 
-                             ng-if="addRiderForm.firstname.$dirty" 
+                             ng-if="addRiderForm.firstname.$dirty || rider.firstname.length > 0" 
                              ng-messages="addRiderForm.firstname.$error">
                             <div ng-message="required">You must enter your name.</div>
                             <div ng-message="minlength">You must enter at least 2 caracters.</div>
@@ -120,7 +109,7 @@
                                ng-maxlength="20"/>
                         <span class="ion-person form-control-feedback"></span>
                         <div class="help-block text-danger" 
-                             ng-if="addRiderForm.lastname.$dirty" 
+                             ng-if="addRiderForm.lastname.$dirty || rider.lastname.length > 0" 
                              ng-messages="addRiderForm.lastname.$error">
                             <div ng-message="required">You must enter your last name.</div>
                             <div ng-message="minlength">You must enter at least 2 caracters.</div>
@@ -152,38 +141,14 @@
                         </div>
                     </div>
                 </div>
-                <!--
-                <div class="form-group clearfix has-feedback" 
-                     ng-class="[formGroupClass, {'has-error': addRiderForm.level.$invalid}]">
-                    <label class="col-xs-3">Level</label>
-                    <div class="col-xs-9">
-
-
-                        <select
-                            name="level"
-                            ng-model="rider.level"
-                            class="form-control"
-                            servererror
-                            ng-required
-                            ng-options="convertToInt(level.code) as level.name for level in levels">
-                        </select>
-                        <span class="ion-person form-control-feedback"></span>
-                        <div class="help-block text-danger" 
-                             ng-messages="addRiderForm.level.$error">
-                            <div ng-message="server">{{addRiderForm.level.$error.server}}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-                -->
-
             </div>
             
-            <div class="clearfix">
-                <div ng-if="findSimilarRiders" class="bg-info padding-sm text-center" ng-show="loaderSearchSimilars">
+            <div class="clearfix form-group">
+                <div ng-if="findSimilarRiders" class="padding-sm text-center" ng-show="loaderSearchSimilars">
                     <img src="img/ajax_loader.gif" alt="Loading..."/> 
                     Searching for existing riders.
                 </div>
+                
                 <div ng-if="similarRiders.length > 0" class="padding-sm">
                     <h5>Existing riders</h5>
                     <div ng-repeat="rider in similarRiders">
