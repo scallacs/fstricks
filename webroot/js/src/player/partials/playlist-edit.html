@@ -18,25 +18,30 @@
             playlist-form 
             playlist="playlist">
         </div>
-        <p class="text-center padding-sm">
-            <a href="#" ng-show="!showEditionForm" ng-click="showEditionForm = true">
+        <p class="text-center padding-sm" ng-show="!showEditionForm">
+            <a href="#" ng-click="showEditionForm = true" id="ButtonEditPlaylistInformation">
                 <span class="glyphicon glyphicon-edit"></span> Edit informations
             </a>
         </p>
     </div>
 
 
-    <h3>
+    <h3 class="page-title">
         <span ng-if="loader.hasData()">Tricks</span>
         <span ng-if="!loader.hasData()">There is no tricks in this playlist</span>
     </h3>
 
+    <p class="text-center padding-sm margin-top">
+        <span class="glyphicon glyphicon-info-sign"></span> Drag and drop tricks to order them in the playlist
+    </p>
+    
     <ul dnd-list="loader.data.items"
         dnd-drop="onDrop(event, index, item, external, type, 'list')"
-        class="list-unstyled"
+        class="list-unstyled wid"
+        style="max-width: 800px; margin:auto;"
         >
         <li ng-repeat="videoTag in loader.data.items" 
-            class="row clearfix bg-primary"
+            class="row clearfix bg-primary border-bottom"
             dnd-draggable="videoTag"
             dnd-effect-allowed="move"
             dnd-selected="selectedVideoTag = videoTag"
@@ -62,7 +67,4 @@
         </button>
     </div>
 
-    <p class="text-center padding-sm margin-top">
-        <span class="glyphicon glyphicon-info-sign"></span> Drag and drop tricks to order them in the playlist
-    </p>
 </div>

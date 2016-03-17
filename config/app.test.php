@@ -11,6 +11,7 @@ return [
      * true: Errors and warnings shown.
      */
     'debug' => true,
+    'maintenance' => 0,
     /**
      * Configure basic information about the application.
      *

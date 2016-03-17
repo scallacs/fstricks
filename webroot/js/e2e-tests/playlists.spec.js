@@ -89,67 +89,91 @@ describe('Playlists: ', function() {
 //    });
 
     describe('Edit playlist', function() {
+        var btnEditInfo, btnCancelEdit;
 
         beforeAll(function() {
             nav.navigateTo('manageplaylist');
             browser.waitForAngular();
+            btnEditInfo = element(by.id('ButtonEditPlaylistInformation'));
+            btnCancelEdit = element(by.css('#FormAddPlaylist [ng-click="cancel()]"'));
         });
 
-        it('Should be possible to edit informations', function() {
+        it('Should be possible navigate to edit the playlist', function() {
             var playlistItem = new PlaylistItem(element.all(by.css('.playlist-edition-item')).get(0), 'edition');
             playlistItem.edit().then(function() {
                 app.assertLocation('editplaylist');
             });
-//
-//            it('Should be possible to cancel edition', function() {
-//
-//            });
-//            
-//            it('Should be possible to save edition', function() {
-//
-//            });
-
-        });
-//        
-//        it('Should be possible to remove a tricks', function() {
-//
-//        });
-//        
-//        it('Should be possible to change order', function() {
-//
-//        });
-
-    });
-    
-    describe('Manage playlist', function() {
-
-        beforeAll(function() {
-            nav.navigateTo('manageplaylist');
-            browser.waitForAngular();
         });
 
-//        it('The playlist created should be displayed', function() {
-//            var nbPlaylist = element.all(by.css('.playlist-edition-item')).count();
-//            expect(nbPlaylist).toBe(5);
-//        });
+        describe('when editing playlist: ', function() {
+            
+            it('Should be possible to edit informations', function() {
+                expect(btnEditInfo.isDisplayed()).toBe(true);
+                btnEditInfo.click().then(function() {
+                    var formEditPlaylist = new util.form(element(by.id('addPlaylistForm')));
+                    formEditPlaylist.fill([
+                        {model: 'playlist.title', value: 'New title', clear: true}
+                    ]);
 
-        it('Should be possible to delete a playlist', function() {
-            var playlistItem = new PlaylistItem(element.all(by.css('.playlist-edition-item')).get(0), 'edition');
-            playlistItem.remove().then(function() {
-                browser.sleep(2000);
-                browser.waitForAngular();
-                var dialog = new util.modalDialog();
-                dialog.ok().then(function() {
-                    browser.waitForAngular();
-                    // TODO check that item has been removed
+                    it('Should be possible to save edition and go back to previous page', function() {
+
+                        formEditPlaylist.submit().then(function() {
+                            expect(btnEditInfo.isDisplayed()).toBe(true);
+                        });
+
+                    });
                 });
             });
+
+            it('Should be possible to cancel edition', function() {
+                expect(btnEditInfo.isDisplayed()).toBe(true);
+                btnEditInfo.click().then(function() {
+                    btnCancelEdit.click().then(function() {
+                        expect(btnEditInfo.isDisplayed()).toBe(true);
+                    });
+                });
+            });
+
+            it('Should be possible to remove a tricks', function() {
+                // TODO 
+            });
+
+            it('Should be possible to change order', function() {
+                // TODO 
+            });
+
         });
-
-        // Number of tags should be 1 for the new playlist => TODO
-        // Should have the up/down button !
-
     });
+
+//    describe('Manage playlist', function() {
+//
+//        beforeAll(function() {
+//            nav.navigateTo('manageplaylist');
+//            browser.waitForAngular();
+//        });
+//
+////        it('The playlist created should be displayed', function() {
+////            var nbPlaylist = element.all(by.css('.playlist-edition-item')).count();
+////            expect(nbPlaylist).toBe(5);
+////        });
+//
+//        it('Should be possible to delete a playlist', function() {
+//            var playlistItem = new PlaylistItem(element.all(by.css('.playlist-edition-item')).get(0), 'edition');
+//            playlistItem.remove().then(function() {
+//                browser.sleep(2000);
+//                browser.waitForAngular();
+//                var dialog = new util.modalDialog();
+//                dialog.ok().then(function() {
+//                    browser.waitForAngular();
+//                    // TODO check that item has been removed
+//                });
+//            });
+//        });
+//
+//        // Number of tags should be 1 for the new playlist => TODO
+//        // Should have the up/down button !
+//
+//    });
 
 
 

@@ -1,4 +1,7 @@
-angular.module('app.tag', ['app.core', 'ui.bootstrap', 'ui.select', 'ui.router', 'ui.slider', 'infinite-scroll'])
+angular.module('app.tag', ['app.core', 'ui.bootstrap', 'ui.select', 'ui.router', 
+    'ui.slider'
+//    'infinite-scroll'
+])
         .controller('SearchTagController', SearchTagController)
         .controller('ModalReportErrorController', ModalReportErrorController)
         .config(Config);

@@ -414,7 +414,7 @@ function PaginateDataLoader($q) {
     function init() {
         this.filters = {};
         this.data = {
-            total: null,
+            total: 0,
             perPage: null,
             items: []
         };
@@ -429,7 +429,7 @@ function PaginateDataLoader($q) {
     }
 
     function hasNextPage(){
-        return this.mode === 'append' && this.total > this.items.length;
+        return this.mode === 'append' && this.data.total > this.data.items.length;
     }
 
     function getItem(i) {
@@ -550,11 +550,12 @@ function PaginateDataLoader($q) {
         this.data.extra = data.extra;
 
         var tags = data.items;
-        console.log('[OK] Loading page ' + this.filters.page + ': ' + tags.length + ' item(s)');
+        console.log('[Loader] Loading page ' + this.filters.page + ': ' + tags.length + ' item(s)');
         if (this.mode === 'append') {
             for (var i = 0; i < tags.length; i++) {
                 this.data.items.push(tags[i]);
             }
+            console.log('[Loader] ' + this.data.items.length + '/' + data.total + ' items');
         }
         else {
             this.data.items = tags;

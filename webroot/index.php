@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The Front Controller for handling every request
  *
@@ -14,6 +15,7 @@
  * @since         0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 // for built-in server
 if (php_sapi_name() === 'cli-server') {
     $_SERVER['PHP_SELF'] = '/' . basename(__FILE__);
@@ -30,8 +32,13 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\DispatcherFactory;
 
+if (\Cake\Core\Configure::read('maintenance') > 0) {
+    // TODO SET ERROR CODE 503
+    require('maintenance.php');
+    die();
+}
+
 $dispatcher = DispatcherFactory::create();
 $dispatcher->dispatch(
-    Request::createFromGlobals(),
-    new Response()
+        Request::createFromGlobals(), new Response()
 );

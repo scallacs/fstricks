@@ -9,7 +9,12 @@ body{
 h3, h2, h1{
     padding: 10px 10px;
 }
-
+.border-bottom{
+    border-bottom: 1px solid #333;
+}
+.border-bottom:first-child{
+    border-top: 1px solid #333;
+}
 .border-radius{
     border-radius: 5px;
 }

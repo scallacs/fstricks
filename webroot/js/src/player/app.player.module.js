@@ -6,7 +6,7 @@ angular.module('app.player', [
     'shared.vimeo',
     'shared',
     'angularUtils.directives.dirPagination',
-    'infinite-scroll',
+//    'infinite-scroll',
     'ui.bootstrap',
     'dndLists'
 ])
@@ -656,8 +656,8 @@ function ManagePlaylistController($scope, PlaylistEntity, SharedData, PaginateDa
 
 }
 
-EditPlaylistController.$inject = ['$scope', 'PaginateDataLoader', 'PlaylistItemEntity', 'SharedData', '$stateParams', 'ApiFactory'];
-function EditPlaylistController($scope, PaginateDataLoader, PlaylistItemEntity, SharedData, $stateParams, ApiFactory) {
+EditPlaylistController.$inject = ['$scope', 'PaginateDataLoader', 'PlaylistItemEntity', 'SharedData', '$stateParams', 'ApiFactory', '$state'];
+function EditPlaylistController($scope, PaginateDataLoader, PlaylistItemEntity, SharedData, $stateParams, ApiFactory, $state) {
     var removeEndpoint = ApiFactory.endpoint('PlaylistVideoTags', 'delete').remove;
     $scope.removeOptions = {
         wait: false, 
@@ -682,6 +682,9 @@ function EditPlaylistController($scope, PaginateDataLoader, PlaylistItemEntity, 
                 .startLoading()
                 .then(function(results) {
                     $scope.playlist = results.extra.playlist;
+                })
+                .catch(function(){
+                    $state.go('manageplaylist');
                 })
                 .finally(function() {
                     SharedData.pageLoader(false);

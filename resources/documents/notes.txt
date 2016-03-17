@@ -33,3 +33,16 @@ DELETE FROM tags  WHERE name = 'fro';
 
 UPDATE video_tags SET tag_id = 94 where tag_id = 81;
 DELETE FROM tags  WHERE id = 81;
+
+
+
+
+# HTACCESS
+    Options +FollowSymLinks -MultiViews
+
+    DirectoryIndex index.php
+
+    AuthType Basic
+    AuthName "Beta test access"
+    AuthUserFile F:\Programmation\Web\Tricker\.htpasswd
+    Require valid-user

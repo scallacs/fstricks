@@ -16,16 +16,14 @@ angular.module('shared')
 
                         $timeout(function() {
 
-                            var text = elem.text();
+                            var text = elem.text().trim();
                             if (!angular.isDefined(attr.maxLength)) {
                                 attr.maxLength = 200;
                             }
                             if (text.length > attr.maxLength) {
-                                var hiddenText = text.substr(maxLength + 1);
+                                var hiddenText = text.substr(maxLength);
                                 var visibleText = text.substr(0, maxLength);
-                                var content = visibleText + '\
-                                <a href="#" ng-show="!show" ng-click="showMore()"> show more</a>\n\
-                                <span ng-show="show">' + hiddenText + '</span>\n\
+                                var content = visibleText + '<span ng-show="!show">... <a href="#" ng-click="showMore()">show more</a></span><span ng-show="show">' + hiddenText + '</span>\n\
                                 <a href="#" ng-show="show" ng-click="hideMore()"> hide </a>';
                                 elem.html($compile('<div>' + content + '<div>')(scope));
                             }

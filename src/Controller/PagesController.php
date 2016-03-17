@@ -65,6 +65,9 @@ class PagesController extends AppController
 //    }
     
     public function app(){
+        if (Configure::read('onlyLoggedUser') && !$this->Auth->user('id')){
+            return $this->redirect(['controller' => 'users', 'action' => 'login']);
+        }
         $this->render('/pages/home');
     }
 }

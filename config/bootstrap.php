@@ -226,6 +226,9 @@ Configure::write('Company', [
     'title' => 'Freestyle Tricks',
     'name' => 'FS tricks'
 ]);
+Configure::write('Browser', [
+    'title_prefix' => 'Freestyle Tricks',
+]);
 Configure::write('JsonConfigFolder', WWW_ROOT . DS . 'data' . DS);
 Configure::write('TokenExpirationTime', 30 * (86400 * 1000)); // 30 jour
 

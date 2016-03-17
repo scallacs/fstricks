@@ -2,6 +2,7 @@
 <html>
     <head>
         <?= $this->Element('Common/head'); ?>
+        <?= $this->Element('Common/scripts'); ?>
 
         <?= $this->fetch('meta') ?>
         <?= $this->fetch('css') ?>
@@ -32,5 +33,10 @@
     </div>
 
     <?= $this->Element('Common/footer'); ?>
+
+    <?php if (\Cake\Core\Configure::read('user_feedback')) { ?>
+        <angular-feedback options="{ajaxURL: '<?php \Cake\Core\Router::url(['controller' => 'feedback', 'action' => 'send', 'prefix' => 'api']);?>'}"></angular-feedback>
+    <?php } ?>
+
 </body>
 </html>
