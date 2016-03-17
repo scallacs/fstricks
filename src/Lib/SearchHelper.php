@@ -88,7 +88,7 @@ class SearchHelper {
             }
             if (strlen($term) >= $minLength) {
                 $i++;
-                $conditions['AND'][] = ['LOWER('.$field . ') LIKE ' => '%' . trim($term) . '%'];
+                $conditions['AND'][] = [$field .' LIKE ' => '%' . trim($term) . '%'];
             }
         }
 //        print_r($conditions);
