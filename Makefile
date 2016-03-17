@@ -60,7 +60,7 @@ database: $(DB_SOURCE)
 clean-prod:
 	rm -rf webroot/coverage
 	rm -rf webroot/js/e2e-tests
-	rm -rf webroot/js/components
+	#rm -rf webroot/js/components
 	rm -rf webroot/js/lib
 	find webroot/js/admin -type f ! -name '*.html' -delete
 	find webroot/js/src -type f ! -name '*.html' -delete
