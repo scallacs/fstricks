@@ -153,6 +153,9 @@ class RidersControllerTest extends MyIntegrationTestCase {
         $this->get('/api/riders/local_search.json?q=Stephane');
         $this->assertResponseOk();
         
+        $this->get('/api/riders/local_search.json?q=tors hor');
+        $this->assertResponseOk();
+        
         $this->get('/api/riders/local_search.json?firstname=Stephane&lastname=test');
         $this->assertResponseOk();
         

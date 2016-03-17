@@ -127,8 +127,11 @@ class RidersController extends AppController {
                     ->limit(20);
             
             if (isset($data['q'])) {
-                \App\Model\Table\TableUtil::multipleWordSearch($query, $data['q'],  
-                        'CONCAT(Riders.firstname, \' \', Riders.lastname)');
+                $searchHelper = new \App\Lib\SearchHelper($data, $query);
+                $searchHelper->required('q', 
+                        'CONCAT(Riders.firstname, \' \', Riders.lastname)', [
+                            'type' => 'keywords'
+                        ]);
             } else {
                 $query->where([
                     'Riders.firstname LIKE "%' . DataUtil::getLowerString($data, 'firstname') . '%"',
