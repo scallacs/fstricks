@@ -89,13 +89,12 @@ describe('Playlists: ', function() {
 //    });
 
     describe('Edit playlist', function() {
-        var btnEditInfo, btnCancelEdit;
+        var btnEditInfo;
 
         beforeAll(function() {
             nav.navigateTo('manageplaylist');
             browser.waitForAngular();
             btnEditInfo = element(by.id('ButtonEditPlaylistInformation'));
-            btnCancelEdit = element(by.css('#FormAddPlaylist [ng-click="cancel()]"'));
         });
 
         it('Should be possible navigate to edit the playlist', function() {
@@ -106,21 +105,18 @@ describe('Playlists: ', function() {
         });
 
         describe('when editing playlist: ', function() {
-            
+
             it('Should be possible to edit informations', function() {
                 expect(btnEditInfo.isDisplayed()).toBe(true);
                 btnEditInfo.click().then(function() {
-                    var formEditPlaylist = new util.form(element(by.id('addPlaylistForm')));
+                    var formEditPlaylist = new util.form(element(by.id('FormAddPlaylist')));
                     formEditPlaylist.fill([
                         {model: 'playlist.title', value: 'New title', clear: true}
                     ]);
 
-                    it('Should be possible to save edition and go back to previous page', function() {
-
-                        formEditPlaylist.submit().then(function() {
-                            expect(btnEditInfo.isDisplayed()).toBe(true);
-                        });
-
+                    // Should be possible to save edition and go back to previous page
+                    formEditPlaylist.submit().then(function() {
+                        expect(btnEditInfo.isDisplayed()).toBe(true);
                     });
                 });
             });
@@ -128,6 +124,7 @@ describe('Playlists: ', function() {
             it('Should be possible to cancel edition', function() {
                 expect(btnEditInfo.isDisplayed()).toBe(true);
                 btnEditInfo.click().then(function() {
+                    var btnCancelEdit = element(by.id('FormAddPlaylist')).element(by.css('[ng-click="cancel()"]'));
                     btnCancelEdit.click().then(function() {
                         expect(btnEditInfo.isDisplayed()).toBe(true);
                     });

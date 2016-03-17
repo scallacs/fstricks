@@ -90,11 +90,12 @@
 <?php
 
 if (\Cake\Core\Configure::read('user_feedback')) {
-    echo $this->Html->script("components/angular-send-feedback/angular-send-feedback.min.js");
+    echo $this->Html->script("components/angular-send-feedback/dist/angular-send-feedback.min.js");
+    echo $this->Html->css("../js/components/angular-send-feedback/dist/angular-send-feedback.min.css");
     ?>
     <script type="text/javascript">
         var app = angular.module('app');
-        //app.requires.push('angular-send-feedback');
+        app.requires.push('angular-send-feedback');
     </script>
     <?php
 }

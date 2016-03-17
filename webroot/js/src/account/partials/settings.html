@@ -11,11 +11,11 @@
                 Account created {{data.user.created| timeago}}.
             </p>
 
-            <p class="text-center" ng-show="isSociaLogin()">
+            <p class="text-center" ng-show="authService.isProvider('facebook')">
                 Your are logged in with facebook.
             </p>
 
-            <div class="text-center" ng-show="!isSociaLogin()">
+            <div class="text-center" ng-show="authService.isProvider('local')">
                 <uib-tabset >
                     <uib-tab heading="Change password">
                         <div form-change-password class="padding-sm"></div>

@@ -18,16 +18,6 @@ class FeedbacksControllerTest extends IntegrationTestCase
     public $fixtures = [
         'app.feedbacks',
         'app.users',
-        'app.tags',
-        'app.video_tags',
-        'app.videos',
-        'app.riders',
-        'app.video_tag_accuracy_rates',
-        'app.categories',
-        'app.sports',
-        'app.tags_users',
-        'app.playlists',
-        'app.playlist_video_tags'
     ];
 
     /**
@@ -35,48 +25,10 @@ class FeedbacksControllerTest extends IntegrationTestCase
      *
      * @return void
      */
-    public function testIndex()
+    public function testSend()
     {
         $this->markTestIncomplete('Not implemented yet.');
     }
 
-    /**
-     * Test view method
-     *
-     * @return void
-     */
-    public function testView()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
 
-    /**
-     * Test add method
-     *
-     * @return void
-     */
-    public function testAdd()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test edit method
-     *
-     * @return void
-     */
-    public function testEdit()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test delete method
-     *
-     * @return void
-     */
-    public function testDelete()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
 }

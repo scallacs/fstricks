@@ -35,6 +35,10 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
     $scope.SharedData = SharedData;
     $scope.authData = AuthenticationService.authData;
     $scope.config = Config.website;
+    $scope.feedbackOptions = {
+        ajaxURL: API_BASE_URL + '/feedbacks/send.json',
+        html2canvasURL : 'js/components/html2canvas/build/html2canvas.min.js'
+    };
 
     $scope.$on('view-video-tag', function(event, tag) {
         console.log('MainController: Event view-video-tag');

@@ -15,30 +15,7 @@ class FeedbacksFixture extends TestFixture
      *
      * @var array
      */
-    // @codingStandardsIgnoreStart
-    public $fields = [
-        'id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'autoIncrement' => true, 'precision' => null],
-        'browser' => ['type' => 'text', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
-        'url' => ['type' => 'string', 'length' => 1023, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null, 'fixed' => null],
-        'note' => ['type' => 'text', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
-        'img' => ['type' => 'text', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
-        'html' => ['type' => 'text', 'length' => null, 'null' => true, 'default' => null, 'comment' => '', 'precision' => null],
-        'user_id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
-        'created' => ['type' => 'timestamp', 'length' => null, 'null' => false, 'default' => 'CURRENT_TIMESTAMP', 'comment' => '', 'precision' => null],
-        'status' => ['type' => 'text', 'length' => null, 'null' => true, 'default' => 'created', 'comment' => '', 'precision' => null],
-        '_indexes' => [
-            'fk_feedbacks_users1_idx' => ['type' => 'index', 'columns' => ['user_id'], 'length' => []],
-        ],
-        '_constraints' => [
-            'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
-            'fk_feedbacks_users1' => ['type' => 'foreign', 'columns' => ['user_id'], 'references' => ['users', 'id'], 'update' => 'noAction', 'delete' => 'noAction', 'length' => []],
-        ],
-        '_options' => [
-            'engine' => 'InnoDB',
-            'collation' => 'utf8_polish_ci'
-        ],
-    ];
-    // @codingStandardsIgnoreEnd
+    public $import = ['table' => 'feedbacks', 'connection' => 'default'];
 
     /**
      * Records

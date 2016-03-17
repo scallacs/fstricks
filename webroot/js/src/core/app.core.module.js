@@ -182,12 +182,12 @@ function PlayerData(VideoTagData, $q) {
 //        console.log(currentTime);
         obj.data.currentTime = currentTime;
 //        console.log( obj.data);
-        
+
         if (this.playMode === 'video' && !obj.looping) {
 //        console.log(VideoTagData.currentTag);
             var current = VideoTagData.currentTag;
             if (angular.isDefined(current) && current !== null) {
-                console.log("current tag is defined: " + currentTime + " in ? " + current.id + " [" + current.begin+", "+current.end+"]");
+                console.log("current tag is defined: " + currentTime + " in ? " + current.id + " [" + current.begin + ", " + current.end + "]");
                 if (current.begin <= currentTime && current.end >= currentTime) {
                     current.time_to_play = 0;
                     obj.data.end = current.end;
@@ -428,7 +428,7 @@ function PaginateDataLoader($q) {
         return this;
     }
 
-    function hasNextPage(){
+    function hasNextPage() {
         return this.mode === 'append' && this.data.total > this.data.items.length;
     }
 
@@ -1102,8 +1102,8 @@ function ServerConfigEntity($resource) {
 
 }
 
-AuthenticationService.$inject = ['$http', '$cookies', '$rootScope', 'UserEntity', '$state', 'PaginateDataLoader'];
-function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, PaginateDataLoader) {
+AuthenticationService.$inject = ['$http', '$cookies', '$rootScope', 'UserEntity', '$state', 'PaginateDataLoader', '$auth'];
+function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, PaginateDataLoader, $auth) {
 
     var service = {};
 
@@ -1117,12 +1117,15 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
     service.signup = signup;
     service.requireLogin = requireLogin;
     service.requestPassword = requestPassword;
+    service.isProvider = isProvider;
     service.logFromCookie = logFromCookie;
     service.init = init;
-
+    service.setAuthData = setAuthData;
+    
     service.authData = {
         token: null,
         user: null,
+        provider: null,
         isAuthed: function() {
             return service.isAuthed();
         }
@@ -1134,6 +1137,11 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
         service.logFromCookie();
     }
 
+    function isProvider(p) {
+        console.log('Provider: ' + service.authData.provider + ' ?= ' + p);
+        return service.authData.provider === p;
+    }
+
     function isAuthed() {
         return service.authData.token !== null && service.authData.user !== null;
     }
@@ -1142,25 +1150,35 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
         return service.authData.user;
     }
 
+    function setAuthData(data, provider) {
+        if (data === null) {
+            service.authData.user = null;
+            service.authData.token = null;
+            service.authData.provider = null;
+        }
+        else{
+            service.authData.user = data.user;
+            service.authData.token = data.token;
+            service.authData.provider = provider ? provider : data.provider;
+        }
+    }
+
     function logFromCookie() {
         var globals = $cookies.getObject('globals');
         if (!globals) {
             console.log("Getting current user from cookies: NO COOKIES");
-            service.authData.user = null;
-            service.authData.token = null;
+            service.setAuthData(null);
             return;
         }
         console.log("Getting current user from cookies");
-        service.authData.user = globals.user;
-        service.authData.token = globals.token;
+        service.setAuthData(globals);
         setHttpHeader();
     }
 
     function login(username, password) {
         var promise = UserEntity.login({email: username, password: password, id: null}, function(response) {
             if (response.success) {
-                response.data.provider = null;
-                service.setCredentials(response.data);
+                service.setCredentials('local', response.data);
             }
         }).$promise;
         return promise;
@@ -1170,8 +1188,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
         return UserEntity.signup(data, function(response) {
             console.log(response);
             if (response.success) {
-                response.data.provider = null;
-                service.setCredentials(response.data);
+                service.setCredentials('local', response.data);
             }
         }).$promise;
     }
@@ -1182,16 +1199,25 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
         }).$promise;
     }
 
-    function socialLogin(provider, callback) {
+    function socialLogin(provider) {
+        var promise = $auth.authenticate(provider, {provider: provider});
+        promise.then(successCallback);
 
-        UserEntity.login({id: null, provider: provider}, function(response) {
-            console.log(response);
+        function successCallback(response) {
+            response = response.data;
             if (response.success) {
-                response.data.provider = provider;
-                service.setCredentials(response.data);
+                service.setCredentials(provider, response.data);
             }
-            callback(response.success, response);
-        }).$promise;
+        }
+        return promise;
+
+//        return UserEntity.socialLogin({id: null, provider: provider}, function(response) {
+//            console.log(response);
+//            if (response.success) {
+//                service.setCredentials(provider, response.data);
+//            }
+//            callback(response.success, response);
+//        }).$promise;
     }
 
     function setHttpHeader() {
@@ -1199,16 +1225,14 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
         $http.defaults.headers.common['Authorization'] = 'Bearer ' + service.authData.token;
     }
 
-    function setCredentials(data) {
-        console.log('Setting credential: ');
-        console.log(data);
-        service.authData.user = data.user;
-        service.authData.token = data.token;
+    function setCredentials(provider, data) {
+        console.log('Setting credential from : ' + provider);
+        service.setAuthData(data, provider);
         console.log(service.authData);
-        $rootScope.globals = {currentUser: data}; // TODO useless ? 
+        $rootScope.globals = service.authData; // TODO useless ? 
         $cookies.remove('globals');
         $cookies.putObject('globals', service.authData);
-        console.log("Setting credential for user: " + data.user.email + " - stored: " + getCurrentUser().email);
+        console.log("Saving credential for user: " + data.user.email + " with provider " + provider + " - stored: " + getCurrentUser().email);
         setHttpHeader();
     }
 
@@ -1222,8 +1246,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
     }
 
     function clearCredentials() {
-        service.authData.user = false;
-        service.authData.token = null;
+        service.setAuthData(null);
         $rootScope.globals = {};
         $cookies.remove('globals');
         $http.defaults.headers.common.Authorization = 'Basic';

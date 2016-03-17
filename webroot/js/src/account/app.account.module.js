@@ -81,21 +81,14 @@ function ConfigSocialApi($authProvider) {
 //    });
 }
 
-SettingsController.$inject = ['$scope', 'AuthenticationService']
-function SettingsController($scope, AuthenticationService) {
+SettingsController.$inject = ['$scope', 'AuthenticationService', '$state']
+function SettingsController($scope, AuthenticationService, $state) {
 
     $scope.data = {};
     $scope.password = '';
     $scope.isFormDeleteAccountLoading = false;
-    $scope.isSociaLogin = isSocialLogin;
     $scope.data.user = AuthenticationService.getCurrentUser();
-
-    function isSocialLogin() {
-        if (!AuthenticationService.isAuthed()) {
-            return false;
-        }
-        return AuthenticationService.getCurrentUser().provider;
-    }
+    $scope.authService = AuthenticationService;
 }
 
 DeleteAccountController.$inject = ['$scope', 'UserEntity'];

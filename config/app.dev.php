@@ -12,6 +12,7 @@ return [
      */
     'debug' => true,
     'maintenance' => 0,
+    'user_feedback' => true,
     /**
      * Configure basic information about the application.
      *

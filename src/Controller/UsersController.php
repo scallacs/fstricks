@@ -55,6 +55,7 @@ class UsersController extends AppController {
     }
 
     public function beforeFilter(\Cake\Event\Event $event) {
+        parent::beforeFilter($event);
         $this->Auth->allow(['add', 'token', 'profile', 'login', 'signup', 'username_exists', 'facebook_login',
             'logout', 'reset_password', 'request_password']);
         if (\Cake\Core\Configure::read('onlyLoggedUser')){

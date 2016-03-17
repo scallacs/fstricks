@@ -16,7 +16,12 @@ DB_PROD_CREDENTIAL = -uroot -pr4xc3oSFSTDB -hlocalhost
 KARMA_BIN = node_modules/karma/bin/karma
 WEBDRIVER_MANAGER_BIN = node_modules/webdriver-manager/bin/webdriver-manager
 PROTRACTOR_BIN = node_modules/protractor/bin/protractor
+
+
 ###############################################################
+all: build mv2prod
+    
+
 # target: reset-repo - reset repo
 reset-repo: 
 	git reset --hard origin/master
@@ -95,7 +100,7 @@ minify-css:
 
 tests: test-backend test-frontend
 
-test-controller: 
+test-controller: config-test
 	vendor/bin/phpunit --coverage-html webroot/coverage tests/TestCase/Controller/$(q)ControllerTest.php
 
 start-webdriver:
@@ -106,7 +111,7 @@ start-webdriver:
 test-frontend: config-test
 	mysql $(DB_TEST_CREDENTIAL) $(DB_TEST_NAME) < './resources/database/test/delete.sql'
 	mysql $(DB_TEST_CREDENTIAL) $(DB_TEST_NAME) < './resources/database/test/insert.sql'
-	$(PROTRACTOR_BIN) webroot/js/e2e-tests/conf/protractor-conf.js
+	$(PROTRACTOR_BIN) webroot/js/e2e-tests/conf/protractor-conf.js | tee -i logs/test-frontend.log
 
 
 # Init db 
@@ -117,10 +122,8 @@ prepare-db:
 	
 # target : - test-backend run test on backend
 .PHONY: test-backend
-test-backend:
-	vendor/bin/phpunit --coverage-html webroot/coverage tests/TestCase
-    #webroot/coverage/index.html 
-	
+test-backend: config-test
+	vendor/bin/phpunit --coverage-html webroot/coverage tests/TestCase | tee -i logs/test-backend.log
 
 ###############################################################
 # OTHERS

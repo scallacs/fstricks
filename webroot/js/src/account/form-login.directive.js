@@ -10,17 +10,9 @@ function formLoginDirective() {
                 $scope.resetPassword = false;
 
                 function authenticate(provider) {
-                    var promise = $auth.authenticate(provider, {provider: provider});
-                    promise.then(successCallback);
-
-                    function successCallback(response) {
-                        response = response.data;
-                        if (response.success) {
-                            response.data.provider = provider;
-                            AuthenticationService.setCredentials(response.data);
-                            $scope.$emit("user-login-success");
-                        }
-                    }
+                    AuthenticationService.socialLogin(provider).then(function(){
+                        $scope.$emit("user-login-success");
+                    });
                 }
 
 

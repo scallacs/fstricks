@@ -138,6 +138,10 @@
             self.isValid = function() {
                 return self._submitBtn.isEnabled();
             };
+            
+            self.isDisplayed = function(){
+                return form.isDisplayed();
+            };
 
             self.submit = function() {
                 expect(self._submitBtn.isEnabled()).toBe(true);

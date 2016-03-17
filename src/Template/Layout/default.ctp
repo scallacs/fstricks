@@ -34,8 +34,12 @@
 
     <?= $this->Element('Common/footer'); ?>
 
-    <?php if (\Cake\Core\Configure::read('user_feedback')) { ?>
-        <angular-feedback options="{ajaxURL: '<?php \Cake\Core\Router::url(['controller' => 'feedback', 'action' => 'send', 'prefix' => 'api']);?>'}"></angular-feedback>
+    <?php if (\Cake\Core\Configure::read('user_feedback')) {
+        ?>
+        <!--<div class="feeback-container">-->
+            <angular-feedback options="feedbackOptions" ng-show="authData.isAuthed()">
+            </angular-feedback>
+        <!--</div>-->
     <?php } ?>
 
 </body>

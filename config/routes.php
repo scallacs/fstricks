@@ -49,10 +49,6 @@ Router::prefix('Admin', function ($routes) {
     $routes->connect('/login', ['controller' => 'users', 'action' => 'login']);    
     $routes->connect('/**', ['controller' => 'Pages', 'action' => 'app']);    
 });
-//Router::scope('/admin', function ($routes) {
-//    $routes->connect('/**', ['controller' => 'Pages', 'action' => 'app']);
-//    $routes->fallbacks('InflectedRoute');
-//});
 
 Router::scope('/api', function ($routes) {
     $routes->extensions(['json']);
