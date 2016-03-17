@@ -91,7 +91,7 @@ class SearchHelper {
                 $conditions['AND'][] = [$field .' LIKE ' => '%' . trim($term) . '%'];
             }
         }
-        print_r($conditions);
+//        print_r($conditions);
         $this->query->where([$conditions]);
 //        print_r($this->query->sql());
     }

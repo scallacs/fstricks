@@ -129,7 +129,7 @@ class RidersController extends AppController {
             if (isset($data['q'])) {
                 $searchHelper = new \App\Lib\SearchHelper($data, $query);
                 $searchHelper->required('q', 
-                        'CONCAT(Riders.firstname,Riders.lastname)', [
+                        'CONCAT(firstname, \' \', lastname)', [
                             'type' => 'keywords'
                         ]);
             } else {

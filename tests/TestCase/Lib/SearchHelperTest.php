@@ -36,8 +36,10 @@ class SearchHelperTest extends \Cake\TestSuite\TestCase {
         $table = TableRegistry::get('tests');
         $query = $table->query('all');
         
+        $query->select(['firstname', 'lastname']);
+        
         $search = new \App\Lib\SearchHelper($data, $query);
-        $search->required('q', 'CONCAT(Riders.firstname,Riders.lastname)', [
+        $search->required('q', 'CONCAT(tests.firstname,tests.lastname)', [
             'type' => 'keywords'
         ]);
         
