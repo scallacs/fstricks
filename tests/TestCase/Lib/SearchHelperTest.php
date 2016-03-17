@@ -37,7 +37,7 @@ class SearchHelperTest extends \Cake\TestSuite\TestCase {
         $query = $table->query('all');
         
         $search = new \App\Lib\SearchHelper($data, $query);
-        $search->required('q', 'CONCAT(A,B)', [
+        $search->required('q', 'CONCAT(Riders.firstname,Riders.lastname)', [
             'type' => 'keywords'
         ]);
         
