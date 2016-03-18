@@ -21,14 +21,14 @@ class SearchHelper {
         $this->query = $query;
     }
 
-    public function optional($name, $field, $options) {
+    public function optional($name, $field, $options = []) {
         if ($this->has($name)) {
             $this->_generate($name, $field, $options);
         }
         return $this;
     }
 
-    public function required($name, $field, $options) {
+    public function required($name, $field, $options = []) {
         if (!$this->has($name)) {
             throw new MissingSearchParams('Required field ' . $name . ' is missing');
         }

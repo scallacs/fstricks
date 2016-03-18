@@ -5,7 +5,8 @@ angular.module('app.admin', [
     'app.player',
     'app.config',
     'app.tag',
-    'toaster'
+    'toaster',
+    'satellizer'
 ])
         .config(ConfigInterceptor)
         .controller('ModalInstanceCtrl', ModalInstanceCtrl)

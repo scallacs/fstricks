@@ -409,9 +409,10 @@ function AddVideoTagController($scope, $filter, $state, $stateParams,
         changeSliderValues([0, 10], 1);
     }
 
-    function playVideo(video) {
+    function playVideo(video, repeat) {
+        PlayerData.stopLooping();
         return PlayerData.loadVideo(video.provider_id, {video_url: video.video_url})
-                .then(addNewTag)
+                //.then(addNewTag)
                 .finally(function() {
                     SharedData.pageLoader(false);
                 });
