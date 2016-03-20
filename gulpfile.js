@@ -38,7 +38,8 @@ gulp.task('concat-js-lib', function() {
         "webroot/js/lib/jquery-ui.min.js",
         'webroot/js/lib/bootstrap.min.js',
         "webroot/js/lib/ui-bootstrap-custom-tpls-0.14.3.min.js",
-        "webroot/js/lib/slider.min.js"
+        "webroot/js/lib/slider.min.js",
+        "webroot/js/lib/froogaloop.js"
     ])
             .pipe(stripDebug())
             .pipe(concat('lib.js'))

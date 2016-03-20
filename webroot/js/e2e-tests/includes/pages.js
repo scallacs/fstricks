@@ -15,9 +15,9 @@
             'videoplayer.best': '/player/best',
             'videoplayer.video': '/player/video',
             'videoplayer.sport': '/player/sport',
-            'editplaylist': '/playlist/edit',
             'videoplayer.tag': '/player/trick',
-            'videoplayer.rider': '/player/rider'
+            'videoplayer.rider': '/player/rider',
+            'editplaylist': '/playlist/edit',
         };
 
         app.webroot = 'http://localhost:8082/Tricker/';

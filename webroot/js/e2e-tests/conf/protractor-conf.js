@@ -2,7 +2,7 @@ exports.config = {
     framework: 'jasmine',
     seleniumAddress: 'http://localhost:4444/wd/hub',
     specs: [
-//        '../signup.spec.js',
+        '../signup.spec.js',
 //        '../login.spec.js',
 //        '../add-video.spec.js',
 //        '../settings.spec.js',
@@ -13,17 +13,17 @@ exports.config = {
     ],
     defaultTimeoutInterval: 40000,
     multiCapabilities: [
-//        {
-//            browserName: 'chrome'
-//        },
+        {
+            browserName: 'chrome'
+        },
 //        {
 //            browserName: 'firefox'
 //        },
-        {
-            'browserName': 'internet explorer',
-            'platform': 'ANY',
-            'version': '11'
-        }
+//        {
+//            'browserName': 'internet explorer',
+//            'platform': 'ANY',
+//            'version': '11'
+//        }
     ],
     baseUrl: 'http://localhost:8082/Tricker/',
     onPrepare: function() {

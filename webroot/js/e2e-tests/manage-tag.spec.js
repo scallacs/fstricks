@@ -10,30 +10,36 @@ describe('Manage tags: ', function() {
     var util = new Util();
 
     beforeAll(function() {
-        app.login().then(function() {
-            nav.navigateTo('dashboard');
-            browser.waitForAngular();
-        });
+        app.login();
+    });
+
+    beforeEach(function() {
+        nav.navigateTo('dashboard');
     });
 
     it('Should be possible to change tabs', function() {
         var tabs = new util.tabs(element(by.id('TabsetVideoTags')));
-
         tabs.change('Rejected');
+        browser.waitForAngular();
         tabs.change('Officials');
+        browser.waitForAngular();
         tabs.change('Pendings');
     });
-    
+
     it('Should be possible to remove a tag not validated', function() {
         var videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(0));
-        videoTagItem.openOptionLinkByCss('.btn-remove-item').click(function(){
-            
+        videoTagItem.openOptionLinkByCss('.btn-remove-item').then(function() {
+            var dialog = new util.modalDialog();
+            browser.sleep(1000);
+            dialog.ok().then(function() {
+
+            });
         });
     });
 
     it('Should be possible to edit a tag', function() {
-        var videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(0));
-        videoTagItem.openOptionLinkByState('addtag').then(function(){
+        var videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(1));
+        videoTagItem.openOptionLinkByState('addtag').then(function() {
             app.assertLocation('addtag');
         });
     });
