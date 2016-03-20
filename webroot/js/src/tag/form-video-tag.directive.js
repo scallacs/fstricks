@@ -8,8 +8,7 @@ function FormVideoTagDirective() {
             editionTag: '=editionTag'
         },
         templateUrl: TEMPLATE_URL + '/tag/partials/form-video-tag.html',
-        controller: ['$scope', '$filter', 'TagEntity', 'RiderEntity', 'SharedData', 'PlayerData',
-            'VideoTagData', 'PaginateDataLoader', FormVideoTagController]
+        controller: FormVideoTagController
     };
 
 }
@@ -39,6 +38,8 @@ function FormVideoTagDirective() {
  - category_id
  - rider_id [optional]
  */
+FormVideoTagController.$inject = ['$scope', '$filter', 'TagEntity', 'RiderEntity', 'SharedData', 'PlayerData',
+            'VideoTagData', 'PaginateDataLoader'];
 function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedData, PlayerData,
         VideoTagData, PaginateDataLoader) {
 
