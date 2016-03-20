@@ -2,16 +2,6 @@
     class="container-fluid"
     ng-show="playerData.showListTricks"
     >
-<!--
-<div
-    class="container-fluid"
-    ng-show="playerData.showListTricks"
-    infinite-scroll='videoTagData.getLoader().loadNextPage()' 
-    infinite-scroll-disabled='videoTagData.getLoader().disabled' 
-    infinite-scroll-distance='0.1'
-    infinite-scroll-immediate-check="false"
-    >
--->
     <div class="row" ng-if="playerData.isMode('edition')">
         <button class="btn btn-success btn-block btn-add-tag" ng-click="addNewTag()">
             <span class="glyphicon glyphicon-plus-sign"></span> 

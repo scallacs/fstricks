@@ -128,11 +128,79 @@ function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, P
     }
 }
 
-VideoTagEditController.$inject = ['SharedData', '$stateParams'];
-function VideoTagEditController(SharedData, $stateParams) {
+VideoTagEditController.$inject = ['$scope', 'SharedData', '$stateParams', 'AdminApiFactory', 'VideoEntity', 'EditionTag', '$state', 'VideoTagData', 'PlayerData'];
+function VideoTagEditController($scope, SharedData, $stateParams, AdminApiFactory, VideoEntity, EditionTag, $state, VideoTagData, PlayerData) {
     SharedData.pageLoader(false);
-    
+    $scope.user = false;
+
     var id = $stateParams.videoTagId;
 
-    
+    EditionTag.prototype.callApi = function(name, params) {
+        switch (name) {
+            case 'delete':
+                params = {_id: params.id};
+                break;
+            case 'edit':
+                params._id = params.id;
+                break;
+        }
+        return this._apiMap[name](params);
+    };
+
+    $scope.editionTag = new EditionTag(null, {
+        'edit': AdminApiFactory.endpoint('VideoTags', 'edit').save,
+        'add': AdminApiFactory.endpoint('VideoTags', 'add').save,
+        'delete': AdminApiFactory.endpoint('VideoTags', 'delete').save
+    }, 'admin');
+//
+////    PlayerData.showEditionMode();
+////    PlayerData.showListTricks = false;
+////    VideoTagData.reset();
+////    VideoTagData.getLoader()
+////            .setFilter('with_pending', true)
+////            .setFilter('video_id', $stateParams.videoId);
+//
+    var videoTagsEndpoint = AdminApiFactory.endpoint('VideoTags', 'view', id);
+    videoTagsEndpoint.get().$promise
+            .then(function(result) {
+                console.log(result);
+                $scope.video = {
+                    video_url: result.video_url,
+                    id: result.video_id,
+                    provider_id: result.provider_id,
+                    duration: parseInt(result.video_duration)
+                };
+                $scope.editionTag.fromVideoTag(result);
+                $scope.editionTag.setVideo($scope.video);
+                
+                VideoTagData.getLoader().add(result);
+                VideoTagData.setCurrentTag(result);
+                PlayerData.data.duration = $scope.video.duration;
+
+                PlayerData.playVideoTag(result);
+
+                if (result.user_id) {
+                    loadUser(result.user_id);
+                }
+
+                SharedData.pageLoader(false);
+            })
+            .catch(function() {
+                // TODO
+//               $state.go('notfound');
+            });
+
+    function loadUser(id) {
+        var usersEndpoint = AdminApiFactory.endpoint('Users', 'view', id).get;
+        usersEndpoint().$promise.then(function(result) {
+            console.log(result);
+            $scope.user = result;
+        });
+    }
+    ;
+
+    $scope.$on('on-video-tag-remove', function() {
+        $state.$go('videotags.index');
+    });
 }
+

@@ -5,8 +5,12 @@ angular.module('app.admin', [
     'app.player',
     'app.config',
     'app.tag',
+    'app.rider',
     'toaster',
-    'satellizer'
+    'satellizer',
+    
+    'app.account', // Required by form-video-tag !!???
+    'toaster'
 ])
         .config(ConfigInterceptor)
         .controller('ModalInstanceCtrl', ModalInstanceCtrl)

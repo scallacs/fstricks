@@ -79,6 +79,7 @@
     <?= $this->Html->script('src/tag/trick-list.directive'); ?>
     <?= $this->Html->script('src/tag/video-tag-item.directive'); ?>
     <?= $this->Html->script('src/tag/add-video-tag.controller'); ?>
+    <?= $this->Html->script('src/tag/form-video-tag.directive'); ?>
     <?= $this->Html->script('src/page/app.page.module'); ?>
     <?= $this->Html->script('src/app.config.module'); ?>
     <?= $this->Html->script('src/app.module'); ?>

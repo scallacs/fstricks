@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Controller\AppController;
 use App\Lib\ResultMessage;
 use Cake\Core\Configure;
+
 /**
  * VideoTags Controller
  *
@@ -12,7 +13,6 @@ use Cake\Core\Configure;
  */
 class VideoTagsController extends AppController {
 
-    
     public function initialize() {
         parent::initialize();
         $this->loadComponent('Paginator');
@@ -21,7 +21,7 @@ class VideoTagsController extends AppController {
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
     }
-    
+
     /**
      * Video tags to validate
      *
@@ -38,44 +38,42 @@ class VideoTagsController extends AppController {
                         'count_accurate' => 'VideoTags.count_accurate',
                     ])
                     ->contain([
-                        'Users' => function ($q) {
-                            return $q->select([
-                                    'username' => 'Users.username',
-                                    'user_id' => 'Users.id'
-                                ]);
-                        }
-                    ]);
-                        
+                'Users' => function ($q) {
+            return $q->select([
+                        'username' => 'Users.username',
+                        'user_id' => 'Users.id'
+            ]);
+        }
+            ]);
+
             $searchHelper = new \App\Lib\SearchHelper($this->request->query, $query);
             $searchHelper
-                        ->optional('status', 'VideoTags.status', [
+                    ->optional('status', 'VideoTags.status', [
 //                            'rule' => 'number',
-                            'split' => ',',
-                        ])
-                        ->optional('user_id', 'VideoTags.user_id', [
+                        'split' => ',',
+                    ])
+                    ->optional('user_id', 'VideoTags.user_id', [
 //                            'rule' => 'number',
-                            'condition' => '='
-                        ])
-                        ->optional('sports', 'Tags.sport_id', [
+                        'condition' => '='
+                    ])
+                    ->optional('sports', 'Tags.sport_id', [
 //                            'rule' => 'number',
-                            'split' => ',',
-                        ])
-                        ->orders('order', [
-                            'modified' => ['VideoTags.modified DESC'],
-                            'created' => ['VideoTags.created DESC'],
-                            'best' => ['VideoTags.count_points DESC']
-                        ]);
+                        'split' => ',',
+                    ])
+                    ->orders('order', [
+                        'modified' => ['VideoTags.modified DESC'],
+                        'created' => ['VideoTags.created DESC'],
+                        'best' => ['VideoTags.count_points DESC']
+            ]);
 //            debug($query->sql());
 //            die();
 
             ResultMessage::setPaginateData(
-                    $this->paginate($query), 
-                    $this->request->params['paging']['VideoTags']);
+                    $this->paginate($query), $this->request->params['paging']['VideoTags']);
         } catch (NotFoundException $e) {
             ResultMessage::overwriteData([]);
         }
     }
-    
 
     /**
      * View method
@@ -84,13 +82,14 @@ class VideoTagsController extends AppController {
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-//    public function view($id = null) {
-//        $videoTag = $this->VideoTags->get($id, [
-//            'contain' => ['Videos', 'Tags', 'Users', 'VideoTagPoints']
-//        ]);
-//        $this->set('videoTag', $videoTag);
-//        $this->set('_serialize', ['videoTag']);
-//    }
+    public function view($id = null) {
+        $videoTag = $this->VideoTags->findAndJoin()
+                ->where(['VideoTags.id' => $id, 'VideoTags.status !=' => \App\Model\Entity\VideoTag::STATUS_BLOCKED])
+                ->limit(1)
+                ->first();
+        ResultMessage::overwriteData($videoTag);
+        ResultMessage::setWrapper(false);
+    }
 
     /**
      * Add method
@@ -122,19 +121,37 @@ class VideoTagsController extends AppController {
         try {
             $videoTag = $this->VideoTags->get($id);
             if ($this->request->is(['patch', 'post', 'put'])) {
-                
-                $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data, 
-                    ['accessibleFields' => ['status' => true]]);
-                
+
+                $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data);
+
                 if ($this->VideoTags->save($videoTag)) {
                     ResultMessage::setMessage(__('The video tag has been saved.'), true);
                 } else {
                     ResultMessage::setMessage(__('The video tag could not be saved. Please, try again.'), false);
+                    ResultMessage::addValidationErrorsModel($videoTag);
                 }
             }
-        } 
-        catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
+        } catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
             throw new \Cake\Network\Exception\NotFoundException();
+        }
+    }
+
+    /**
+     * Add method
+     *
+     */
+    public function add() {
+        if ($this->request->is(['patch', 'post'])) {
+
+            $videoTag = $this->VideoTags->newEntity($this->request->data);
+            $videoTag->user_id = $this->Auth->user('id');
+
+            if ($this->VideoTags->save($videoTag)) {
+                ResultMessage::setMessage(__('The video tag has been added.'), true);
+            } else {
+                ResultMessage::setMessage(__('The video tag could not be added. Please, try again.'), false);
+                ResultMessage::addValidationErrorsModel($videoTag);
+            }
         }
     }
 

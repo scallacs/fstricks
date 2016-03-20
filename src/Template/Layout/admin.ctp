@@ -12,6 +12,7 @@
             <?= $this->Html->script('admin/dashboard/dashboard.controller.js'); ?>
             <?= $this->Html->script('admin/video-tags/video-tags.controller.js'); ?>
             <?= $this->Html->script('admin/users/users.controller.js'); ?>
+            <?= $this->Html->script('admin/users/user-item.directive.js'); ?>
 
         <?php } else { ?>
 

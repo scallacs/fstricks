@@ -49,5 +49,9 @@ function ConfigRouting($stateProvider) {
             .state("otherwise", {
                 url: "*path",
                 templateUrl: TEMPLATE_URL + "/views/error-not-found.html",
+            })
+            .state("notfound", {
+                url: "*path",
+                templateUrl: TEMPLATE_URL + "/views/error-not-found.html"
             });
 }

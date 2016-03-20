@@ -19,7 +19,6 @@ function AdminApiFactory(Api, ApiResourceFactory ) {
                 url += '/:_id';
                 extra._id = '@_id';
             }
-//            url += angular.isDefined(id) ? '/' + id : '/:_id';
             url += '.json';
             console.log("Creating endpoint: " + url);
             return ApiResourceFactory.create(url, extra);

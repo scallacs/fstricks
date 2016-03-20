@@ -75,4 +75,17 @@ class UsersController extends AppController {
         }
     }
 
+    
+    /**
+     * View method
+     *
+     * @param string|null $id Video Tag id.
+     * @return void
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
+    public function view($id = null) {
+        $videoTag = $this->Users->get($id);
+        ResultMessage::overwriteData($videoTag);
+        ResultMessage::setWrapper(false);
+    }
 }
