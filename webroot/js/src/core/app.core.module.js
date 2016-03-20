@@ -483,9 +483,10 @@ function PaginateDataLoader($q) {
 
         return deferred.promise;
 
+        // results contains only the last page
         function successCallback(results) {
             if (that.disabled) {
-                deferred.resolve(results);
+                deferred.resolve(that.data);
             }
             else {
                 that.loadNextPage().then(successCallback);

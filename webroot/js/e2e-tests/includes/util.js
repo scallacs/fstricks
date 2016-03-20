@@ -148,6 +148,18 @@
                 return self._submitBtn.click();
             };
         };
+        
+        this.tabs = function(elem){
+            var self = this;
+            expect(elem.isPresent()).toBe(true);
+            self._elem = elem;
+            
+            self.change = function(heading){
+                var tabLink = self._elem.element(by.css('li[heading="' + heading + '"] a'));
+                expect(tabLink.isPresent()).toBe(true);
+                return tabLink.click();
+            };
+        };
     };
 
     module.exports = function() {
