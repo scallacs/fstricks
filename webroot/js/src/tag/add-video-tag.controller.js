@@ -29,7 +29,7 @@ function AddVideoTagController($scope, $state, $stateParams, VideoTagData, Video
             loader      .setMode('append')
                         .loadAll()
                         .then(function() {
-                            data = loader.data;
+                            var data = loader.data;
                             if ($stateParams.tagId) {
                                 console.log("Searching for tag " + $stateParams.tagId + " to edit among " + data.items.length + " items");
                                 console.log(data);

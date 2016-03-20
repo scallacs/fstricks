@@ -29,7 +29,7 @@ gulp.task('concat-js-components', function() {
     ])
             .pipe(stripDebug())
             .pipe(concat('components.js'))
-//            .pipe(uglify())
+            .pipe(uglify())
             .pipe(gulp.dest('./webroot/js/'))
 });
 
@@ -43,7 +43,7 @@ gulp.task('concat-js-lib', function() {
     ])
             .pipe(stripDebug())
             .pipe(concat('lib.js'))
-//            .pipe(uglify())
+            .pipe(uglify())
             .pipe(gulp.dest('./webroot/js/'))
 });
 
