@@ -3,7 +3,12 @@
 <div class="bg-primary padding-sm">
 
     <div class="padding-sm container">
-        <form class="form-horizontal" ng-submit="submitSearch(search)">
+        <p class="text-right">
+            <button type="button" class="btn btn-default" ng-click="isSearchCollapsed = !isSearchCollapsed">
+                <span class="glyphicon glyphicon-search"></span> Search
+            </button>
+        </p>
+        <form class="form-horizontal" ng-submit="submitSearch(search)" uib-collapse="isSearchCollapsed">
             <div class="form-group">
                 <label class="col-sm-4">Status</label>
                 <div class="col-sm-8 checkbox">
@@ -75,7 +80,7 @@
             <tr ng-repeat="videoTag in videoTags" removable-item removable-item-options="removeOptions"
                 removable-item-id="{_id: videoTag.id}">
                 <td video-tag-item video-tag="videoTag"></td>
-                <td>{{videoTag.modified}}</td>
+                <td>{{videoTag.modified | timeago}}</td>
                 <td class="text-bold" ng-class="video-tag-status-{{videoTag.status}}">
                     {{videoTag.status}}
                 </td>

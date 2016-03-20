@@ -1,10 +1,25 @@
-<?= $this->Html->script('https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js'); ?>
-<?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"); ?>
-<?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-resource.min.js"); ?>
-<?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"); ?>
-<?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-cookies.min.js"); ?>
-<?= $this->Html->script("https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"); ?>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.js"></script>
+<?php if (\Cake\Core\Configure::read('debug')) { ?>
+    <?= $this->Html->script('components/jquery/dist/jquery.min.js'); ?> 
+    <?= $this->Html->script('components/angular/angular.min.js'); ?> 
+    <?= $this->Html->script('components/angular-resource/angular-resource.min.js'); ?> 
+    <?= $this->Html->script('components/angular-messages/angular-messages.min.js'); ?> 
+    <?= $this->Html->script('components/angular-animate/angular-animate.min.js'); ?> 
+    <?= $this->Html->script('components/angular-cookies/angular-cookies.min.js'); ?> 
+    <?= $this->Html->script("components/angular-ui-router/release/angular-ui-router.min"); ?>
+    <?= $this->Html->script('components/AngularJS-Toaster/toaster.min.js'); ?> 
+    <?= $this->Html->script('components/jquery-timeago/jquery.timeago.js'); ?> 
+    <?= $this->Html->script("components/angular-simple-logger/dist/angular-simple-logger.min.js"); ?> 
+    <?= $this->Html->script('components/ui-select/dist/select.min.js'); ?>   
+    <?= $this->Html->script("components/ng-file-upload/ng-file-upload-shim.min.js"); ?>
+    <?= $this->Html->script("components/ng-file-upload/ng-file-upload.min.js"); ?>
+    <?= $this->Html->script("components/angular-socialshare/angular-socialshare.min.js"); ?>  
+    <?= $this->Html->script("components/satellizer/satellizer.min.js"); ?>                    
+    <?= $this->Html->script("components/angular-utils-pagination/dirPagination.js"); ?>        
+    <?= $this->Html->script("components/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js"); ?>
+<?php } else { ?>
+    <?= $this->Html->script('components.js'); ?>
+<?php } ?>
+
 
 <?php if (\Cake\Core\Configure::read('debug')) { ?>
     <?= $this->Html->script("lib/jquery-ui.min.js"); ?> 
@@ -15,23 +30,6 @@
 <?php } else { ?>
     <?php // $this->Html->script("https://f.vimeocdn.com/js/froogaloop2.min.js"); ?>
     <?= $this->Html->script('lib.js'); ?>
-<?php } ?>
-
-<?php if (\Cake\Core\Configure::read('debug')) { ?>
-    <?php // echo  $this->Html->script("components/lodash/dist/lodash.min.js"); ?> 
-    <?= $this->Html->script('components/jquery-timeago/jquery.timeago.js'); ?> 
-    <?= $this->Html->script("components/angular-ui-router/release/angular-ui-router.min"); ?>
-    <?= $this->Html->script("components/angular-simple-logger/dist/angular-simple-logger.min.js"); ?> 
-    <?= $this->Html->script('components/ui-select/dist/select.min.js'); ?>   
-    <?= $this->Html->script("components/ng-file-upload/ng-file-upload-shim.min.js"); ?>
-    <?= $this->Html->script("components/ng-file-upload/ng-file-upload.min.js"); ?>
-    <?= $this->Html->script("components/angular-socialshare/angular-socialshare.min.js"); ?>  
-    <?= $this->Html->script("components/satellizer/satellizer.min.js"); ?>                    
-    <?= $this->Html->script("components/angular-utils-pagination/dirPagination.js"); ?>        
-    <?php // $this->Html->script("components/ngInfiniteScroll/build/ng-infinite-scroll.min.js"); ?>
-    <?= $this->Html->script("components/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js"); ?>
-<?php } else { ?>
-    <?= $this->Html->script('components.js'); ?>
 <?php } ?>
 
 <?php if (\Cake\Core\Configure::read('debug')) { ?>
@@ -99,5 +97,6 @@ if (\Cake\Core\Configure::read('user_feedback')) {
         app.requires.push('angular-send-feedback');
     </script>
     <?php
+
 }
 ?>

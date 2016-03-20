@@ -23,19 +23,20 @@ describe('Manage tags: ', function() {
         tabs.change('Officials');
         tabs.change('Pendings');
     });
-
-    it('Should be possible to edit a tag', function() {
-        var videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(0));
-        videoTagItem.openOptionLinkByState('addtag').then(function(){
-            // TODO 
-        });
-    });
-
+    
     it('Should be possible to remove a tag not validated', function() {
         var videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(0));
         videoTagItem.openOptionLinkByCss('.btn-remove-item').click(function(){
             
         });
     });
+
+    it('Should be possible to edit a tag', function() {
+        var videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(0));
+        videoTagItem.openOptionLinkByState('addtag').then(function(){
+            app.assertLocation('addtag');
+        });
+    });
+
 
 });

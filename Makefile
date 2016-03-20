@@ -104,6 +104,7 @@ test-controller: config-test
 	vendor/bin/phpunit --coverage-html webroot/coverage tests/TestCase/Controller/$(q)ControllerTest.php
 
 start-webdriver:
+	$(WEBDRIVER_MANAGER_BIN) update --ie 
 	$(WEBDRIVER_MANAGER_BIN) start 
 	
 # target : - test-frontend run test on backend 

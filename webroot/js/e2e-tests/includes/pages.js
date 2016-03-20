@@ -11,6 +11,7 @@
             login: '/login',
             sinup: '/signup',
             addvideo: '/video/add',
+            addtag: '/tag/add/',
             'videoplayer.best': '/player/best',
             'videoplayer.video': '/player/video',
             'videoplayer.sport': '/player/sport',

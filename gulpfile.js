@@ -8,6 +8,14 @@ var cleanCSS = require('gulp-clean-css');
 
 gulp.task('concat-js-components', function() {
     gulp.src([
+        "webroot/js/components/jquery/dist/jquery.min.js",
+        "webroot/js/components/angular/angular.min.js",
+        "webroot/js/components/angular-resource/angular-resource.min.js",
+        "webroot/js/components/angular-messages/angular-messages.min.js",
+        "webroot/js/components/angular-animate/angular-animate.min.js",
+        "webroot/js/components/angular-cookies/angular-cookies.min.js",
+        "webroot/js/components/angular-ui-router/release/angular-ui-router.min.js",
+        "webroot/js/components/AngularJS-Toaster/toaster.min.js",
         'webroot/js/components/jquery-timeago/jquery.timeago.js',
         "webroot/js/components/angular-ui-router/release/angular-ui-router.min.js",
         "webroot/js/components/angular-simple-logger/dist/angular-simple-logger.min.js",
@@ -17,7 +25,6 @@ gulp.task('concat-js-components', function() {
         "webroot/js/components/angular-socialshare/angular-socialshare.min.js",
         "webroot/js/components/satellizer/satellizer.min.js",
         "webroot/js/components/angular-utils-pagination/dirPagination.js",
-        //"webroot/js/components/ngInfiniteScroll/build/ng-infinite-scroll.min.js",
         "webroot/js/components/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js"
     ])
             .pipe(stripDebug())

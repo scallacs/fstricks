@@ -11,6 +11,7 @@ VideoTagIndexController.$inject = ['$scope', 'AdminApiFactory', 'SharedData', 't
 function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, PaginateDataLoader) {
     $scope.removeOptions = {trigger: '.btn-remove-item', endpoint: AdminApiFactory.endpoint('VideoTags', 'delete').save, confirm: true, wait: false};
     $scope.refreshUsers = refreshUsers;
+    $scope.isSearchCollapsed = true;
     $scope.search = {
         status: {'pending': true, 'rejected': false, 'validated': false, 'blocked': false},
         sports: {},
@@ -40,8 +41,8 @@ function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, P
     });
 
     var api = AdminApiFactory.api();
-    var dataLoader = PaginateDataLoader.create(AdminApiFactory.endpoint('VideoTags', 'index').get)
-            .setMode('append');
+    var dataLoader = PaginateDataLoader.create(AdminApiFactory.endpoint('VideoTags', 'index').get);
+    dataLoader.setMode('append');
 
     submitSearch($scope.search);
 
@@ -84,6 +85,8 @@ function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, P
         if (!allSelected) {
             dataLoader.setFilter('sports', selected.join());
         }
+        
+        dataLoader.setFilter('order', $scope.search.order);
     }
 
     function computeRatio(videoTag) {
