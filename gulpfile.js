@@ -64,7 +64,7 @@ gulp.task('concat-js', function() {
             .pipe(stripDebug())
             .pipe(concat('app.js'))
 //    .pipe(ngAnnotate())
-//            .pipe(uglify())
+            .pipe(uglify())
             .pipe(gulp.dest('./webroot/js/'))
 });
 
