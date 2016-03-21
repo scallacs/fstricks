@@ -127,13 +127,13 @@ function EditionTag() {
         isValidated: isValidated,
         isOwner: isOwner,
         remove: remove,
-        callApi: callApi
+        callApi: callApi,
+        hasApi: hasApi
     };
     
     function remove(){
         return this.callApi('delete', {id: this.getId()}).$promise;
     }
-    
     function isOwner() {
         return this._user_id === this._video_tag.user_id;
     }
@@ -167,12 +167,16 @@ function EditionTag() {
     function callApi(name, param){
         return this._apiMap[name](param);
     }
+    function hasApi(name){
+        return this._apiCall[name] == true;
+    }
+    
 
     function save(form) {
         console.log(form);
         var self = this;
         if (this.isNew()) {
-            return form.submit(this.callApi('all', this.toPostData()).$promise)
+            return form.submit(this.callApi('add', this.toPostData()).$promise)
                     .then(function(response) {
                         console.log("Creating a new tag!'");
                         self.setStatus(response.data.status);
