@@ -118,11 +118,13 @@ class VideoTagsController extends AppController {
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
     public function edit($id = null) {
-        try {
+//        try {
             $videoTag = $this->VideoTags->get($id);
             if ($this->request->is(['patch', 'post', 'put'])) {
 
-                $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data);
+                $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data, [
+                    'fieldList' => ['begin', 'end', 'tag_id', 'status', 'rider_id']
+                ]);
 
                 if ($this->VideoTags->save($videoTag)) {
                     ResultMessage::setMessage(__('The video tag has been saved.'), true);
@@ -131,9 +133,9 @@ class VideoTagsController extends AppController {
                     ResultMessage::addValidationErrorsModel($videoTag);
                 }
             }
-        } catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
-            throw new \Cake\Network\Exception\NotFoundException();
-        }
+//        } catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
+//            throw new \Cake\Network\Exception\NotFoundException();
+//        }
     }
 
     /**

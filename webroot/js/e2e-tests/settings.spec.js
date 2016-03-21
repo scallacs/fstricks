@@ -89,7 +89,7 @@ describe('Settings ', function() {
                 if (test.btnEnabled && btnSave.isEnabled()) {
                     btnSave.click().then(function() {
                         if (test.success) {
-                            // TODO
+                            // TODO test success -> logout and try to login with new credentials
                         }
                     });
                 }
@@ -127,10 +127,11 @@ describe('Settings ', function() {
                 btnConfirm.click().then(function() {
                     if (test.success) {
                         expect(browser.getLocationAbsUrl()).not.toContain('/settings');
-                        // TODO test is authed
+                        expect(app.topNav().isAuthNav()).toBe(false);
                     }
                     else {
                         expect(browser.getLocationAbsUrl()).toContain('/settings');
+                        expect(app.topNav().isAuthNav()).toBe(true);
                     }
                 });
             });

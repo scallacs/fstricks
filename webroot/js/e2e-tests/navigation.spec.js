@@ -35,13 +35,6 @@ describe('Navigation', function() {
             });
         });
 
-//        it("Should be possible to navigate to the home page", function() {
-//            var homeLink = nav.getHomeLink(true);
-//            homeLink.click().then(function() {
-//                // TODO 
-//            });
-//        });
-
         it("Should be possible to navigate to sports pages", function() {
             nav.changeSport('snowboard').then(function() {
                 app.assertLocation('videoplayer.sport');

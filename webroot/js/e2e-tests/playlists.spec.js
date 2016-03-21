@@ -57,36 +57,36 @@ describe('Playlists: ', function() {
         app.login();
     });
 
-//    describe('Create a playlist ', function() {
-//        var form = null;
-//
-//        beforeAll(function() {
-//            nav.changeSport('snowboard');
-//            var container = element.all(by.css('.item-video-tag')).get(0);
-//            var videoTagItem = new VideoTagItem(container);
-//            videoTagItem.openOptionLinkByCss('[ng-click^="addToPlaylist"]').then(function() {
-//                element(by.id('ButtonNewPlaylist')).click().then(function() {
-//                });
-//            });
-//            browser.waitForAngular();
-//            form = new util.form(element(by.id('FormAddPlaylist')));
-//        });
-//
-//        // Add a new playlist
-//        playlists.forEach(function(playlist) {
-//            it(playlist.message, function() {
-////                console.log('TESTING: ' + playlist.message);
-////                console.log(playlist);
-//                form.fill(playlist.data);
-//                expect(form.isValid()).toBe(playlist.isValid);
-//
-//                if (playlist.isValid) {
-//                    form.submit();
-//                }
-//            });
-//        });
-//
-//    });
+    describe('Create a playlist ', function() {
+        var form = null;
+
+        beforeAll(function() {
+            nav.changeSport('snowboard');
+            var container = element.all(by.css('.item-video-tag')).get(0);
+            var videoTagItem = new VideoTagItem(container);
+            videoTagItem.openOptionLinkByCss('[ng-click^="addToPlaylist"]').then(function() {
+                element(by.id('ButtonNewPlaylist')).click().then(function() {
+                });
+            });
+            browser.waitForAngular();
+            form = new util.form(element(by.id('FormAddPlaylist')));
+        });
+
+        // Add a new playlist
+        playlists.forEach(function(playlist) {
+            it(playlist.message, function() {
+//                console.log('TESTING: ' + playlist.message);
+//                console.log(playlist);
+                form.fill(playlist.data);
+                expect(form.isValid()).toBe(playlist.isValid);
+
+                if (playlist.isValid) {
+                    form.submit();
+                }
+            });
+        });
+
+    });
 
     describe('Edit playlist', function() {
         var btnEditInfo;
@@ -132,45 +132,57 @@ describe('Playlists: ', function() {
             });
 
             it('Should be possible to remove a tricks', function() {
-                // TODO 
+                var container = element.all(by.css('li[removable-item]')).get(0);
+                var btnRemove = container.element(by.css('button.btn-remove-item'));
+//                var promiseCountItems = element.all(by.css('li[removable-item]')).count();
+//                promiseCountItems.then(function(nbInitial){
+                    btnRemove.click().then(function() {
+//                        expect(element.all(by.css('li[removable-item]')).count()).toBe(nbInitial - 1);
+                    });
+//                });
             });
 
-            it('Should be possible to change order', function() {
-                // TODO 
-            });
+            // TODO 
+//            it('Should be possible to change order', function() {
+//                browser.actions().
+//                        mouseMove(startPoint.getWebElement(), {x: 0, y: 0}).
+//                        mouseDown().
+//                        mouseMove(endPoint.getWebElement()).
+//                        mouseUp().
+//                        perform();
+//            });
 
         });
     });
-// TODO 
-//    describe('Manage playlist', function() {
-//
-//        beforeAll(function() {
-//            nav.navigateTo('manageplaylist');
-//            browser.waitForAngular();
+    //    
+    describe('Manage playlist', function() {
+
+        beforeAll(function() {
+            nav.navigateTo('manageplaylist');
+            browser.waitForAngular();
+        });
+
+//        it('The playlist created should be displayed', function() {
+//            var nbPlaylist = element.all(by.css('.playlist-edition-item')).count();
+//            expect(nbPlaylist).toBe(5);
 //        });
-//
-////        it('The playlist created should be displayed', function() {
-////            var nbPlaylist = element.all(by.css('.playlist-edition-item')).count();
-////            expect(nbPlaylist).toBe(5);
-////        });
-//
-//        it('Should be possible to delete a playlist', function() {
-//            var playlistItem = new PlaylistItem(element.all(by.css('.playlist-edition-item')).get(0), 'edition');
-//            playlistItem.remove().then(function() {
-//                browser.sleep(2000);
-//                browser.waitForAngular();
-//                var dialog = new util.modalDialog();
-//                dialog.ok().then(function() {
-//                    browser.waitForAngular();
-//                    // TODO check that item has been removed
-//                });
-//            });
-//        });
-//
-//        // Number of tags should be 1 for the new playlist => TODO
-//        // Should have the up/down button !
-//
-//    });
+
+        it('Should be possible to delete a playlist', function() {
+            var playlistItem = new PlaylistItem(element.all(by.css('.playlist-edition-item')).get(0), 'edition');
+            playlistItem.remove().then(function() {
+                browser.sleep(1000);
+                browser.waitForAngular();
+                var dialog = new util.modalDialog();
+                dialog.ok().then(function() {
+                    // TODO check that item has been removed
+                });
+            });
+        });
+
+        // Number of tags should be 1 for the new playlist => TODO
+        // Should have the up/down button !
+
+    });
 
 
 

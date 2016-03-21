@@ -15,7 +15,7 @@ describe('Rider profile: ', function() {
     
     it('Should be possible to search for a rider and view his tricks', function(){
         searchBar.sendKeys('torstein hor');
-        searchBar.pickChoice(0).then(function(){
+        searchBar.pickChoice(1).then(function(){
             app.assertLocation('videoplayer.rider');
         });
     });

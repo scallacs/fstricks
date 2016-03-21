@@ -1,8 +1,13 @@
 # Log to server
 ssh -i resources/webserver-fstricks-linux.pem ec2-user@fstricks.com
 
-########### PHP ################
+########### YUM ################
 sudo yum update -y
+
+########### GIT ################
+sudo yum install git
+
+########### PHP ################
 sudo yum install -y httpd24 php56 mysql55-server php56-mysqlnd
 sudo service httpd start
 sudo chkconfig httpd on
@@ -29,7 +34,7 @@ find /var/www -type f -exec sudo chmod 0664 {} \;
 
 #If any of the required packages are not listed in your output, install them with the sudo yum install package command.
 
-# MYSQL 
+########## MYSQL ############
 sudo service mysqld start
 sudo mysql_secure_installation
 sudo chkconfig mysqld on # start mysql server at every boot
@@ -47,7 +52,7 @@ sudo service httpd restart
 #### TOOLS ############
 #Composer
 php -r "readfile('https://getcomposer.org/installer');" > composer-setup.php
-php -r "if (hash('SHA384', file_get_contents('composer-setup.php')) === 'fd26ce67e3b237fffd5e5544b45b0d92c41a4afe3e3f778e942e43ce6be197b9cdc7c251dcde6e2a52297ea269370680') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); }"
+#php -r "if (hash('SHA384', file_get_contents('composer-setup.php')) === 'fd26ce67e3b237fffd5e5544b45b0d92c41a4afe3e3f778e942e43ce6be197b9cdc7c251dcde6e2a52297ea269370680') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); }"
 php composer-setup.php
 php -r "unlink('composer-setup.php');"
 sudo mv composer.phar /usr/local/bin/composer
@@ -61,9 +66,9 @@ sudo npm install bower -g
 sudo yum install libicu
 sudo yum install libicu-devel.x86_64
 sudo yum install php-pear # for pecl
-#sudo yum install libicu-devel
-#sudo yum install gcc gcc-c++ autoconf automake
-#sudo pecl install Xdebug
+sudo yum install libicu-devel
+sudo yum install gcc gcc-c++ autoconf automake
+sudo pecl install Xdebug
 #4) Find the php.ini file using
 #vim /etc/php.ini
 #And add the following line
@@ -73,7 +78,9 @@ sudo yum install php-pear # for pecl
 #echo "xdebug.remote_enable = 1" >> /etc/php.ini
 sudo yum install php56-devel.x86_64
 sudo pecl install intl
-echo "extension=intl.so" >> /etc/php.ini
+sudo echo "extension=intl.so" >> /etc/php.ini
+# Check pecl
+ll /usr/lib64/php/5.6/modules | grep intl
 sudo service httpd restart
 
 echo "LoadModule rewrite_module modules/mod_rewrite.so" >> /etc/httpd/conf/httpd.conf

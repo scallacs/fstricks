@@ -37,7 +37,7 @@
     <?php if (\Cake\Core\Configure::read('user_feedback')) {
         ?>
         <!--<div class="feeback-container">-->
-            <angular-feedback options="feedbackOptions" ng-show="authData.isAuthed()">
+            <angular-feedback options="feedbackOptions" ng-if="authData.isAuthed()">
             </angular-feedback>
         <!--</div>-->
     <?php } ?>
