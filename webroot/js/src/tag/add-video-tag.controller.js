@@ -39,6 +39,7 @@ function AddVideoTagController($scope, $state, $stateParams, VideoTagData, Video
                                     var item = data.items[i];
                                     if (item.id == $stateParams.tagId) { // @warning $stateParams is a string
                                         console.log("Tag to edit found!");
+                                        $scope.editionTag.fromVideoTag(item);
                                         PlayerData.playVideoTag($scope.editionTag.fromVideoTag(item)._video_tag);
                                         return;
                                     }
@@ -50,9 +51,6 @@ function AddVideoTagController($scope, $state, $stateParams, VideoTagData, Video
                             playVideo(video);
                         })
                         .finally(function() {
-                            if (PlayerData.currentTag === null) {
-                                VideoTagData.setCurrentTag($scope.editionTag._video_tag);
-                            }
                             SharedData.pageLoader(false);
                         });
         }, onError);
