@@ -43,6 +43,6 @@ class SearchHelperTest extends \Cake\TestSuite\TestCase {
             'type' => 'keywords'
         ]);
         
-        debug($query->sql());
+//        debug($query->sql());
     }
 }

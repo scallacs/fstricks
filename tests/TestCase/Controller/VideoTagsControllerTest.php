@@ -192,10 +192,7 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
             'end' => 10
         ];
         $this->post('/api/VideoTags/add.json', $data);
-
-        $this->assertResponseOk();
-        $result = json_decode($this->_response->body());
-        $this->assertTrue($result->success);
+        $this->assertResultMessageSuccess();
     }
 
 
@@ -217,10 +214,8 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
             'end' => 10
         ];
         $this->post('/api/VideoTags/add.json', $data);
-
-        $this->assertResponseOk();
-        $result = json_decode($this->_response->body());
-        $this->assertTrue($result->success);
+        debug($this->bodyAsJson());
+        $this->assertResultMessageSuccess();
     }
 
     /**

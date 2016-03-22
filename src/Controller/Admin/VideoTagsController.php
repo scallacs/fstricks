@@ -119,20 +119,21 @@ class VideoTagsController extends AppController {
      */
     public function edit($id = null) {
 //        try {
-            $videoTag = $this->VideoTags->get($id);
-            if ($this->request->is(['patch', 'post', 'put'])) {
+        $videoTag = $this->VideoTags->get($id);
+        if ($this->request->is(['patch', 'post', 'put'])) {
 
-                $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data, [
-                    'fieldList' => ['begin', 'end', 'tag_id', 'status', 'rider_id']
-                ]);
+            $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data, [
+                'fieldList' => ['begin', 'end', 'tag_id', 'status', 'rider_id']
+            ]);
+            $videoTag->tag = isset($this->request->data['tag']) ? $this->request->data['tag'] : null;
 
-                if ($this->VideoTags->save($videoTag)) {
-                    ResultMessage::setMessage(__('The video tag has been saved.'), true);
-                } else {
-                    ResultMessage::setMessage(__('The video tag could not be saved. Please, try again.'), false);
-                    ResultMessage::addValidationErrorsModel($videoTag);
-                }
+            if ($this->VideoTags->save($videoTag)) {
+                ResultMessage::setMessage(__('The video tag has been saved.'), true);
+            } else {
+                ResultMessage::setMessage(__('The video tag could not be saved. Please, try again.'), false);
+                ResultMessage::addValidationErrorsModel($videoTag);
             }
+        }
 //        } catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
 //            throw new \Cake\Network\Exception\NotFoundException();
 //        }
@@ -147,6 +148,7 @@ class VideoTagsController extends AppController {
 
             $videoTag = $this->VideoTags->newEntity($this->request->data);
             $videoTag->user_id = $this->Auth->user('id');
+            $videoTag->tag = isset($this->request->data['tag']) ? $this->request->data['tag'] : null;
 
             if ($this->VideoTags->save($videoTag)) {
                 ResultMessage::setMessage(__('The video tag has been added.'), true);

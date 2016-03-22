@@ -72,27 +72,9 @@ class VideoTagsController extends AppController {
         if ($this->request->is('post')) {
             $data = $this->request->data;
 
-            $tagId = null;
-            // Creating a new tag if needed !
-            if (isset($data['tag'])) {
-                // Create tag 
-                $tagTable = \Cake\ORM\TableRegistry::get('Tags');
-                $tagEntity = $tagTable->newEntity($data['tag']);
-                $tagEntity->user_id = $this->Auth->user('id');
-                $tagEntity = $tagTable->createOrGet($tagEntity, $this->Auth->user('id'));
-                if (!$tagEntity) {
-                    ResultMessage::setMessage(__('Cannot create this trick'), false);
-                    return;
-                }
-                $tagId = $tagEntity->id;
-                unset($data['tag']);
-            }
-
             $videoTag = $this->VideoTags->patchEntity($videoTag, $data);
+            $videoTag->tag = isset($data['tag']) ? $data['tag'] : null;
             $videoTag->user_id = $this->Auth->user('id');
-            if ($tagId !== null) {
-                $videoTag->tag_id = $tagId;
-            }
 
             if ($this->VideoTags->save($videoTag)) {
                 ResultMessage::setMessage(__('Your trick has been saved.'), true);
@@ -118,6 +100,7 @@ class VideoTagsController extends AppController {
                 $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data, [
                     'fieldList' => ['rider_id', 'begin', 'end', 'tag_id']
                 ]);
+                $videoTag->tag = isset($this->request->data['tag']) ? $this->request->data['tag'] : null;
 //                debug($videoTag);
                 $videoTag->status = VideoTag::STATUS_PENDING;
                 if ($this->VideoTags->save($videoTag)) {
@@ -283,7 +266,7 @@ class VideoTagsController extends AppController {
                 ResultMessage::setPaginateExtra('video', $videosTable->getPublic($videoId));
             }
             if (isset($this->request->query['only_owner'])) {
-                if (!$this->Auth->user('id')){
+                if (!$this->Auth->user('id')) {
                     throw new \Cake\Network\Exception\UnauthorizedException();
                 }
                 $query->where(['VideoTags.user_id' => $this->Auth->user('id')]);
@@ -328,12 +311,12 @@ class VideoTagsController extends AppController {
         }
     }
 
-    public function trending(){
+    public function trending() {
         ResultMessage::setWrapper(false);
         $query = $this->VideoTags->findTrending();
         ResultMessage::overwriteData($query->all());
     }
-    
+
     /**
      * Return recently tagged video by user
      * UPDATE tags T SET count_ref = (SELECT count(*) FROM video_tags WHERE tag_id = T.id)

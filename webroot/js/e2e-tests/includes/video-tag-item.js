@@ -43,6 +43,24 @@ var Util = require('./util.js');
         self.clickRider = function(){
             return self._rider.click();
         };
+        
+        self.upPoint = function(){
+            return self._btnPoint('up');
+            
+        };
+        self.downPoint = function(){
+            return self._btnPoint('down');
+        };
+        self._btnPoint = function(action){
+            var btn = self.container.element(by.css('div[up-down-points] .btn[ng-click^="'+action+'"]'));  
+            expect(btn.isDisplayed()).toBe(true);
+            return btn.click();
+        };
+        
+        self.isPointBtnDisabled = function(){
+            var btn = self.container.element(by.css('div[up-down-points] .btn[ng-click^="down"]'));  
+            return btn.isDisabled();
+        };
 
     };
 

@@ -58,13 +58,14 @@ class VideoTagsTable extends Table {
         ]);
     }
 
-    public function findTrending($limit = 5){
+    public function findTrending($limit = 5) {
         return $this->findAndJoin()
-                ->order(['VideoTags.count_points DESC'])
-                ->where(['VideoTags.status ' => VideoTag::STATUS_VALIDATED])
-                ->limit($limit)
-                ->cache('videotags', 'oneHourCache');
+                        ->order(['VideoTags.count_points DESC'])
+                        ->where(['VideoTags.status ' => VideoTag::STATUS_VALIDATED])
+                        ->limit($limit)
+                        ->cache('videotags', 'oneHourCache');
     }
+
     /**
      * Find data for tags and do joins 
      * 
@@ -102,7 +103,7 @@ class VideoTagsTable extends Table {
                 ]);
             };
         }
-        if ($query === null){
+        if ($query === null) {
             $query = $this->find('all');
         }
         return $query
@@ -143,8 +144,8 @@ class VideoTagsTable extends Table {
                 ->add('begin', 'decimal', ['rule' => 'decimal'])
                 ->add('begin', 'postive', [
                     'rule' => function ($value, $context) {
-                        return $value >= 0;
-                    },
+                return $value >= 0;
+            },
                     'message' => 'Begin time must be a positive number.'
                 ])
                 ->requirePresence('begin', 'create')
@@ -153,16 +154,16 @@ class VideoTagsTable extends Table {
         $validator
                 ->add('end', 'trick_duration', [
                     'rule' => function ($value, $context) {
-                        if ($value < self::MIN_TAG_DURATION) {
-                            return false;
-                        }
-                        if (isset($context['data']['begin'])) {
-                            $duration = $value - $context['data']['begin'];
-                            return $duration >= self::MIN_TAG_DURATION &&
-                                    $duration <= self::MAX_TAG_DURATION;
-                        }
-                        return true;
-                    },
+                if ($value < self::MIN_TAG_DURATION) {
+                    return false;
+                }
+                if (isset($context['data']['begin'])) {
+                    $duration = $value - $context['data']['begin'];
+                    return $duration >= self::MIN_TAG_DURATION &&
+                            $duration <= self::MAX_TAG_DURATION;
+                }
+                return true;
+            },
                     'message' => 'The trick duration must be between ' . self::MIN_TAG_DURATION . ' and ' .
                     self::MAX_TAG_DURATION . ' seconds.'
                 ])
@@ -249,6 +250,26 @@ class VideoTagsTable extends Table {
     }
 
     /**
+     * @param \Cake\ORM\Entity $entity
+     */
+    private function createTag($videoTag) {
+        // Creating a new tag if needed !
+        // Create tag 
+        $tagTable = \Cake\ORM\TableRegistry::get('Tags');
+        $tagEntity = $tagTable->newEntity($videoTag->tag);
+        $tagEntity->user_id = $videoTag->user_id;
+        $tagEntity = $tagTable->createOrGet($tagEntity, $tagEntity->user_id);
+        if (!$tagEntity) {
+            $videoTag->tag_id = null;
+            $videoTag->errors('tag_id', ['The new trick could not be created']);
+            return false;
+        }
+        $videoTag->tag_id = $tagEntity->id;
+        unset($tagEntity->tag);
+        return true;
+    }
+
+    /**
      * @param \App\Model\Table\Event $event
      * @param \Cake\ORM\Entity $entity
      * @param \App\Model\Table\ArrayObject $options
@@ -258,6 +279,12 @@ class VideoTagsTable extends Table {
             $event->stopPropagation();
             $entity->errors('status', ['You are not authorized to edit this trick']);
             return false;
+        }
+        
+        if ($entity->tag !== null) {
+            if (!$this->createTag($entity)){
+                $event->stopPropagation();
+            }
         }
 
         $entity->_delete_accuracy_rates = false;
@@ -275,7 +302,7 @@ class VideoTagsTable extends Table {
             // Reset counter
             if ($this->existsSimilarValidated($entity)) {
                 $entity->status = VideoTag::STATUS_DUPLICATE;
-            } 
+            }
         }
         $this->modified = date('c');
     }

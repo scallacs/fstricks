@@ -56,7 +56,14 @@ describe('Navigation', function() {
         
         it(' should be possible to view trick', function() {
             videoTagItem.watch().then(function(){
-                expect(element(by.css('.table-current-trick')).isPresent()).toBe(true);
+                expect(element(by.css('.table-current-trick')).isDisplayed()).toBe(true);
+            });
+        });
+        
+        it(' should be possible to add points for the current trick', function() {
+            videoTagItem = new VideoTagItem(element(by.css('.table-current-trick .item-video-tag')));
+            videoTagItem.upPoint().then(function(){
+                assert(videoTagItem.isPointBtnDisabled()).toBe(true);
             });
         });
         

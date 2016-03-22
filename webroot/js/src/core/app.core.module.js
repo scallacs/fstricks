@@ -105,12 +105,18 @@ function PlayerData(VideoTagData, $q) {
         onPause: onPause,
         onPlay: onPlay,
         hasVideo: hasVideo,
-        hide: hide
+        hide: hide,
+        setVideo: setVideo
     };
 
     obj.init();
 
     return obj;
+    
+    function setVideo(data){
+        this.data.provider = data.provider_id;
+        this.data.duration = data.duration;
+    }
 
     function hasVideo() {
         return !this.hasError() && this.state !== 'hide';
@@ -357,6 +363,9 @@ function PlayerData(VideoTagData, $q) {
 
     function getPromise() {
         console.log("Getting promise for: " + this.data.provider);
+        if (!this.data.provider){
+            throw "Unkown video provider";
+        }
         return this.deferred[this.data.provider].promise;
     }
 
@@ -1072,7 +1081,7 @@ function PlaylistItemEntity($resource) {
 }
 ServerConfigEntity.$inject = ['$resource'];
 function ServerConfigEntity($resource) {
-    var resource = $resource('data/:action.json', {action: '@action'}, {
+    var resource = $resource(API_BASE_URL + '/data/:action.json', {action: '@action'}, {
         rules: {
             method: 'GET',
             params: {action: 'rules'},
