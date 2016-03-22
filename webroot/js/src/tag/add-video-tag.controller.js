@@ -24,6 +24,7 @@ function AddVideoTagController($scope, $state, $stateParams, VideoTagData, Video
             $scope.video = video;
             $scope.editionTag.setVideo($scope.video);
             //PlayerData.setVideo(video);
+            PlayerData.data.provider = video.provider_id;
             PlayerData.data.duration = video.duration;
             // When data are loaded we set in the editor the tag id to edit
             var loader = VideoTagData.getLoader();
