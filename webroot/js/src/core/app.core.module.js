@@ -114,16 +114,16 @@ function PlayerData(VideoTagData, $q) {
     return obj;
     
     function setVideo(data){
-        this.data.provider = data.provider_id;
-        this.data.duration = data.duration;
+        obj.data.provider = data.provider_id;
+        obj.data.duration = data.duration;
     }
 
     function hasVideo() {
-        return !this.hasError() && this.state !== 'hide';
+        return !this.hasError() && obj.state !== 'hide';
     }
 
     function hide() {
-        this.state = 'hide';
+        obj.state = 'hide';
     }
 
     function onFinish() {
