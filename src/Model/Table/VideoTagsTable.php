@@ -264,6 +264,7 @@ class VideoTagsTable extends Table {
             $videoTag->errors('tag_id', ['The new trick could not be created']);
             return false;
         }
+        \Cake\Log\Log::debug("Creating new tag: " . $tagEntity->name, 'messages');
         $videoTag->tag_id = $tagEntity->id;
         unset($tagEntity->tag);
         return true;
@@ -280,9 +281,9 @@ class VideoTagsTable extends Table {
             $entity->errors('status', ['You are not authorized to edit this trick']);
             return false;
         }
-        
+
         if ($entity->tag !== null) {
-            if (!$this->createTag($entity)){
+            if (!$this->createTag($entity)) {
                 $event->stopPropagation();
             }
         }

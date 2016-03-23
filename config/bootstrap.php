@@ -64,6 +64,7 @@ use Cake\Utility\Security;
  */
 try {
     Configure::config('default', new PhpConfig());
+    Configure::load('app_common', 'default');
     Configure::load('app', 'default', false);
 } catch (\Exception $e) {
     die($e->getMessage() . "\n");
@@ -211,12 +212,14 @@ Log::config('queries', [
     'scopes' => ['queriesLog']
 ]);
 
+
 // File logging
-Log::config('m', [
+Log::config('messages', [
     'className' => 'File',
     'path' => LOGS,
+    'levels' => ['debug', 'info', 'debug', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency'],
     'file' => 'messages.log',
-    'scopes' => ['queriesLog']
+    'scopes' => ['messages']
 ]);
 
 Plugin::load('Bootstrap'); // instead of Plugin::load('Bootstrap3') ;

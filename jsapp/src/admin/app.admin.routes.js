@@ -8,32 +8,32 @@ function ConfigRouting($stateProvider) {
             .state('home', {
                 url: "/",
                 controller: 'DashboardController',
-                templateUrl: TEMPLATE_URL + "/../admin/dashboard/partials/home.html"
+                templateUrl: ADMIN_TEMPLATE_URL + "dashboard/partials/home.html"
             })
             .state('logout', {
                 url: "/logout",
                 controller: 'LogoutController',
-//                templateUrl: TEMPLATE_URL + "/../admin/dashboard/partials/home.html"
+//                templateUrl: ADMIN_TEMPLATE_URL + "admin/dashboard/partials/home.html"
             })
             .state("users", {
                 url: "/users",
                 controller: 'UsersController',
-                templateUrl: TEMPLATE_URL + "/../admin/users/partials/template.html"
+                templateUrl: ADMIN_TEMPLATE_URL + "users/partials/template.html"
             })
             .state("users.index", {
                 url: "/index",
                 controller: 'UserIndexController',
-                templateUrl: TEMPLATE_URL + "/../admin/users/partials/index.html"
+                templateUrl: ADMIN_TEMPLATE_URL + "users/partials/index.html"
             })
             .state("videotag", {
                 url: "/video-tag",
                 controller: 'VideoTagsController',
-                templateUrl: TEMPLATE_URL + "/../admin/video-tags/partials/template.html"
+                templateUrl: ADMIN_TEMPLATE_URL + "video-tags/partials/template.html"
             })
             .state("videotag.index", {
                 url: "/index",
                 controller: 'VideoTagIndexController',
-                templateUrl: TEMPLATE_URL + "/../admin/video-tags/partials/index.html",
+                templateUrl: ADMIN_TEMPLATE_URL + "video-tags/partials/index.html",
                 data: {
                     pageLoader: true
                 }
@@ -41,7 +41,7 @@ function ConfigRouting($stateProvider) {
             .state("videotag.edit", {
                 url: "/edit/:videoTagId",
                 controller: 'VideoTagEditController',
-                templateUrl: TEMPLATE_URL + "/../admin/video-tags/partials/edit.html",
+                templateUrl: ADMIN_TEMPLATE_URL + "video-tags/partials/edit.html",
                 data: {
                     pageLoader: true
                 }

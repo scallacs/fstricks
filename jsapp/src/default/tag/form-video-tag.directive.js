@@ -177,7 +177,7 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
                     $scope.similarTags = [];
 
                     // only if new 
-                    if (isNew) {
+                    if (isNew && response.success) {
                         VideoTagData.getLoader().add(editionTag._original);
                         $scope.showAddFeedback = true;
                     }
@@ -186,7 +186,7 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
                     $scope.$emit('save-video-tag', editionTag);
                 })
                 .catch(function() {
-
+                    
                 });
 
 

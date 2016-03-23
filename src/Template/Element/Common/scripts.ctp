@@ -1,4 +1,4 @@
-<?php if (\Cake\Core\Configure::read('debug')) { ?>
+<?php if (!\Cake\Core\Configure::read('concat_js')) { ?>
     <?= $this->Html->script('components/jquery/dist/jquery.min.js'); ?> 
     <?= $this->Html->script('components/angular/angular.min.js'); ?> 
     <?= $this->Html->script('components/angular-resource/angular-resource.min.js'); ?> 
@@ -21,7 +21,7 @@
 <?php } ?>
 
 
-<?php if (\Cake\Core\Configure::read('debug')) { ?>
+<?php if (!\Cake\Core\Configure::read('concat_js')) { ?>
     <?= $this->Html->script("lib/jquery-ui.min.js"); ?> 
     <?= $this->Html->script('lib/bootstrap.min.js'); ?>
     <?= $this->Html->script("lib/ui-bootstrap-custom-tpls-0.14.3.min.js"); ?>
@@ -32,7 +32,7 @@
     <?= $this->Html->script('lib.js'); ?>
 <?php } ?>
 
-<?php if (\Cake\Core\Configure::read('debug')) { ?>
+<?php if (!\Cake\Core\Configure::read('concat_js')) { ?>
     <?= $this->Html->script('src/shared/shared.module'); ?>
     <?= $this->Html->script('src/shared/directives/copy-this-link.directive'); ?>
     <?= $this->Html->script('src/shared/directives/up-down-points.directive'); ?>

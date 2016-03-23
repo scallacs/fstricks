@@ -130,8 +130,8 @@ function EditionTag() {
         callApi: callApi,
         hasApi: hasApi
     };
-    
-    function remove(){
+
+    function remove() {
         return this.callApi('delete', {id: this.getId()}).$promise;
     }
     function isOwner() {
@@ -148,7 +148,7 @@ function EditionTag() {
         var b = this._original;
 //        console.log(a);console.log(b);
         return a.begin !== b.begin || a.end !== b.end
-                || ( (a.tag_id && a.tag_id !== b.tag_id) || (!a.tag_id && a.tag_name !== b.tag_name)) 
+                || ((a.tag_id && a.tag_id !== b.tag_id) || (!a.tag_id && a.tag_name !== b.tag_name))
                 || a.rider_id !== b.rider_id
                 || a.category_id !== b.category_id || a.video_id !== b.video_id;
     }
@@ -163,14 +163,14 @@ function EditionTag() {
     function allowedToRemove() {
         return !this.isNew() && ((!this.isValidated() && this.isOwner()) || this._role === 'admin');
     }
-    
-    function callApi(name, param){
+
+    function callApi(name, param) {
         return this._apiMap[name](param);
     }
-    function hasApi(name){
+    function hasApi(name) {
         return this._apiCall[name] == true;
     }
-    
+
 
     function save(form) {
         console.log(form);
@@ -178,10 +178,12 @@ function EditionTag() {
         if (this.isNew()) {
             return form.submit(this.callApi('add', this.toPostData()).$promise)
                     .then(function(response) {
-                        console.log("Creating a new tag!'");
-                        self.setStatus(response.data.status);
-                        self.setId(response.data.video_tag_id);
-                        self._original = self.toVideoTag();
+                        if (response.success) {
+                            console.log("Creating a new tag!'");
+                            self.setStatus(response.data.status);
+                            self.setId(response.data.video_tag_id);
+                            self._original = self.toVideoTag();
+                        }
                     });
         }
         else {

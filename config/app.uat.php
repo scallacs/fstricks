@@ -1,20 +1,33 @@
 <?php
 
 return [
-    /**
-     * Debug Level:
-     *
-     * Production Mode:
-     * false: No error messages, errors, or warnings shown.
-     *
-     * Development Mode:
-     * true: Errors and warnings shown.
-     */
     'debug' => true,
     'maintenance' => 0,
     'user_feedback' => true,
-    'concat_js' => false,
-    'concat_css' => false,
+    'concat_js' => true,
+    'concat_css' => true,
+    'EmailTransport' => [
+        'default' => [
+            'className' => 'Mail',
+            // The following keys are used in SMTP transports
+            'host' => 'localhost',
+            'port' => 25,
+            'timeout' => 30,
+            'username' => '',
+            'password' => '',
+            'client' => null,
+            'tls' => null,
+        ],
+    ],
+    /**
+     * Email delivery profiles
+     *
+     * Delivery profiles allow you to predefine various properties about email
+     * messages from your application and give the settings a name. This saves
+     * duplication across your application and makes maintenance and development
+     * easier. Each profile accepts a number of keys. See `Cake\Network\Email\Email`
+     * for more information.
+     */
     'Email' => [
         'default' => [
             'transport' => 'default',
@@ -23,6 +36,12 @@ return [
         //'headerCharset' => 'utf-8',
         ],
     ],
+    /**
+     * Connection information used by the ORM to connect
+     * to your application's datastores.
+     * Drivers include Mysql Postgres Sqlite Sqlserver
+     * See vendor\cakephp\cakephp\src\Database\Driver for complete list
+     */
     'Datasources' => [
         'default' => [
             'className' => 'Cake\Database\Connection',
@@ -37,7 +56,7 @@ return [
             //'port' => 'nonstandard_port_number',
             'username' => 'root',
             'password' => '',
-            'database' => 'trickers',
+            'database' => 'trickers_test_e2e',
             'encoding' => 'utf8',
             'timezone' => 'UTC',
             'cacheMetadata' => true,
@@ -76,24 +95,7 @@ return [
             'timezone' => 'UTC',
             'cacheMetadata' => true,
             'quoteIdentifiers' => false,
-        //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
-        ],
-    ],
-    /**
-     * Configures logging options
-     */
-    'Log' => [
-        'debug' => [
-            'className' => 'Cake\Log\Engine\FileLog',
-            'path' => LOGS,
-            'file' => 'debug',
-            'levels' => ['notice', 'info', 'debug'],
-        ],
-        'error' => [
-            'className' => 'Cake\Log\Engine\FileLog',
-            'path' => LOGS,
-            'file' => 'error',
-            'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
+            //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
         ],
     ],
     'Recaptcha' => [

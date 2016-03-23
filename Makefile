@@ -2,7 +2,6 @@
 CSS_FILES = $(filter-out %.min.css,$(wildcard \
 	webroot/css/*.css \
 ))
-CSS_MINIFIED = $(CSS_FILES:.css=.min.css)
 GULP_BIN = node_modules/gulp/bin/gulp.js
 DB_SOURCE = resources/database/prod.sql
 DB_PROD_NAME = trickers 
@@ -59,14 +58,12 @@ database: $(DB_SOURCE)
 .PHONY: clean-prod
 clean-prod:
 	rm -rf webroot/coverage
-	rm -rf webroot/js/e2e-tests
-	#rm -rf webroot/js/components
 	rm -rf webroot/js/lib
 	find webroot/js/admin -type f ! -name '*.html' -delete
 	find webroot/js/src -type f ! -name '*.html' -delete
 	find webroot/css -type f ! -name 'style.css' -delete
 
-build: reset-repo build-backend build-frontend minify
+build: reset-repo build-backend build-frontend
 
 .PHONY: build-backend
 build-backend: 
@@ -75,26 +72,8 @@ build-backend:
 	
 build-frontend: 
 	bower install
-	
-###############################################################
-# MINIFY
+	$(GULP_BIN) build
 
-# minify : minify - test-frontend run test on backend
-minify: minify-css minify-js
-	
-# target : minify-js
-minify-js:
-	$(GULP_BIN) concat-js
-	$(GULP_BIN) concat-js-components
-	$(GULP_BIN) concat-js-lib	
-	$(GULP_BIN) concat-js-admin
-
-	
-# target: minify-css - Minifies CSS.
-minify-css:
-	$(GULP_BIN) concat-css
-		
-	
 ###############################################################
 # TESTS
 
@@ -112,7 +91,7 @@ start-webdriver:
 test-frontend: config-test
 	mysql $(DB_TEST_CREDENTIAL) $(DB_TEST_NAME) < './resources/database/test/delete.sql'
 	mysql $(DB_TEST_CREDENTIAL) $(DB_TEST_NAME) < './resources/database/test/insert.sql'
-	$(PROTRACTOR_BIN) webroot/js/e2e-tests/conf/protractor-conf.js | tee -i logs/test-frontend.log
+	$(PROTRACTOR_BIN) webroot/jsapp/e2e-tests/conf/protractor-conf.js | tee -i logs/test-frontend.log
 
 
 # Init db 
@@ -126,12 +105,6 @@ prepare-db:
 test-backend: config-test
 	vendor/bin/phpunit --coverage-html webroot/coverage tests/TestCase | tee -i logs/test-backend.log
 
-###############################################################
-# OTHERS
-# target: clean - Removes minified CSS and JS files.
-clean:
-	rm -f $(CSS_MINIFIED)
-	
 # target: help - Displays help.
 help:
 	@egrep "^# target:" Makefile

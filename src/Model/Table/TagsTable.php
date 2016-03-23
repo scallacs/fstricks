@@ -114,6 +114,7 @@ class TagsTable extends Table {
             }
         } 
         else {
+            \Cake\Log\Log::notice("Cannot create a new tag: " . print_r($entity->errors(), true), 'messages');
             ResultMessage::addValidationErrorsModel($entity);
             ResultMessage::setMessage(__('Cannot create this trick'), false);
         }

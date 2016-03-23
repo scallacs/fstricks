@@ -4,7 +4,57 @@ var uglify = require('gulp-uglify')
 var wrap = require('gulp-wrap')
 var stripDebug = require('gulp-strip-debug');
 var cleanCSS = require('gulp-clean-css');
+var browserify = require('gulp-browserify');
+var jshint = require('gulp-jshint');
+var sourcemaps = require('gulp-sourcemaps');
 //var ngAnnotate = require('gulp-ng-annotate')
+
+var ADMIN_HIDDEN_PATH = 'moFEJPQQS320909j2309923II2ODI2993';
+var ROOT = './jsapp/';
+var APP_SRC = ROOT + 'src/';
+var DEFAULT_APP = APP_SRC + 'default/';
+var ADMIN_APP = APP_SRC + 'admin/';
+var JS_OUTPUT = './webroot/js/';
+var CSS_PATH = './webroot/css/';
+
+
+// JSHint task
+gulp.task('lint', function() {
+  gulp.src(DEFAULT_APP + '*.js')
+  .pipe(jshint())
+  // You can look into pretty reporters as well, but that's another story
+  .pipe(jshint.reporter('default'));
+});
+
+gulp.task('build', ['concat-js', 'concat-js-admin', 'concat-css', 'concat-js-lib', 'concat-js-components', 'build-views']);
+
+gulp.task('watch', ['lint'], function() {
+  // Watch our scripts
+  gulp.watch([APP_SRC + '*.js', APP_SRC + '**/*.js', APP_SRC + '**/**/*.js', APP_SRC + '**/**/**/*.js'], [ 
+    'lint',
+    'concat-js',
+    'concat-js-admin'
+  ]);
+  gulp.watch([APP_SRC + '*.html', APP_SRC + '**/*.html', APP_SRC + '**/**/*.html' , APP_SRC + '**/**/**/*.html'], [ 
+    'build-views'
+  ]);
+  
+  gulp.watch([JS_OUTPUT + 'lib/*.js'],[
+      'concat-js-lib'
+  ]);
+//  gulp.watch([JS_OUTPUT + 'components/*'],[
+//      'concat-js-components'
+//  ]);
+  gulp.watch([CSS_PATH + '*.css'],[
+    'concat-css'
+  ]);
+});
+
+
+gulp.task('build-views', function() {
+    gulp.src([DEFAULT_APP + '/**/**/*.html']).pipe(gulp.dest('./webroot/views/default/'));
+    gulp.src([ADMIN_APP + '/**/**/*.html']).pipe(gulp.dest('./webroot/views/' + ADMIN_HIDDEN_PATH + '/'));
+});
 
 gulp.task('concat-js-components', function() {
     gulp.src([
@@ -30,7 +80,7 @@ gulp.task('concat-js-components', function() {
             .pipe(stripDebug())
             .pipe(concat('components.js'))
             .pipe(uglify())
-            .pipe(gulp.dest('./webroot/js/'))
+            .pipe(gulp.dest(JS_OUTPUT));
 });
 
 gulp.task('concat-js-lib', function() {
@@ -44,46 +94,46 @@ gulp.task('concat-js-lib', function() {
             .pipe(stripDebug())
             .pipe(concat('lib.js'))
             .pipe(uglify())
-            .pipe(gulp.dest('./webroot/js/'))
+            .pipe(gulp.dest(JS_OUTPUT));
 });
 
 gulp.task('concat-js', function() {
     gulp.src([
-        '!webroot/js/src/*.spec.js',
-        '!webroot/js/src/**/*.spec.js',
-        '!webroot/js/src/**/**/*.spec.js',
-        'webroot/js/src/app.config.module.js',
-        'webroot/js/src/shared/**/*.module.js',
-        'webroot/js/src/shared/**/*.js',
-        'webroot/js/src/shared/shared.module.js',
-        'webroot/js/src/**/*.module.js',
-        'webroot/js/src/**/*.js',
-        'webroot/js/src/app.module.js'
+        '!' + DEFAULT_APP + '*.spec.js',
+        '!' + DEFAULT_APP + '**/*.spec.js',
+        '!' + DEFAULT_APP + '**/**/*.spec.js',
+        DEFAULT_APP + 'app.config.module.js',
+        DEFAULT_APP + 'shared/**/*.module.js',
+        DEFAULT_APP + 'shared/**/*.js',
+        DEFAULT_APP + 'shared/shared.module.js',
+        DEFAULT_APP + '**/*.module.js',
+        DEFAULT_APP + '**/*.js',
+        DEFAULT_APP + 'app.module.js'
     ])
             .pipe(wrap('(function(){\n"use strict";\n<%= contents %>\n})();'))
             .pipe(stripDebug())
             .pipe(concat('app.js'))
 //    .pipe(ngAnnotate())
-            .pipe(uglify())
-            .pipe(gulp.dest('./webroot/js/'))
+//            .pipe(uglify())
+            .pipe(gulp.dest(JS_OUTPUT))
 });
 
 
 gulp.task('concat-js-admin', function() {
     gulp.src([
-        '!webroot/js/admin/*.spec.js',
-        '!webroot/js/admin/**/*.spec.js',
-        '!webroot/js/admin/**/**/*.spec.js',
-        'webroot/js/admin/**/*.module.js',
-        'webroot/js/admin/**/*.js',
-        'webroot/js/admin/app.admin.module.js',
-        'webroot/js/admin/*.js'
+        '!' + ADMIN_APP + '*.spec.js',
+        '!' + ADMIN_APP + '**/*.spec.js',
+        '!' + ADMIN_APP + '**/**/*.spec.js',
+        ADMIN_APP + '**/*.module.js',
+        ADMIN_APP + '**/*.js',
+        ADMIN_APP + 'app.admin.module.js',
+        ADMIN_APP + '*.js'
     ])
             .pipe(wrap('(function(){\n"use strict";\n<%= contents %>\n})();'))
             .pipe(stripDebug())
-            .pipe(concat('moFEJPQQS320909j2309923II2ODI2993.js'))
-            .pipe(uglify())
-            .pipe(gulp.dest('./webroot/js/'));
+            .pipe(concat(ADMIN_HIDDEN_PATH + '.js'))
+//            .pipe(uglify())
+            .pipe(gulp.dest(JS_OUTPUT));
 });
 
 gulp.task('concat-css', function() {
@@ -97,7 +147,7 @@ gulp.task('concat-css', function() {
 //            console.log(details.stats.minifiedSize);
 //        }))
             .pipe(cleanCSS())
-            .pipe(concat('style.css'))
-            .pipe(gulp.dest('webroot/css/'));
+            .pipe(concat('style.min.css'))
+            .pipe(gulp.dest(CSS_PATH));
 });
 

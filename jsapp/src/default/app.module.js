@@ -12,7 +12,7 @@ angular.module('app', [
     'toaster'
 ])
         .config(ConfigRouting)
-        .config(ConfigInterceptor)
+        .config(ConfigInterceptor) 
         .controller('ModalInstanceCtrl', ModalInstanceCtrl)
         .controller('MainController', MainController)
         .run(Run);
@@ -21,8 +21,7 @@ ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance'];
 function ModalInstanceCtrl($scope, $uibModalInstance) {
     $scope.ok = function() {
         $uibModalInstance.close('close');
-    };
-
+    }; 
     $scope.cancel = function() {
         $uibModalInstance.dismiss('cancel');
     };
@@ -35,6 +34,7 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
     $scope.SharedData = SharedData;
     $scope.authData = AuthenticationService.authData;
     $scope.config = Config.website;
+//    $scope.seo = Seo;
     $scope.feedbackOptions = {
         ajaxURL: API_BASE_URL + '/feedbacks/send.json',
         html2canvasURL : 'js/components/html2canvas/build/html2canvas.min.js'
