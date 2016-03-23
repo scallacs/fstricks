@@ -42,5 +42,6 @@
         <!--</div>-->
     <?php } ?>
 
+        {{playerData}}
 </body>
 </html>

@@ -61,6 +61,12 @@ var Util = require('./util.js');
             var btn = self.container.element(by.css('div[up-down-points] .btn[ng-click^="down"]'));  
             return btn.isDisabled();
         };
+        
+        self.getTimeRemaining = function(){
+            var timeRemaining = self.container.element(by.css('.item-video-tag-remaining'));
+            expect(timeRemaining.isDisplayed()).toBe(true);
+            return timeRemaining.getText();
+        };
 
     };
 

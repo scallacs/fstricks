@@ -1,6 +1,6 @@
 <button type="button" class="btn btn-primary"  
         ng-click="down(controller, data)" 
-        ng-disabled="data.user_rate === 'loading'"
+        ng-disabled="data.user_rate !== 'none'"
         ng-show="allowedToVote"
         ng-class="data.user_rate === 'down' ? 'active' : ''">
     <span class="glyphicon glyphicon-arrow-down"></span>
@@ -11,7 +11,7 @@
 <button type="button" 
         class="btn btn-primary" 
         ng-click="up(controller, data)" 
-        ng-disabled="data.user_rate === 'loading'"
+        ng-disabled="data.user_rate !== 'none'"
         ng-show="allowedToVote"
         ng-class="data.user_rate === 'up' ? 'active' : ''">
     <span class="glyphicon glyphicon-arrow-up"></span>

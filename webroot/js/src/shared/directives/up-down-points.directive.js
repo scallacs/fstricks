@@ -36,8 +36,9 @@ angular.module('shared')
                             });
                         }
                     }],
-                link: function(scope){
+                link: function(scope, elem){
                     console.log(scope.allowedToVote);
+                    scope.data.user_rate = 'none';
                 }
             };
         });

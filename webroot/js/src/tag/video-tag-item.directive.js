@@ -9,7 +9,7 @@ function videoTagItem() {
             videoTag: '=',
             options: '='
         },
-        controller: ['$scope', '$uibModal', 'PlayerData', 'VideoTagData', 'AuthenticationService', 
+        controller: ['$scope', '$uibModal', 'PlayerData', 'VideoTagData','AuthenticationService', 
                 function($scope, $uibModal, PlayerData, VideoTagData, AuthenticationService) {
 
             $scope.openReportErrorModal = openReportErrorModal;

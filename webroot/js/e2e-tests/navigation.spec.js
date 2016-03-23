@@ -24,12 +24,8 @@ describe('Navigation', function() {
             expect(container.isPresent()).toBe(true);
         });
 
-
-        it("Should have a login button when user is not logged in", function() {
-            expect(nav.getLink("login").isPresent()).toBe(true);
-        });
-
         it("Should be possible to navigate to the log in page", function() {
+            expect(nav.getLink("login").isDisplayed()).toBe(true);
             nav.getLink("login").click(function() {
                 expect(app.hasLocation("login")).toBe(true);
             });
@@ -56,20 +52,31 @@ describe('Navigation', function() {
         
         it(' should be possible to view trick', function() {
             videoTagItem.watch().then(function(){
-                expect(element(by.css('.table-current-trick')).isDisplayed()).toBe(true);
+                expect(app.hasCurrentTag()).toBe(true);
             });
         });
         
-        it(' should be possible to add points for the current trick', function() {
-            videoTagItem = new VideoTagItem(element(by.css('.table-current-trick .item-video-tag')));
+        it(' should be possible to add points for the current trick and once done it should be disabled', function() {
+            videoTagItem = new VideoTagItem(app.getCurrentTag());
             videoTagItem.upPoint().then(function(){
                 assert(videoTagItem.isPointBtnDisabled()).toBe(true);
             });
         });
         
-        it(' should be possible to view the full video', function() {
+        it(' should be possible to view the full video and current tag should be displayed with time remaining', function() {
             videoTagItem.openOptionLinkByState('videoplayer.video').then(function(){
                 app.assertLocation('videoplayer.video');
+                
+                // TODO Check that currentTag is updated correctly:
+                browser.sleep(2000);
+                expect(app.hasCurrentTag()).toBe(true);
+                videoTagItem = new VideoTagItem(app.getCurrentTag());
+                // Check the current time 
+                var timeRemaining = videoTagItem.getTimeRemaining();
+                timeRemaining.then(function(value){
+                    // Player time should not be the same
+                    expect(value).not.toEqual(videoTagItem.getTimeRemaining());
+                });
             });
         });
         it(' should be possible to view all video for this', function() {

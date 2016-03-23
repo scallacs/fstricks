@@ -2,13 +2,6 @@
     class="container-fluid"
     ng-show="playerData.showListTricks"
     >
-    <!--
-    <div class="row" ng-if="playerData.isMode('edition')">
-        <button class="btn btn-success btn-block btn-add-tag" ng-click="addNewTag()">
-            <span class="glyphicon glyphicon-plus-sign"></span> 
-            Add a trick
-        </button>
-    </div>-->
 
     <div ng-repeat="videoTag in videoTagData.getItems()" ng-if="$index % 2 == 0" class="row clearfix">
         <div class="col-sm-6 nopadding">

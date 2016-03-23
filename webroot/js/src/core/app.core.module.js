@@ -34,54 +34,14 @@ function NotifyOnLoad($rootScope, $timeout) {
 PlayerData.$inject = ['VideoTagData', '$q'];
 function PlayerData(VideoTagData, $q) {
     var obj = {
-        initPlayers: function() {
-            obj.deferred = {
-                youtube: $q.defer(),
-                vimeo: $q.defer()
-            };
-            obj.players = {
-                youtube: null,
-                vimeo: null
-            };
-        },
-        initData: function() {
-            console.log("PlayerData::initData");
-            obj.state = 'hide';
-            obj.timer = null;
-            obj.visible = true;
-            obj.showListTricks = true;
-            obj.mode = 'view';
-            obj.looping = true; // True if we want to loop on the current tag
-            obj.playMode = 'tag'; // tag, playlist, video
-            obj.data = {
-                begin: 0,
-                end: 0,
-                video_url: null,
-                duration: 0,
-                currentTime: 0,
-                id: null,
-                provider: null
-            };
-//            obj.onSeek = function() {
-//                obj.getCurrentTime().then(function(currentTime) {
-//                    if ((obj.data.begin !== null && currentTime < obj.data.begin)
-//                            || (obj.data.end !== null && currentTime > obj.data.end)) {
-//                        obj.looping = false;
-//                    }
-//                });
-//            };
-        },
-        init: function() {
-            console.log("PlayerData::init");
-            obj.initPlayers();
-            obj.initData();
-        },
+        initPlayers: initPlayers,
+        initData: initData,
+        init: init,
         showEditionMode: showEditionMode,
         showViewMode: showViewMode,
         showValidationMode: showValidationMode,
         isMode: isMode,
-        getPromise: getPromise,
-        getPlayer: getPlayer,
+        getPromise: getPromise, getPlayer: getPlayer,
         isProvider: isProvider,
         setPlayer: setPlayer,
         errorPlayer: errorPlayer,
@@ -115,7 +75,47 @@ function PlayerData(VideoTagData, $q) {
 
     return obj;
     
-    function setVideo(data){
+    function init() {
+        console.log("PlayerData::init");
+        obj.initPlayers();
+        obj.initData();
+    }
+    function initData() {
+        console.log("PlayerData::initData");
+        obj.state = 'hide';
+        obj.timer = null;
+        obj.visible = true;
+        obj.showListTricks = true;
+        obj.mode = 'view';
+        obj.looping = true; // True if we want to loop on the current tag
+        obj.playMode = 'tag'; // tag, playlist, video
+        obj.data = {
+            begin: 0, end: 0,
+            video_url: null,
+            duration: 0, currentTime: 0,
+            id: null,
+            provider: null
+        };
+        //            obj.onSeek = function() {
+        //                obj.getCurrentTime().then(function(currentTime) {
+        //                    if ((obj.data.begin !== null && currentTime < obj.data.begin)
+        //                            || (obj.data.end !== null && currentTime > obj.data.end)) { //                        obj.looping = false;
+        //                    }
+        //                });
+        //            };
+    }
+    function initPlayers() {
+        obj.deferred = {
+            youtube: $q.defer(),
+            vimeo: $q.defer()
+        };
+        obj.players = {
+            youtube: null,
+            vimeo: null
+        };
+    }
+
+    function setVideo(data) {
         obj.data.provider = data.provider_id;
         obj.data.duration = data.duration;
     }
@@ -159,6 +159,7 @@ function PlayerData(VideoTagData, $q) {
         obj.looping ? obj.stopLooping() : obj.startLooping();
     }
     function isMode(m) {
+        console.log("PlayerData::isMode(" + m + ") ? " + obj.mode);
         return obj.mode === m;
     }
 
@@ -175,25 +176,24 @@ function PlayerData(VideoTagData, $q) {
         else if (obj.playMode === 'playlist' && VideoTagData.getLoader().hasData()) {
             if (VideoTagData.hasNext()) {
                 obj.playVideoTag(VideoTagData.next(), false);
-            }
-            else {
+            } else {
                 obj.playVideoTag(VideoTagData.getLoader().getItem(0));
             }
         }
     }
     function hasError() {
 //        return obj.data.provider !== null &&
-//                obj.players[obj.data.provider] === false;
+        //                obj.players[obj.data.provider] === false;
         return obj.data.provider !== null &&
                 obj.players[obj.data.provider] === false;
     }
     function onPlayProgress(currentTime) {
-//        console.log(currentTime);
+        //        console.log(currentTime);
         obj.data.currentTime = currentTime;
-//        console.log( obj.data);
+        //        console.log( obj.data);
 
         if (obj.playMode === 'video' && !obj.looping) {
-//        console.log(VideoTagData.currentTag);
+            //        console.log(VideoTagData.currentTag);
             var current = VideoTagData.currentTag;
             if (angular.isDefined(current) && current !== null) {
                 console.log("current tag is defined: " + currentTime + " in ? " + current.id + " [" + current.begin + ", " + current.end + "]");
@@ -286,7 +286,7 @@ function PlayerData(VideoTagData, $q) {
         obj.data.id = videoTag.id;
         obj.showListTricks = false;
         obj.looping = !angular.isDefined(looping) ? (obj.playMode === 'tag') : looping;
-//        console.log("Play mode: " + obj.playMode + ". Set looping: " + obj.looping);
+        //        console.log("Play mode: " + obj.playMode + ". Set looping: " + obj.looping);
         return obj.loadVideo(videoTag.provider_id, videoTag);
     }
 
@@ -366,7 +366,7 @@ function PlayerData(VideoTagData, $q) {
 
     function getPromise() {
         console.log("Getting promise for: " + obj.data.provider);
-        if (!obj.data.provider){
+        if (!obj.data.provider) {
             throw "Unkown video provider: " + obj.data.provider;
         }
         return obj.deferred[obj.data.provider].promise;
@@ -412,8 +412,7 @@ function PaginateDataLoader($q) {
         instance: function(name, r) {
             if (!angular.isDefined(this._instances[name])) {
                 this._instances[name] = new PaginateDataLoader(r);
-            }
-            else {
+            } else {
                 this._instances[name].setResource(r);
             }
             return this._instances[name];
@@ -499,8 +498,7 @@ function PaginateDataLoader($q) {
         function successCallback(results) {
             if (that.disabled) {
                 deferred.resolve(that.data);
-            }
-            else {
+            } else {
                 that.loadNextPage().then(successCallback);
             }
         }
@@ -521,8 +519,7 @@ function PaginateDataLoader($q) {
             if (data.items.length < data.perPage) {
                 console.log('disabling video tag data loader');
                 that.disabled = true;
-            }
-            else {
+            } else {
                 that.disabled = false;
             }
         });
@@ -533,7 +530,7 @@ function PaginateDataLoader($q) {
         var that = this;
         console.log('Request page ' + page + ' with filter: ');
         console.log(this.filters);
-//        console.log(that.data.items);
+        //        console.log(that.data.items);
         if (!angular.isDefined(this.cachePage[page])) {
             this.filters.page = page;
             this.loading = true;
@@ -561,7 +558,6 @@ function PaginateDataLoader($q) {
         this.data.perPage = data.perPage;
         this.data.total = data.total;
         this.data.extra = data.extra;
-
         var tags = data.items;
         console.log('[Loader] Loading page ' + this.filters.page + ': ' + tags.length + ' item(s)');
         if (this.mode === 'append') {
@@ -614,11 +610,9 @@ function VideoTagData(PaginateDataLoader, VideoTagEntity) {
         },
         getItems: function() {
             return this.getLoader().data.items;
-        },
-        hasPrev: function() {
+        }, hasPrev: function() {
             return this.getItems().length > 0 && obj.currentTag !== null && obj.currentTag.id !== this.getItems()[0].id;
-        },
-        hasNext: function() {
+        }, hasNext: function() {
             //console.log(obj.currentTag.id+ ' != ' + this.getItems()[this.getItems().length - 1].id);
             return this.getItems().length > 0 && obj.currentTag !== null && obj.currentTag.id !== this.getItems()[this.getItems().length - 1].id;
         },
@@ -703,8 +697,7 @@ function SharedData(SportEntity) {
         currentSearch: {},
         sports: [],
         categories: [],
-        _callbacks: [],
-        onReady: onReady,
+        _callbacks: [], onReady: onReady,
         pageLoader: pageLoader,
         init: init,
         _execCallbacks: _execCallbacks
@@ -781,8 +774,7 @@ function RiderEntity($resource) {
             method: 'POST',
             params: {action: 'add'},
             isArray: false
-        },
-        profile: {
+        }, profile: {
             method: 'GET',
             params: {action: 'profile'},
             isArray: false
@@ -793,8 +785,7 @@ function RiderEntity($resource) {
 UserEntity.$inject = ['$resource'];
 function UserEntity($resource) {
     var url = API_BASE_URL + '/Users/:action/:id.json';
-    return $resource(url, {id: '@id', action: '@action'}, {
-        profile: {
+    return $resource(url, {id: '@id', action: '@action'}, {profile: {
             method: 'GET',
             params: {action: 'profile'},
             isArray: false
@@ -900,8 +891,7 @@ TagEntity.$inject = ['$resource'];
 function TagEntity($resource) {
     var url = API_BASE_URL + '/Tags/:action/:id.json';
     //var url = '/sys/MediaTagTricks/:action/:id';
-    return $resource(url, {id: '@id', action: '@action', sport: '@sport', category: '@category', trick: '@trick'}, {
-        suggest: {
+    return $resource(url, {id: '@id', action: '@action', sport: '@sport', category: '@category', trick: '@trick'}, {suggest: {
             method: 'GET',
             params: {action: 'suggest'},
             isArray: true
@@ -991,8 +981,7 @@ function VideoTagEntity($resource) {
             method: 'GET',
             params: {action: 'validation'},
             isArray: true
-        },
-        similar: {
+        }, similar: {
             method: 'POST',
             params: {action: 'similar'},
             isArray: true
@@ -1078,13 +1067,13 @@ function PlaylistItemEntity($resource) {
 //        down: {
 //            method: 'POST',
 //            params: {action: 'down'},
-//            isArray: false
+        //            isArray: false
 //        }
     });
 }
 ServerConfigEntity.$inject = ['$resource'];
 function ServerConfigEntity($resource) {
-    var resource = $resource(API_BASE_URL + '/data/:action.json', {action: '@action'}, {
+    var resource = $resource(WEBROOT_FULL + '/data/:action.json', {action: '@action'}, {
         rules: {
             method: 'GET',
             params: {action: 'rules'},
@@ -1117,7 +1106,6 @@ function ServerConfigEntity($resource) {
 
 AuthenticationService.$inject = ['$http', '$cookies', '$rootScope', 'UserEntity', '$state', 'PaginateDataLoader', '$auth'];
 function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, PaginateDataLoader, $auth) {
-
     var service = {};
 
     service.login = login;
@@ -1134,7 +1122,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
     service.logFromCookie = logFromCookie;
     service.init = init;
     service.setAuthData = setAuthData;
-    
+
     service.authData = {
         token: null,
         user: null,
@@ -1169,7 +1157,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
             service.authData.token = null;
             service.authData.provider = null;
         }
-        else{
+        else {
             service.authData.user = data.user;
             service.authData.token = data.token;
             service.authData.provider = provider ? provider : data.provider;
@@ -1230,7 +1218,7 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
 //                service.setCredentials(provider, response.data);
 //            }
 //            callback(response.success, response);
-//        }).$promise;
+        //        }).$promise;
     }
 
     function setHttpHeader() {

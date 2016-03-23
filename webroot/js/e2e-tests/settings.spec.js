@@ -127,11 +127,11 @@ describe('Settings ', function() {
                 btnConfirm.click().then(function() {
                     if (test.success) {
                         expect(browser.getLocationAbsUrl()).not.toContain('/settings');
-                        expect(app.topNav().isAuthNav()).toBe(false);
+                        expect(app.topNav().isVisitorNav()).toBe(true);
                     }
                     else {
                         expect(browser.getLocationAbsUrl()).toContain('/settings');
-                        expect(app.topNav().isAuthNav()).toBe(true);
+                        expect(app.topNav().isVisitorNav()).toBe(false);
                     }
                 });
             });

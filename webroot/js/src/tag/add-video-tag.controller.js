@@ -28,31 +28,29 @@ function AddVideoTagController($scope, $state, $stateParams, VideoTagData, Video
             PlayerData.data.duration = video.duration;
             // When data are loaded we set in the editor the tag id to edit
             var loader = VideoTagData.getLoader();
-            loader      .setMode('append')
-                        .loadAll()
-                        .then(function() {
-                            var data = loader.data;
-                            if ($stateParams.tagId) {
-                                console.log("Searching for tag " + $stateParams.tagId + " to edit among " + data.items.length + " items");
-                                console.log(data);
-                                for (var i = 0; i < data.items.length; i++) {
-                                    var item = data.items[i];
-                                    if (item.id == $stateParams.tagId) { // @warning $stateParams is a string
-                                        console.log("Tag to edit found!");
-                                        $scope.editionTag.fromVideoTag(item);
-                                        PlayerData.playVideoTag($scope.editionTag.fromVideoTag(item)._video_tag);
-                                        return;
-                                    }
+            loader.setMode('append')
+                    .loadAll()
+                    .then(function() {
+                        var data = loader.data;
+                        if ($stateParams.tagId) {
+                            console.log("Searching for tag " + $stateParams.tagId + " to edit among " + data.items.length + " items");
+                            console.log(data);
+                            for (var i = 0; i < data.items.length; i++) {
+                                var item = data.items[i];
+                                if (item.id == $stateParams.tagId) { // @warning $stateParams is a string
+                                    console.log("Tag to edit found!");
+                                    $scope.editionTag.fromVideoTag(item);
+                                    PlayerData.playVideoTag($scope.editionTag.fromVideoTag(item)._video_tag);
+                                    SharedData.pageLoader(false);
+                                    return;
                                 }
-                                console.log("Cannot find tag to edit: " + $stateParams.tagId);
                             }
+                            console.log("Cannot find tag to edit: " + $stateParams.tagId);
+                        }
 
-                            VideoTagData.setCurrentTag($scope.editionTag._video_tag);
-                            playVideo(video);
-                        })
-                        .finally(function() {
-                            SharedData.pageLoader(false);
-                        });
+                        VideoTagData.setCurrentTag($scope.editionTag._video_tag);
+                        playVideo(video);
+                    });
         }, onError);
     }
 

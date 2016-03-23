@@ -79,7 +79,7 @@ describe('Account login', function() {
                     it(test.message, function() {
                         loginPromise.then(function() {
                             browser.waitForAngular();
-                            expect(nav.isAuthNav()).toBe(false);
+                            expect(nav.isVisitorNav()).toBe(true);
                         });
                     });
                 }

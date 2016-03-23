@@ -42,7 +42,6 @@
         app.assertNotLocation = function(state) {
             expect(browser.getLocationAbsUrl()).not.toContain(app.states[state]);
         };
-
         app.login = function(credentials) {
             if (!credentials) {
                 credentials = app.credential;
@@ -57,6 +56,15 @@
             });
             return promise;
         };
+        
+        app.hasCurrentTag = function(){
+            return app.getCurrentTag().isDisplayed();
+        };
+        
+        app.getCurrentTag = function(){
+            return element(by.css('.table-current-trick .item-video-tag'));
+        };
+
 
         app.topNav = function() {
             return new Navigation();
@@ -80,8 +88,8 @@
             return new ElementHelper(nav._topNavElement).linkByState(state, assert);
         };
 
-        nav.isAuthNav = function() {
-            return (!nav.getLink("login").isPresent()) && !nav.getLink("signup").isPresent();
+        nav.isVisitorNav = function() {
+            return nav.getLink("login").isDisplayed();
         };
 
         nav.openUserNav = function() {

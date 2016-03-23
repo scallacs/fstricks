@@ -20,15 +20,18 @@ var Util = require('./util.js');
 
         self.setCategory = function(name) {
             self._categoryInput.sendKeys(name);
-            self._categoryInput.pickChoice(0);
+            browser.waitForAngular();
+            return self._categoryInput.pickChoice(0);
         };
         self.setRider = function(name) {
             self._riderInput.sendKeys(name);
-            self._riderInput.pickChoice(0);
+            browser.waitForAngular();
+            return self._riderInput.pickChoice(0);
         };
         self.setTag = function(name) {
             self._tagInput.sendKeys(name);
-            self._tagInput.pickChoice(0);
+            browser.waitForAngular();
+            return self._tagInput.pickChoice(0);
         };
 
         self.showRiderForm = function() {
