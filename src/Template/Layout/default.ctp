@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="app" ng-controller="MainController as main" id="ng-app">
     <head>
         <?= $this->Element('Common/head'); ?>
         <?= $this->Element('Common/scripts'); ?>
@@ -9,7 +9,7 @@
         <?= $this->fetch('script') ?>
 
     </head>
-    <body ng-app="app" ng-controller="MainController as main" id="ng-app">
+    <body>
     <base href="<?= \Cake\Routing\Router::url('/'); ?>"/>
     <toaster-container toaster-options="{'close-button': true}"></toaster-container>
 

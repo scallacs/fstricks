@@ -75,7 +75,7 @@ function Run($rootScope, AuthenticationService, loginModal, $state, SharedData) 
     SharedData.init();
 
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
-        SharedData.currentSearch = {};
+        SharedData.setCurrentSearch(null);
 
         if (toState.redirectTo) {
             event.preventDefault();

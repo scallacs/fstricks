@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>
-    <?php echo \Cake\Core\Configure::read('Company.title'); ?>
+    <?php echo \Cake\Core\Configure::read('Company.title'); ?>: {{SharedData.pageTitle()}}
 </title>
 
 <?= $this->Html->meta('icon', 'img/favicon.png'); ?>

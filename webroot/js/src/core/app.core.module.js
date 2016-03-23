@@ -694,15 +694,33 @@ SharedData.$inject = ['SportEntity'];
 function SharedData(SportEntity) {
     var self = {
         loadingState: true,
+        pageTitle: pageTitle,
         currentSearch: {},
+        setCurrentSearch: setCurrentSearch,
         sports: [],
         categories: [],
         _callbacks: [], onReady: onReady,
         pageLoader: pageLoader,
         init: init,
-        _execCallbacks: _execCallbacks
+        _execCallbacks: _execCallbacks,
+        _pageTitle: ''
     };
     return self;
+    
+    function setCurrentSearch(s){
+        if (s === null){
+            this._pageTitle = '';
+            this.currentSearch = {};
+            return;
+        }
+        this._pageTitle = s.category;
+        this._pageTitle += ' ' + s.title;
+        this.currentSearch = s;
+    }
+    
+    function pageTitle(){
+        return this._pageTitle;
+    }
 
     function _execCallbacks() {
         for (var i = 0; i < self._callbacks.length; i++) {

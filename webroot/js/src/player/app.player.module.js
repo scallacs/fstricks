@@ -341,10 +341,11 @@ function PlayerController($scope, PlayerData, SharedData, TopSearchMapper) {
 //    }
 }
 
-ViewRealizationController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', '$state'];
-function ViewRealizationController(VideoTagData, $stateParams, PlayerData, SharedData, $state) {
-    SharedData.currentSearch.title = 'realization';
-    SharedData.currentSearch.category = 'Trick';
+ViewRealizationController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', '$state', 'TopSearchMapper'];
+function ViewRealizationController(VideoTagData, $stateParams, PlayerData, SharedData, $state, TopSearchMapper) {
+    SharedData.setCurrentSearch(TopSearchMapper['trick']({
+        title: 'realization'
+    }));
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = false;
@@ -378,7 +379,7 @@ function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData, T
         .then(function(results) {
             if (results.items.length > 0) {
                 var firstTag = results.items[0];
-                SharedData.currentSearch = TopSearchMapper['trick'](firstTag);
+                SharedData.setCurrentSearch(TopSearchMapper['trick'](firstTag));
                 // Auto play if there is only one realization for the trick
                 if (results.items.length === 1) {
                     PlayerData.showListTricks = false;
@@ -398,9 +399,9 @@ function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData,
     PlayerData.stop();
     PlayerData.showListTricks = true;
 
-    SharedData.currentSearch = TopSearchMapper['sport']({
+    SharedData.setCurrentSearch(TopSearchMapper['sport']({
         name: $stateParams.sportName
-    });
+    }));
 
     console.log("Viewing sport: " + $stateParams.sportName);
     console.log(SharedData.currentSearch);
@@ -429,7 +430,7 @@ function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, Sha
     RiderEntity.profile({id: $stateParams.riderId}, function(rider) {
         console.log(rider);
         $scope.rider = rider;
-        SharedData.currentSearch = TopSearchMapper['rider'](rider);
+        SharedData.setCurrentSearch(TopSearchMapper['rider'](rider));
     });
 }
 
@@ -440,12 +441,12 @@ function ViewSearchController(VideoTagData, $stateParams, PlayerData, SharedData
     PlayerData.showListTricks = true;
 
     if ($stateParams.q) {
-        SharedData.currentSearch = TopSearchMapper['search']($stateParams.q);
+        SharedData.setCurrentSearch(TopSearchMapper['search']($stateParams.q));
     }
     else {
-        SharedData.currentSearch = TopSearchMapper['sport']({
+        SharedData.setCurrentSearch(TopSearchMapper['sport']({
             name: 'all sports'
-        });
+        }));
     }
 
 //    console.log($stateParams);
@@ -481,7 +482,7 @@ function ViewPlaylistController($scope, VideoTagData, $stateParams, PlayerData, 
     loader.startLoading()
             .then(function() {
                 $scope.playlist = loader.data.extra.playlist;
-                SharedData.currentSearch = TopSearchMapper['playlist']($scope.playlist);
+                SharedData.setCurrentSearch(TopSearchMapper['playlist']($scope.playlist));
             })
             .finally(function() {
                 SharedData.pageLoader(false);
@@ -548,7 +549,7 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
                 .then(function(results) {
                     var item = providerFactory.createItem(results);
                     console.log(item);
-                    SharedData.currentSearch = TopSearchMapper['video']({title: item.title()});
+                    SharedData.setCurrentSearch(TopSearchMapper['video']({title: item.title()}));
                 });
     }
 }
