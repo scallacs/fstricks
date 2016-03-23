@@ -43,74 +43,78 @@ describe('Navigation', function() {
 
     describe(' with a video tag item: ', function() {
         var videoTagItem;
-        
-        beforeEach(function(){
+
+        beforeEach(function() {
             app.getState('videoplayer.best');
             browser.waitForAngular();
             videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(0));
         });
-        
+
         it(' should be possible to view trick', function() {
-            videoTagItem.watch().then(function(){
+            videoTagItem.watch().then(function() {
                 expect(app.hasCurrentTag()).toBe(true);
             });
         });
-        
+
         it(' should be possible to add points for the current trick and once done it should be disabled', function() {
-            videoTagItem = new VideoTagItem(app.getCurrentTag());
-            videoTagItem.upPoint().then(function(){
-                assert(videoTagItem.isPointBtnDisabled()).toBe(true);
+            videoTagItem.watch().then(function() {
+                videoTagItem = new VideoTagItem(app.getCurrentTag());
+                // TODO change test must be logged in to work...
+                videoTagItem.upPoint().then(function() {
+                    expect(videoTagItem.isPointBtnEnabled()).toBe(false);
+                });
             });
         });
-        
+
         it(' should be possible to view the full video and current tag should be displayed with time remaining', function() {
-            videoTagItem.openOptionLinkByState('videoplayer.video').then(function(){
+            videoTagItem.openOptionLinkByState('videoplayer.video').then(function() {
                 app.assertLocation('videoplayer.video');
-                
-                // TODO Check that currentTag is updated correctly:
+
                 browser.sleep(2000);
                 expect(app.hasCurrentTag()).toBe(true);
                 videoTagItem = new VideoTagItem(app.getCurrentTag());
                 // Check the current time 
                 var timeRemaining = videoTagItem.getTimeRemaining();
-                timeRemaining.then(function(value){
+                timeRemaining.then(function(value) {
+                    browser.sleep(2000);
                     // Player time should not be the same
-                    expect(value).not.toEqual(videoTagItem.getTimeRemaining());
+//                    console.log("TEXT CURRENT TAG: " + value);
+                    expect(videoTagItem.getTimeRemaining()).not.toEqual(value);
                 });
             });
         });
         it(' should be possible to view all video for this', function() {
-            videoTagItem.openOptionLinkByState('videoplayer.tag').then(function(){
+            videoTagItem.openOptionLinkByState('videoplayer.tag').then(function() {
                 app.assertLocation('videoplayer.tag');
             });
         });
         it(' should be possible to view rider', function() {
-            videoTagItem.clickRider().then(function(){
+            videoTagItem.clickRider().then(function() {
                 app.assertLocation('videoplayer.rider');
             });
         });
     });
 
-    describe('Watching videos ', function(){
-        
+    describe('Watching videos ', function() {
+
         var videoTagItem = null;
         var playerContainer = null;
-        beforeAll(function(){
+        beforeAll(function() {
             app.getState('videoplayer.best');
             browser.waitForAngular();
             videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(0));
-            videoTagItem.watch().then(function(){
+            videoTagItem.watch().then(function() {
                 playerContainer = new PlayerContainer(element(by.css('.player-container')));
             });
         });
-        
-        it('Should NOT be possible to play prev trick when fist element selected', function(){
+
+        it('Should NOT be possible to play prev trick when fist element selected', function() {
             expect(playerContainer.hasPrev()).toBe(false);
         });
-        it('Should be possible to play next trick', function(){
+        it('Should be possible to play next trick', function() {
             playerContainer.next();
         });
-        it('Should be possible to play previous trick', function(){
+        it('Should be possible to play previous trick', function() {
             playerContainer.prev();
         });
 //        it('Should NOT be possible to play next trick when last element selected', function(){
@@ -128,8 +132,8 @@ describe('Navigation', function() {
         });
 
         it("Should be possible to navigate to manage playlist", function() {
-            
-            nav.navigateTo('manageplaylist').then(function(){
+
+            nav.navigateTo('manageplaylist').then(function() {
                 app.assertUrl('playlist/manage');
             });
         });

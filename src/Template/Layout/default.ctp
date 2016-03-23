@@ -41,7 +41,5 @@
             </angular-feedback>
         <!--</div>-->
     <?php } ?>
-
-        {{playerData}}
 </body>
 </html>

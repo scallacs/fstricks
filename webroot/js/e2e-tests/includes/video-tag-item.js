@@ -57,9 +57,9 @@ var Util = require('./util.js');
             return btn.click();
         };
         
-        self.isPointBtnDisabled = function(){
+        self.isPointBtnEnabled = function(){
             var btn = self.container.element(by.css('div[up-down-points] .btn[ng-click^="down"]'));  
-            return btn.isDisabled();
+            return btn.isEnabled();
         };
         
         self.getTimeRemaining = function(){

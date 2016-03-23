@@ -105,7 +105,9 @@ function youtubeDirective($window, VideoEntity, PlayerData, YoutubeCmdMapper) {
                             }
                             console.log("Setting youtube time event");
                             PlayerData.timer = setInterval(function() {
-                                PlayerData.onPlayProgress(player.getCurrentTime());
+                                scope.$apply(function(){
+                                    PlayerData.onPlayProgress(player.getCurrentTime());
+                                });
 //                                        console.log(PlayerData.data.end - newTime);
 //                                if (PlayerData.looping 
 //                                        && (PlayerData.data.end - newTime) < (intervalDuration / 1000)) {

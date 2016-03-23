@@ -85,9 +85,9 @@
                 element.on('$destroy', function() {
                     PlayerData.resetPlayer('vimeo');
                 });
-                
+
                 scope.$watch('playerData.data.video_url', function(newVal) {
-                    if ($('#' + playerId).length === 0 && newVal !== null){
+                    if ($('#' + playerId).length === 0 && newVal !== null) {
                         loadPlayer(newVal);
                     }
                 });
@@ -107,7 +107,9 @@
                         console.log('VIMEO PLAYER: ready');
                         PlayerData.setPlayer('vimeo', VimeoCmdMapper.create(player, iframe));
                         player.addEvent('playProgress', function(data) {
-                            PlayerData.onPlayProgress(data.seconds);
+                            scope.$apply(function() {
+                                PlayerData.onPlayProgress(data.seconds);
+                            });
                         });
                         player.addEvent('pause', PlayerData.onPause);
                         player.addEvent('play', PlayerData.onPlay);

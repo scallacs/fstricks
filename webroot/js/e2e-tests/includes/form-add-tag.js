@@ -72,6 +72,17 @@ var Util = require('./util.js');
             return self._form.element(by.id(id)).click();
         };
 
+        self.continueEditing = function(){
+            var btn = element(by.css('.add-tag-feedback')).element(by.css('.btn[ng-click^="editVideoTag"]'));
+            expect(btn.isDisplayed()).toBe(true);
+            return btn.click();
+        };
+        self.continueAddTag = function(){
+            var btn = element(by.css('.add-tag-feedback')).element(by.css('.btn[ng-click^="addNewTag"]'));
+            expect(btn.isDisplayed()).toBe(true);
+            return btn.click();
+        };
+
         self.submit = function() {
             return self._submit.click();
         };

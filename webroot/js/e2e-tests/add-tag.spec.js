@@ -47,9 +47,11 @@ describe('Add tag on video: ', function() {
         formAddVideoTag.submit().then(function() {
             browser.waitForAngular();
 
-            it('It should be possible to remove the newly created tag', function() {
-                formAddVideoTag.remove().then(function() {
+            formAddVideoTag.continueEditing().then(function() {
+                it('It should be possible to remove the newly created tag', function() {
+                    formAddVideoTag.remove().then(function() {
 
+                    });
                 });
             });
         });
@@ -79,7 +81,6 @@ describe('Add tag on video: ', function() {
 
 
                 formAddRider.submit().then(function() {
-
                 });
             });
         });
