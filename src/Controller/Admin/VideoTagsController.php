@@ -121,11 +121,9 @@ class VideoTagsController extends AppController {
 //        try {
         $videoTag = $this->VideoTags->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
-
-            $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data, [
-                'fieldList' => ['begin', 'end', 'tag_id', 'status', 'rider_id']
-            ]);
-            $videoTag->tag = isset($this->request->data['tag']) ? $this->request->data['tag'] : null;
+            $data = $this->request->data;
+            $videoTag = $this->VideoTags->saveWithTag($this->Auth->user('id'), $data, 
+                    ['rider_id', 'begin', 'end', 'tag_id', 'tag']);
 
             if ($this->VideoTags->save($videoTag)) {
                 ResultMessage::setMessage(__('The video tag has been saved.'), true);
@@ -146,10 +144,11 @@ class VideoTagsController extends AppController {
     public function add() {
         if ($this->request->is(['patch', 'post'])) {
 
-            $videoTag = $this->VideoTags->newEntity($this->request->data);
+            $data = $this->request->data;
+            $videoTag = $this->VideoTags->saveWithTag($this->Auth->user('id'), $data, 
+                    ['rider_id', 'begin', 'end', 'tag_id', 'tag', 'video_id']);
             $videoTag->user_id = $this->Auth->user('id');
-            $videoTag->tag = isset($this->request->data['tag']) ? $this->request->data['tag'] : null;
-
+            
             if ($this->VideoTags->save($videoTag)) {
                 ResultMessage::setMessage(__('The video tag has been added.'), true);
             } else {

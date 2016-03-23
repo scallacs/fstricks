@@ -43,11 +43,11 @@ class SearchsControllerTest extends MyIntegrationTestCase {
      * @return void
      */
     public function testSearch() {
-        $this->get('/api/Searchs/search.json?sport_id=1&q=q query with too much words that can be handled therefor they are ignored.json');
+        $this->get('/api/Searchs/search.json?sport_id=1&q=query with too much words that can be handled therefor they are ignored.json');
         $this->assertResponseOk();
         
         
-        $this->get('/api/Searchs/search.json?q=playlist.json');
+        $this->get('/api/Searchs/search.json?q=playlist');
         $this->assertResponseOk();
         $result = json_decode($this->_response->body(), true);
         $this->assertTrue(!empty($result));

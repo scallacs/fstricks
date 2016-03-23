@@ -60,5 +60,10 @@ class MyIntegrationTestCase extends \Cake\TestSuite\IntegrationTestCase {
         }
         $this->assertArrayHasKeys(['validationErrors' => [$model => $fields]], $result, $message);
     }
+    
+    public function bodyAsJson($toArray = true){
+        return json_decode($this->_response->body(), $toArray);
+    }
+
 
 }

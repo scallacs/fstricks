@@ -252,22 +252,37 @@ class VideoTagsTable extends Table {
     /**
      * @param \Cake\ORM\Entity $entity
      */
-    private function createTag($videoTag) {
-        // Creating a new tag if needed !
-        // Create tag 
-        $tagTable = \Cake\ORM\TableRegistry::get('Tags');
-        $tagEntity = $tagTable->newEntity($videoTag->tag);
-        $tagEntity->user_id = $videoTag->user_id;
-        $tagEntity = $tagTable->createOrGet($tagEntity, $tagEntity->user_id);
-        if (!$tagEntity) {
-            $videoTag->tag_id = null;
-            $videoTag->errors('tag_id', ['The new trick could not be created']);
-            return false;
+//    private function createTag($videoTag) {
+//        // Creating a new tag if needed !
+//        // Create tag 
+//        $tagTable = \Cake\ORM\TableRegistry::get('Tags');
+//        debug($videoTag);
+//        debug($videoTag->tag);
+//        $tagEntity = $tagTable->newEntity($videoTag->tag);
+//        $tagEntity->user_id = $videoTag->user_id;
+//        $tagEntity = $tagTable->createOrGet($tagEntity, $tagEntity->user_id);
+//        if (!$tagEntity) {
+//            $videoTag->tag_id = null;
+//            $videoTag->errors('tag_id', ['The new trick could not be created']);
+//            return false;
+//        }
+//        \Cake\Log\Log::debug("Creating new tag: " . $tagEntity->name, 'messages');
+//        $videoTag->tag_id = $tagEntity->id;
+//        unset($tagEntity->tag);
+//        return true;
+//    }
+
+    public function saveWithTag($userId, $data, $fieldList = ['rider_id', 'begin', 'end', 'tag_id', 'tag', 'video_id']) {
+        $entity = $this->newEntity($data, [
+            'fieldList' => $fieldList,
+            'validate' => false
+        ]);
+        $entity->user_id = $userId;
+        if (!empty($entity->tag) && is_object($entity->tag)) {
+            $tagsTable = \Cake\ORM\TableRegistry::get('Tags');
+            $entity->tag = $tagsTable->createOrGet($entity->tag, $userId);
         }
-        \Cake\Log\Log::debug("Creating new tag: " . $tagEntity->name, 'messages');
-        $videoTag->tag_id = $tagEntity->id;
-        unset($tagEntity->tag);
-        return true;
+        return $entity;
     }
 
     /**
@@ -280,12 +295,6 @@ class VideoTagsTable extends Table {
             $event->stopPropagation();
             $entity->errors('status', ['You are not authorized to edit this trick']);
             return false;
-        }
-
-        if ($entity->tag !== null) {
-            if (!$this->createTag($entity)) {
-                $event->stopPropagation();
-            }
         }
 
         $entity->_delete_accuracy_rates = false;

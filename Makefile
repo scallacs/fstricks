@@ -91,7 +91,7 @@ start-webdriver:
 test-frontend: config-test
 	mysql $(DB_TEST_CREDENTIAL) $(DB_TEST_NAME) < './resources/database/test/delete.sql'
 	mysql $(DB_TEST_CREDENTIAL) $(DB_TEST_NAME) < './resources/database/test/insert.sql'
-	$(PROTRACTOR_BIN) webroot/jsapp/e2e-tests/conf/protractor-conf.js | tee -i logs/test-frontend.log
+	$(PROTRACTOR_BIN) jsapp/e2e-tests/conf/protractor-conf.js | tee -i logs/test-frontend.log
 
 
 # Init db 

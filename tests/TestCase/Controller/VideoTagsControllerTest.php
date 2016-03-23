@@ -208,14 +208,22 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
             'tag' => [
                 'sport_id' => 1,
                 'category_id' => 1,
-                'name' => 'testtesttesttest'
+                'name' => 'testtesghttesttest'
             ],
             'begin' => 2,
             'end' => 10
         ];
         $this->post('/api/VideoTags/add.json', $data);
-//        debug($this->bodyAsJson());
+        debug($this->bodyAsJson());
         $this->assertResultMessageSuccess();
+    }
+    /**
+     * Test add method
+     * TODO 
+     * @return void
+     */
+    public function testEditWithNewTag() {
+        $this->markTestIncomplete('Not implemented yet.');
     }
 
     /**

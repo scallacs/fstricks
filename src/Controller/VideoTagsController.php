@@ -72,8 +72,7 @@ class VideoTagsController extends AppController {
         if ($this->request->is('post')) {
             $data = $this->request->data;
 
-            $videoTag = $this->VideoTags->patchEntity($videoTag, $data);
-            $videoTag->tag = isset($data['tag']) ? $data['tag'] : null;
+            $videoTag = $this->VideoTags->saveWithTag($this->Auth->user('id'), $data, ['rider_id', 'begin', 'end', 'tag_id', 'tag', 'video_id']);
             $videoTag->user_id = $this->Auth->user('id');
 
             if ($this->VideoTags->save($videoTag)) {
@@ -92,15 +91,14 @@ class VideoTagsController extends AppController {
         try {
             if (!empty($id) && is_numeric($id) &&
                     $this->request->is('post') && !empty($this->request->data)) {
+                $data = $this->request->data;
 
                 $videoTag = $this->VideoTags->get($id);
                 if (!$videoTag->isEditabled($this->Auth->user('id'))) {
                     throw new \Cake\Network\Exception\NotFoundException();
                 }
-                $videoTag = $this->VideoTags->patchEntity($videoTag, $this->request->data, [
-                    'fieldList' => ['rider_id', 'begin', 'end', 'tag_id']
-                ]);
-                $videoTag->tag = isset($this->request->data['tag']) ? $this->request->data['tag'] : null;
+                $videoTag = $this->VideoTags->saveWithTag($this->Auth->user('id'), $data, ['rider_id', 'begin', 'end', 'tag_id', 'tag']);
+//                $videoTag->tag = isset($this->request->data['tag']) ? $this->request->data['tag'] : null;
 //                debug($videoTag);
                 $videoTag->status = VideoTag::STATUS_PENDING;
                 if ($this->VideoTags->save($videoTag)) {

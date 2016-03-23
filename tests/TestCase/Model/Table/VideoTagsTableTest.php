@@ -17,11 +17,14 @@ class VideoTagsTableTest extends TestCase {
      * @var array
      */
     public $fixtures = [
-        'app.video_tags',
-        'app.videos',
         'app.users',
+        'app.video_providers',
+        'app.videos',
         'app.tags',
+        'app.video_tags',
         'app.riders',
+        'app.sports',
+        'app.categories',
         'app.video_tag_accuracy_rates'
     ];
 
@@ -38,6 +41,8 @@ class VideoTagsTableTest extends TestCase {
         parent::setUp();
         $config = TableRegistry::exists('VideoTags') ? [] : ['className' => 'App\Model\Table\VideoTagsTable'];
         $this->VideoTags = TableRegistry::get('VideoTags', $config);
+        $config = TableRegistry::exists('Tags') ? [] : ['className' => 'App\Model\Table\TagsTable'];
+        $this->Tags = TableRegistry::get('Tags', $config);
     }
 
     /**
@@ -65,8 +70,24 @@ class VideoTagsTableTest extends TestCase {
         $videoTag = $this->VideoTags->newEntity($data);
         $videoTag->user_id = 1;
         $this->assertTrue((bool) $this->VideoTags->save($videoTag));
-        $this->assertEquals($videoTag->status, \App\Model\Entity\VideoTag::STATUS_PENDING,
-                "It should have the status 'pending'");
+        $this->assertEquals($videoTag->status, \App\Model\Entity\VideoTag::STATUS_PENDING, "It should have the status 'pending'");
+    }
+
+    public function testAddWithNewTag() {
+        $data = [
+            'video_id' => 1,
+            'tag' => [
+                'sport_id' => 1,
+                'category_id' => 1,
+                'name' => 'testtesghttesttest'
+            ],
+            'begin' => 2,
+            'end' => 10
+        ];
+        $entity = $this->VideoTags->saveWithTag(1, $data);
+        $this->assertTrue((bool) $this->VideoTags->save($entity), "Should be possible to add the new tag");
+        $entity = $this->VideoTags->saveWithTag(1, $data);
+        $this->assertTrue((bool) $this->VideoTags->save($entity), "Should be possible to add a trick with data has a new tag even if tag already exists");
     }
 
     /**
@@ -87,11 +108,8 @@ class VideoTagsTableTest extends TestCase {
         $videoTagNew->user_id = 1;
         $this->assertTrue((bool) $this->VideoTags->save($videoTagNew), "Should be possible to create a new tag at the same "
                 . "place as a validated tag");
-        $this->assertEquals($videoTagNew->status, \App\Model\Entity\VideoTag::STATUS_DUPLICATE,
-                "It should have the status 'duplicate' because their is already a validated tag here");
+        $this->assertEquals($videoTagNew->status, \App\Model\Entity\VideoTag::STATUS_DUPLICATE, "It should have the status 'duplicate' because their is already a validated tag here");
     }
-    
-    
 
     /**
      * When adding a tag where there is alreadu a validated tag, it should 
@@ -103,15 +121,10 @@ class VideoTagsTableTest extends TestCase {
         $videoTag = $this->VideoTags->get($id);
 
         $videoTag->begin = $videoTag->begin + 1;
-        $this->assertEquals($videoTag->status, 
-                \App\Model\Entity\VideoTag::STATUS_REJECTED,
-                "Fixure is not properly set. It should have the status 'rejected'");
+        $this->assertEquals($videoTag->status, \App\Model\Entity\VideoTag::STATUS_REJECTED, "Fixure is not properly set. It should have the status 'rejected'");
         $this->assertTrue((bool) $this->VideoTags->save($videoTag), "Should be possible to edit the tag");
-        $this->assertEquals($videoTag->status, 
-                \App\Model\Entity\VideoTag::STATUS_REJECTED,
-                "It should have the status 'pending' when saving tag");
+        $this->assertEquals($videoTag->status, \App\Model\Entity\VideoTag::STATUS_REJECTED, "It should have the status 'pending' when saving tag");
     }
-
 
     /**
      * TODO Test adding a begin or end time bigger than the video duration
