@@ -30,6 +30,12 @@ reset-repo:
 # target: prod - build the project for production
 prod: build config-prod clean-prod
 
+# target: uat - build the project for production
+uat: build config-uat
+
+# target: dev - build the project for production
+dev: build config-dev
+
 
 # target: dev - build the project for dev
 config-dev: build 
