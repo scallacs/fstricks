@@ -176,7 +176,9 @@ function EditionTag() {
         console.log(form);
         var self = this;
         if (this.isNew()) {
-            return form.submit(this.callApi('add', this.toPostData()).$promise)
+            var promise = this.callApi('add', this.toPostData()).$promise;
+            form.submit(promise);
+            promise
                     .then(function(response) {
                         if (response.success) {
                             console.log("Creating a new tag!'");
@@ -185,14 +187,17 @@ function EditionTag() {
                             self._original = self.toVideoTag();
                         }
                     });
+            return promise;
         }
         else {
-            return form.submit(this.callApi('edit', this.toPostData()).$promise)
-                    .then(function(response) {
-                        if (response.success) {
-                            angular.copy(self._video_tag, self._original);
-                        }
-                    });
+            var promise = this.callApi('edit', this.toPostData()).$promise;
+            form.submit(promise);
+            promise.then(function(response) {
+                if (response.success) {
+                    angular.copy(self._video_tag, self._original);
+                }
+            });
+            return promise;
         }
     }
     function resetTag() {

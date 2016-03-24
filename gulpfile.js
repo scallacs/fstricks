@@ -114,7 +114,7 @@ gulp.task('concat-js', function() {
             .pipe(stripDebug())
             .pipe(concat('app.js'))
 //    .pipe(ngAnnotate())
-//            .pipe(uglify())
+            .pipe(uglify())
             .pipe(gulp.dest(JS_OUTPUT))
 });
 
@@ -132,7 +132,7 @@ gulp.task('concat-js-admin', function() {
             .pipe(wrap('(function(){\n"use strict";\n<%= contents %>\n})();'))
             .pipe(stripDebug())
             .pipe(concat(ADMIN_HIDDEN_PATH + '.js'))
-//            .pipe(uglify())
+            .pipe(uglify())
             .pipe(gulp.dest(JS_OUTPUT));
 });
 

@@ -13,7 +13,7 @@ return [
     'debug' => true,
     'maintenance' => 0,
     'user_feedback' => true,
-    'concat_js' => false,
+    'concat_js' => true,
     'concat_css' => false,
     'Email' => [
         'default' => [
