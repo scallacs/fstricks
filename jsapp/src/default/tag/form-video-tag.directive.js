@@ -160,7 +160,9 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
         PlayerData.showListTricks = false;
         editionTag.resetTag()
                 .setId(null)
-                .setVideo($scope.video);
+                .setVideo($scope.video)
+                .moveForward();
+        
         updateSimilarTags();
         playEditionTag();
     }

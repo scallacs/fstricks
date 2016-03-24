@@ -97,6 +97,24 @@ gulp.task('concat-js-lib', function() {
             .pipe(gulp.dest(JS_OUTPUT));
 });
 
+gulp.task('concat-js-dev', function() {
+    gulp.src([
+        '!' + DEFAULT_APP + '*.spec.js',
+        '!' + DEFAULT_APP + '**/*.spec.js',
+        '!' + DEFAULT_APP + '**/**/*.spec.js',
+        DEFAULT_APP + 'app.config.module.js',
+        DEFAULT_APP + 'shared/**/*.module.js',
+        DEFAULT_APP + 'shared/**/*.js',
+        DEFAULT_APP + 'shared/shared.module.js',
+        DEFAULT_APP + '**/*.module.js',
+        DEFAULT_APP + '**/*.js',
+        DEFAULT_APP + 'app.module.js'
+    ])
+            .pipe(wrap('(function(){\n"use strict";\n<%= contents %>\n})();'))
+            .pipe(concat('app.js'))
+            .pipe(sourcemaps.write('maps'))
+            .pipe(gulp.dest(JS_OUTPUT))
+});
 gulp.task('concat-js', function() {
     gulp.src([
         '!' + DEFAULT_APP + '*.spec.js',
@@ -113,9 +131,7 @@ gulp.task('concat-js', function() {
             .pipe(wrap('(function(){\n"use strict";\n<%= contents %>\n})();'))
             .pipe(stripDebug())
             .pipe(concat('app.js'))
-//    .pipe(ngAnnotate())
             .pipe(uglify())
-            .pipe(sourcemaps.write('maps'))
             .pipe(gulp.dest(JS_OUTPUT))
 });
 

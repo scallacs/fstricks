@@ -128,7 +128,8 @@ function EditionTag() {
         isOwner: isOwner,
         remove: remove,
         callApi: callApi,
-        hasApi: hasApi
+        hasApi: hasApi,
+        moveForward: moveForward
     };
 
     function remove() {
@@ -290,6 +291,12 @@ function EditionTag() {
     function syncRider() {
         this.setRider(this._extra.rider);
     }
+    
+    function moveForward(){
+        var duration = this._video_tag.end - this._video_tag.begin;
+        this._video_tag.begin = this._video_tag.end;
+        this._video_tag.end = this._video_tag.begin + duration;
+    }
 
     function fromVideoTag(videoTag) {
         this._video_tag = angular.copy(videoTag);
@@ -368,7 +375,11 @@ function EditionTag() {
             id: this._video_tag.id
         };
         if (this._extra.tag.is_new) {
+            console.log("CREATING NEW TAG:");
+            console.log(this._extra.category);
             postData.tag = this._extra.tag;
+            postData.tag.category_id = this._extra.category.category_id;
+            postData.tag.sport_id = this._extra.category.sport_id;
         }
         return postData;
     }

@@ -159,7 +159,7 @@ function PlayerData(VideoTagData, $q) {
         obj.looping ? obj.stopLooping() : obj.startLooping();
     }
     function isMode(m) {
-        console.log("PlayerData::isMode(" + m + ") ? " + obj.mode);
+//        console.log("PlayerData::isMode(" + m + ") ? " + obj.mode);
         return obj.mode === m;
     }
 
