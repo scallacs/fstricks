@@ -124,14 +124,14 @@ function ConfigRouting($stateProvider) {
 //            })
             .state("otherwise", {
                 url: "*path",
-                templateUrl: "js/src/views/error-not-found.html",
+                templateUrl: TEMPLATE_URL + "views/error-not-found.html",
                 data: {
                     requireLogin: false
                 }
             })
             .state("notfound", {
                 url: "*path",
-                templateUrl: "js/src/views/error-not-found.html",
+                templateUrl: TEMPLATE_URL + "views/error-not-found.html",
                 data: {
                     requireLogin: false
                 }

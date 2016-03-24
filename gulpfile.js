@@ -20,34 +20,34 @@ var CSS_PATH = './webroot/css/';
 
 // JSHint task
 gulp.task('lint', function() {
-  gulp.src(DEFAULT_APP + '*.js')
-  .pipe(jshint())
-  // You can look into pretty reporters as well, but that's another story
-  .pipe(jshint.reporter('default'));
+    gulp.src(DEFAULT_APP + '*.js')
+            .pipe(jshint())
+            // You can look into pretty reporters as well, but that's another story
+            .pipe(jshint.reporter('default'));
 });
 
 gulp.task('build', ['concat-js', 'concat-js-admin', 'concat-css', 'concat-js-lib', 'concat-js-components', 'build-views']);
 
 gulp.task('watch', ['lint'], function() {
-  // Watch our scripts
-  gulp.watch([APP_SRC + '*.js', APP_SRC + '**/*.js', APP_SRC + '**/**/*.js', APP_SRC + '**/**/**/*.js'], [ 
-    'lint',
-    'concat-js',
-    'concat-js-admin'
-  ]);
-  gulp.watch([APP_SRC + '*.html', APP_SRC + '**/*.html', APP_SRC + '**/**/*.html' , APP_SRC + '**/**/**/*.html'], [ 
-    'build-views'
-  ]);
-  
-  gulp.watch([JS_OUTPUT + 'lib/*.js'],[
-      'concat-js-lib'
-  ]);
+    // Watch our scripts
+    gulp.watch([APP_SRC + '*.js', APP_SRC + '**/*.js', APP_SRC + '**/**/*.js', APP_SRC + '**/**/**/*.js'], [
+        'lint',
+        'concat-js',
+        'concat-js-admin'
+    ]);
+    gulp.watch([APP_SRC + '*.html', APP_SRC + '**/*.html', APP_SRC + '**/**/*.html', APP_SRC + '**/**/**/*.html'], [
+        'build-views'
+    ]);
+
+    gulp.watch([JS_OUTPUT + 'lib/*.js'], [
+        'concat-js-lib'
+    ]);
 //  gulp.watch([JS_OUTPUT + 'components/*'],[
 //      'concat-js-components'
 //  ]);
-  gulp.watch([CSS_PATH + '*.css'],[
-    'concat-css'
-  ]);
+    gulp.watch([CSS_PATH + '*.css'], [
+        'concat-css'
+    ]);
 });
 
 
@@ -115,6 +115,7 @@ gulp.task('concat-js', function() {
             .pipe(concat('app.js'))
 //    .pipe(ngAnnotate())
             .pipe(uglify())
+            .pipe(sourcemaps.write('maps'))
             .pipe(gulp.dest(JS_OUTPUT))
 });
 
