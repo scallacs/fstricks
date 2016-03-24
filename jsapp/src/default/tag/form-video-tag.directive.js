@@ -167,8 +167,8 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
         playEditionTag();
     }
 
-    function playEditionTag() {
-        PlayerData.playVideoTag(editionTag._video_tag);
+    function playEditionTag(looping) {
+        PlayerData.playVideoTag(editionTag._video_tag, looping);
     }
 
     function saveVideoTag(editionTag) {
@@ -294,7 +294,7 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
         editionTag._video_tag.end = output[1];
         if (editionTag._video_tag.provider_id !== null) {
             if (i === 0) {
-                playEditionTag();
+                playEditionTag(false); // we do not loop we tagin the begining
             }
             else {
                 PlayerData.data.end = output[1];
