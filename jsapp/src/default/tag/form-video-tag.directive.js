@@ -164,7 +164,7 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
                 .moveForward();
         
         updateSimilarTags();
-        playEditionTag();
+        playEditionTag(false);
     }
 
     function playEditionTag(looping) {
@@ -202,7 +202,7 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
     function editVideoTag(videoTag) {
         $scope.showAddFeedback = false;
         editionTag.fromVideoTag(videoTag);
-        playEditionTag();
+        playEditionTag(true);
         editionTag.isNew() ? updateSimilarTags() : $scope.similarTags = [];
     }
 
@@ -294,7 +294,7 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
         editionTag._video_tag.end = output[1];
         if (editionTag._video_tag.provider_id !== null) {
             if (i === 0) {
-                playEditionTag(false); // we do not loop we tagin the begining
+                playEditionTag(true);
             }
             else {
                 PlayerData.data.end = output[1];
