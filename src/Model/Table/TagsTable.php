@@ -118,7 +118,7 @@ class TagsTable extends Table {
             ResultMessage::addValidationErrorsModel($entity);
             ResultMessage::setMessage(__('Cannot create this trick'), false);
         }
-        return false;
+        return $entity;
     }
 
     public function buildRules(RulesChecker $rules) {

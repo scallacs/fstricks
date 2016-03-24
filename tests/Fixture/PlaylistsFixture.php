@@ -32,7 +32,7 @@ class PlaylistsFixture extends TestFixture
     public $records = [
         [
             'id' => self::ID_PUBLIC,
-            'title' => 'Lorem ipsum dolor sit amet',
+            'title' => 'Playlist public',
             'description' => 'Lorem ipsum dolor sit amet',
             'created' => 1456577224,
             'modified' => 1456577224,

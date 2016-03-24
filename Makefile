@@ -26,17 +26,9 @@ reset-repo:
 	git reset --hard origin/master
 #	git fetch origin
 
-# target: mv2prod - Moving to production
-mv2prod: 
-	sudo rm -rf /var/www/html/*
-	cp -r ./* /var/www/html
-	cp .htaccess /var/www/html
-	cp webroot/.htaccess /var/www/html/webroot
-	sudo chmod 777 -R /var/www/html/logs
-	sudo chmod 777 -R /var/www/html/tmp
 	
 # target: prod - build the project for production
-prod: build clean-prod config-prod 
+prod: build config-prod clean-prod
 
 
 # target: dev - build the project for dev
@@ -48,21 +40,15 @@ config-prod:
 	
 config-test:
 	cp config/app.test.php config/app.php
+
+config-uat:
+	cp config/app.uat.php config/app.php
 	
 .PHONY: database
 database: $(DB_SOURCE)
 	echo "CREATE DATABASE IF NOT EXISTS $(DB_PROD_NAME)" |  mysql $(DB_PROD_CREDENTIAL)
 	mysql $(DB_PROD_CREDENTIAL) $(DB_PROD_NAME) < $(DB_SOURCE)
 	
-# target: clean-prod - cleaning prod server 
-.PHONY: clean-prod
-clean-prod:
-	rm -rf webroot/coverage
-	rm -rf webroot/js/lib
-	find webroot/js/admin -type f ! -name '*.html' -delete
-	find webroot/js/src -type f ! -name '*.html' -delete
-	find webroot/css -type f ! -name 'style.css' -delete
-
 build: reset-repo build-backend build-frontend
 
 .PHONY: build-backend
@@ -73,6 +59,9 @@ build-backend:
 build-frontend: 
 	bower install
 	$(GULP_BIN) build
+
+clean-prod:
+	rm -rf webroot/coverage
 
 ###############################################################
 # TESTS
@@ -108,3 +97,23 @@ test-backend: config-test
 # target: help - Displays help.
 help:
 	@egrep "^# target:" Makefile
+
+
+
+
+# target: mv2prod - Moving to production
+#mv2prod: 
+#	sudo rm -rf /var/www/html/*
+#	cp -r ./* /var/www/html
+#	cp .htaccess /var/www/html
+#	cp webroot/.htaccess /var/www/html/webroot
+#	sudo chmod 777 -R /var/www/html/logs
+#	sudo chmod 777 -R /var/www/html/tmp
+# target: clean-prod - cleaning prod server 
+#.PHONY: clean-prod
+#clean-prod:
+#	rm -rf webroot/coverage
+#	rm -rf webroot/js/lib
+#	find webroot/js/admin -type f ! -name '*.html' -delete
+#	find webroot/js/src -type f ! -name '*.html' -delete
+#	find webroot/css -type f ! -name 'style.css' -delete

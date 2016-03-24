@@ -84,10 +84,25 @@ class VideoTagsTableTest extends TestCase {
             'begin' => 2,
             'end' => 10
         ];
-        $entity = $this->VideoTags->saveWithTag(1, $data);
+        $entity = $this->VideoTags->saveWithTag(null, 1, $data);
         $this->assertTrue((bool) $this->VideoTags->save($entity), "Should be possible to add the new tag");
-        $entity = $this->VideoTags->saveWithTag(1, $data);
+        $entity = $this->VideoTags->saveWithTag(null, 1, $data);
         $this->assertTrue((bool) $this->VideoTags->save($entity), "Should be possible to add a trick with data has a new tag even if tag already exists");
+    }
+
+    public function testEditWithNewTag() {
+        $videoTag = $this->VideoTags->get(1);
+        $data = [
+            'tag' => [
+                'sport_id' => 1,
+                'category_id' => 1,
+                'name' => 'testtesghttesttest'
+            ],
+            'begin' => 2,
+            'end' => 10
+        ];
+        $entity = $this->VideoTags->saveWithTag($videoTag, 1, $data);
+        $this->assertTrue((bool) $this->VideoTags->save($entity), "Should be possible to add the new tag");
     }
 
     /**

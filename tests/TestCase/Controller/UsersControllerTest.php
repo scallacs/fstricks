@@ -17,6 +17,7 @@ class UsersControllerTest extends MyIntegrationTestCase {
      */
     public $fixtures = [
         'app.users',
+        'app.playlists',
     ];
 
     /**
@@ -198,7 +199,7 @@ class UsersControllerTest extends MyIntegrationTestCase {
             'email' => $record['email']
         ];
         $this->post('/api/users/request_password.json', $data);
-        $this->assertResultMessageSuccess(null, "Should be possible to request a new password");
+        $this->assertResultMessageSuccess(null, "Should be possible to request a new password (@warning: email should works')");
         
         // Should be possible to reset password with the new one
         $record = $this->Users->get($record['id']);

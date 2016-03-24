@@ -252,35 +252,31 @@ class VideoTagsTable extends Table {
     /**
      * @param \Cake\ORM\Entity $entity
      */
-//    private function createTag($videoTag) {
-//        // Creating a new tag if needed !
-//        // Create tag 
-//        $tagTable = \Cake\ORM\TableRegistry::get('Tags');
-//        debug($videoTag);
-//        debug($videoTag->tag);
-//        $tagEntity = $tagTable->newEntity($videoTag->tag);
-//        $tagEntity->user_id = $videoTag->user_id;
-//        $tagEntity = $tagTable->createOrGet($tagEntity, $tagEntity->user_id);
-//        if (!$tagEntity) {
-//            $videoTag->tag_id = null;
-//            $videoTag->errors('tag_id', ['The new trick could not be created']);
-//            return false;
-//        }
-//        \Cake\Log\Log::debug("Creating new tag: " . $tagEntity->name, 'messages');
-//        $videoTag->tag_id = $tagEntity->id;
-//        unset($tagEntity->tag);
-//        return true;
-//    }
+    private function createTag($data, $userId) {
+        $tagsTable = \Cake\ORM\TableRegistry::get('Tags');
+        return $tagsTable->createOrGet($tagsTable->newEntity($data), $userId);
+    }
 
-    public function saveWithTag($userId, $data, $fieldList = ['rider_id', 'begin', 'end', 'tag_id', 'tag', 'video_id']) {
-        $entity = $this->newEntity($data, [
-            'fieldList' => $fieldList,
-            'validate' => false
-        ]);
-        $entity->user_id = $userId;
-        if (!empty($entity->tag) && is_object($entity->tag)) {
-            $tagsTable = \Cake\ORM\TableRegistry::get('Tags');
-            $entity->tag = $tagsTable->createOrGet($entity->tag, $userId);
+    public function saveWithTag($entity, $userId, $data, $fieldList = ['rider_id', 'begin', 'end', 'tag_id', 'video_id']) {
+
+        if (!empty($data['tag']) && is_array($data['tag'])) {
+            $data['tag_id'] = $this->createTag($data['tag'], $userId)->id;
+            unset($data['tag']);
+        }
+        if ($entity == null) {
+            $entity = $this->newEntity($data, [
+                'fieldList' => $fieldList,
+                'validate' => true
+            ]);
+        }
+        else{
+            $this->patchEntity($entity, $data, [
+                'fieldList' => $fieldList,
+                'validate' => true
+            ]);
+        }
+        if ($userId !== null) {
+            $entity->user_id = $userId;
         }
         return $entity;
     }

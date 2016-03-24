@@ -37,6 +37,8 @@ class VideoTagsControllerTest extends MyIntegrationTestCase {
         
         $this->logUser($videoTagOrigin->user_id + 1);
         $data = [
+            'user_id' => 1,
+            'video_id' => 1,
             'begin' => $videoTagOrigin->begin + 1,
             'end' => $videoTagOrigin->end + 1,
             'tag' => [
@@ -45,7 +47,7 @@ class VideoTagsControllerTest extends MyIntegrationTestCase {
                 'sport_id' => 1
             ],
         ];
-        $this->post('/adming/api/VideoTags/edit/' . $tagId . '.json', $data);
+        $this->post('/admin/api/VideoTags/edit/' . $tagId . '.json', $data);
         $this->assertResultMessageSuccess();
     }
     

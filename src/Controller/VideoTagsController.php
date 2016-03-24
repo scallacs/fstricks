@@ -68,11 +68,10 @@ class VideoTagsController extends AppController {
      */
     public function add() {
         ResultMessage::setWrapper(true);
-        $videoTag = $this->VideoTags->newEntity();
         if ($this->request->is('post')) {
             $data = $this->request->data;
 
-            $videoTag = $this->VideoTags->saveWithTag($this->Auth->user('id'), $data, ['rider_id', 'begin', 'end', 'tag_id', 'tag', 'video_id']);
+            $videoTag = $this->VideoTags->saveWithTag(null, $this->Auth->user('id'), $data, ['rider_id', 'begin', 'end', 'tag_id', 'tag', 'video_id']);
             $videoTag->user_id = $this->Auth->user('id');
 
             if ($this->VideoTags->save($videoTag)) {
@@ -97,7 +96,7 @@ class VideoTagsController extends AppController {
                 if (!$videoTag->isEditabled($this->Auth->user('id'))) {
                     throw new \Cake\Network\Exception\NotFoundException();
                 }
-                $videoTag = $this->VideoTags->saveWithTag($this->Auth->user('id'), $data, ['rider_id', 'begin', 'end', 'tag_id', 'tag']);
+                $videoTag = $this->VideoTags->saveWithTag($videoTag, $this->Auth->user('id'), $data, ['rider_id', 'begin', 'end', 'tag_id', 'tag']);
 //                $videoTag->tag = isset($this->request->data['tag']) ? $this->request->data['tag'] : null;
 //                debug($videoTag);
                 $videoTag->status = VideoTag::STATUS_PENDING;
