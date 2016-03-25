@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "********** mise en production *********" 
+cd /var/www/fstricks 
+unset GIT_DIR
+git pull origin master
