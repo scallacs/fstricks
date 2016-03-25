@@ -122,7 +122,7 @@ class VideoTagsController extends AppController {
         $videoTag = $this->VideoTags->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $data = $this->request->data;
-            $videoTag = $this->VideoTags->saveWithTag($videoTag, null, $data, ['rider_id', 'begin', 'end', 'tag_id', 'tag']);
+            $videoTag = $this->VideoTags->saveWithTag($videoTag, null, $data, ['rider_id', 'begin', 'end', 'tag_id', 'tag', 'status']);
 
             if ($this->VideoTags->save($videoTag)) {
                 ResultMessage::setMessage(__('The video tag has been saved.'), true);

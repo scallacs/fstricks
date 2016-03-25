@@ -96,7 +96,10 @@ class VideoTagsController extends AppController {
                 if (!$videoTag->isEditabled($this->Auth->user('id'))) {
                     throw new \Cake\Network\Exception\NotFoundException();
                 }
-                $videoTag = $this->VideoTags->saveWithTag($videoTag, $this->Auth->user('id'), $data, ['rider_id', 'begin', 'end', 'tag_id', 'tag', 'status']);
+                $videoTag = $this->VideoTags->saveWithTag($videoTag, 
+                        $this->Auth->user('id'), 
+                        $data, 
+                        ['rider_id', 'begin', 'end', 'tag_id', 'tag']);
 //                $videoTag->tag = isset($this->request->data['tag']) ? $this->request->data['tag'] : null;
 //                debug($videoTag);
                 $videoTag->status = VideoTag::STATUS_PENDING;
