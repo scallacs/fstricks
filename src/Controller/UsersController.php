@@ -335,6 +335,7 @@ class UsersController extends AppController {
      */
 
     // For JSON LOGIN
+    // http://www.bravo-kernel.com/2015/04/how-to-add-jwt-authentication-to-a-cakephp-3-rest-api/
     protected function setToken($userId = null) {
         if ($userId === null) {
             $userId = $this->Auth->user('id');
@@ -343,13 +344,9 @@ class UsersController extends AppController {
                     'id' => $userId,
                     'sub' => $userId,
                     'exp' => time() + \Cake\Core\Configure::read('TokenExpirationTime'),
-                    'iat' => time()
+                    'iat' => time() // Issued At 
                         ], Security::salt());
 
-//        ResultMessage::setData('id', $userId);
-//        ResultMessage::setData('username', $this->Auth->user('username'));
-//        ResultMessage::setData('email', $this->Auth->user('email'));
-//        ResultMessage::setData('created', $this->Auth->user('created'));
         ResultMessage::setToken($token);
     }
 

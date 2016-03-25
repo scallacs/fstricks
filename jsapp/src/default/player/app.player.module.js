@@ -364,7 +364,6 @@ function ViewRealizationController(VideoTagData, $stateParams, PlayerData, Share
                 }
             })
             .catch(function() {
-                SharedData.pageLoader(false);
                 $state.go('notfound');
             });
 }

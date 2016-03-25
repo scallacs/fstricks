@@ -233,7 +233,7 @@ Configure::write('Browser', [
     'title_prefix' => 'Freestyle Tricks',
 ]);
 Configure::write('JsonConfigFolder', WWW_ROOT . DS . 'data' . DS);
-Configure::write('TokenExpirationTime', 30 * (86400 * 1000)); // 30 jour
+Configure::write('TokenExpirationTime', 604800); // 7 jours
 
 Configure::write('VideoTagValidation', [
     "threshold_reject" => 0.7,
