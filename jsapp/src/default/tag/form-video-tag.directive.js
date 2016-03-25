@@ -47,9 +47,9 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
     var editionTag = $scope.editionTag;
     // -------------------------------------------------------------------------
     // Properties: TODO match with server side
-    var MIN_TAG_DURATION = 2;
-    var MAX_TAG_DURATION = 40;
-    var SIMILAR_TAG_LIMIT_RATIO = 0.6;
+    var MIN_TAG_DURATION = editionTag._config.min_duration;
+    var MAX_TAG_DURATION = editionTag._config.max_duration;;
+    var SIMILAR_TAG_LIMIT_RATIO = editionTag._config.similar_tag_limit_ratio;
 
     $scope.showCreateRiderForm = false;
 

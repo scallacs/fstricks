@@ -92,11 +92,12 @@ function ModalReportErrorController($scope, $uibModalInstance, ErrorReportEntity
 
 function EditionTag() {
 
-    function EditionTag(userId, apiMap, role) {
+    function EditionTag(userId, apiMap, role, config) {
         this._user_id = userId;
         this.init();
         this._apiMap = apiMap;
         this._role = role ? role : 'user';
+        this._config = config;
         return this;
     }
 
@@ -223,6 +224,7 @@ function EditionTag() {
     function setVideo(data) {
         this._video_tag.video_url = data.video_url;
         this._video_tag.video_id = data.id;
+        this._video_tag.video_duration = data.duration;
         this._video_tag.provider_id = data.provider_id;
         return this;
     }
@@ -294,8 +296,10 @@ function EditionTag() {
     
     function moveForward(){
         var duration = this._video_tag.end - this._video_tag.begin;
-        this._video_tag.begin = this._video_tag.end;
-        this._video_tag.end = this._video_tag.begin + duration;
+        this._extra.range[0] = Math.min(this._video_tag.end, this._video_tag.video_duration - this._config.min_duration);
+        this._video_tag.begin = this._extra.range[0];
+        this._extra.range[1] = this._video_tag.begin + Math.min(duration, (this._video_tag.video_duration - this._video_tag.begin));
+        this._video_tag.end = this._extra.range[1];
     }
 
     function fromVideoTag(videoTag) {

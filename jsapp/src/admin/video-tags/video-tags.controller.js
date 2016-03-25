@@ -154,7 +154,11 @@ function VideoTagEditController($scope, SharedData, $stateParams, AdminApiFactor
         'edit': AdminApiFactory.endpoint('VideoTags', 'edit').save,
         'add': AdminApiFactory.endpoint('VideoTags', 'add').save,
         'delete': AdminApiFactory.endpoint('VideoTags', 'delete').save
-    }, 'admin');
+    }, 'admin', {
+        min_duration: 2,
+        max_duration: 40, 
+        similar_tag_limit_ratio: 0.6
+    });
 //
 ////    PlayerData.showEditionMode();
 ////    PlayerData.showListTricks = false;
