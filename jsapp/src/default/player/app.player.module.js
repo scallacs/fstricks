@@ -186,9 +186,9 @@ DashboardController.$inject = ['$scope', 'PaginateDataLoader', 'SharedData', '$s
 function DashboardController($scope, PaginateDataLoader, SharedData, $state, VideoTagEntity, ApiFactory) {
 
     $scope.removeOptions = {
-        trigger: '.btn-remove-item', 
-        endpoint: ApiFactory.endpoint('VideoTags', 'delete').remove, 
-        confirm: true, 
+        trigger: '.btn-remove-item',
+        endpoint: ApiFactory.endpoint('VideoTags', 'delete').remove,
+        confirm: true,
         wait: false
     };
 
@@ -343,9 +343,6 @@ function PlayerController($scope, PlayerData, SharedData, TopSearchMapper) {
 
 ViewRealizationController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', '$state', 'TopSearchMapper'];
 function ViewRealizationController(VideoTagData, $stateParams, PlayerData, SharedData, $state, TopSearchMapper) {
-    SharedData.setCurrentSearch(TopSearchMapper['trick']({
-        title: 'realization'
-    }));
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = false;
@@ -355,8 +352,11 @@ function ViewRealizationController(VideoTagData, $stateParams, PlayerData, Share
             .startLoading()
             .then(function(results) {
                 if (results.items.length === 1) {
-                    PlayerData.playVideoTag(results.items[0]).then(function() {
+                    var videoTag = results.items[0];
+                    PlayerData.playVideoTag(videoTag).then(function() {
                         SharedData.pageLoader(false);
+                        console.log(videoTag);
+                        SharedData.setCurrentSearch(TopSearchMapper['trick'](videoTag));
                     });
                 }
                 else {
@@ -365,6 +365,7 @@ function ViewRealizationController(VideoTagData, $stateParams, PlayerData, Share
             })
             .catch(function() {
                 SharedData.pageLoader(false);
+                $state.go('notfound');
             });
 }
 
@@ -374,22 +375,22 @@ function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData, T
     PlayerData.showViewMode();
     PlayerData.stop();
     VideoTagData.getLoader()
-        .setFilters({tag_slug: $stateParams.tagSlug, order: $stateParams.order})
-        .startLoading()
-        .then(function(results) {
-            if (results.items.length > 0) {
-                var firstTag = results.items[0];
-                SharedData.setCurrentSearch(TopSearchMapper['trick'](firstTag));
-                // Auto play if there is only one realization for the trick
-                if (results.items.length === 1) {
-                    PlayerData.showListTricks = false;
-                    PlayerData.playVideoTag(firstTag);
+            .setFilters({tag_slug: $stateParams.tagSlug, order: $stateParams.order})
+            .startLoading()
+            .then(function(results) {
+                if (results.items.length > 0) {
+                    var firstTag = results.items[0];
+                    SharedData.setCurrentSearch(TopSearchMapper['trick'](firstTag));
+                    // Auto play if there is only one realization for the trick
+                    if (results.items.length === 1) {
+                        PlayerData.showListTricks = false;
+                        PlayerData.playVideoTag(firstTag);
+                    }
                 }
-            }
-        })
-        .finally(function() {
-            SharedData.pageLoader(false);
-        });
+            })
+            .finally(function() {
+                SharedData.pageLoader(false);
+            });
 }
 
 ViewSportController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'TopSearchMapper'];
@@ -408,9 +409,9 @@ function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData,
     VideoTagData.getLoader()
             .setFilters({sport_name: $stateParams.sportName, order: $stateParams.order})
             .startLoading().finally(function() {
-                SharedData.pageLoader(false);
-            });
-        }
+        SharedData.pageLoader(false);
+    });
+}
 
 ViewRiderController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'RiderEntity', 'TopSearchMapper'];
 function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, SharedData, RiderEntity, TopSearchMapper) {
@@ -565,12 +566,12 @@ ViewValidationController.$inject = ['$scope', 'VideoTagData', 'PlayerData', 'Sha
 function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, $state, VideoTagEntity,
         VideoTagAccuracyRateEntity, $uibModal) {
     var skipped = [];
-    
-    if (!SharedData.currentSport){
+
+    if (!SharedData.currentSport) {
         $state.go('startvalidation');
         return;
     }
-    
+
     VideoTagData.reset();
     loadNext();
     PlayerData.showValidationMode();
@@ -580,7 +581,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     $scope.rateFake = rateFake;
     $scope.skip = skip;
 
-    
+
     function rateAccurate() {
         $scope.isButtonsLoading = true;
         VideoTagAccuracyRateEntity.accurate({
@@ -661,8 +662,8 @@ EditPlaylistController.$inject = ['$scope', 'PaginateDataLoader', 'PlaylistItemE
 function EditPlaylistController($scope, PaginateDataLoader, PlaylistItemEntity, SharedData, $stateParams, ApiFactory, $state) {
     var removeEndpoint = ApiFactory.endpoint('PlaylistVideoTags', 'delete').remove;
     $scope.removeOptions = {
-        wait: false, 
-        endpoint: removeEndpoint, 
+        wait: false,
+        endpoint: removeEndpoint,
         trigger: '.btn-remove-item',
         confirm: false
     };
@@ -684,7 +685,7 @@ function EditPlaylistController($scope, PaginateDataLoader, PlaylistItemEntity, 
                 .then(function(results) {
                     $scope.playlist = results.extra.playlist;
                 })
-                .catch(function(){
+                .catch(function() {
                     $state.go('manageplaylist');
                 })
                 .finally(function() {

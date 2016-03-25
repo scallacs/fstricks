@@ -24,3 +24,7 @@ CakePHP 2
 /app/Config/core.php
 /app/Config/database.php
 /vendors/*
+
+Netbeans
+/nbproject/private/private.xml
+/resources/webserver-fstricks-linux.pem
