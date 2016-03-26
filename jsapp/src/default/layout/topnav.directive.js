@@ -10,19 +10,20 @@ function topnav() {
         controller: ['$scope', 'AuthenticationService', '$state', 'SharedData', 'VideoTagData', 'PlayerData',
             function($scope, AuthenticationService, $state, SharedData, VideoTagData, PlayerData) {
                 // create a message to display in our view
-                $scope.currentSport = null;
                 $scope.logout = logout;
                 $scope.setCurrentSport = setCurrentSport;
+                
 
                 // -------------------------------------------------------------------------
                 // Youtube player
                 $scope.videoTagData = VideoTagData;
                 $scope.playerData = PlayerData;
+                $scope.SharedData = SharedData;
 
                 // -------------------------------------------------------------------------
 
                 //init();
-                SharedData.onReady(function() {
+                SharedData.onReady().then(function() {
                     $scope.sports = SharedData.sports;
                 });
 
@@ -34,7 +35,6 @@ function topnav() {
 
                 function setCurrentSport(sport) {
                     console.log('Setting current sport: ' +  ( sport !== null ? sport.name : 'all sports'));
-                    $scope.currentSport = sport;
                     SharedData.currentSport = sport;
                 }
             }]

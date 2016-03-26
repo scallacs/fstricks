@@ -2,6 +2,24 @@
     class="container-fluid"
     ng-show="playerData.showListTricks"
     >
+    <ul ng-if="SharedData.currentSport && SharedData.currentSport.categories.length > 1" 
+        class="nav nav-pills nav-justified text-big margin-bottom margin-top text-capitalize">
+        <li class="bg-primary-darker"
+            ng-class="{active: SharedData.currentCategory === null}">
+            <a ui-sref="videoplayer.sport({sportName: SharedData.currentSport.name,categoryName: null})" 
+               ng-click="setCurrentSport(SharedData.currentSport)">
+                All 
+            </a>
+        </li>
+        <li class="bg-primary-darker" 
+            ng-repeat="category in SharedData.currentSport.categories"
+            ng-class="{active: SharedData.currentCategory.id === category.id}">
+            <a ui-sref="videoplayer.sport({sportName: SharedData.currentSport.name, categoryName: category.name})" 
+               ng-click="setCurrentCategory(category)">
+                {{category.name}}
+            </a>
+        </li>
+    </ul>
 
     <div ng-repeat="videoTag in videoTagData.getItems()" ng-if="$index % 2 == 0" class="row clearfix">
         <div class="col-sm-6 nopadding">

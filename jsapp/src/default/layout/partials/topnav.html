@@ -9,22 +9,22 @@
     </div>
     <ul id="TopNav" class="nav navbar-nav navbar-no-collapse ">
         <li class="dropdown text-capitalize" id="SportsNav">
-            <a data-toggle="dropdown" ng-if="currentSport"  class="text-big" id="ToggleSportLink">
-                <b class="caret"></b> 
-                {{currentSport.name}}
+            <a data-toggle="dropdown" ng-if="SharedData.currentSport"  class="text-big" id="ToggleSportLink">
+                <b class="caret"></b>
+                {{SharedData.currentSport.name}}
             </a>
-            <a data-toggle="dropdown" ng-if="!currentSport"  class="text-big" id="ToggleSportLink">
+            <a data-toggle="dropdown" ng-if="!SharedData.currentSport"  class="text-big" id="ToggleSportLink">
                 <b class="caret"></b> 
                 All sports
             </a>
             <ul class="dropdown-menu" id="DropDownMenuSports">
                 <li><a ui-sref="videoplayer.best" ng-click="setCurrentSport(null)">All sports</a></li>
                 <li ng-repeat="sport in sports">
-                    <a ui-sref="videoplayer.sport({sportName: sport.name})" 
+                    <a ui-sref="videoplayer.sport({sportName: sport.name, categoryName: null})" 
                        ng-click="setCurrentSport(sport)">
                         <img ng-src="{{sport.name| imageUrl}}"> &nbsp;
                         {{sport.name}}
-                    </a>
+                    </a>    
                 </li>
             </ul>
         </li>

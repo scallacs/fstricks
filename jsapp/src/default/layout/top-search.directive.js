@@ -44,6 +44,7 @@ function TopSearchMapper(SharedData) {
         },
         sport: function(data) {
             data.title = data.name;
+            data.sub_title = (data.category ? data.category: '');
             data.type = 'sport';
             data.category = 'Best of';
             return data;

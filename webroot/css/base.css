@@ -636,6 +636,9 @@ ul[dnd-list] li.selected {
 .margin-top{
     margin-top: 10px;
 }
+.margin-bottom{
+    margin-bottom: 10px;
+}
 
 .user-profile-tag{
     font-size: 1.5em;

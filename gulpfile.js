@@ -32,7 +32,7 @@ gulp.task('watch', ['lint'], function() {
     // Watch our scripts
     gulp.watch([APP_SRC + '*.js', APP_SRC + '**/*.js', APP_SRC + '**/**/*.js', APP_SRC + '**/**/**/*.js'], [
         'lint',
-        'concat-js',
+        'concat-js-dev',
         'concat-js-admin'
     ]);
     gulp.watch([APP_SRC + '*.html', APP_SRC + '**/*.html', APP_SRC + '**/**/*.html', APP_SRC + '**/**/**/*.html'], [

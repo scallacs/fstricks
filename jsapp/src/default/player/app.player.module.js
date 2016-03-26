@@ -92,7 +92,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer.sport', {
-                url: '/sport/:sportName',
+                url: '/sport/:sportName/:categoryName',
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewSportController',
@@ -392,21 +392,30 @@ function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData, T
             });
 }
 
-ViewSportController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'TopSearchMapper'];
-function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData, TopSearchMapper) {
+ViewSportController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'TopSearchMapper', '$filter'];
+function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData, TopSearchMapper, $filter) {
 //    console.log("View sport: " + $stateParams.sportName);
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = true;
+    var sportName = $stateParams.sportName;
+    var categoryName = $stateParams.categoryName;
 
-    SharedData.setCurrentSearch(TopSearchMapper['sport']({
-        name: $stateParams.sportName
-    }));
 
-    console.log("Viewing sport: " + $stateParams.sportName);
-    console.log(SharedData.currentSearch);
+    console.log("Viewing sport: " + sportName);
+    SharedData.onReady().then(function() {
+        var sport = $filter('getSportByName')(SharedData.sports, sportName);
+        SharedData.currentSport = sport;
+        if (categoryName !== null) {
+            SharedData.currentCategory = $filter('getSportByName')(sport.categories, categoryName);
+        }
+        SharedData.setCurrentSearch(TopSearchMapper['sport']({
+            name: sportName,
+            category: categoryName
+        }));
+    });
     VideoTagData.getLoader()
-            .setFilters({sport_name: $stateParams.sportName, order: $stateParams.order})
+            .setFilters({sport_name: $stateParams.sportName, category_name: $stateParams.categoryName, order: $stateParams.order})
             .startLoading().finally(function() {
         SharedData.pageLoader(false);
     });

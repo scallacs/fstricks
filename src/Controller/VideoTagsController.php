@@ -96,10 +96,7 @@ class VideoTagsController extends AppController {
                 if (!$videoTag->isEditabled($this->Auth->user('id'))) {
                     throw new \Cake\Network\Exception\NotFoundException();
                 }
-                $videoTag = $this->VideoTags->saveWithTag($videoTag, 
-                        $this->Auth->user('id'), 
-                        $data, 
-                        ['rider_id', 'begin', 'end', 'tag_id', 'tag']);
+                $videoTag = $this->VideoTags->saveWithTag($videoTag, $this->Auth->user('id'), $data, ['rider_id', 'begin', 'end', 'tag_id', 'tag']);
 //                $videoTag->tag = isset($this->request->data['tag']) ? $this->request->data['tag'] : null;
 //                debug($videoTag);
                 $videoTag->status = VideoTag::STATUS_PENDING;
@@ -220,6 +217,8 @@ class VideoTagsController extends AppController {
             }
             if (DataUtil::isPositiveInt($this->request->query, 'sport_id')) {
                 $query->where(['Tags.sport_id' => $this->request->query['sport_id']]);
+            } else if (DataUtil::isPositiveInt($this->request->query, 'category_id')) {
+                $query->where(['Tags.category_id' => $this->request->query['category_id']]);
             } else if (!empty($this->request->query['sport_name'])) {
                 // Get id from name
                 $sports = \Cake\ORM\TableRegistry::get('Sports');
@@ -227,6 +226,13 @@ class VideoTagsController extends AppController {
                 $sport = $sports->findFromNameCached($sportName);
                 if (!empty($sport)) {
                     $query->where(['Tags.sport_id' => $sport['id']]);
+//                    if (!empty($this->request->query['category_name'])) {
+//                        $categoryName = \App\Lib\DataUtil::lowername($this->request->query['category_name']);
+//                        $category = $sports->findFromCategoryCached($sportName, $categoryName);
+//                        if (!empty($category)) {
+//                            $query->where(['Tags.category_id' => $category['id']]);
+//                        }
+//                    }
                 }
             }
             if (DataUtil::isPositiveInt($this->request->query, 'category_id')) {

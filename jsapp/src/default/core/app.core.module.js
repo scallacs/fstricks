@@ -689,7 +689,6 @@ function getSportByName() {
     };
 
 }
-
 SharedData.$inject = ['SportEntity'];
 function SharedData(SportEntity) {
     var self = {
@@ -705,6 +704,7 @@ function SharedData(SportEntity) {
         _execCallbacks: _execCallbacks,
         _pageTitle: ''
     };
+
     return self;
     
     function setCurrentSearch(s){
@@ -729,8 +729,8 @@ function SharedData(SportEntity) {
         self._callbacks = [];
     }
 
-    function onReady(fct) {
-        self._callbacks.push(fct);
+    function onReady() {
+        return this.loadingPromise;
     }
 
     function pageLoader(val) {
@@ -739,7 +739,7 @@ function SharedData(SportEntity) {
     }
 
     function init() {
-        SportEntity.index({}, function(response) {
+        this.loadingPromise = SportEntity.index({}, function(response) {
             self.sports = response;
             self.categories = [];
             for (var i = 0; i < response.length; i++) {
@@ -755,9 +755,7 @@ function SharedData(SportEntity) {
                     });
                 }
             }
-
-            self._execCallbacks();
-        });
+        }).$promise;
     }
 }
 
