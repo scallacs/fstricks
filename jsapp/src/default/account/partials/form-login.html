@@ -28,6 +28,7 @@
 </form>
 
 <hr/>
-<button class="btn btn-block btn-facebook btn-lg" ng-click="authenticate('facebook')">
+<button class="btn btn-block btn-facebook btn-lg" ng-click="authenticate('facebook')" ng-disabled="isLoading">
+    <img class="form-loader"  ng-show="isLoading" ng-src="{{ 'ajax_loader.gif' | imageUrl }}" alt="Loading..."/>
     <i class="ion-social-facebook"></i> Sign in with Facebook
 </button>

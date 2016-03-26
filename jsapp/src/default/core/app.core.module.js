@@ -74,7 +74,7 @@ function PlayerData(VideoTagData, $q) {
     obj.init();
 
     return obj;
-    
+
     function init() {
         console.log("PlayerData::init");
         obj.initPlayers();
@@ -706,9 +706,9 @@ function SharedData(SportEntity) {
     };
 
     return self;
-    
-    function setCurrentSearch(s){
-        if (s === null){
+
+    function setCurrentSearch(s) {
+        if (s === null) {
             this._pageTitle = '';
             this.currentSearch = {};
             return;
@@ -717,8 +717,8 @@ function SharedData(SportEntity) {
         this._pageTitle += ' ' + s.title;
         this.currentSearch = s;
     }
-    
-    function pageTitle(){
+
+    function pageTitle() {
         return this._pageTitle;
     }
 
@@ -1248,7 +1248,11 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
         console.log(service.authData);
         $rootScope.globals = service.authData; // TODO useless ? 
         $cookies.remove('globals');
-        $cookies.putObject('globals', service.authData);
+
+        var expireDate = new Date();
+        expireDate.setDate(expireDate.getDate() + 7); // TODO param
+
+        $cookies.putObject('globals', service.authData, {'expires': expireDate});
         console.log("Saving credential for user: " + data.user.email + " with provider " + provider + " - stored: " + getCurrentUser().email);
         setHttpHeader();
     }

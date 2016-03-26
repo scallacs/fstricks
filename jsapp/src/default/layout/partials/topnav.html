@@ -22,7 +22,7 @@
                 <li ng-repeat="sport in sports">
                     <a ui-sref="videoplayer.sport({sportName: sport.name, categoryName: null})" 
                        ng-click="setCurrentSport(sport)">
-                        <img ng-src="{{sport.name| imageUrl}}"> &nbsp;
+                        <img ng-src="{{sport.name| sportIconUrl}}"> &nbsp;
                         {{sport.name}}
                     </a>    
                 </li>

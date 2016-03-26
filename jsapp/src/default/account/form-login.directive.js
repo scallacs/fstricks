@@ -10,9 +10,14 @@ function formLoginDirective() {
                 $scope.resetPassword = false;
 
                 function authenticate(provider) {
-                    AuthenticationService.socialLogin(provider).then(function(){
-                        $scope.$emit("user-login-success");
-                    });
+                    $scope.isLoading = true;
+                    AuthenticationService.socialLogin(provider)
+                            .then(function() {
+                                $scope.$emit("user-login-success");
+                            })
+                            .finally(function() {
+                                $scope.isLoading = false;
+                            });
                 }
 
 
