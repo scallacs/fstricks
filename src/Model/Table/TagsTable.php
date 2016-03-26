@@ -124,6 +124,13 @@ class TagsTable extends Table {
     public function buildRules(RulesChecker $rules) {
         parent::buildRules($rules);
         $rules->add($rules->isUnique(['name', 'category_id']));
+        $rules->add(function($entity, $options){
+            $categoriesTable = \Cake\ORM\TableRegistry::get('Categories');
+            return !empty($categoriesTable->find('all')->where([
+                'id' => $entity->category_id,
+                'sport_id' => $entity->sport_id
+            ])->limit(1)->first());
+        });
         return $rules;
     }
 
