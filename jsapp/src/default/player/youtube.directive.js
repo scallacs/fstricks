@@ -101,11 +101,20 @@ function youtubeDirective($window, VideoEntity, PlayerData, YoutubeCmdMapper) {
                         case YT.PlayerState.PLAYING:
                             PlayerData.onPlay();
                             if (PlayerData.looping && PlayerData.data.end < player.getCurrentTime()) {
-                                PlayerData.onTimeRangeEnd('youtube',  player.getCurrentTime());
+                                PlayerData.onTimeRangeEnd('youtube', player.getCurrentTime());
                             }
                             console.log("Setting youtube time event");
                             PlayerData.timer = setInterval(function() {
-                                scope.$apply(function(){
+//                                if (PlayerData.looping) {
+//                                    var durationBeforeEnd = PlayerData.data.end - player.getCurrentTime();
+//                                    if (durationBeforeEnd < 0.3 && durationBeforeEnd > 0) {
+//                                        console.log("Just before end: " + durationBeforeEnd);
+//                                        setTimeout(function() {
+//                                            PlayerData.onPlayProgress(player.getCurrentTime());
+//                                        }, (durationBeforeEnd-0.01) * 1000);
+//                                    }
+//                                }
+                                scope.$apply(function() {
                                     PlayerData.onPlayProgress(player.getCurrentTime());
                                 });
 //                                        console.log(PlayerData.data.end - newTime);
