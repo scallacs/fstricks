@@ -93,11 +93,16 @@ class UsersController extends AppController {
                 $this->Auth->setUser($user);
                 $this->setUserResponse($user);
 //                ResultMessage::setRedirectUrl($this->Auth->redirectUrl());
+                $this->onLoginSuccess();
                 ResultMessage::setMessage("Welcome back !", true);
             } else {
                 ResultMessage::setMessage('Your username or password is incorrect', false);
             }
         }
+    }
+    
+    private function onLoginSuccess(){
+        $res = $this->Users->updateLastActivity($this->Auth->user('id'), 'last_login');
     }
 
     public function username_exists() {
@@ -152,6 +157,7 @@ class UsersController extends AppController {
 //            $userArray = $user->toArray();
 //            $userArray['access_token'] = $accessToken;
             $this->setUserResponse($user, true);
+            $this->onLoginSuccess();
             ResultMessage::setSuccess(true);
         } catch (\Facebook\Exceptions\FacebookSDKException $ex) {
             ResultMessage::setMessage('FacebookSDKException');
