@@ -49,7 +49,7 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
         // immediate search
         if (data.type === 'partial') {
             console.log("Start partial seach");
-            $state.go('videoplayer.search', {
+            $state.go('videoplayer.sport', {
                 q: data.search
             });
         }

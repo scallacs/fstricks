@@ -11,8 +11,6 @@ function topnav() {
             function($scope, AuthenticationService, $state, SharedData, VideoTagData, PlayerData) {
                 // create a message to display in our view
                 $scope.logout = logout;
-                $scope.setCurrentSport = setCurrentSport;
-                
 
                 // -------------------------------------------------------------------------
                 // Youtube player
@@ -33,10 +31,6 @@ function topnav() {
                     $scope.isAuthed = AuthenticationService.isAuthed();
                 }
 
-                function setCurrentSport(sport) {
-                    console.log('Setting current sport: ' +  ( sport !== null ? sport.name : 'all sports'));
-                    SharedData.currentSport = sport;
-                }
             }]
     };
 

@@ -2,10 +2,10 @@
     <div  class="input-group">
         <ui-select 
             id="SearchBar"
-            ng-model="currentSearch"
+            ng-model="search.selected"
             theme="bootstrap"
             on-select="onSelect($item, $model)"
-            reset-search-input="false">
+            reset-search-input="true">
             <ui-select-match placeholder="Search tricks, riders, playlists" >
                 <span  ng-if="$select.selected.category" class="text-bold text-uppercase" >{{$select.selected.category}}: </span> 
                 <span class="text-bold text-capitalize" >{{$select.selected.title}} </span> 

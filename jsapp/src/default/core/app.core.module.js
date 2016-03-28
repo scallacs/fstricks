@@ -20,7 +20,8 @@ angular
         .factory('VideoTagAccuracyRateEntity', VideoTagAccuracyRateEntity)
         .directive('notifyOnLoad', NotifyOnLoad)
         .filter('searchCategory', searchCategory)
-        .filter('getSportByName', getSportByName);
+        .filter('getSportByName', getSportByName)
+        .filter('trickListFilter', trickListFilter);
 
 NotifyOnLoad.$inject = ['$rootScope', '$timeout'];
 function NotifyOnLoad($rootScope, $timeout) {
@@ -28,6 +29,23 @@ function NotifyOnLoad($rootScope, $timeout) {
         $timeout(function() {
             $rootScope.$broadcast('notity-player-offset');
         });
+    };
+}
+
+trickListFilter.$inject = ['SharedData'];
+function trickListFilter(SharedData) {
+    return function(input) {
+        var result = [];
+        input.forEach(function(item){
+            var keep = (SharedData.currentCategory === null ||
+                    (SharedData.currentCategory.id === item.category_id)) 
+                    && (SharedData.currentSport === null ||
+                            (SharedData.currentSport.id === item.sport_id));
+            if (keep){
+                result.push(item);
+            }
+        });
+        return result;
     };
 }
 
@@ -386,11 +404,13 @@ function PaginateDataLoader($q) {
         this.init();
     }
     PaginateDataLoader.prototype.init = init;
+    PaginateDataLoader.prototype.initData = initData;
     PaginateDataLoader.prototype.loadAll = loadAll;
     PaginateDataLoader.prototype.loadNextPage = loadNextPage;
     PaginateDataLoader.prototype.hasNextPage = hasNextPage;
     PaginateDataLoader.prototype.loadPage = loadPage;
     PaginateDataLoader.prototype.setFilters = setFilters;
+    PaginateDataLoader.prototype.updateFilters = updateFilters;
     PaginateDataLoader.prototype.setFilter = setFilter;
     PaginateDataLoader.prototype.setLimit = setLimit;
     PaginateDataLoader.prototype.remove = remove;
@@ -424,16 +444,10 @@ function PaginateDataLoader($q) {
 
     function init() {
         this.filters = {};
-        this.data = {
-            total: 0,
-            perPage: null,
-            items: []
-        };
+        this.initData();
         this.limit = 20; // TODO synchro server
         this.disabled = true;
         this.loading = false;
-        this.currentPage = 1;
-        this.cachePage = {};
         //this.resource = null; VideoTagEntity.search; DO NOT RESET
         this.mode = 'append'; // Append to data Other mode: 'replace'
         return this;
@@ -578,6 +592,27 @@ function PaginateDataLoader($q) {
         this.filters = value;
         return this;
     }
+    
+    function updateFilters(filters){
+        var self = this;
+//        var restrictif = true;
+        angular.forEach(filters, function(val, key){
+//            restrictif = restrictif && !this.filters[key];
+            self.filters[key] = val;
+        });
+        return this;
+    }
+    
+    function initData(){
+        this.data = {
+            total: 0,
+            perPage: null,
+            items: []
+        };
+        this.currentPage = 1;
+        this.cachePage = {};
+        return this;
+    }
 
     function remove(id) {
         for (var i = 0; i < this.data.items.length; i++) {
@@ -692,22 +727,40 @@ function getSportByName() {
 SharedData.$inject = ['SportEntity'];
 function SharedData(SportEntity) {
     var self = {
-        loadingState: true,
-        pageTitle: pageTitle,
-        currentSearch: {},
         setCurrentSearch: setCurrentSearch,
-        sports: [],
-        categories: [],
-        _callbacks: [], onReady: onReady,
+        setCurrentCategory: setCurrentCategory,
+        onReady: onReady,
         pageLoader: pageLoader,
+        pageTitle: pageTitle,
         init: init,
-        _execCallbacks: _execCallbacks,
+        toFilter: toFilter,
+        
+        sports: [],
+        loadingState: true,
+        currentSearch: {},
+        currentSport: null,
+        currentCategory: null,
+        categories: [],
         _pageTitle: ''
     };
 
     return self;
 
+    function toFilter(){
+        return {
+            category_id: self.currentCategory ? self.currentCategory.id : null,
+            sport_id: self.currentSport ? self.currentSport.id : null,
+            q: self.currentSearch ? self.currentSearch.term : null
+        };
+    }
+
+    function setCurrentCategory(c) {
+        this.currentCategory = c;
+    }
+
     function setCurrentSearch(s) {
+        console.log('Setting current search: ');
+        console.log(s);
         if (s === null) {
             this._pageTitle = '';
             this.currentSearch = {};
@@ -720,13 +773,6 @@ function SharedData(SportEntity) {
 
     function pageTitle() {
         return this._pageTitle;
-    }
-
-    function _execCallbacks() {
-        for (var i = 0; i < self._callbacks.length; i++) {
-            self._callbacks[i]();
-        }
-        self._callbacks = [];
     }
 
     function onReady() {

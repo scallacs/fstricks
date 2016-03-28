@@ -221,7 +221,7 @@
                                     on-select="onSelectRider($item, $model)"
                                     on-remove="onRemoveRider($item, $model)"
                                     >
-                                    <ui-select-match placeholder="Rider..." class="text-capitalize">
+                                    <ui-select-match placeholder="Rider..." class="text-capitalize" allow-clear="true">
                                         <img ng-src="{{$select.selected.picture_round_xs}}" alt=""/>  
                                         <span class="text-bold">{{$select.selected.display_name}} </span> 
                                         <span class="text-muted" ng-if="$select.selected.nationality">({{$select.selected.nationality}})</span> 

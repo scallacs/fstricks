@@ -7,8 +7,15 @@ angular.module('app.tag')
 function trickList() {
     return {
         templateUrl: TEMPLATE_URL + '/tag/partials/player-trick-list.html',
-        controller: ['$scope', 'PlayerData', function($scope, PlayerData) {
+        controller: ['$scope', 'PlayerData', 'SharedData', function($scope, PlayerData, SharedData) {
             $scope.playerData = PlayerData;
+            $scope.setCategory = setCategory;
+            
+            function setCategory(c){
+                console.log("Setting category: " + c);
+                SharedData.setCurrentCategory(c);
+                $scope.$emit('on-category-changed', c);
+            }
         }]
     };
 

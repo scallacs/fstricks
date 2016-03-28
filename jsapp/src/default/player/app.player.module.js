@@ -17,7 +17,7 @@ angular.module('app.player', [
         .controller('ViewTagController', ViewTagController)
         .controller('ViewSportController', ViewSportController)
         .controller('ViewRiderController', ViewRiderController)
-        .controller('ViewSearchController', ViewSearchController)
+//        .controller('ViewSearchController', ViewSearchController)
         .controller('ViewRealizationController', ViewRealizationController)
         .controller('ViewValidationController', ViewValidationController)
         .controller('StartValidationController', StartValidationController)
@@ -75,6 +75,15 @@ function ConfigRoute($stateProvider) {
                     pageLoader: true
                 }
             })
+            .state('startvalidation', {
+                url: '/start-validation',
+                templateUrl: baseUrl + 'start-validation.html',
+                controller: 'StartValidationController',
+                data: {
+                    requireLogin: true,
+                    pageLoader: true
+                }
+            })
             .state('videoplayer', {
                 url: '/player?order',
                 views: {
@@ -92,7 +101,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer.sport', {
-                url: '/sport/:sportName/:categoryName',
+                url: '/bestof/:sportName?category&q',
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewSportController',
@@ -135,39 +144,12 @@ function ConfigRoute($stateProvider) {
                     }
                 }
             })
-            .state('startvalidation', {
-                url: '/start-validation',
-                templateUrl: baseUrl + 'start-validation.html',
-                controller: 'StartValidationController',
-                data: {
-                    requireLogin: true,
-                    pageLoader: true
-                }
-            })
-            .state('videoplayer.best', {
-                url: '/best',
-                views: {
-                    videoPlayerExtra: {
-                        controller: 'ViewSearchController',
-                        templateUrl: baseUrl + 'pick-video.html'
-                    }
-                }
-            })
             .state('videoplayer.playlist', {
                 url: '/playlist/:playlistId?ids',
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewPlaylistController',
                         templateUrl: baseUrl + 'playlist-view.html'
-                    }
-                }
-            })
-            .state('videoplayer.search', {
-                url: '/search?q',
-                views: {
-                    videoPlayerExtra: {
-                        controller: 'ViewSearchController',
-                        templateUrl: baseUrl + 'pick-video.html'
                     }
                 }
             })
@@ -179,7 +161,25 @@ function ConfigRoute($stateProvider) {
                         templateUrl: baseUrl + 'view-rider.html'
                     }
                 }
-            });
+            })
+//            .state('videoplayer.best', {
+//                url: '/best',
+//                views: {
+//                    videoPlayerExtra: {
+//                        controller: 'ViewSearchController',
+//                        templateUrl: baseUrl + 'pick-video.html'
+//                    }
+//                }
+//            })
+//            .state('videoplayer.search', {
+//                url: '/search?q',
+//                views: {
+//                    videoPlayerExtra: {
+//                        controller: 'ViewSearchController',
+//                        templateUrl: baseUrl + 'pick-video.html'
+//                    }
+//                }
+//            });
 }
 
 DashboardController.$inject = ['$scope', 'PaginateDataLoader', 'SharedData', '$state', 'VideoTagEntity', 'ApiFactory'];
@@ -323,8 +323,8 @@ function AddVideoController($scope, ProviderVideoInfo, $state,
 
 }
 
-PlayerController.$inject = ['$scope', 'PlayerData', 'SharedData', 'TopSearchMapper'];
-function PlayerController($scope, PlayerData, SharedData, TopSearchMapper) {
+PlayerController.$inject = ['$scope', 'PlayerData', 'SharedData', 'VideoTagData', '$location'];
+function PlayerController($scope, PlayerData, SharedData, VideoTagData, $location) {
     PlayerData.showViewMode();
     PlayerData.showListTricks = true;
 
@@ -339,6 +339,20 @@ function PlayerController($scope, PlayerData, SharedData, TopSearchMapper) {
 //    if (angular.isDefined($stateParams.realization)) {
 //        console.log('Realization for player: ' + $stateParams.realization);
 //    }
+
+    $scope.$on('on-category-changed', function(event, category) {
+        console.log("Received 'on-category-changed'");
+        SharedData.pageLoader(true);
+        $location.search('category', category ? category.name : null);
+
+//        VideoTagData.getLoader()
+//                .initData()
+//                .updateFilters({category_id: category ? category.id : null})
+//                .startLoading()
+//                .finally(function() {
+//                    SharedData.pageLoader(false);
+//                });
+    });
 }
 
 ViewRealizationController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', '$state', 'TopSearchMapper'];
@@ -346,6 +360,9 @@ function ViewRealizationController(VideoTagData, $stateParams, PlayerData, Share
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = false;
+    SharedData.showCategories = false;
+    SharedData.setCurrentCategory(null);
+
     VideoTagData
             .getLoader()
             .setFilters({video_tag_id: $stateParams.videoTagId, status: 'rejected,pending,validated'})
@@ -373,6 +390,9 @@ function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData, T
     SharedData.currentSearch.category = 'Trick';
     PlayerData.showViewMode();
     PlayerData.stop();
+    SharedData.showCategories = false;
+    SharedData.setCurrentCategory(null);
+
     VideoTagData.getLoader()
             .setFilters({tag_slug: $stateParams.tagSlug, order: $stateParams.order})
             .startLoading()
@@ -392,33 +412,47 @@ function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData, T
             });
 }
 
-ViewSportController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'TopSearchMapper', '$filter'];
-function ViewSportController(VideoTagData, $stateParams, PlayerData, SharedData, TopSearchMapper, $filter) {
+ViewSportController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'TopSearchMapper', '$filter'];
+function ViewSportController($scope, VideoTagData, $stateParams, PlayerData, SharedData, TopSearchMapper, $filter) {
 //    console.log("View sport: " + $stateParams.sportName);
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = true;
+    SharedData.showCategories = true;
     var sportName = $stateParams.sportName;
-    var categoryName = $stateParams.categoryName;
-
+    var categoryName = $stateParams.category;
 
     console.log("Viewing sport: " + sportName);
     SharedData.onReady().then(function() {
         var sport = $filter('getSportByName')(SharedData.sports, sportName);
         SharedData.currentSport = sport;
-        if (categoryName !== null) {
-            SharedData.currentCategory = $filter('getSportByName')(sport.categories, categoryName);
+
+        if (sport !== null) {
+            SharedData.setCurrentCategory($filter('getSportByName')(sport.categories, categoryName));
         }
-        SharedData.setCurrentSearch(TopSearchMapper['sport']({
-            name: sportName,
-            category: categoryName
-        }));
+        
+        
+        if ($stateParams.q) {
+            SharedData.setCurrentSearch(TopSearchMapper['search']($stateParams.q));
+        }
+        else {
+            SharedData.setCurrentSearch(TopSearchMapper['sport']({
+                name: sportName,
+                category: categoryName
+            }));
+        }
+
+
+        VideoTagData.getLoader()
+                .setFilters(SharedData.toFilter())
+                .setOrder($stateParams.order)
+                .setFilter('tag_name', $stateParams.q)
+                .startLoading()
+                .finally(function() {
+                    SharedData.pageLoader(false);
+                });
     });
-    VideoTagData.getLoader()
-            .setFilters({sport_name: $stateParams.sportName, category_name: $stateParams.categoryName, order: $stateParams.order})
-            .startLoading().finally(function() {
-        SharedData.pageLoader(false);
-    });
+
 }
 
 ViewRiderController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'RiderEntity', 'TopSearchMapper'];
@@ -427,6 +461,8 @@ function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, Sha
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = false;
+    SharedData.showCategories = false;
+    SharedData.setCurrentCategory(null);
 
     $scope.rider = {id: $stateParams.riderId};
     VideoTagData.getLoader()
@@ -443,32 +479,33 @@ function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, Sha
     });
 }
 
-ViewSearchController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'TopSearchMapper'];
-function ViewSearchController(VideoTagData, $stateParams, PlayerData, SharedData, TopSearchMapper) {
-    PlayerData.showViewMode();
-    PlayerData.stop();
-    PlayerData.showListTricks = true;
-
-    if ($stateParams.q) {
-        SharedData.setCurrentSearch(TopSearchMapper['search']($stateParams.q));
-    }
-    else {
-        SharedData.setCurrentSearch(TopSearchMapper['sport']({
-            name: 'all sports'
-        }));
-    }
-
-//    console.log($stateParams);
-    VideoTagData.reset();
-    VideoTagData.getLoader()
-            .setOrder($stateParams.order)
-            .setFilter('tag_name', $stateParams.q)
-            .setFilter('sport_id', SharedData.currentSport ? SharedData.currentSport.id : null)
-            .startLoading()
-            .finally(function() {
-                SharedData.pageLoader(false);
-            });
-}
+//ViewSearchController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'TopSearchMapper'];
+//function ViewSearchController(VideoTagData, $stateParams, PlayerData, SharedData, TopSearchMapper) {
+//    PlayerData.showViewMode();
+//    PlayerData.stop();
+//    PlayerData.showListTricks = true;
+//    SharedData.showCategories = true;
+//
+//    if ($stateParams.q) {
+//        SharedData.setCurrentSearch(TopSearchMapper['search']($stateParams.q));
+//    }
+//    else {
+//        SharedData.setCurrentSearch(TopSearchMapper['sport']({
+//            name: 'all sports'
+//        }));
+//    }
+//
+////    console.log($stateParams);
+//    VideoTagData.reset();
+//    VideoTagData.getLoader()
+//            .setFilters(SharedData.toFilter())
+//            .setOrder($stateParams.order)
+//            .setFilter('tag_name', $stateParams.q)
+//            .startLoading()
+//            .finally(function() {
+//                SharedData.pageLoader(false);
+//            });
+//}
 
 ViewPlaylistController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'PlaylistItemEntity', 'TopSearchMapper'];
 function ViewPlaylistController($scope, VideoTagData, $stateParams, PlayerData, SharedData, PlaylistItemEntity, TopSearchMapper) {
@@ -477,7 +514,9 @@ function ViewPlaylistController($scope, VideoTagData, $stateParams, PlayerData, 
     PlayerData.showViewMode();
     PlayerData.showListTricks = false;
     PlayerData.playMode = 'playlist';
+    SharedData.showCategories = false;
     $scope.playlist = false;
+    SharedData.setCurrentCategory(null);
 
     var loader = VideoTagData.getLoader();
     if ($stateParams.playlistId) {
@@ -514,6 +553,8 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
     PlayerData.stop();
     PlayerData.showListTricks = false;
     PlayerData.playMode = 'video';
+    SharedData.showCategories = false;
+    SharedData.setCurrentCategory(null);
     PlayerData.stopLooping();
 
     $scope.video = {
@@ -583,6 +624,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     VideoTagData.reset();
     loadNext();
     PlayerData.showValidationMode();
+    SharedData.setCurrentCategory(null);
     PlayerData.showListTricks = false;
 
     $scope.rateAccurate = rateAccurate;

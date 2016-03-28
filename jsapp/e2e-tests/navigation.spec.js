@@ -45,7 +45,7 @@ describe('Navigation', function() {
         var videoTagItem;
 
         beforeEach(function() {
-            app.getState('videoplayer.best');
+            app.getState('videoplayer.sport');
             browser.waitForAngular();
             videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(0));
         });
@@ -100,7 +100,7 @@ describe('Navigation', function() {
         var videoTagItem = null;
         var playerContainer = null;
         beforeAll(function() {
-            app.getState('videoplayer.best');
+            app.getState('videoplayer.sport');
             browser.waitForAngular();
             videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(0));
             videoTagItem.watch().then(function() {
