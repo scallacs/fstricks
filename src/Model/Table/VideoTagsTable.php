@@ -144,8 +144,8 @@ class VideoTagsTable extends Table {
                 ->add('begin', 'decimal', ['rule' => 'decimal'])
                 ->add('begin', 'postive', [
                     'rule' => function ($value, $context) {
-                return $value >= 0;
-            },
+                        return $value >= 0;
+                    },
                     'message' => 'Begin time must be a positive number.'
                 ])
                 ->requirePresence('begin', 'create')
@@ -154,16 +154,16 @@ class VideoTagsTable extends Table {
         $validator
                 ->add('end', 'trick_duration', [
                     'rule' => function ($value, $context) {
-                if ($value < self::MIN_TAG_DURATION) {
-                    return false;
-                }
-                if (isset($context['data']['begin'])) {
-                    $duration = $value - $context['data']['begin'];
-                    return $duration >= self::MIN_TAG_DURATION &&
-                            $duration <= self::MAX_TAG_DURATION;
-                }
-                return true;
-            },
+                        if ($value < self::MIN_TAG_DURATION) {
+                            return false;
+                        }
+                        if (isset($context['data']['begin'])) {
+                            $duration = $value - $context['data']['begin'];
+                            return $duration >= self::MIN_TAG_DURATION &&
+                                    $duration <= self::MAX_TAG_DURATION;
+                        }
+                        return true;
+                    },
                     'message' => 'The trick duration must be between ' . self::MIN_TAG_DURATION . ' and ' .
                     self::MAX_TAG_DURATION . ' seconds.'
                 ])
@@ -213,11 +213,34 @@ class VideoTagsTable extends Table {
      * @return \Cake\ORM\RulesChecker
      */
     public function buildRules(RulesChecker $rules) {
-        $rules->add($rules->existsIn(['video_id'], 'Videos'));
+//        $rules->add($rules->existsIn(['video_id'], 'Videos'));
         $rules->add($rules->existsIn(['tag_id'], 'Tags'));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
         $rules->add($rules->existsIn(['rider_id'], 'Riders'));
 
+        // Check exists in video id and duration > 
+        $rules->add(function ($entity) {
+            $videoTable = \Cake\ORM\TableRegistry::get('Videos');
+            try {
+                $video = $videoTable->getPublic($entity->video_id);
+                $entity->errors('video_id', ['This video does not exists']);
+                if ($video->duration < $entity->end) {
+                    \Cake\Log\Log::error('User is trying to add a video tag with an end time greater '
+                            . 'than the video duration (user_id= ' . $entity->user_id . ', '
+                            . 'video_id=' . $entity->video_id . ',video_duration= ' . $video->duration . ')', ['messages']);
+                    $entity->errors('end', ['Invalid end time']);
+                    return false;
+                }
+                return true;
+            } catch (\Cake\Network\Exception\RecordNotFoundException $ex) {
+                $entity->errors('video_id', ['Invalid video']);
+                return false;
+            }
+        }, 'video_exists_and_duration');
+//        , [
+//            'errorField' => 'status',
+//            'message' => 'This invoice cannot be moved to that status.'
+//        ]);
         // Checking similar tags
 //        $rules->add(function($entity, $scope) {
 //            if ($entity->isNew() || $entity->dirty('begin') || $entity->dirty('end')) {
@@ -268,8 +291,7 @@ class VideoTagsTable extends Table {
                 'fieldList' => $fieldList,
                 'validate' => true
             ]);
-        }
-        else{
+        } else {
             $this->patchEntity($entity, $data, [
                 'fieldList' => $fieldList,
                 'validate' => true

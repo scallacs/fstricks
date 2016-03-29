@@ -219,7 +219,7 @@ class UsersControllerTest extends MyIntegrationTestCase {
 
     // Test adding a place when not logged in
 //    public function testLoginFacebook() {
-//        \App\Lib\ResultMessage::reset();
+//        
 //        
 //        // TODO get code ? 
 //        $data = [

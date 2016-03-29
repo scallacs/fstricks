@@ -294,13 +294,13 @@ function PlayerData(VideoTagData, $q) {
         return _view(videoTag, looping);
     }
     function _view(videoTag, looping) {
-        console.log("PlayerData._view: " + videoTag.id);
-        console.log(videoTag);
         VideoTagData.setCurrentTag(videoTag);
-        if (videoTag === null) {
+        if (!videoTag) {
             console.log("Try to view a null videoTag");
             return;
         }
+        console.log("PlayerData._view: " + videoTag.id);
+        console.log(videoTag);
         obj.data.id = videoTag.id;
         obj.showListTricks = false;
         obj.looping = !angular.isDefined(looping) ? (obj.playMode === 'tag') : looping;
