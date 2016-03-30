@@ -14,7 +14,7 @@
             addtag: '/tag/add/',
 //            'videoplayer.best': '/player/best',
             'videoplayer.video': '/player/video',
-            'videoplayer.sport': '/player/bestof',
+            'videoplayer.sport': '/player/bestof/',
             'videoplayer.tag': '/player/trick',
             'videoplayer.rider': '/player/rider',
             'editplaylist': '/playlist/edit',
