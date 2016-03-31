@@ -193,7 +193,7 @@ class UsersController extends AppController {
     }
 
     public function logout() {
-        if ($this->request->is('post')) {
+        if ($this->request->is('post') && $this->Auth->user('id')) {
             $this->Auth->logout();
             ResultMessage::setMessage('You are now logged out.', true);
         }

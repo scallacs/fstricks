@@ -382,7 +382,7 @@ function EditionTag() {
             console.log("CREATING NEW TAG:");
             console.log(this._extra.category);
             postData.tag = this._extra.tag;
-            postData.tag.category_id = this._extra.category.category_id;
+            postData.tag.category_id = this._extra.category_id;
             postData.tag.sport_id = this._extra.category.sport_id;
         }
         return postData;

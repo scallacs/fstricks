@@ -28,8 +28,11 @@ class VideoTagsTableTest extends TestCase {
         'app.video_tag_accuracy_rates'
     ];
 
-    private function assertEntityHasError($entity, $name, $message = null) {
-        $this->assertArrayHasKey($name, $entity->errors(), $message);
+
+    private function assertEntityHasErrors($entity, $errors, $message = null) {
+        foreach ($errors as $name) {
+            $this->assertArrayHasKey($name, $entity->errors(), $message);
+        }
     }
 
     /**
@@ -43,6 +46,8 @@ class VideoTagsTableTest extends TestCase {
         $this->VideoTags = TableRegistry::get('VideoTags', $config);
         $config = TableRegistry::exists('Tags') ? [] : ['className' => 'App\Model\Table\TagsTable'];
         $this->Tags = TableRegistry::get('Tags', $config);
+        $config = TableRegistry::exists('Videos') ? [] : ['className' => 'App\Model\Table\VideosTable'];
+        $this->Videos = TableRegistry::get('Videos', $config);
     }
 
     /**
@@ -52,6 +57,8 @@ class VideoTagsTableTest extends TestCase {
      */
     public function tearDown() {
         unset($this->VideoTags);
+        unset($this->Videos);
+        unset($this->Tags);
 
         parent::tearDown();
     }
@@ -142,43 +149,81 @@ class VideoTagsTableTest extends TestCase {
     }
 
     /**
-     * TODO Test adding a begin or end time bigger than the video duration
+     * 
      */
     public function testInvalidTimeRange() {
+        $video = $this->Videos->get(1);
         // Add a video:
         $data = [
-            'tag_id' => 1,
-            'video_id' => 1,
-            'begin' => 20,
-            'end' => 20,
+            [
+                'data' => [
+                    'tag_id' => $video->id,
+                    'video_id' => 1,
+                    'begin' => 20,
+                    'end' => 20.5,
+                ],
+                'validationErrors' => ['end'],
+                'message' => "Should not be possible to add a too small range"
+            ],
+            [
+                'data' => [
+                    'tag_id' => $video->id,
+                    'video_id' => 1,
+                    'begin' => 0,
+                    'end' => 99,
+                ],
+                'validationErrors' => ['end'],
+                'message' => "Time range should have a max"
+            ],
+            [
+                'data' => [
+                    'tag_id' => $video->id,
+                    'video_id' => 1,
+                    'begin' => -10,
+                    'end' => -6,
+                ],
+                'validationErrors' => ['end', 'begin'],
+                'message' => "Time range should not be negative"
+            ],
+            [
+                'data' => [
+                    'tag_id' => $video->id,
+                    'video_id' => 1,
+                    'begin' => 10.2,
+                    'end' => 6.5,
+                ],
+                'validationErrors' => ['end'],
+                'message' => "Begin time should be greater than end time"
+            ],
+            [
+                'data' => [
+                    'tag_id' => $video->id,
+                    'video_id' => 1,
+                    'begin' => "Salut",
+                    'end' => "blob",
+                ],
+                'validationErrors' => ['begin', 'end'],
+                'message' => "Time range should be positive numbers"
+            ],
+            [
+                'data' => [
+                    'tag_id' => $video->id,
+                    'video_id' => 1,
+                    'begin' => $video->duration - 1,
+                    'end' => $video->duration + 3,
+                ],
+                'validationErrors' => ['end'],
+                'message' => "Should not be possible to have an end time greated than the video duration"
+            ]
         ];
-        $video = $this->VideoTags->newEntity($data);
-        $video->user_id = 1;
-        $saved = $this->VideoTags->save($video);
-        $this->assertFalse((bool) $saved, "Time range should have a min");
-        $this->assertEntityHasError($video, 'end', "Validation error 'end' should be set");
 
-        $data['begin'] = 0;
-        $data['end'] = 2020;
-        $video = $this->VideoTags->newEntity($data);
-        $video->user_id = 1;
-        $this->assertFalse((bool) $this->VideoTags->save($video), "Time range should have a max");
-        $this->assertEntityHasError($video, 'end', "Time range should have a max");
-
-        $data['begin'] = -10;
-        $data['end'] = -2;
-        $video = $this->VideoTags->newEntity($data);
-        $video->user_id = 1;
-        $this->assertFalse((bool) $this->VideoTags->save($video), "Time range should not be negative");
-        $this->assertEntityHasError($video, 'end', "Time range should not be negative");
-        $this->assertEntityHasError($video, 'begin', "Time range should not be negative");
-
-        $data['begin'] = "Salut";
-        $data['end'] = "Fun";
-        $video = $this->VideoTags->newEntity($data);
-        $video->user_id = 1;
-        $this->assertEntityHasError($video, 'begin', "Time range should be positive numbers");
-        $this->assertEntityHasError($video, 'end', "Time range should be positive numbers");
+        foreach ($data as $d) {
+            $videoTag = $this->VideoTags->newEntity($d['data']);
+            $videoTag->user_id = 1;
+            $saved = $this->VideoTags->save($videoTag);
+            $this->assertFalse((bool) $saved, $d['message']);
+            $this->assertEntityHasErrors($videoTag, $d['validationErrors'], $d['message']);
+        }
     }
 
 }

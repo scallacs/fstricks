@@ -41,15 +41,5 @@ class ReportErrorsController extends AppController {
         }
     }
 
-    /**
-     * 
-     */
-    public function index() {
-        $query = $this->ReportErrors
-                ->find('all')
-                ->cache('report_errors', 'veryLongCache');
-        ResultMessage::overwriteData($query - all());
-        ResultMessage::setSuccess(true);
-    }
 
 }

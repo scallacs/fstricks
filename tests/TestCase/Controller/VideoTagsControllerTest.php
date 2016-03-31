@@ -214,7 +214,7 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
             'end' => 10
         ];
         $this->post('/api/VideoTags/add.json', $data);
-        debug($this->bodyAsJson());
+//        debug($this->bodyAsJson());
         $this->assertResultMessageSuccess();
     }
     /**

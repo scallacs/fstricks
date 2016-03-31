@@ -50,6 +50,7 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
     var MIN_TAG_DURATION = editionTag._config.min_duration;
     var MAX_TAG_DURATION = editionTag._config.max_duration;;
     var SIMILAR_TAG_LIMIT_RATIO = editionTag._config.similar_tag_limit_ratio;
+    var TAG_MAX_LENGTH = 50; // TODO
 
     $scope.showCreateRiderForm = false;
 
@@ -112,11 +113,18 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
 
 //    $scope.$watch('editionTag._extra.range', watchEditionTagRange, true);
     $scope.$watch('editionTag._extra.category', function() {
-        $scope.suggestedTags = [];
         editionTag.syncCategory();
     });
-    $scope.$watch('editionTag._extra.tag', function() {
-        editionTag.syncTag();
+    $scope.$watch('editionTag._extra.tag', function(newVal) {
+        if (!newVal){
+            return;
+        }
+        var valid = newVal.name.length <= TAG_MAX_LENGTH;
+        $scope.formAddVideoTag.tag_id.$setValidity("maxlength", valid);
+        console.log("Set validity for " + newVal.name + " ("+newVal.name.lenth+" <=? " +TAG_MAX_LENGTH+ " ): " + valid);
+        if (valid){
+            editionTag.syncTag();
+        }
     });
     $scope.$watch('editionTag._extra.rider', function() {
         editionTag.syncRider();
