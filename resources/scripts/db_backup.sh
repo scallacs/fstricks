@@ -5,7 +5,7 @@ COMPRESSOR_FLAGS="cfz ${BACKUP_FOLDER}/$(date +%Y-%m-%d).tar.gz"
 
 # Database backup
 mkdir -p ${BACKUP_FOLDER}
-echo "r4xc3oSFSTDB" | mysqldump -u root -p fstricks > "${BACKUP_FOLDER}/tmp.sql"
+echo mysqldump -u root -pr4xc3oSFSTDB trickers > "${BACKUP_FOLDER}/tmp.sql"
 ${COMPRESSOR_BIN} ${COMPRESSOR_FLAGS} "${BACKUP_FOLDER}/tmp.sql"
 rm "${BACKUP_FOLDER}/tmp.sql"
 
