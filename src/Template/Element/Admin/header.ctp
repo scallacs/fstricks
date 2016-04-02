@@ -23,14 +23,7 @@
                         </a>
                     </li>
                     <li>
-                        <a ui-sref="users.index">
-                            Users
-                        </a>
-                    </li>
-                    <li>
-                        <a ui-sref="logout">
-                            Logout
-                        </a>
+                        <?= $this->Html->link('Dashboard', ['prefix' => 'admin', 'action' => 'dashboard', 'controller' => 'Pages']);?>
                     </li>
                 </ul>
             </div>

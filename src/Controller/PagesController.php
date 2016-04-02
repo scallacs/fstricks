@@ -64,6 +64,11 @@ class PagesController extends AppController
 //        }
 //    }
     
+    public function beforeFilter(\Cake\Event\Event $event) {
+        parent::beforeFilter($event);
+        $this->Auth->allow(['app']);
+    }
+    
     public function app(){
         if (Configure::read('onlyLoggedUser') && !$this->Auth->user('id')){
             return $this->redirect(['controller' => 'users', 'action' => 'login']);

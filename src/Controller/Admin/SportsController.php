@@ -1,8 +1,7 @@
 <?php
 namespace App\Controller\Admin;
 
-use App\Controller\AppController;
-
+use App\Lib\ResultMessage;
 /**
  * Sports Controller
  *
@@ -18,8 +17,9 @@ class SportsController extends AppController
      */
     public function index()
     {
-        $this->set('sports', $this->paginate($this->Sports));
-        $this->set('_serialize', ['sports']);
+        $query = $this->Sports->find('all');
+        ResultMessage::setWrapper(false);
+        ResultMessage::overwriteData($this->paginate($query));
     }
 
     /**
@@ -32,10 +32,10 @@ class SportsController extends AppController
     public function view($id = null)
     {
         $sport = $this->Sports->get($id, [
-            'contain' => ['Categories', 'Tags']
+            'contain' => ['Categories']
         ]);
-        $this->set('sport', $sport);
-        $this->set('_serialize', ['sport']);
+        ResultMessage::setWrapper(false);
+        ResultMessage::overwriteData($sport);
     }
 
     /**

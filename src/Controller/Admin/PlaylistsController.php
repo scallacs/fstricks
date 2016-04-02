@@ -1,28 +1,31 @@
 <?php
+
 namespace App\Controller;
 
-use App\Controller\AppController;
-
+use App\Lib\ResultMessage;
 /**
  * Playlists Controller
  *
  * @property \App\Model\Table\PlaylistsTable $Playlists
  */
-class PlaylistsController extends AppController
-{
+class PlaylistsController extends AppController {
+
+    public function initialize() {
+        parent::initialize();
+        $this->loadComponent('Paginator');
+    }
 
     /**
      * Index method
      *
      * @return void
      */
-    public function index()
-    {
-        $this->paginate = [
-            'contain' => ['Users']
-        ];
-        $this->set('playlists', $this->paginate($this->Playlists));
-        $this->set('_serialize', ['playlists']);
+    public function index() {
+        $query = $this->find('all')
+                ->order(['created']);
+
+        ResultMessage::setPaginateData(
+                $this->paginate($query), $this->request->params['paging']['Playlists']);
     }
 
     /**
@@ -32,8 +35,7 @@ class PlaylistsController extends AppController
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function view($id = null)
-    {
+    public function view($id = null) {
         $playlist = $this->Playlists->get($id, [
             'contain' => ['Users', 'PlaylistVideoTags']
         ]);
@@ -46,8 +48,7 @@ class PlaylistsController extends AppController
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
-    public function add()
-    {
+    public function add() {
         $playlist = $this->Playlists->newEntity();
         if ($this->request->is('post')) {
             $playlist = $this->Playlists->patchEntity($playlist, $this->request->data);
@@ -70,8 +71,7 @@ class PlaylistsController extends AppController
      * @return void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
-    {
+    public function edit($id = null) {
         $playlist = $this->Playlists->get($id, [
             'contain' => []
         ]);
@@ -96,8 +96,7 @@ class PlaylistsController extends AppController
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function delete($id = null)
-    {
+    public function delete($id = null) {
         $this->request->allowMethod(['post', 'delete']);
         $playlist = $this->Playlists->get($id);
         if ($this->Playlists->delete($playlist)) {
@@ -107,4 +106,5 @@ class PlaylistsController extends AppController
         }
         return $this->redirect(['action' => 'index']);
     }
+
 }

@@ -4,7 +4,6 @@ angular.module('app.admin')
         .controller('VideoTagEditController', VideoTagEditController);
 
 function VideoTagsController() {
-
 }
 
 VideoTagIndexController.$inject = ['$scope', 'AdminApiFactory', 'SharedData', 'toaster', 'PaginateDataLoader'];

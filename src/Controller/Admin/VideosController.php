@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller\Admin;
 
-use App\Controller\AppController;
 use App\Lib\ResultMessage;
 /**
  * Videos Controller
@@ -16,9 +15,27 @@ class VideosController extends AppController
      *
      * @return void
      */
-    public function index() {
-        $this->Videos->updateVideoDuration();
+    public function index()
+    {
+//        $this->Paginator->config(Configure::read('Pagination.Users'));
+        $query = $this->Videos->find('all');
+        ResultMessage::setWrapper(false);
+        ResultMessage::overwriteData($this->paginate($query));
     }
 
-    
+    /**
+     * View method
+     *
+     * @param string|null $id Rider id.
+     * @return void
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $video = $this->Videos->get($id, [
+            'contain' => ['Users']
+        ]);
+        ResultMessage::setWrapper(false);
+        ResultMessage::overwriteData($video);
+    }
 }

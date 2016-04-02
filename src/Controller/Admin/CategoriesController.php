@@ -1,7 +1,6 @@
 <?php
 namespace App\Controller\Admin;
-
-use App\Controller\AppController;
+use App\Lib\ResultMessage;
 
 /**
  * Categories Controller
@@ -18,11 +17,8 @@ class CategoriesController extends AppController
      */
     public function index()
     {
-        $this->paginate = [
-            'contain' => ['Sports']
-        ];
-        $this->set('categories', $this->paginate($this->Categories));
-        $this->set('_serialize', ['categories']);
+        ResultMessage::setWrapper(false);
+        ResultMessage::overwriteData($this->paginate($this->Categories));
     }
 
     /**
@@ -37,8 +33,8 @@ class CategoriesController extends AppController
         $category = $this->Categories->get($id, [
             'contain' => ['Sports', 'Tags']
         ]);
-        $this->set('category', $category);
-        $this->set('_serialize', ['category']);
+        ResultMessage::setWrapper(false);
+        ResultMessage::overwriteData($category);
     }
 
     /**

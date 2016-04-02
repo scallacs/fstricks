@@ -4,7 +4,6 @@ angular.module('app.admin')
 
 DashboardController.$inject = ['$scope', 'AdminApiFactory', 'SharedData', 'toaster'];
 function DashboardController($scope, AdminApiFactory, SharedData, toaster) {
-    
     var api = AdminApiFactory.api();
     
 }
