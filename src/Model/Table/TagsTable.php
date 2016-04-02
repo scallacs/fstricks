@@ -76,9 +76,9 @@ class TagsTable extends Table {
         ]);
 
         // TODO add rule sport and category exists
-        $validator
-                ->requirePresence('sport_id', 'create')
-                ->notEmpty('sport_id');
+//        $validator
+//                ->requirePresence('sport_id', 'create')
+//                ->notEmpty('sport_id');
         $validator
                 ->requirePresence('category_id', 'create')
                 ->notEmpty('category_id');
@@ -126,10 +126,13 @@ class TagsTable extends Table {
         $rules->add($rules->isUnique(['name', 'category_id']));
         $rules->add(function($entity, $options){
             $categoriesTable = \Cake\ORM\TableRegistry::get('Categories');
-            return !empty($categoriesTable->find('all')->where([
-                'id' => $entity->category_id,
-                'sport_id' => $entity->sport_id
-            ])->limit(1)->first());
+            try {
+                $category = $categoriesTable->get($entity->category_id);
+                $entity->sport_id = $category->sport_id;
+                return true;
+            } catch (Exception $ex) {
+                return false;
+            }
         });
         return $rules;
     }

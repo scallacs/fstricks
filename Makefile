@@ -81,12 +81,22 @@ start-webdriver:
 	$(WEBDRIVER_MANAGER_BIN) update --ie 
 	$(WEBDRIVER_MANAGER_BIN) start 
 	
-# target : - test-frontend run test on backend 
-.PHONY: test-frontend
-test-frontend: config-test
+init-db-tests:
 	mysql $(DB_TEST_CREDENTIAL) $(DB_TEST_NAME) < './resources/database/test/delete.sql'
 	mysql $(DB_TEST_CREDENTIAL) $(DB_TEST_NAME) < './resources/database/test/insert.sql'
-	$(PROTRACTOR_BIN) jsapp/e2e-tests/conf/protractor-conf.js | tee -i logs/test-frontend.log
+
+# target : - test-frontend run test on backend 
+.PHONY: test-frontend
+ifdef s
+test-frontend: config-test init-db-tests
+	$(PROTRACTOR_BIN) jsapp/e2e-tests/conf/protractor-conf.js $(q) --specs jsapp/e2e-tests/$(s).spec.js | tee -i logs/test-frontend.log
+endif
+ifndef s
+
+s="--specs jsapp/e2e-tests/$(s).spec.js"
+test-frontend: config-test init-db-tests
+	$(PROTRACTOR_BIN) jsapp/e2e-tests/conf/protractor-conf.js $(q) | tee -i logs/test-frontend.log
+endif
 
 
 # Init db 

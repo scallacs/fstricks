@@ -27,7 +27,8 @@ function playerBar() {
             function computeStyle(tag) {
                 return {
                     width: computeWidth(tag) + "%",
-                    marginLeft: computeMargin(tag) + "%"
+                    marginLeft: computeMargin(tag) + "%",
+                    display: 'block'
                 };
             }
 

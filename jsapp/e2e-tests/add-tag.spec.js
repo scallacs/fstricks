@@ -2,6 +2,7 @@ var Application = require('./includes/pages.js');
 var FormAddVideo = require('./includes/form-add-video.js');
 var FormAddTag = require('./includes/form-add-tag.js');
 var Util = require('./includes/util.js');
+var PlayerBar = require('./includes/player-bar.js');
 
 describe('Add tag on video: ', function() {
     var app = new Application();
@@ -15,7 +16,6 @@ describe('Add tag on video: ', function() {
     beforeAll(function() {
         app.login().then(function() {
             nav.navigateTo('addvideo');
-            browser.waitForAngular();
             var videoForm = new FormAddVideo(element(by.id('FormAddVideo')));
             videoForm.changeTab('Youtube').then(function() {
                 videoForm.setUrl(validYoutubeId);
@@ -25,7 +25,7 @@ describe('Add tag on video: ', function() {
             });
         });
     });
-
+//
     it('Should be possible to create a tag', function() {
         formAddVideoTag.increaseBeginTime();
         formAddVideoTag.decreaseBeginTime();
@@ -46,6 +46,7 @@ describe('Add tag on video: ', function() {
 
         formAddVideoTag.submit().then(function() {
             browser.waitForAngular();
+            formAddVideoTag.expectFeedbackSuccess();
 
             formAddVideoTag.continueEditing().then(function() {
                 it('It should be possible to remove the newly created tag', function() {
@@ -58,6 +59,28 @@ describe('Add tag on video: ', function() {
 
     });
 
+    it('Should be possible to edit a tag', function() {
+        // Select the tag to edit in the player bar
+        var playerBar = new PlayerBar();
+        playerBar.watchByIndex(1).then(function() {
+            expect(formAddVideoTag.isEditionForm()).toBe(true);
+            formAddVideoTag.increaseEndTime();
+            formAddVideoTag.increaseBeginTime();
+
+            formAddVideoTag.setRider('morris');
+
+            formAddVideoTag.setTag('new trick that does not exists');
+            expect(formAddVideoTag.isValid()).toBe(true);
+
+            formAddVideoTag.expectHasChanged(true);
+
+            formAddVideoTag.submit().then(function() {
+                formAddVideoTag.expectFeedbackSuccess();
+            });
+        });
+    });
+
+//
     describe('RIDER', function() {
 
         function getRiderForm() {

@@ -152,7 +152,8 @@ function EditionTag() {
         return a.begin !== b.begin || a.end !== b.end
                 || ((a.tag_id && a.tag_id !== b.tag_id) || (!a.tag_id && a.tag_name !== b.tag_name))
                 || a.rider_id !== b.rider_id
-                || a.category_id !== b.category_id || a.video_id !== b.video_id;
+                || a.category_id !== b.category_id 
+                || a.video_id !== b.video_id;
     }
 
     function setStatus(val) {
@@ -321,8 +322,7 @@ function EditionTag() {
         this._extra.category = {
             category_id: this._video_tag.category_id,
             category_name: this._video_tag.category_name,
-            sport_name: this._video_tag.sport_name,
-            sport_id: this._video_tag.sport_id,
+            sport_name: this._video_tag.sport_name
         };
         this.setEditabled();
         return this;
@@ -382,8 +382,7 @@ function EditionTag() {
             console.log("CREATING NEW TAG:");
             console.log(this._extra.category);
             postData.tag = this._extra.tag;
-            postData.tag.category_id = this._extra.category_id;
-            postData.tag.sport_id = this._extra.category.sport_id;
+            postData.tag.category_id = this._extra.category.category_id;
         }
         return postData;
     }

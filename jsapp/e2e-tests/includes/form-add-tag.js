@@ -17,17 +17,36 @@ var Util = require('./util.js');
         self._riderInput = new util.uiSelect(self._form.element(by.css('.ui-select-rider')));
         self._tagInput = new util.uiSelect(self._form.element(by.css('.ui-select-tag')));
         self._buttonShowRiderForm = self._form.element(by.id('ButtonShowRiderForm'));
+        self._buttonCancelChanged = self._form.element(by.css('[ng-click^="cancel"]'));
+        self._buttonRemove = self._form.element(by.css('[ng-click^="deleteTag"]'));
+
+        self.expectHasChanged = function(){
+            expect(self._buttonCancelChanged.isDisplayed()).toBe(true);
+            expect(self._buttonCancelChanged.isEnabled()).toBe(true);
+        };
+        
+        self.isEditionForm = function(){
+//            expect(self._buttonRemove.isPresent()).toBe(true);
+            return self._buttonRemove.isDisplayed();
+        };
+
+        self.expectFeedbackSuccess =  function(){
+            expect(self._form.all(by.css('.has-error')).count()).toBeLessThan(1);
+            // TODO improve
+        };
 
         self.setCategory = function(name) {
             self._categoryInput.sendKeys(name);
             browser.waitForAngular();
             return self._categoryInput.pickChoice(0);
         };
+        
         self.setRider = function(name) {
             self._riderInput.sendKeys(name);
             browser.waitForAngular();
             return self._riderInput.pickChoice(0);
         };
+        
         self.setTag = function(name) {
             self._tagInput.sendKeys(name);
             browser.waitForAngular();
