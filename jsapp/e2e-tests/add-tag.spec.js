@@ -80,6 +80,13 @@ describe('Add tag on video: ', function() {
         });
     });
 
+
+    // Testing to provide invalid value for trick
+    // TODO 
+//    it('Should be possible to add a trick too big', function() {
+//        // Select the tag to edit in the player bar
+//       
+//    });
 //
     describe('RIDER', function() {
 

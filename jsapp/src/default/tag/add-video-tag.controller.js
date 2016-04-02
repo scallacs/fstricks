@@ -9,9 +9,10 @@ function AddVideoTagController($scope, $state, $stateParams, VideoTagData, Video
 //        edit: VideoTagEntity.edit,
 //        delete: VideoTagEntity.delete
 //    });
+    SharedData.showCategories = false;
     $scope.editionTag = new EditionTag(AuthenticationService.getCurrentUser().id, VideoTagEntity, 'default', {
         min_duration: 2,
-        max_duration: 40, 
+        max_duration: 40,
         similar_tag_limit_ratio: 0.6
     });
     init();
