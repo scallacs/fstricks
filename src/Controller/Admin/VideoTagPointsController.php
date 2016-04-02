@@ -1,8 +1,7 @@
 <?php
 namespace App\Controller\Admin;
 
-use App\Controller\AppController;
-
+use App\Lib\ResultMessage;
 /**
  * VideoTagPoints Controller
  *

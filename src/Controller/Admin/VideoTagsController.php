@@ -2,7 +2,6 @@
 
 namespace App\Controller\Admin;
 
-use App\Controller\AppController;
 use App\Lib\ResultMessage;
 use Cake\Core\Configure;
 
@@ -65,9 +64,10 @@ class VideoTagsController extends AppController {
                         'created' => ['VideoTags.created DESC'],
                         'best' => ['VideoTags.count_points DESC']
             ]);
-//            debug($query->sql());
-//            die();
-
+            
+//            ResultMessage::overwriteData($this->paginate($query));
+//            ResultMessage::setWrapper(false);
+                   
             ResultMessage::setPaginateData(
                     $this->paginate($query), $this->request->params['paging']['VideoTags']);
         } catch (NotFoundException $e) {

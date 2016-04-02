@@ -15,16 +15,6 @@ function ConfigRouting($stateProvider) {
                 controller: 'LogoutController',
 //                templateUrl: ADMIN_TEMPLATE_URL + "admin/dashboard/partials/home.html"
             })
-            .state("users", {
-                url: "/users",
-                controller: 'UsersController',
-                templateUrl: ADMIN_TEMPLATE_URL + "users/partials/template.html"
-            })
-            .state("users.index", {
-                url: "/index",
-                controller: 'UserIndexController',
-                templateUrl: ADMIN_TEMPLATE_URL + "users/partials/index.html"
-            })
             .state("videotag", {
                 url: "/video-tag",
                 controller: 'VideoTagsController',

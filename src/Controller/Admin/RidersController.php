@@ -1,7 +1,7 @@
 <?php
 namespace App\Controller\Admin;
 
-use App\Controller\AppController;
+use App\Lib\ResultMessage;
 
 /**
  * Riders Controller
@@ -18,11 +18,10 @@ class RidersController extends AppController
      */
     public function index()
     {
-        $this->paginate = [
-            'contain' => ['Users', 'SocialProviders']
-        ];
-        $this->set('riders', $this->paginate($this->Riders));
-        $this->set('_serialize', ['riders']);
+//        $this->Paginator->config(Configure::read('Pagination.Users'));
+        $query = $this->Riders->find('all');
+        ResultMessage::setWrapper(false);
+        ResultMessage::overwriteData($this->paginate($query));
     }
 
     /**
@@ -35,10 +34,10 @@ class RidersController extends AppController
     public function view($id = null)
     {
         $rider = $this->Riders->get($id, [
-            'contain' => ['Users', 'SocialProviders', 'VideoTags']
+            'contain' => ['Users']
         ]);
-        $this->set('rider', $rider);
-        $this->set('_serialize', ['rider']);
+        ResultMessage::setWrapper(false);
+        ResultMessage::overwriteData($rider);
     }
 
     /**

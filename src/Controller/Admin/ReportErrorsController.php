@@ -1,8 +1,8 @@
 <?php
 namespace App\Controller\Admin;
 
-use App\Controller\AppController;
-
+use App\Lib\ResultMessage;
+use App\Model\Entity\ReportError;
 /**
  * ReportErrors Controller
  *
@@ -11,18 +11,24 @@ use App\Controller\AppController;
 class ReportErrorsController extends AppController
 {
 
-    /**
-     * Index method
-     *
-     * @return void
-     */
-    public function index()
-    {
-        $this->paginate = [
-            'contain' => ['Users', 'ErrorTypes', 'VideoTags']
-        ];
-        $this->set('reportErrors', $this->paginate($this->ReportErrors));
-        $this->set('_serialize', ['reportErrors']);
+    public function initialize() {
+        parent::initialize();
+        $this->loadComponent('Paginator');
+    }
+    
+    public function index() {
+        $query = $this->ReportErrors->find('all')
+                ->select([
+                    'count_ref' => 'COUNT(ReportErrors.video_tag_id)'
+                ])
+                ->order(['ReportErrors.created DESC'])
+                ->where(['ReportErrors.status IN' => [ReportError::STATUS_PENDING]])
+                ->group(['ReportErrors.video_tag_id'])
+                ->contain(['VideoTags']);
+        ResultMessage::overwriteData($this->paginate($query));
+        ResultMessage::setWrapper(false);
+//        ResultMessage::setPaginateData(
+//                $this->paginate($query), $this->request->params['paging']['ReportErrors']);
     }
 
     /**
@@ -37,8 +43,8 @@ class ReportErrorsController extends AppController
         $reportError = $this->ReportErrors->get($id, [
             'contain' => ['Users', 'ErrorTypes', 'VideoTags']
         ]);
-        $this->set('reportError', $reportError);
-        $this->set('_serialize', ['reportError']);
+        ResultMessage::overwriteData($reportError->first());
+        ResultMessage::setWrapper(false);
     }
 
     /**

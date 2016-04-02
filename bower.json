@@ -45,6 +45,8 @@
     "AngularJS-Toaster": "angularjs-toaster#~1.1.0",
     "angular-drag-and-drop-lists": "~1.4.0",
     "angular-send-feedback": "^1.0.2",
-    "html2canvas": "^0.4.1"
+    "html2canvas": "^0.4.1",
+    "gentelella": "puikinsh/gentelella#^1.0.0",
+    "ng-admin": "^0.9.1"
   }
 }

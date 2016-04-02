@@ -8,7 +8,6 @@ angular.module('app.admin', [
     'app.rider',
     'toaster',
     'satellizer',
-    
     'app.account', // Required by form-video-tag !!???
     'toaster'
 ])
@@ -70,24 +69,22 @@ Run.$inject = ['$rootScope', 'AuthenticationService', '$state', 'SharedData'];
 function Run($rootScope, AuthenticationService, $state, SharedData) {
     AuthenticationService.init();
     SharedData.init();
-
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
         SharedData.currentSearch = {};
-
         if (toState.redirectTo) {
             event.preventDefault();
             $state.go(toState.redirectTo, toParams);
             return;
         }
 
-        if (!AuthenticationService.isAuthed()) {
-            console.log('DENY USER ACCESS FOR THIS LOCATION');
-            event.preventDefault();
-            SharedData.pageLoader(false);
-        }
-        
-        SharedData.pageLoader(angular.isDefined(toState.data) ? 
-            toState.data.pageLoader: false);
+//        if (!AuthenticationService.isAuthed()) {
+//            console.log('DENY USER ACCESS FOR THIS LOCATION');
+//            event.preventDefault();
+//            SharedData.pageLoader(false);
+//        }
+
+        SharedData.pageLoader(angular.isDefined(toState.data) ?
+                toState.data.pageLoader : false);
     });
 
 }
@@ -96,7 +93,6 @@ function ConfigInterceptor($httpProvider, $locationProvider) {
     'use strict';
     //$locationProvider.html5Mode(true).hashPrefix('!');
     $locationProvider.html5Mode(true);
-
     var interceptor = ['$rootScope', '$q', '$injector', '$timeout',
         function(scope, $q, $injector, $timeout) {
             var $http, $state;
@@ -157,7 +153,7 @@ function ConfigInterceptor($httpProvider, $locationProvider) {
 
 
 LogoutController.$inject = ['$state', 'AuthenticationService'];
-function LogoutController($state, AuthenticationService){
+function LogoutController($state, AuthenticationService) {
     AuthenticationService.logout();
     $state.go('home');
 }

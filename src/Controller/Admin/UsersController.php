@@ -30,18 +30,28 @@ class UsersController extends AppController {
 
     public function index() {
         $this->Paginator->config(Configure::read('Pagination.Users'));
+        $query = $this->Users->find('all');
         ResultMessage::setWrapper(false);
-        try {
-            $query = $this->Users->find('all');
-            ResultMessage::setPaginateData(
-                    $this->paginate($query), 
-                    $this->request->params['paging']['Users']);
-        } catch (NotFoundException $e) {
-            ResultMessage::overwriteData([]);
-        }
+        ResultMessage::overwriteData($this->paginate($query));
+//        ResultMessage::setPaginateData(
+//                $this->paginate($query), 
+//                $this->request->params['paging']['Users']);
     }
     
-
+    /**
+     * View method
+     *
+     * @param string|null $id Video Tag id.
+     * @return void
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
+    public function view($id = null) {
+        $videoTag = $this->Users->get($id);
+        ResultMessage::overwriteData($videoTag);
+        ResultMessage::setWrapper(false);
+    }
+    
+    
     public function search() {
         ResultMessage::setWrapper(false);
         $q = \App\Lib\DataUtil::getString($this->request->query, 'q');
@@ -76,16 +86,4 @@ class UsersController extends AppController {
     }
 
     
-    /**
-     * View method
-     *
-     * @param string|null $id Video Tag id.
-     * @return void
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     */
-    public function view($id = null) {
-        $videoTag = $this->Users->get($id);
-        ResultMessage::overwriteData($videoTag);
-        ResultMessage::setWrapper(false);
-    }
 }
