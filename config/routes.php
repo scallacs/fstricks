@@ -44,10 +44,19 @@ Router::defaultRouteClass('Route');
 Router::prefix('Admin', function ($routes) {
     $routes->scope('/api', function ($routes) {
         $routes->extensions(['json']);
-        $routes->fallbacks('InflectedRoute');
+        $routes->resources('ReportErrors');
+        $routes->resources('Users');
+        $routes->resources('Riders');
+        $routes->resources('Sports');
+        $routes->resources('Videos');
+        $routes->resources('Categories');
+//        $routes->resources('VideoTags');
+        $routes->resources('Feedbacks');
+        $routes->fallbacks('DashedRoute');
     });
     $routes->connect('/login', ['controller' => 'users', 'action' => 'login']);    
     $routes->connect('/**', ['controller' => 'Pages', 'action' => 'app']);    
+    $routes->connect('/dashboard', ['controller' => 'Pages', 'action' => 'dashboard']);    
 });
 
 Router::scope('/api', function ($routes) {
@@ -71,6 +80,7 @@ Router::scope('/', function ($routes) {
 //        'controller' => 'Users', 
 //        'action' => 'beta_login'
 //    ]);
+    $routes->connect('/', ['controller' => 'Pages', 'action' => 'app']);
     $routes->connect('/**', ['controller' => 'Pages', 'action' => 'app']);
     /**
      * Connect catchall routes for all controllers.
@@ -88,7 +98,7 @@ Router::scope('/', function ($routes) {
      * You can remove these routes once you've connected the
      * routes you want in your application.
      */
-    $routes->fallbacks('InflectedRoute');
+    //$routes->fallbacks('InflectedRoute');
 });
 
 
