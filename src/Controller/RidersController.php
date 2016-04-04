@@ -25,14 +25,8 @@ class RidersController extends AppController {
      */
     public function profile($slug = null) {
         ResultMessage::setWrapper(false);
-//        if ($profileId === null && $this->Auth->user('id')) {
-//            $query = $this->Riders->find()
-//                    ->limit(1)
-//                    ->where(['Riders.user_id' => $this->Auth->user('id')]);
-//            $data = $query->first();
-//        } else 
         if (!empty($slug)) {
-            $query = $this->Riders->find()
+            $query = $this->Riders->findPublic()
                     ->limit(1)
                     ->where(['Riders.slug' => $slug]);
             $data = $query->first();
@@ -113,7 +107,7 @@ class RidersController extends AppController {
             if (!isset($data['q']) && (!isset($data['firstname']) || !isset($data['lastname']))) {
                 throw new \Cake\Network\Exception\NotFoundException();
             }
-            $query = $this->Riders->find('all')
+            $query = $this->Riders->findPublic()
                     ->select([
                         'firstname' => 'Riders.firstname',
                         'lastname' => 'Riders.lastname',

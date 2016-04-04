@@ -18,6 +18,8 @@ CakePHP 3
 /webroot/js/*.js
 /webroot/css/style.min.css
 /webroot/snapshots
+/webroot/sitemap.xml
+
 CakePHP 2
 
 /app/tmp/*
@@ -28,3 +30,4 @@ CakePHP 2
 Netbeans
 /nbproject/private/private.xml
 /resources/webserver-fstricks-linux.pem
+/nbproject/private/config.properties

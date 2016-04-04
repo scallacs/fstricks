@@ -176,5 +176,8 @@ class RidersTable extends Table {
         $entity->nationality = \App\Lib\DataUtil::lowername($entity->nationality);
         $entity->slug = \Cake\Utility\Inflector::slug($entity->firstname . '-' . $entity->lastname . '-' . $entity->nationality);
     }
-
+    
+    public function findPublic(){
+        return $this->find('all');
+    }
 }

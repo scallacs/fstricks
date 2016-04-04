@@ -110,7 +110,7 @@ sudo /sbin/swapon /var/swap.1
 
 
 ################################################################################
-# Instal phatom
+# Instal phantom
 PHANTOM_VERSION=phantomjs-2.1.1-linux-x86_64
 wget https://bitbucket.org/ariya/phantomjs/downloads/${PHANTOM_VERSION}.tar.bz2
 tar -xvf ${PHANTOM_VERSION}.tar.bz2

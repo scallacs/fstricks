@@ -59,12 +59,17 @@ build: reset-repo build-backend build-frontend
 
 .PHONY: build-backend
 build-backend: 
+	chmod u+x bin/cake
 	composer install
 	npm install
 	
 build-frontend: 
 	bower install
 	$(GULP_BIN) build
+
+.PHONY: generate-sitemap
+generate-sitemap: 
+        bin/cake Sitemap http://www.fstricks.com
 
 clean-prod:
 	rm -rf webroot/coverage

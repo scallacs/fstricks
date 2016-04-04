@@ -69,7 +69,7 @@ class TagsController extends AppController {
         if ($term === null){
             throw new \Cake\Network\Exception\NotFoundException();
         }
-        $query = $this->Tags->find('all')
+        $query = $this->Tags->findPublic()
                 ->select([
                     'name' => 'Tags.name',
                     'slug' => 'Tags.slug',

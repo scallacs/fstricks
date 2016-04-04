@@ -150,4 +150,7 @@ class TagsTable extends Table {
         }
     }
 
+    public function findPublic(){
+        return $this->find('all');
+    }
 }
