@@ -101,3 +101,21 @@ chkconfig sendmail on
 service sendmail restart
 
 
+################################################################################
+# Enabling SWAP
+free -m
+sudo /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024
+sudo /sbin/mkswap /var/swap.1
+sudo /sbin/swapon /var/swap.1
+
+
+################################################################################
+# Instal phatom
+PHANTOM_VERSION=phantomjs-2.1.1-linux-x86_64
+wget https://bitbucket.org/ariya/phantomjs/downloads/${PHANTOM_VERSION}.tar.bz2
+tar -xvf ${PHANTOM_VERSION}.tar.bz2
+cd $PHANTOM_VERSION
+cd bin
+sudo cp phantomjs /usr/bin
+phantomjs -h
+sudo yum install fontconfig freetype libfreetype.so.6 libfontconfig.so.1 libstdc++.so.6

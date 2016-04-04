@@ -1,5 +1,9 @@
 <IfModule mod_rewrite.c>
     RewriteEngine on
+    #RewriteCond %{REQUEST_URI}  ^/$
+    #RewriteCond %{QUERY_STRING} ^_escaped_fragment_=/?(.*)$
+    #RewriteRule ^(.*)$ webroot/snapshots/%1? [NC,L]
+
     RewriteRule    ^$    webroot/    [L]
     RewriteRule    (.*) webroot/$1    [L]
 </IfModule>

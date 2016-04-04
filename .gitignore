@@ -17,7 +17,7 @@ CakePHP 3
 /webroot/views
 /webroot/js/*.js
 /webroot/css/style.min.css
-
+/webroot/snapshots
 CakePHP 2
 
 /app/tmp/*

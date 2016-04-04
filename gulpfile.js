@@ -168,3 +168,36 @@ gulp.task('concat-css', function() {
             .pipe(gulp.dest(CSS_PATH));
 });
 
+
+
+var sitemap = require('gulp-sitemap');
+var save = require('gulp-save');
+ 
+ 
+var sports = [
+    'all', 'snowboard', 'ski'
+];
+
+var pages = [];
+for (var i = 0; i < sports.length; i++){
+    pages.push('player/bestof/' + sports[i]);
+}
+
+// TODO dynamically get pages to index
+// Get most famouse riders
+ 
+gulp.task('generate-sitemap', function() {
+    gulp.src('./webroot/snapshots/**/*.html')
+//        .pipe(save('before-sitemap'))
+        .pipe(sitemap({
+                siteUrl: 'http://www.fstricks.com',
+                changefreq: 'always',
+                lastmod: null,
+                pages: pages,
+                verbose: true
+        })) // Returns sitemap.xml 
+        .pipe(gulp.dest('./webroot/snapshots'))
+//        .pipe(save.restore('before-sitemap')) //restore all files to the state when we cached them 
+        // -> continue stream with original html files 
+        // ... 
+});
