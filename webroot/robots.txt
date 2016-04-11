@@ -1,5 +1,2 @@
 User-agent: *
-Disallow: /api/
-Allow: /
-
 Sitemap: http://www.fstricks.com/sitemap.xml
