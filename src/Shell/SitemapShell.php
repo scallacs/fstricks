@@ -114,8 +114,8 @@ class SitemapShell extends Shell {
             $this->out("Writing sitemap in file...");
             $this->sitemap->writeSitemap();
             // update robots.txt file
-            $this->out("Updating robots...");
-            $this->sitemap->updateRobots();
+//            $this->out("Updating robots...");
+//            $this->sitemap->updateRobots();
 //            debug($this->sitemap->toArray());
             // submit sitemaps to search engines
             //$result = $this->sitemap->submitSitemap("yahooAppId");

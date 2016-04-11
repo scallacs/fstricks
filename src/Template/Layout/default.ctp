@@ -4,10 +4,10 @@
         <?= $this->Element('Common/head'); ?>
         <?= $this->Element('Common/scripts'); ?>
 
+        <meta name="fragment" content="!">
         <?= $this->fetch('meta') ?>
         <?= $this->fetch('css') ?>
         <?= $this->fetch('script') ?>
-
     </head>
     <body>
     <base href="<?= \Cake\Routing\Router::url('/'); ?>"/>
@@ -37,8 +37,8 @@
     <?php if (\Cake\Core\Configure::read('user_feedback')) {
         ?>
         <!--<div class="feeback-container">-->
-            <angular-feedback options="feedbackOptions" ng-if="authData.isAuthed()">
-            </angular-feedback>
+        <angular-feedback options="feedbackOptions" ng-if="authData.isAuthed()">
+        </angular-feedback>
         <!--</div>-->
     <?php } ?>
 </body>
