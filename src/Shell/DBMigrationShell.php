@@ -10,11 +10,26 @@ class DBMigrationShell extends Shell {
 
     public function main() {
         $this->_init();
+        
+        $this->_updateSlugs('Sports');
+        $this->_updateSlugs('Categories');
+        
         $this->_updateTagSlugs();
     }
 
     private function _init() {
         
+    }
+    
+    private function _updateSlugs($model) {
+        $this->loadModel($model);
+        $data = $this->$model->find('all')
+                ->limit(10000)
+                ->hydrate(true);
+        foreach ($data as $d) {
+            $d->slug = \Cake\Utility\Inflector::slug(\App\Lib\DataUtil::lowername($d->name));
+            $this->log("Updating " . $model . " slug: " . $d->name . ' -> ' . $d->slug);
+        }
     }
 
     private function _updateTagSlugs() {
