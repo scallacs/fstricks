@@ -143,14 +143,31 @@ class TagsTable extends Table {
      * @param \App\Model\Table\ArrayObject $options
      */
     public function beforeSave($event, $entity, $options) {
-        if (!empty($entity->name)) {
-            // TODO remove from here (set in entity)
-            $entity->name = \App\Lib\DataUtil::lowernamenumeric($entity->name);
-            $entity->slug = \Cake\Utility\Inflector::slug($entity->name.'-'.$entity->category_id);
+        if ($entity->isNew() && empty($entity->slug)){
+            // TODO SET SLUG
+            $entity->generateSlug($entity->sport, $entity->category);
+        }
+    }
+    /**
+     * @param \App\Model\Table\Event $event
+     * @param \Cake\ORM\Entity $entity
+     * @param \App\Model\Table\ArrayObject $options
+     */
+    public function afterSave($event, $entity, $options) {
+        if ($entity->isNew() && empty($entity->slug)){
+            $entity->updateSlug($entity->id);
         }
     }
 
     public function findPublic(){
         return $this->find('all');
+    }
+    
+    public function updateSlug($id){
+        $entity = $this->get($id, [
+            'contain' => ['Categories', 'Sports']
+        ]);
+        $entity->generateSlug($entity->sport, $entity->category);
+        return $this->save($entity);
     }
 }

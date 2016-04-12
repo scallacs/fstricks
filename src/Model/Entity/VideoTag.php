@@ -48,8 +48,23 @@ class VideoTag extends Entity {
         '*' => true,
     ];
 
-    
-    public function isEditabled($userId){
+    public function isEditabled($userId) {
         return $this->status === self::STATUS_PENDING && $this->user_id === $userId;
     }
+
+    public function generateSlug($rider, $tag) {
+        $this->slug = $this->id . '-' . $tag['slug'] . '-by-' . (!empty($rider['slug']) ? $rider['slug'] : 'unknown');
+    }
+
+    //protected $_virtual = ['slug'];
+
+    protected function _getSlug() {
+        if (empty($this->slug)){
+            return $this->id . '-' . $this->tag_slug . (!empty($this->rider_slug) ? '-by-'.($this->rider_slug) : '');
+        }
+        else {
+            return $this->slug;
+        }
+    }
+
 }

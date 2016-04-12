@@ -113,6 +113,7 @@ class VideoTagsTable extends Table {
                             'tag_id' => 'Tags.id',
                             'count_points' => 'VideoTags.count_points',
                             'id' => 'VideoTags.id',
+                            'slug' => 'VideoTags.slug',
                             'provider_id' => 'Videos.provider_id',
                             'video_url' => 'Videos.video_url',
                             'video_duration' => 'Videos.duration',
@@ -348,6 +349,14 @@ class VideoTagsTable extends Table {
                 'video_tag_id' => $entity->id
             ]);
         }
+    }
+    
+    public function updateSlug($id){
+        $entity = $this->get($id, [
+            'contain' => ['Riders', 'Tags']
+        ]);
+        $entity->generateSlug($entity->rider, $entity->tag);
+        return $this->save($entity);
     }
 
 }

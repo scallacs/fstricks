@@ -48,10 +48,10 @@ class CategoriesController extends AppController
         if ($this->request->is('post')) {
             $category = $this->Categories->patchEntity($category, $this->request->data);
             if ($this->Categories->save($category)) {
-                $this->Flash->success(__('The category has been saved.'));
+                ResultMessage::setMessage(__('The category has been saved.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The category could not be saved. Please, try again.'));
+                ResultMessage::setMessage(__('The category could not be saved. Please, try again.'));
             }
         }
         $sports = $this->Categories->Sports->find('list', ['limit' => 200]);
@@ -74,15 +74,11 @@ class CategoriesController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $category = $this->Categories->patchEntity($category, $this->request->data);
             if ($this->Categories->save($category)) {
-                $this->Flash->success(__('The category has been saved.'));
-                return $this->redirect(['action' => 'index']);
+                ResultMessage::setMessage(__('The category has been saved.'));
             } else {
-                $this->Flash->error(__('The category could not be saved. Please, try again.'));
+                ResultMessage::setMessage(__('The category could not be saved. Please, try again.'));
             }
         }
-        $sports = $this->Categories->Sports->find('list', ['limit' => 200]);
-        $this->set(compact('category', 'sports'));
-        $this->set('_serialize', ['category']);
     }
 
     /**
@@ -97,9 +93,9 @@ class CategoriesController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $category = $this->Categories->get($id);
         if ($this->Categories->delete($category)) {
-            $this->Flash->success(__('The category has been deleted.'));
+            ResultMessage::setMessage(__('The category has been deleted.'));
         } else {
-            $this->Flash->error(__('The category could not be deleted. Please, try again.'));
+            ResultMessage::setMessage(__('The category could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
     }

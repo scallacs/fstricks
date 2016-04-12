@@ -46,10 +46,10 @@ class VideoTagPointsController extends AppController {
         if ($this->request->is('post')) {
             $videoTagPoint = $this->VideoTagPoints->patchEntity($videoTagPoint, $this->request->data);
             if ($this->VideoTagPoints->save($videoTagPoint)) {
-                $this->Flash->success(__('The video tag point has been saved.'));
+                ResultMessage::setMessage(__('The video tag point has been saved.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The video tag point could not be saved. Please, try again.'));
+                ResultMessage::setMessage(__('The video tag point could not be saved. Please, try again.'));
             }
         }
         $users = $this->VideoTagPoints->Users->find('list', ['limit' => 200]);
@@ -72,10 +72,10 @@ class VideoTagPointsController extends AppController {
         if ($this->request->is(['patch', 'post', 'put'])) {
             $videoTagPoint = $this->VideoTagPoints->patchEntity($videoTagPoint, $this->request->data);
             if ($this->VideoTagPoints->save($videoTagPoint)) {
-                $this->Flash->success(__('The video tag point has been saved.'));
+                ResultMessage::setMessage(__('The video tag point has been saved.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The video tag point could not be saved. Please, try again.'));
+                ResultMessage::setMessage(__('The video tag point could not be saved. Please, try again.'));
             }
         }
         $users = $this->VideoTagPoints->Users->find('list', ['limit' => 200]);
@@ -95,9 +95,9 @@ class VideoTagPointsController extends AppController {
         $this->request->allowMethod(['post', 'delete']);
         $videoTagPoint = $this->VideoTagPoints->get($id);
         if ($this->VideoTagPoints->delete($videoTagPoint)) {
-            $this->Flash->success(__('The video tag point has been deleted.'));
+            ResultMessage::setMessage(__('The video tag point has been deleted.'));
         } else {
-            $this->Flash->error(__('The video tag point could not be deleted. Please, try again.'));
+            ResultMessage::setMessage(__('The video tag point could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
     }

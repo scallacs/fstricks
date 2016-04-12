@@ -51,10 +51,10 @@ class VideoTagAccuracyRatesController extends AppController
         if ($this->request->is('post')) {
             $videoTagAccuracyRate = $this->VideoTagAccuracyRates->patchEntity($videoTagAccuracyRate, $this->request->data);
             if ($this->VideoTagAccuracyRates->save($videoTagAccuracyRate)) {
-                $this->Flash->success(__('The video tag accuracy rate has been saved.'));
+                ResultMessage::setMessage(__('The video tag accuracy rate has been saved.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The video tag accuracy rate could not be saved. Please, try again.'));
+                ResultMessage::setMessage(__('The video tag accuracy rate could not be saved. Please, try again.'));
             }
         }
         $users = $this->VideoTagAccuracyRates->Users->find('list', ['limit' => 200]);
@@ -78,10 +78,10 @@ class VideoTagAccuracyRatesController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $videoTagAccuracyRate = $this->VideoTagAccuracyRates->patchEntity($videoTagAccuracyRate, $this->request->data);
             if ($this->VideoTagAccuracyRates->save($videoTagAccuracyRate)) {
-                $this->Flash->success(__('The video tag accuracy rate has been saved.'));
+                ResultMessage::setMessage(__('The video tag accuracy rate has been saved.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The video tag accuracy rate could not be saved. Please, try again.'));
+                ResultMessage::setMessage(__('The video tag accuracy rate could not be saved. Please, try again.'));
             }
         }
         $users = $this->VideoTagAccuracyRates->Users->find('list', ['limit' => 200]);
@@ -102,9 +102,9 @@ class VideoTagAccuracyRatesController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $videoTagAccuracyRate = $this->VideoTagAccuracyRates->get($id);
         if ($this->VideoTagAccuracyRates->delete($videoTagAccuracyRate)) {
-            $this->Flash->success(__('The video tag accuracy rate has been deleted.'));
+            ResultMessage::setMessage(__('The video tag accuracy rate has been deleted.'));
         } else {
-            $this->Flash->error(__('The video tag accuracy rate could not be deleted. Please, try again.'));
+            ResultMessage::setMessage(__('The video tag accuracy rate could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
     }

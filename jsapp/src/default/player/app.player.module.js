@@ -128,7 +128,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer.realization', {
-                url: '/realization/:videoTagId',
+                url: '/performance/:videoTagId',
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewRealizationController'
@@ -362,10 +362,12 @@ function ViewRealizationController(VideoTagData, $stateParams, PlayerData, Share
     PlayerData.showListTricks = false;
     SharedData.showCategories = false;
     SharedData.setCurrentCategory(null);
+    
+    var videoTagId = $stateParams.videoTagId.split('-')[0];
 
     VideoTagData
             .getLoader()
-            .setFilters({video_tag_id: $stateParams.videoTagId, status: 'rejected,pending,validated'})
+            .setFilters({video_tag_id: videoTagId, status: 'rejected,pending,validated'})
             .startLoading()
             .then(function(results) {
                 if (results.items.length === 1) {

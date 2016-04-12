@@ -57,6 +57,9 @@ function Config(nga) {
     // -------------------------------------------------------------
     var user = nga.entity('users');
     var tag = nga.entity('tags');
+    var sport = nga.entity('sports');
+    var category = nga.entity('categories');
+    var video = nga.entity('videos');
 
     var quotaType = nga.entity('quota-types');
     quotaType.baseApiUrl(ADMIN_API_BASE_URL + 'activity-quota/');
@@ -136,9 +139,19 @@ function Config(nga) {
     // -------------------------------------------------------------
     // set the fields of the user entity list view
     tag.listView().fields([
+        nga.field('id'),
         nga.field('name'),
         nga.field('count_ref'),
-        nga.field('created')
+        nga.field('slug'),
+        nga.field('created'),
+        nga.field('sport_id', 'reference')
+                .targetEntity(sport)
+                .targetField(nga.field('name'))
+                .label('Sport'),
+        nga.field('category_id', 'reference')
+                .targetEntity(category)
+                .targetField(nga.field('name'))
+                .label('Category')
     ])
             .filters([
                 nga.field('q')
@@ -200,67 +213,31 @@ function Config(nga) {
         nga.field('last_login', 'date')
     ]);
 
-    // set the fields of the user entity list view
-    user.listView()
-            .fields([
-                nga.field('username').isDetailLink(true),
-                nga.field('email'),
-                nga.field('status'),
-                nga.field('created', 'datetime'),
-                nga.field('last_login', 'datetime')
-//                                nga.field('id', 'reference')
-//                                    .targetEntity(user)
-//                                    .targetField(nga.field('username'))
-//                                    .label('Author')
-            ])
-            .listActions(['show'])
-            .batchActions([]);
-    user.showView()
-            .fields([
-                nga.field('id'),
-                nga.field('username'),
-                nga.field('email'),
-                nga.field('status'),
-                nga.field('created', 'datetime'),
-                nga.field('last_login', 'datetime')
-            ]);
     // add the user entity to the admin application
     admin.addEntity(user);
 
-    var category = nga.entity('categories');
-    var sport = nga.entity('sports');
+    // ---------------------------------------------------------
 
-    category
-            .listView()
-            .fields([
-                nga.field('id'),
-                nga.field('name').isDetailLink(true),
-                nga.field('status'),
-                nga.field('sport_id', 'reference')
-                        .targetEntity(sport)
-                        .targetField(nga.field('name'))
-                        .label('Sport')
-            ]);
-    admin.addEntity(category);
 
+    // ---------------------------------------------------------
     sport
             .listView()
             .fields([
                 nga.field('id'),
                 nga.field('image', 'file'),
                 nga.field('name').isDetailLink(true),
+                nga.field('slug'),
                 nga.field('status')
             ]);
     sport.showView()
             .fields([
                 nga.field('id'),
                 nga.field('name'),
+                nga.field('slug'),
                 nga.field('categories', 'referenced_list')
                         .targetEntity(category)
                         .targetReferenceField('sport_id')
-                        .targetFields([
-                            nga.field('name')
-                        ])
+                        .targetField(nga.field('name'))
                         .sortField('id')
                         .sortDir('DESC')
             ]);
@@ -275,7 +252,6 @@ function Config(nga) {
     admin.addEntity(sport);
 
     // ---------------------------------------------------------
-    var video = nga.entity('videos');
     video
             .listView()
             .fields([
@@ -391,6 +367,7 @@ function Config(nga) {
                 nga.field('firstname'),
                 nga.field('lastname'),
                 nga.field('nationality'),
+                nga.field('slug'),
                 nga.field('status'),
                 nga.field('created', 'datetime'),
                 nga.field('modified', 'datetime'),
@@ -497,12 +474,27 @@ function Config(nga) {
                 nga.field('status'),
                 nga.field('begin'),
                 nga.field('end'),
+                nga.field('slug'),
                 nga.field('created', 'datetime'),
                 nga.field('modified', 'datetime'),
+                nga.field('video_id', 'reference')
+                        .targetEntity(video)
+                        .targetField(nga.field('video_url'))
+                        .label('Video'),
                 nga.field('rider_id', 'reference')
                         .targetEntity(rider)
+//                        .targetReferenceField('rider_id') 
+//                        .targetFields([nga.field('firstname'), nga.field('lastname')])
                         .targetField(nga.field('lastname'))
-                        .label('Rider')
+                        .label('Rider'),
+                nga.field('category_id', 'reference')
+                        .targetEntity(category)
+                        .targetField(nga.field('name'))
+                        .label('Category'),
+                nga.field('user_id', 'reference')
+                        .targetEntity(user)
+                        .targetField(nga.field('username'))
+                        .label('User')
             ])
             .listActions(['show'])
             .batchActions([]);
@@ -510,11 +502,30 @@ function Config(nga) {
     videoTags.showView()
             .fields([
                 nga.field('id'),
-                nga.field('username'),
-                nga.field('email'),
                 nga.field('status'),
+                nga.field('begin'),
+                nga.field('end'),
+                nga.field('slug'),
                 nga.field('created', 'datetime'),
-                nga.field('last_login', 'datetime')
+                nga.field('modified', 'datetime'),
+                nga.field('video_id', 'reference')
+                        .targetEntity(video)
+                        .targetField(nga.field('video_url'))
+                        .label('Video'),
+                nga.field('rider_id', 'reference')
+                        .targetEntity(rider)
+//                        .targetReferenceField('rider_id') 
+//                        .targetFields([nga.field('firstname'), nga.field('lastname')])
+                        .targetField(nga.field('lastname'))
+                        .label('Rider'),
+                nga.field('category_id', 'reference')
+                        .targetEntity(category)
+                        .targetField(nga.field('name'))
+                        .label('Category'),
+                nga.field('user_id', 'reference')
+                        .targetEntity(user)
+                        .targetField(nga.field('username'))
+                        .label('User')
             ]);
     // add the user entity to the admin application
     admin.addEntity(videoTags);
@@ -523,20 +534,28 @@ function Config(nga) {
 
 
     // -------------------------------------------------------------
-    var category = nga.entity('categories');
     // set the fields of the user entity list view
+
+
     category.listView().fields([
-//        nga.field('id'),
+        nga.field('id'),
         nga.field('name').isDetailLink(true),
-//        nga.field('image'),
+        nga.field('slug'),
+        nga.field('sport_id', 'reference')
+                .targetEntity(sport)
+                .targetField(nga.field('name'))
+                .label('Sport'),
+        nga.field('status'),
         nga.field('position')
     ])
-            .listActions(['edit', 'delete'])
+            .listActions(['show', 'edit', 'delete'])
             .batchActions(['delete']);
     // add the user entity to the admin application
     category.creationView()
             .fields([
                 nga.field('name')
+                        .validation({required: true, minlength: 2, maxlength: 25}),
+                nga.field('slug')
                         .validation({required: true, minlength: 2, maxlength: 25}),
 //                nga.field('image')
 //                        .validation({required: false}),

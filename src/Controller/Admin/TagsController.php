@@ -35,4 +35,16 @@ class TagsController extends AppController {
         ResultMessage::overwriteData($tag);
         ResultMessage::setWrapper(false);
     }
+    
+    public function updateSlug($id = null){
+        $entity = $this->Tags->updateSlug($id);
+        if (empty($entity->errors())){
+            ResultMessage::setMessage("Slug updated!", true);
+            ResultMessage::setData('slug', $entity->slug);
+        }
+        else{
+            ResultMessage::setMessage("Cannot update slug", false);
+//            ResultMessage::addValidationErrorsModel($entity)
+        }
+    }
 }

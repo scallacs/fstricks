@@ -55,10 +55,10 @@ class ReportErrorsController extends AppController
         if ($this->request->is('post')) {
             $reportError = $this->ReportErrors->patchEntity($reportError, $this->request->data);
             if ($this->ReportErrors->save($reportError)) {
-                $this->Flash->success(__('The report error has been saved.'));
+                ResultMessage::setMessage(__('The report error has been saved.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The report error could not be saved. Please, try again.'));
+                ResultMessage::setMessage(__('The report error could not be saved. Please, try again.'));
             }
         }
         $users = $this->ReportErrors->Users->find('list', ['limit' => 200]);
@@ -83,10 +83,10 @@ class ReportErrorsController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $reportError = $this->ReportErrors->patchEntity($reportError, $this->request->data);
             if ($this->ReportErrors->save($reportError)) {
-                $this->Flash->success(__('The report error has been saved.'));
+                ResultMessage::setMessage(__('The report error has been saved.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The report error could not be saved. Please, try again.'));
+                ResultMessage::setMessage(__('The report error could not be saved. Please, try again.'));
             }
         }
         $users = $this->ReportErrors->Users->find('list', ['limit' => 200]);
@@ -108,9 +108,9 @@ class ReportErrorsController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $reportError = $this->ReportErrors->get($id);
         if ($this->ReportErrors->delete($reportError)) {
-            $this->Flash->success(__('The report error has been deleted.'));
+            ResultMessage::setMessage(__('The report error has been deleted.'));
         } else {
-            $this->Flash->error(__('The report error could not be deleted. Please, try again.'));
+            ResultMessage::setMessage(__('The report error could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
     }

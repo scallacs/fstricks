@@ -1,13 +1,14 @@
-INSERT INTO `sports` (`id`, `name`, `status`) VALUES
-(1, 'snowboard', 'public'),
-(2, 'ski', 'public'),
-(3, 'skate', 'public'),
-(4, 'roller', 'public'),
-(5, 'motocross', 'public'),
-(6, 'wakeboard', 'public'),
-(7, 'surf', 'public'),
-(8, 'bmx', 'public'),
-(9, 'parkour', 'public');
+
+INSERT INTO `sports` (`id`, `name`, `status`, `slug`) VALUES
+(1, 'snowboard', 'public', 'snowboard'),
+(2, 'ski', 'public', 'ski'),
+(3, 'skate', 'public', 'skate'),
+(4, 'roller', 'public', 'roller'),
+(5, 'FMX', 'public', 'fmx'),
+(6, 'wakeboard', 'public', 'wakeboard'),
+(7, 'surf', 'public', 'surf'),
+(8, 'bmx', 'public', 'bmx'),
+(9, 'parkour', 'public', 'parkour');
 
 INSERT INTO `trickers_test_e2e`.`social_providers` (`id`) VALUES ('facebook');
 
@@ -24,37 +25,37 @@ VALUES
 
 
 
-INSERT INTO `categories` (`id`, `name`, `sport_id`) VALUES
-(4, 'flat', 1),
-(2, 'jib', 1),
-(1, 'kicker', 1),
-(33, 'other', 1),
-(3, 'pipe', 1),
-(8, 'flat', 2),
-(6, 'jib', 2),
-(5, 'kicker', 2),
-(34, 'other', 2),
-(7, 'pipe', 2),
-(31, 'flat', 3),
-(29, 'jump', 3),
-(32, 'other', 3),
-(23, 'pipes', 3),
-(30, 'vert', 3),
-(27, 'flat', 4),
-(25, 'jump', 4),
-(28, 'others', 4),
-(24, 'pipes', 4),
-(26, 'vert', 4),
-(9, 'freestyle', 5),
-(21, 'jib', 6),
-(20, 'jump', 6),
-(22, 'waves', 6),
-(16, 'all', 7),
-(10, 'dirt', 8),
-(14, 'flat', 8),
-(11, 'street', 8),
-(15, 'vert', 8),
-(17, 'All', 9);
+INSERT INTO `categories` (`id`, `name`, `sport_id`, `slug`) VALUES
+(1, 'kicker', 1, 'kicker'),
+(2, 'jib', 1, 'jib'),
+(3, 'pipe', 1, 'pipe'),
+(4, 'flat', 1, 'flat'),
+(5, 'kicker', 2, 'kicker'),
+(6, 'jib', 2, 'jib'),
+(7, 'pipe', 2, 'pipe'),
+(8, 'flat', 2, 'flat'),
+(9, 'freestyle', 5, 'freestyle'),
+(10, 'dirt', 8, 'dirt'),
+(11, 'street', 8, 'street'),
+(14, 'flat', 8, 'flat'),
+(15, 'vert', 8, 'vert'),
+(16, 'all', 7, 'all'),
+(17, 'All', 9, 'All'),
+(20, 'jump', 6, 'jump'),
+(21, 'jib', 6, 'jib'),
+(22, 'waves', 6, 'waves'),
+(23, 'pipes', 3, 'pipes'),
+(24, 'pipes', 4, 'pipes'),
+(25, 'jump', 4, 'jump'),
+(26, 'vert', 4, 'vert'),
+(27, 'flat', 4, 'flat'),
+(28, 'others', 4, 'others'),
+(29, 'jump', 3, 'jump'),
+(30, 'vert', 3, 'vert'),
+(31, 'flat', 3, 'flat'),
+(32, 'other', 3, 'other'),
+(33, 'other', 1, 'other'),
+(34, 'other', 2, 'other');
 
 INSERT INTO `error_types` (`id`, `name`, `description`) VALUES
 (1, 'Invalid sport, category or trick', 'The tag is invalid for one of the following reason: - The sport or the category is not the good one - The trick is not the good one'),

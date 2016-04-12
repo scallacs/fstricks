@@ -12,6 +12,8 @@
 
 <script>
     var WEBROOT_FULL = '<?= \Cake\Routing\Router::url('/', true); ?>';
+    var DOMAIN_URL = '<?= \Cake\Routing\Router::fullbaseUrl(); ?>';
+    
     var API_BASE_URL = '<?= \Cake\Routing\Router::url('/api', true); ?>';
     var TEMPLATE_URL = '<?= \Cake\Routing\Router::url('/views/default/', true); ?>';
     var APIS = {

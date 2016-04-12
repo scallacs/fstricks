@@ -50,13 +50,28 @@ Router::prefix('Admin', function ($routes) {
         $routes->resources('Sports');
         $routes->resources('Videos');
         $routes->resources('Categories');
-//        $routes->resources('VideoTags');
+        $routes->resources('Tags', [
+            'map' => [
+                'updateSlug' => [
+                    'action' => 'updateSlug',
+                    'method' => 'GET'
+                ]
+            ]
+        ]);
+        $routes->resources('VideoTags', [
+            'map' => [
+                'updateSlug' => [
+                    'action' => 'updateSlug',
+                    'method' => 'GET'
+                ],
+            ]
+        ]);
         $routes->resources('Feedbacks');
         $routes->fallbacks('DashedRoute');
     });
-    $routes->connect('/login', ['controller' => 'users', 'action' => 'login']);    
-    $routes->connect('/**', ['controller' => 'Pages', 'action' => 'app']);    
-    $routes->connect('/dashboard', ['controller' => 'Pages', 'action' => 'dashboard']);    
+    $routes->connect('/login', ['controller' => 'users', 'action' => 'login']);
+    $routes->connect('/**', ['controller' => 'Pages', 'action' => 'app']);
+    $routes->connect('/dashboard', ['controller' => 'Pages', 'action' => 'dashboard']);
 });
 
 Router::scope('/api', function ($routes) {

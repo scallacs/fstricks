@@ -51,10 +51,10 @@ class PlaylistsController extends AppController {
         if ($this->request->is('post')) {
             $playlist = $this->Playlists->patchEntity($playlist, $this->request->data);
             if ($this->Playlists->save($playlist)) {
-                $this->Flash->success(__('The playlist has been saved.'));
+                ResultMessage::setMessage(__('The playlist has been saved.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The playlist could not be saved. Please, try again.'));
+                ResultMessage::setMessage(__('The playlist could not be saved. Please, try again.'));
             }
         }
         $users = $this->Playlists->Users->find('list', ['limit' => 200]);
@@ -76,10 +76,10 @@ class PlaylistsController extends AppController {
         if ($this->request->is(['patch', 'post', 'put'])) {
             $playlist = $this->Playlists->patchEntity($playlist, $this->request->data);
             if ($this->Playlists->save($playlist)) {
-                $this->Flash->success(__('The playlist has been saved.'));
+                ResultMessage::setMessage(__('The playlist has been saved.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The playlist could not be saved. Please, try again.'));
+                ResultMessage::setMessage(__('The playlist could not be saved. Please, try again.'));
             }
         }
         $users = $this->Playlists->Users->find('list', ['limit' => 200]);
@@ -98,9 +98,9 @@ class PlaylistsController extends AppController {
         $this->request->allowMethod(['post', 'delete']);
         $playlist = $this->Playlists->get($id);
         if ($this->Playlists->delete($playlist)) {
-            $this->Flash->success(__('The playlist has been deleted.'));
+            ResultMessage::setMessage(__('The playlist has been deleted.'));
         } else {
-            $this->Flash->error(__('The playlist could not be deleted. Please, try again.'));
+            ResultMessage::setMessage(__('The playlist could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
     }

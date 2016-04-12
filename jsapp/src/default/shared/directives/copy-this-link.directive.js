@@ -4,7 +4,7 @@ angular.module('shared')
                 restrict: 'A',
                 link: function(scope, elem) {
                     elem.click(function(event) {
-                        var href = WEBROOT_FULL + elem.attr('href');
+                        var href = DOMAIN_URL + elem.attr('href');
                         $uibModal.open({
                             template: '<input select-all readonly class="form-control" value="' + href + '"/>'
                         });

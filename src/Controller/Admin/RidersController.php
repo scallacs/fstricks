@@ -50,10 +50,10 @@ class RidersController extends AppController
         if ($this->request->is('post')) {
             $rider = $this->Riders->patchEntity($rider, $this->request->data);
             if ($this->Riders->save($rider)) {
-                $this->Flash->success(__('The rider has been saved.'));
+                ResultMessage::setMessage(__('The rider has been saved.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The rider could not be saved. Please, try again.'));
+                ResultMessage::setMessage(__('The rider could not be saved. Please, try again.'));
             }
         }
         $users = $this->Riders->Users->find('list', ['limit' => 200]);
@@ -77,10 +77,10 @@ class RidersController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $rider = $this->Riders->patchEntity($rider, $this->request->data);
             if ($this->Riders->save($rider)) {
-                $this->Flash->success(__('The rider has been saved.'));
+                ResultMessage::setMessage(__('The rider has been saved.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The rider could not be saved. Please, try again.'));
+                ResultMessage::setMessage(__('The rider could not be saved. Please, try again.'));
             }
         }
         $users = $this->Riders->Users->find('list', ['limit' => 200]);
@@ -101,9 +101,9 @@ class RidersController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $rider = $this->Riders->get($id);
         if ($this->Riders->delete($rider)) {
-            $this->Flash->success(__('The rider has been deleted.'));
+            ResultMessage::setMessage(__('The rider has been deleted.'));
         } else {
-            $this->Flash->error(__('The rider could not be deleted. Please, try again.'));
+            ResultMessage::setMessage(__('The rider could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
     }

@@ -25,4 +25,12 @@ class Tag extends Entity
         'user_id' => false,
         'slug' => false
     ];
+    
+    public function generateSlug($sport, $category){
+        $this->slug = $sport['slug'].'-'.$category['slug'].'-'.\Cake\Utility\Inflector::slug($this->name);
+    }
+    
+    public function _setName($name){
+        return \App\Lib\DataUtil::lowernamenumeric($name);
+    }
 }

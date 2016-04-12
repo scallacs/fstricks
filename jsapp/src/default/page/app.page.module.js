@@ -68,7 +68,7 @@ function HomeController($scope, SharedData, VideoTagEntity, PlaylistEntity, $sta
     
     $scope.$on('view-video-tag', function(event, data){
         $state.go('videoplayer.realization', {
-            videoTagId: data.id
+            videoTagId: data.slug
         });
     });
     

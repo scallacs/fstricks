@@ -32,6 +32,12 @@ class VideoTagsController extends AppController {
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
     public function view($id = null) {
+        if (empty($id)){
+            throw new \Cake\Network\Exception\NotFoundException();
+        }
+        $parts = explode('-', $id, 2);
+        $id = $parts[0];
+        
         $videoTag = $this->VideoTags->findAndJoin()
                 ->where(['VideoTags.id' => $id, 'VideoTags.status !=' => VideoTag::STATUS_BLOCKED])
                 ->limit(1)

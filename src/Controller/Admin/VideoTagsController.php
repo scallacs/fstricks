@@ -168,5 +168,17 @@ class VideoTagsController extends AppController {
             ResultMessage::setMessage(__('The video tag could not be deleted. Please, try again.'), false);
         }
     }
+    
+    public function updateSlug($id = null){
+        $entity = $this->VideoTags->updateSlug($id);
+        if (empty($entity->errors())){
+            ResultMessage::setMessage("Slug updated!", true);
+            ResultMessage::setData('slug', $entity->slug);
+        }
+        else{
+            ResultMessage::setMessage("Cannot update slug", false);
+//            ResultMessage::addValidationErrorsModel($entity)
+        }
+    }
 
 }
