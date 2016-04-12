@@ -10,17 +10,17 @@ class DBMigrationShell extends Shell {
 
     public function main() {
         $this->_init();
-        
+
         $this->_updateSlugs('Sports');
         $this->_updateSlugs('Categories');
-        
+
         $this->_updateTagSlugs();
     }
 
     private function _init() {
         
     }
-    
+
     private function _updateSlugs($model) {
         $this->loadModel($model);
         $data = $this->$model->find('all')
@@ -28,8 +28,12 @@ class DBMigrationShell extends Shell {
                 ->hydrate(true);
         foreach ($data as $d) {
             $d->slug = \Cake\Utility\Inflector::slug(\App\Lib\DataUtil::lowername($d->name));
-            $this->log("Updating " . $model . " slug: " . $d->name . ' -> ' . $d->slug);
-            $this->$model->save($d);
+            $success = $this->$model->save($d);
+            if ($success) {
+                $this->log("Updating " . $model . " slug: " . $d->name . ' -> ' . $d->slug , \Psr\Log\LogLevel::INFO);
+            } else {
+                $this->log("Cannot update " . $model . " slug: " . $d->name . ' -> ' . $d->slug, \Psr\Log\LogLevel::ERROR);
+            }
         }
     }
 
