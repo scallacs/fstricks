@@ -163,6 +163,17 @@ class TagsTable extends Table {
         return $this->find('all');
     }
     
+    public function findForSitemap(){
+        return $this->find('all')
+                ->order(['Tags.count_ref DESC'])
+                ->where([
+                    'OR' => [
+                        'Tags.count_ref >' => '1',
+                        'Tags.status' => \App\Model\Entity\Tag::STATUS_VALIDATED
+                    ]
+                ])
+                ->limit(50000);
+    }
     public function updateSlug($id){
         $entity = $this->get($id, [
             'contain' => ['Categories', 'Sports']

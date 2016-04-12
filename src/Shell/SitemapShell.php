@@ -7,101 +7,103 @@ use App\Lib\SitemapGenerator;
 use Cake\Routing\Router;
 
 class SitemapShell extends Shell {
-    
+
+    const SITEMAP_INDEX = "sitemap-index.xml";
+
     private $siteUrl = '';
+    private $sitemap = [
+        'sports' => null,
+        'riders' => null,
+        'tricks' => null
+    ];
 
     public function main() {
         $this->_init();
         $this->_build();
     }
-    
+
     private function _init() {
         $this->_initModels();
-        $this->_initSitemap();
-        $this->_initStaticUrls();
+        foreach ($this->sitemap as $name => $sitemap) {
+            $this->_initSitemap($name);
+        }
+//        $this->_initStaticUrls();
         $this->_initDynamicUrls();
     }
-    
-    private function _initSitemap(){
+
+    private function _initSitemap($name) {
         $this->siteUrl = !empty($this->args[0]) ? $this->args[0] : Router::url('/Tricker/', true);
-        $this->out("Generating sitemap for website: " . $this->siteUrl);
+        $this->out("Generating sitemap '".$name."' for website: " . $this->siteUrl);
         $this->out("Output will be saved to: " . WWW_ROOT);
-        $this->sitemap = new SitemapGenerator($this->siteUrl, WWW_ROOT);
-//        $this->sitemap->createGZipFile = true;
+        $this->sitemap[$name] = new SitemapGenerator($this->siteUrl, WWW_ROOT);
+        //        $this->sitemap->createGZipFile = true;
         // determine how many urls should be put into one file
-        $this->sitemap->maxURLsPerSitemap = 10000;
+        $this->sitemap[$name]->maxURLsPerSitemap = 10000;
         // sitemap file name
-        $this->sitemap->sitemapFileName = "sitemap.xml";
+        $this->sitemap[$name]->sitemapFileName = "sitemap-".$name.".xml";
         // sitemap index file name
-        $this->sitemap->sitemapIndexFileName = "sitemap-index.xml";
+        $this->sitemap[$name]->sitemapIndexFileName = self::SITEMAP_INDEX;
         // robots file name
-        $this->sitemap->robotsFileName = "robots.txt";
-        
+        $this->sitemap[$name]->robotsFileName = "robots.txt";
     }
-    
-    private function _initModels(){
+
+    private function _initModels() {
         $this->loadModel('Sports');
         $this->loadModel('Riders');
         $this->loadModel('Tags');
     }
-    
-    private function _initStaticUrls(){
-        $urls = [
-            '/',
-        ];
-        foreach ($urls as $url){
-            $this->addUrl($url, date('c'), 'daily', '1');
-        }
-    }
-    
-    private function _initDynamicUrls(){
-        $sports = $this->Sports->findAllCached();
-        foreach ($sports as $sport){
+
+//    private function _initStaticUrls(){
+//        $urls = [
+//            '/',
+//        ];
+//        foreach ($urls as $url){
+//            $this->addUrl($url, date('c'), 'daily', '1');
+//        }
+//    }
+
+    private function _initDynamicUrls() {
+        $sports = $this->Sports->findForSitemap();
+        foreach ($sports as $sport) {
             $this->_addSportLink($sport);
         }
-        $this->_addSportLink(['name' => 'all']);
-        
-        $riders = $this->Riders->findPublic()
-                ->order(['Riders.count_tags DESC'])
-                ->where(['Riders.count_tags >' => '1'])
-                ->limit(1000);
-        foreach ($riders as $rider){
+        $this->_addSportLink(['name' => 'all', 'slug' => 'all']);
+
+        $riders = $this->Riders->findForSitemap();
+        foreach ($riders as $rider) {
             $this->_addRiderLink($rider);
         }
-        
-        $tags = $this->Tags->findPublic()
-                ->order(['Tags.count_ref DESC'])
-                ->where(['Tags.count_ref >' => '1'])
-                ->limit(1000);
-        foreach ($tags as $tag){
+
+        $tags = $this->Tags->findForSitemap();
+        foreach ($tags as $tag) {
             $this->_addTrickLink($tag);
         }
     }
-    
-    private function _addSportLink($sport){
-        $url = $this->siteUrl . '/player/bestof/'.$sport['name'];
-        $this->sitemap->addUrl($url, date('c'), 'daily', '1');
+
+    private function _addSportLink($sport) {
+        $url = '/player/bestof/' . $sport['slug'];
+        $this->addUrl('sports', $url, date('c'), 'daily', '1');
         $this->out("Adding url: $url");
-        if (!empty($sport['categories'])){
-            foreach ($sport['categories'] as $category){
-                $url = '/player/bestof/'.$sport['name'].'?category='.$category['name'];
-                $this->addUrl($url, date('c'), 'daily', '1');
+        if (!empty($sport['categories'])) {
+            foreach ($sport['categories'] as $category) {
+                $url = '/player/bestof/' . $sport['slug'] . '?category=' . $category['slug'];
+                $this->addUrl('sports', $url, date('c'), 'daily', '1');
             }
         }
     }
 
-    private function _addRiderLink($rider){
-        $this->addUrl('/player/rider/'.$rider['slug'], date('c'), 'daily', '0.5');
+    private function _addRiderLink($rider) {
+        $this->addUrl('riders', '/player/rider/' . $rider['slug'], date('c'), 'daily', '0.5');
     }
-    private function _addTrickLink($trick){
-        $this->addUrl('/player/trick/'.$trick['slug'], date('c'), 'daily', '0.5');
+
+    private function _addTrickLink($trick) {
+        $this->addUrl('tricks', '/player/trick/' . $trick['slug'], date('c'), 'daily', '0.5');
     }
-    
-    private function addUrl($url, $date, $freq, $prio){
-        $this->out('Adding url: '. $this->siteUrl . $url);
-        $this->sitemap->addUrl($this->siteUrl . $url, $date, $freq, $prio);
+
+    private function addUrl($name, $url, $date, $freq, $prio) {
+        $this->out('Adding url: ' . $this->siteUrl . $url);
+        $this->sitemap[$name]->addUrl($this->siteUrl . $url, $date, $freq, $prio);
     }
-    
 
     private function _build() {
         $time = explode(" ", microtime());
@@ -109,13 +111,14 @@ class SitemapShell extends Shell {
         try {
             // create sitemap
             $this->out("Creating sitemap...");
-            $this->sitemap->createSitemap();
-            // write sitemap as file
-            $this->out("Writing sitemap in file...");
-            $this->sitemap->writeSitemap();
+            foreach ($this->sitemap as $sitemap) {
+                $sitemap->createSitemap();
+                $this->out("Writing sitemap in file...");
+                $sitemap->writeSitemap();
+            }
             // update robots.txt file
 //            $this->out("Updating robots...");
-//            $this->sitemap->updateRobots();
+//            $this->sitemap[$name]->updateRobots();
 //            debug($this->sitemap->toArray());
             // submit sitemaps to search engines
             //$result = $this->sitemap->submitSitemap("yahooAppId");

@@ -6,9 +6,10 @@ use Cake\ORM\Entity;
 /**
  * Tag Entity.
  */
-class Tag extends Entity
-{
+class Tag extends Entity {
 
+    const STATUS_VALIDATED = 'validated';
+    
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
      * Note that '*' is set to true, which allows all unspecified fields to be

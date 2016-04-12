@@ -180,4 +180,16 @@ class RidersTable extends Table {
     public function findPublic(){
         return $this->find('all');
     }
+    
+    public function findForSitemap(){
+        return $this->find('all')
+                ->order(['Riders.count_tags DESC'])
+                ->where([
+                    'OR' => [
+                        'Riders.count_tags >' => '1',
+                        'Riders.status' => \App\Model\Entity\Rider::STATUS_VALIDATED
+                    ]
+                ])
+                ->limit(50000);
+    }
 }

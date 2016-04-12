@@ -21,6 +21,8 @@ use Cake\ORM\Entity;
 class Rider extends Entity
 {
     
+    const STATUS_VALIDATED = 'validated';
+    
     public static $levels = [];
     
     protected $_virtual = [

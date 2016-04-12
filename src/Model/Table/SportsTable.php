@@ -68,6 +68,15 @@ class SportsTable extends Table {
                         ->contain(['Categories'])
                         ->cache('sports', 'veryLongCache');
     }
+    public function findForSitemap() {
+//        debug(\Cake\Cache\Cache::clearGroup('sports', 'veryLongCache'));
+//        debug(\Cake\Cache\Cache::delete('sports', 'veryLongCache'));
+
+        return $this
+                        ->find('all')
+                        ->where(['status' => SportsTable::STATUS_PUBLIC])
+                        ->contain(['Categories']);
+    }
 
     public function findFromNameCached($name) {
         $data = $this->findAllCached();
