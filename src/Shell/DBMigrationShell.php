@@ -29,6 +29,7 @@ class DBMigrationShell extends Shell {
         foreach ($data as $d) {
             $d->slug = \Cake\Utility\Inflector::slug(\App\Lib\DataUtil::lowername($d->name));
             $this->log("Updating " . $model . " slug: " . $d->name . ' -> ' . $d->slug);
+            $this->$model->save($d);
         }
     }
 
