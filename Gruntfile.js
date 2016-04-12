@@ -2,6 +2,32 @@
 module.exports = function(grunt) {
 
     grunt.initConfig({
+        prerender: {
+            options: {
+                dest: 'webroot/snapshots/',
+                sitemap: 'http://www.fstricks.com/sitemap.xml',
+                sitePath: 'http://www.fstricks.com',
+//                urls: ['/', '/player/bestof/snowboard'],
+                hashed: false,
+                outputDirClean: true,
+                selector: 'html',
+                // Task-specific options go here.
+                snapshotScript: {
+                    script: "removeScripts"
+                }
+            },
+//            debug: {
+//                options: {
+//                    outputDir: "./snapshots"
+//                }
+//            },
+            prod: {
+                options: {
+                    outputDir: "./snapshots",
+                    outputPath: false
+                }
+            }
+        },
         html_snapshots: {
             // options for all targets
             options: {
@@ -106,11 +132,20 @@ module.exports = function(grunt) {
 //
 //  grunt.registerTask('default', ['jshint']);
     grunt.loadNpmTasks('grunt-html-snapshot');
-
+    grunt.loadNpmTasks('grunt-prerender');
 
     // A very basic default task.
     grunt.registerTask('default', 'Create snapshots.', function() {
-
+//        var htmlSnapshots = require('html-snapshots');
+//        var result = htmlSnapshots.run({
+//            input: "sitemap",
+//            source: "webroot/sitemap.xml",
+////            source: "webroot/robots.txt",
+//            hostname: "http://www.fstricks.com",
+//            outputDir: "webroot/snapshots",
+//            outputDirClean: true,
+//            selector: "html"
+//        });
     });
 
 };

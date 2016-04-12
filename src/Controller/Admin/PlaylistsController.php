@@ -23,9 +23,7 @@ class PlaylistsController extends AppController {
     public function index() {
         $query = $this->find('all')
                 ->order(['created']);
-
-        ResultMessage::setPaginateData(
-                $this->paginate($query), $this->request->params['paging']['Playlists']);
+        ResultMessage::paginate($query, $this);
     }
 
     /**

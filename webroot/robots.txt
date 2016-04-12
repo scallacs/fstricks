@@ -1,6 +1,7 @@
 User-agent: *
-Disallow: /api/*
+Disallow: /files
+Disallow: /files/*
 Disallow: /admin/*
 Allow: /
 
-Sitemap: http://www.fstricks.comsitemap.xml
+Sitemap: http://www.fstricks.com/sitemap.xml

@@ -65,11 +65,7 @@ class VideoTagsController extends AppController {
                         'best' => ['VideoTags.count_points DESC']
             ]);
             
-//            ResultMessage::overwriteData($this->paginate($query));
-//            ResultMessage::setWrapper(false);
-                   
-            ResultMessage::setPaginateData(
-                    $this->paginate($query), $this->request->params['paging']['VideoTags']);
+            ResultMessage::paginate($query, $this);
         } catch (NotFoundException $e) {
             ResultMessage::overwriteData([]);
         }

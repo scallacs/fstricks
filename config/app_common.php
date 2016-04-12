@@ -1,5 +1,6 @@
 <?php
 return [
+    'admin_hidden_prefix' => 'moFEJPQQS320909j2309923II2ODI2993',
 
     'debug' => false,
     'maintenance' => 0,

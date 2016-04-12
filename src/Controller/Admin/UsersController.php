@@ -15,7 +15,6 @@ class UsersController extends AppController {
 
     public function initialize() {
         parent::initialize();
-        $this->loadComponent('Paginator');
     }
 
     public function beforeFilter(\Cake\Event\Event $event) {
@@ -31,11 +30,7 @@ class UsersController extends AppController {
     public function index() {
         $this->Paginator->config(Configure::read('Pagination.Users'));
         $query = $this->Users->find('all');
-        ResultMessage::setWrapper(false);
-        ResultMessage::overwriteData($this->paginate($query));
-//        ResultMessage::setPaginateData(
-//                $this->paginate($query), 
-//                $this->request->params['paging']['Users']);
+        ResultMessage::paginate($query, $this);
     }
     
     /**

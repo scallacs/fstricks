@@ -36,6 +36,8 @@ class AppController extends \App\Controller\AppController {
      */
     public function initialize() {
         parent::initialize();
+        
+        $this->loadComponent('Paginator');
 
 //        $this->loadComponent('Auth', [
 //            'authenticate' => [

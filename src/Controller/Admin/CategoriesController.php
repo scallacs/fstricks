@@ -17,8 +17,8 @@ class CategoriesController extends AppController
      */
     public function index()
     {
-        ResultMessage::setWrapper(false);
-        ResultMessage::overwriteData($this->paginate($this->Categories));
+        $query = $this->Categories->find('all');
+        ResultMessage::paginate($query, $this);
     }
 
     /**

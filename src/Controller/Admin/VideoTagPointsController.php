@@ -1,27 +1,24 @@
 <?php
+
 namespace App\Controller\Admin;
 
 use App\Lib\ResultMessage;
+
 /**
  * VideoTagPoints Controller
  *
  * @property \App\Model\Table\VideoTagPointsTable $VideoTagPoints
  */
-class VideoTagPointsController extends AppController
-{
+class VideoTagPointsController extends AppController {
 
     /**
      * Index method
      *
      * @return void
      */
-    public function index()
-    {
-        $this->paginate = [
-            'contain' => ['Users', 'VideoTags']
-        ];
-        $this->set('videoTagPoints', $this->paginate($this->VideoTagPoints));
-        $this->set('_serialize', ['videoTagPoints']);
+    public function index() {
+        $query = $this->VideoTagPoints->find('all');
+        ResultMessage::paginate($query, $this);
     }
 
     /**
@@ -31,8 +28,7 @@ class VideoTagPointsController extends AppController
      * @return void
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function view($id = null)
-    {
+    public function view($id = null) {
         $videoTagPoint = $this->VideoTagPoints->get($id, [
             'contain' => ['Users', 'VideoTags']
         ]);
@@ -45,8 +41,7 @@ class VideoTagPointsController extends AppController
      *
      * @return void Redirects on successful add, renders view otherwise.
      */
-    public function add()
-    {
+    public function add() {
         $videoTagPoint = $this->VideoTagPoints->newEntity();
         if ($this->request->is('post')) {
             $videoTagPoint = $this->VideoTagPoints->patchEntity($videoTagPoint, $this->request->data);
@@ -70,8 +65,7 @@ class VideoTagPointsController extends AppController
      * @return void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
-    {
+    public function edit($id = null) {
         $videoTagPoint = $this->VideoTagPoints->get($id, [
             'contain' => []
         ]);
@@ -97,8 +91,7 @@ class VideoTagPointsController extends AppController
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function delete($id = null)
-    {
+    public function delete($id = null) {
         $this->request->allowMethod(['post', 'delete']);
         $videoTagPoint = $this->VideoTagPoints->get($id);
         if ($this->VideoTagPoints->delete($videoTagPoint)) {
@@ -108,4 +101,5 @@ class VideoTagPointsController extends AppController
         }
         return $this->redirect(['action' => 'index']);
     }
+
 }

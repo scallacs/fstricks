@@ -16,11 +16,7 @@ class FeedbacksController extends AppController
                 ->contain([
                     'Users', 
                 ]);
-        ResultMessage::setWrapper(false);
-        ResultMessage::overwriteData($this->paginate($query));
-//        ResultMessage::setPaginateData(
-//                $this->paginate($query), 
-//                $this->request->params['paging']['Users']);
+        ResultMessage::paginate($query, $this);
     }
     
     /**

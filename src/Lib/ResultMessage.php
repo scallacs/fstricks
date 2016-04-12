@@ -86,6 +86,10 @@ class ResultMessage {
         self::$data['perPage'] = $paginateInfo['perPage'];
         self::$data['items'] = $results;
     }
+    public static function paginate($query, $context) {
+        self::setPaginateData($context->Paginator->paginate($query), 
+                current($context->request->params['paging']));
+    }
 
     public static function setPaginateExtra($key, $value) {
         if (!isset(self::$data['extra'])) {

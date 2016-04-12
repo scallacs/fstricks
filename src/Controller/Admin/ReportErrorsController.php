@@ -25,10 +25,7 @@ class ReportErrorsController extends AppController
                 ->where(['ReportErrors.status IN' => [ReportError::STATUS_PENDING]])
                 ->group(['ReportErrors.video_tag_id'])
                 ->contain(['VideoTags']);
-        ResultMessage::overwriteData($this->paginate($query));
-        ResultMessage::setWrapper(false);
-//        ResultMessage::setPaginateData(
-//                $this->paginate($query), $this->request->params['paging']['ReportErrors']);
+        ResultMessage::paginate($query, $this);
     }
 
     /**

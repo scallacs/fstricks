@@ -19,8 +19,7 @@ class VideosController extends AppController
     {
 //        $this->Paginator->config(Configure::read('Pagination.Users'));
         $query = $this->Videos->find('all');
-        ResultMessage::setWrapper(false);
-        ResultMessage::overwriteData($this->paginate($query));
+        ResultMessage::paginate($query, $this);
     }
 
     /**

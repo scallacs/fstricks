@@ -18,8 +18,7 @@ class SportsController extends AppController
     public function index()
     {
         $query = $this->Sports->find('all');
-        ResultMessage::setWrapper(false);
-        ResultMessage::overwriteData($this->paginate($query));
+        ResultMessage::paginate($query, $this);
     }
 
     /**

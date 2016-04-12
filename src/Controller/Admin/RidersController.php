@@ -20,8 +20,7 @@ class RidersController extends AppController
     {
 //        $this->Paginator->config(Configure::read('Pagination.Users'));
         $query = $this->Riders->find('all');
-        ResultMessage::setWrapper(false);
-        ResultMessage::overwriteData($this->paginate($query));
+        ResultMessage::paginate($query, $this);
     }
 
     /**
