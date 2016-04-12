@@ -134,19 +134,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-html-snapshot');
     grunt.loadNpmTasks('grunt-prerender');
 
-    // A very basic default task.
-    grunt.registerTask('default', 'Create snapshots.', function() {
-//        var htmlSnapshots = require('html-snapshots');
-//        var result = htmlSnapshots.run({
-//            input: "sitemap",
-//            source: "webroot/sitemap.xml",
-////            source: "webroot/robots.txt",
-//            hostname: "http://www.fstricks.com",
-//            outputDir: "webroot/snapshots",
-//            outputDirClean: true,
-//            selector: "html"
-//        });
-    });
-
 };
 

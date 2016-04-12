@@ -1,8 +1,8 @@
 <IfModule mod_rewrite.c>
     RewriteEngine on
-    #RewriteCond %{REQUEST_URI}  ^/$
-    RewriteCond %{QUERY_STRING} ^_escaped_fragment_=/?(.*)$
-    RewriteRule ^(.*)$ snapshots/%1/index.html? [NC,L]
+    
+    #RewriteCond %{QUERY_STRING} ^_escaped_fragment_=/?(.*)$
+    #RewriteRule ^(.*)$ snapshots/%1/index.html? [NC,L]
 
     RewriteRule    ^$    webroot/    [L]
     RewriteRule    (.*) webroot/$1    [L]
