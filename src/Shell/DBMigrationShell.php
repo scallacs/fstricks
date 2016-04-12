@@ -29,10 +29,11 @@ class DBMigrationShell extends Shell {
         foreach ($data as $d) {
             $d->slug = \Cake\Utility\Inflector::slug(\App\Lib\DataUtil::lowername($d->name));
             $success = $this->$model->save($d);
-            if ($success) {
+            if (!$d->errors()) {
                 $this->log("Updating " . $model . " slug: " . $d->name . ' -> ' . $d->slug , \Psr\Log\LogLevel::INFO);
             } else {
                 $this->log("Cannot update " . $model . " slug: " . $d->name . ' -> ' . $d->slug, \Psr\Log\LogLevel::ERROR);
+                $this->log($d->errors());
             }
         }
     }
