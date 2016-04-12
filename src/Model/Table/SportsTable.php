@@ -95,7 +95,7 @@ class SportsTable extends Table {
         return null;
     }
 
-    public function afterSave($entity, $options = []) {
+    public function afterSave($event, $entity, $options = []) {
         if ($entity->isNew()) {
             Cake\Cache\Cache::clearGroup('sports', 'veryLongCache');
         }
