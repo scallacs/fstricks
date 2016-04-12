@@ -36,6 +36,7 @@ class DBMigrationShell extends Shell {
                 $this->log($d->errors());
             }
         }
+//        $this->log($this->$model->find('all')->all(), \Psr\Log\LogLevel::INFO);
     }
 
     private function _updateTagSlugs() {
@@ -46,7 +47,7 @@ class DBMigrationShell extends Shell {
                 ->hydrate(false);
         foreach ($tags as $tag) {
             $entity = $this->Tags->updateSlug($tag['id']);
-            $this->log("Updating tag slug: " . $tag['name'] . ' -> ' . $entity->slug);
+            $this->log("Updating tag slug: " . $tag['name'] . ' -> ' . $entity->slug, \Psr\Log\LogLevel::INFO);
         }
     }
 
