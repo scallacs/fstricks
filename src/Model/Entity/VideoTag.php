@@ -38,7 +38,7 @@ class VideoTag extends Entity {
      *
      * @var array
      */
-    protected $_accessible = [
+    protected $_accessible = [ 
         'id' => false,
         'user_id' => false,
         'created' => false,
