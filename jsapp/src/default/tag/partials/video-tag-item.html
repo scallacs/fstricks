@@ -3,7 +3,7 @@
 
     <div class="item-sport">
         <span ng-if="videoTag.sport_name">
-            <img ng-src="{{videoTag.sport_name| sportIconUrl}}" 
+            <img ng-src="{{videoTag.sport_slug | sportIconUrl}}" 
                  title="{{videoTag.sport_name}}"
                  alt="{{videoTag.sport_name}}"/>
         </span>

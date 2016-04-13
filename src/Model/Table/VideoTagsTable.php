@@ -85,7 +85,9 @@ class VideoTagsTable extends Table {
                                 ->select([
                                     'category_name' => 'Categories.name',
                                     'category_id' => 'Categories.id',
+                                    'category_slug' => 'Categories.slug',
                                     'sport_name' => 'Sports.name',
+                                    'sport_slug' => 'Sports.slug',
                                     'sport_id' => 'Sports.id',
                                     'tag_name' => 'Tags.name',
                                 ])

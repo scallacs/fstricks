@@ -20,6 +20,9 @@ PROTRACTOR_BIN = node_modules/protractor/bin/protractor
 ###############################################################
 all: build mv2prod
     
+clear-cache: 
+	rm -rf tmp/* 
+	echo "Y" | composer install
 
 # target: reset-repo - reset repo
 reset-repo: 
@@ -28,7 +31,7 @@ reset-repo:
 
 	
 # target: prod - build the project for production
-prod: build config-prod clean-prod
+prod: clear-cache build config-prod clean-prod
 
 # target: uat - build the project for production
 uat: build config-uat
