@@ -19,6 +19,8 @@ class SportsTable extends Table {
     const STATUS_PUBLIC = 'public';
     const STATUS_PRIVATE = 'private';
 
+    
+    const CACHE_GROUP = 'sports';
     /**
      * Initialize method
      *
@@ -66,7 +68,7 @@ class SportsTable extends Table {
                         ->find('all')
                         ->where(['status' => SportsTable::STATUS_PUBLIC])
                         ->contain(['Categories'])
-                        ->cache('sports', 'veryLongCache');
+                        ->cache(self::CACHE_GROUP, 'veryLongCache');
     }
 
     public function findForSitemap() {
@@ -105,8 +107,14 @@ class SportsTable extends Table {
         return null;
     }
 
+    /**
+     * 
+     * @param type $event
+     * @param type $entity
+     * @param type $options
+     */
     public function afterSave($event, $entity, $options = []) {
-        Cake\Cache\Cache::clearGroup('sports', 'veryLongCache');
+        \Cake\Cache\Cache::clearGroup(self::CACHE_GROUP, 'veryLongCache');
     }
 
 }
