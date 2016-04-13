@@ -1,0 +1,5 @@
+<button ng-repeat="choice in choices" class="btn btn-xs"
+        ng-class="computeCssClass(choice)" 
+        ng-click="updateStatus(choice)">
+    {{choice}}
+</button>
