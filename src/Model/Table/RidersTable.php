@@ -65,6 +65,16 @@ class RidersTable extends Table {
 
         $listener = new \App\Event\UpdatePictureListener();
         $this->eventManager()->on($listener);
+
+        if (method_exists($this, 'searchManager')) {
+            $this->searchManager()
+//                ->add('user_id', 'Search.Value')
+                    ->add('q', 'Search.Like', [
+                        'before' => true,
+                        'after' => true,
+                        'field' => [$this->aliasField('firstname'), $this->aliasField('lastname')]
+            ]);
+        }
     }
 
     /**
@@ -176,20 +186,21 @@ class RidersTable extends Table {
         $entity->nationality = \App\Lib\DataUtil::lowername($entity->nationality);
         $entity->slug = \Cake\Utility\Inflector::slug($entity->firstname . '-' . $entity->lastname . '-' . $entity->nationality);
     }
-    
-    public function findPublic(){
+
+    public function findPublic() {
         return $this->find('all');
     }
-    
-    public function findForSitemap(){
+
+    public function findForSitemap() {
         return $this->find('all')
-                ->order(['Riders.count_tags DESC'])
-                ->where([
-                    'OR' => [
-                        'Riders.count_tags >' => '1',
-                        'Riders.status' => \App\Model\Entity\Rider::STATUS_VALIDATED
-                    ]
-                ])
-                ->limit(50000);
+                        ->order(['Riders.count_tags DESC'])
+                        ->where([
+                            'OR' => [
+                                'Riders.count_tags >' => '1',
+                                'Riders.status' => \App\Model\Entity\Rider::STATUS_VALIDATED
+                            ]
+                        ])
+                        ->limit(50000);
     }
+
 }

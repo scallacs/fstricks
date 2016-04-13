@@ -8,9 +8,11 @@ function RestangularProviderConfig(RestangularProvider, $windowProvider) {
     // RESPONSE
     RestangularProvider.addResponseInterceptor(function(data, operation, what, url, response) {
         if (response.status === 401) {
-            $windowProvider.$get = ['$window', function($window) {
-                    $window.location.href = '/make-me-god-please';
-                }];
+            alert('ok');
+            window.location.href = '/make-me-god-please';
+//            $windowProvider.$get = ['$window', function($window) {
+//                    $window.location.href = '/make-me-god-please';
+//                }];
         }
         if (operation === "getList") {
 //            var contentRange = response.headers('Content-Range');
@@ -577,6 +579,8 @@ function Config(nga) {
 
     admin.addEntity(category);
     // -------------------------------------------------------------
+
+//    admin.header(require(ADMIN_TEMPLATE_URL + '/dashboard/header.html'));
 
     // attach the admin application to the DOM and execute it
     nga.configure(admin);

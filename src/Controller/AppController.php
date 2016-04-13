@@ -68,6 +68,10 @@ class AppController extends Controller {
             ],
             'authorize' => 'Controller'
         ]);
+        
+        $this->loadComponent('Search.Prg', [
+            'actions' => ['index']
+        ]);
     }
 
     public function isAuthorized($user) {

@@ -44,21 +44,22 @@ class TagsTable extends Table {
         // Add the behaviour to your table
         $this->addBehavior('Search.Search');
 
-        $this->searchManager()
-                ->add('user_id', 'Search.Value')
-                ->add('status', 'Search.Value', [
-                    'field' => $this->aliasField('status')
-                ])
-                ->add('q', 'Search.Like', [
-                    'before' => true,
-                    'after' => true,
-                    'field' => [$this->aliasField('name')]
-                ]);
+        if (method_exists($this, 'searchManager')) {
+            $this->searchManager()
+                    ->add('user_id', 'Search.Value')
+                    ->add('status', 'Search.Value', [
+                        'field' => $this->aliasField('status')
+                    ])
+                    ->add('q', 'Search.Like', [
+                        'before' => true,
+                        'after' => true,
+                        'field' => [$this->aliasField('name')]
+            ]);
 //                ->add('foo', 'Search.Callback', [
 //                    'callback' => function ($query, $args, $manager) {
 //                // Modify $query as required
 //            }
-        
+        }
     }
 
     /**
