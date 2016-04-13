@@ -9,7 +9,8 @@ angular.module('app', [
     'app.rider',
     'app.tag',
     'app.page',
-    'toaster'
+    'toaster',
+    'viewhead'
 ])
         .config(ConfigRouting)
         .config(ConfigInterceptor) 

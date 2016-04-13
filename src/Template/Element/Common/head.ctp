@@ -1,8 +1,8 @@
 <?= $this->Html->charset() ?>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>
-    <?php echo \Cake\Core\Configure::read('Company.title'); ?> | {{SharedData.pageTitle()}}
+<title  ng-bind-template="{{viewTitle}} - <?php echo \Cake\Core\Configure::read('Company.title'); ?>">
+    <?php echo \Cake\Core\Configure::read('Company.title'); ?>
 </title>
 
 <?= $this->Html->meta('icon', \Cake\Routing\Router::url('/img/favicon.png', true)); ?>
