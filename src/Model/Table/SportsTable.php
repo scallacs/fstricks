@@ -108,13 +108,13 @@ class SportsTable extends Table {
     }
 
     /**
-     * 
-     * @param type $event
-     * @param type $entity
-     * @param type $options
+     * @param \App\Model\Table\Event $event
+     * @param \Cake\ORM\Entity $entity
+     * @param \App\Model\Table\ArrayObject $options
      */
     public function afterSave($event, $entity, $options = []) {
         \Cake\Cache\Cache::clearGroup(self::CACHE_GROUP);
+        \Cake\Cache\Cache::delete(self::CACHE_GROUP);
     }
 
 }
