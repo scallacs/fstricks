@@ -17,6 +17,7 @@ use App\Lib\JsonConfigHelper;
  */
 class PlaylistsTable extends Table {
 
+    const CACHE_GROUP_TRENDING = 'playliststrending';
     /**
      * Initialize method
      *

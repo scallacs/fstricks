@@ -114,7 +114,7 @@ class SportsTable extends Table {
      * @param type $options
      */
     public function afterSave($event, $entity, $options = []) {
-        \Cake\Cache\Cache::clearGroup(self::CACHE_GROUP, 'veryLongCache');
+        \Cake\Cache\Cache::clearGroup(self::CACHE_GROUP);
     }
 
 }

@@ -22,6 +22,8 @@ class VideoTagsTable extends Table {
     const MAX_TAG_DURATION = 40;
     const SIMILARITY_RATIO_THRESHOLD = 0.6;
     const SIMILARITY_PRECISION_SECONDS = 2;
+    
+    const CACHE_GROUP_TRENDING = 'videotagstrending';
 
     /**
      * Initialize method
@@ -63,7 +65,7 @@ class VideoTagsTable extends Table {
                         ->order(['VideoTags.count_points DESC'])
                         ->where(['VideoTags.status ' => VideoTag::STATUS_VALIDATED])
                         ->limit($limit)
-                        ->cache('videotags', 'oneHourCache');
+                        ->cache(self::CACHE_GROUP_TRENDING, 'oneHourCache');
     }
 
     /**
