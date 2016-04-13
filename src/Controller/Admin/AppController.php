@@ -26,7 +26,6 @@ namespace App\Controller\Admin;
  */
 class AppController extends \App\Controller\AppController {
 
-
     /**
      * Initialization hook method.
      *
@@ -36,9 +35,12 @@ class AppController extends \App\Controller\AppController {
      */
     public function initialize() {
         parent::initialize();
-        
+
         $this->loadComponent('Paginator');
 
+        $this->loadComponent('Search.Prg', [
+            'actions' => ['index']
+        ]);
 //        $this->loadComponent('Auth', [
 //            'authenticate' => [
 //                'Form' => [
@@ -64,7 +66,7 @@ class AppController extends \App\Controller\AppController {
         parent::beforeFilter($event);
         $this->Auth->deny();
         $this->viewBuilder()->layout('admin');
-        
+
         if (strpos($this->request->url, '/api/') !== false) {
 //            $this->loadComponent('RequestHandler');
             $this->request->params['_ext'] = 'json';

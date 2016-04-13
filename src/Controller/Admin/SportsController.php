@@ -71,7 +71,9 @@ class SportsController extends AppController
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $sport = $this->Sports->patchEntity($sport, $this->request->data);
+            $sport = $this->Sports->patchEntity($sport, $this->request->data, [
+                'fieldList' => ['name', 'slug', 'status']
+            ]);
             if ($this->Sports->save($sport)) {
                 ResultMessage::setMessage(__('The sport has been saved.'));
                 return $this->redirect(['action' => 'index']);

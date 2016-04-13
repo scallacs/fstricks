@@ -56,10 +56,6 @@ class RidersController extends AppController
                 ResultMessage::setMessage(__('The rider could not be saved. Please, try again.'));
             }
         }
-        $users = $this->Riders->Users->find('list', ['limit' => 200]);
-        $socialProviders = $this->Riders->SocialProviders->find('list', ['limit' => 200]);
-        $this->set(compact('rider', 'users', 'socialProviders'));
-        $this->set('_serialize', ['rider']);
     }
 
     /**
@@ -83,10 +79,6 @@ class RidersController extends AppController
                 ResultMessage::setMessage(__('The rider could not be saved. Please, try again.'));
             }
         }
-        $users = $this->Riders->Users->find('list', ['limit' => 200]);
-        $socialProviders = $this->Riders->SocialProviders->find('list', ['limit' => 200]);
-        $this->set(compact('rider', 'users', 'socialProviders'));
-        $this->set('_serialize', ['rider']);
     }
 
     /**

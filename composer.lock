@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e6eaf3fce483580d8cfe7b6b4660f241",
-    "content-hash": "95a41466db97dae4c5693d5e06528951",
+    "hash": "ef1bdcb8f66a356315dcf3b005d53cfe",
+    "content-hash": "db659686c0fdb3c64cc63996359f62e0",
     "packages": [
         {
             "name": "admad/cakephp-hybridauth",
@@ -580,7 +580,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidyell/CakePHP3-Proffer/zipball/b4e3e2364bba030a6dabaa454a3cbe63d1026b5e",
+                "url": "https://api.github.com/repos/davidyell/CakePHP3-Proffer/zipball/9e39c95d454e6d8730189776d4b9a1fb44f78fe9",
                 "reference": "b4e3e2364bba030a6dabaa454a3cbe63d1026b5e",
                 "shasum": ""
             },
@@ -922,6 +922,51 @@
                 "update"
             ],
             "time": "2015-12-26 08:29:41"
+        },
+        {
+            "name": "friendsofcake/search",
+            "version": "v1.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/FriendsOfCake/search.git",
+                "reference": "8943e565c6be7562bf984eb466ece3b0c4f84596"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FriendsOfCake/search/zipball/8943e565c6be7562bf984eb466ece3b0c4f84596",
+                "reference": "8943e565c6be7562bf984eb466ece3b0c4f84596",
+                "shasum": ""
+            },
+            "require-dev": {
+                "cakephp/cakephp": "~3.0",
+                "friendsofcake/cakephp-test-utilities": "dev-master"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "Search\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Winther",
+                    "homepage": "http://cakephp.nu/",
+                    "role": "Author"
+                }
+            ],
+            "description": "CakePHP 3.0 easy search framework",
+            "homepage": "https://github.com/FriendsOfCake/search",
+            "keywords": [
+                "cake3",
+                "cakephp",
+                "cakephp3",
+                "search"
+            ],
+            "time": "2016-04-11 18:34:02"
         },
         {
             "name": "holt59/cakephp3-bootstrap-helpers",
@@ -1326,7 +1371,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/config/zipball/58680a6516a457a6c65044fe33586c4a81fdff01",
+                "url": "https://api.github.com/repos/symfony/config/zipball/7ba87ead973916a35487821851064ced061ec547",
                 "reference": "58680a6516a457a6c65044fe33586c4a81fdff01",
                 "shasum": ""
             },

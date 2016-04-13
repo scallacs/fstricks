@@ -9,7 +9,6 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Cake\ORM\Entity;
 use App\Lib\JsonConfigHelper;
-
 use App\Lib\ResultMessage;
 
 /**
@@ -41,6 +40,25 @@ class TagsTable extends Table {
         $this->belongsTo('Sports', [
             'foreignKey' => 'sport_id',
         ]);
+
+        // Add the behaviour to your table
+        $this->addBehavior('Search.Search');
+
+        $this->searchManager()
+                ->add('user_id', 'Search.Value')
+                ->add('status', 'Search.Value', [
+                    'field' => $this->aliasField('status')
+                ])
+                ->add('q', 'Search.Like', [
+                    'before' => true,
+                    'after' => true,
+                    'field' => [$this->aliasField('name')]
+                ]);
+//                ->add('foo', 'Search.Callback', [
+//                    'callback' => function ($query, $args, $manager) {
+//                // Modify $query as required
+//            }
+        
     }
 
     /**
@@ -85,7 +103,7 @@ class TagsTable extends Table {
 
         $validator
                 ->requirePresence('user_id', 'create')
-                ->notEmpty('user_id');
+                ->allowEmpty('user_id', 'update');
 
         return $validator;
     }
@@ -112,8 +130,7 @@ class TagsTable extends Table {
             if ($entity) {
                 return $entity;
             }
-        } 
-        else {
+        } else {
             \Cake\Log\Log::notice("Cannot create a new tag: " . print_r($entity->errors(), true), 'messages');
             ResultMessage::addValidationErrorsModel($entity);
             ResultMessage::setMessage(__('Cannot create this trick'), false);
@@ -124,7 +141,7 @@ class TagsTable extends Table {
     public function buildRules(RulesChecker $rules) {
         parent::buildRules($rules);
         $rules->add($rules->isUnique(['name', 'category_id']));
-        $rules->add(function($entity, $options){
+        $rules->add(function($entity, $options) {
             $categoriesTable = \Cake\ORM\TableRegistry::get('Categories');
             try {
                 $category = $categoriesTable->get($entity->category_id);
@@ -143,42 +160,45 @@ class TagsTable extends Table {
      * @param \App\Model\Table\ArrayObject $options
      */
     public function beforeSave($event, $entity, $options) {
-        if ($entity->isNew() && empty($entity->slug)){
+        if ($entity->isNew() && empty($entity->slug)) {
             // TODO SET SLUG
             $entity->generateSlug($entity->sport, $entity->category);
         }
     }
+
     /**
      * @param \App\Model\Table\Event $event
      * @param \Cake\ORM\Entity $entity
      * @param \App\Model\Table\ArrayObject $options
      */
     public function afterSave($event, $entity, $options) {
-        if ($entity->isNew() && empty($entity->slug)){
+        if ($entity->isNew() && empty($entity->slug)) {
             $entity->updateSlug($entity->id);
         }
     }
 
-    public function findPublic(){
+    public function findPublic() {
         return $this->find('all');
     }
-    
-    public function findForSitemap(){
+
+    public function findForSitemap() {
         return $this->find('all')
-                ->order(['Tags.count_ref DESC'])
-                ->where([
-                    'OR' => [
-                        'Tags.count_ref >' => '1',
-                        'Tags.status' => \App\Model\Entity\Tag::STATUS_VALIDATED
-                    ]
-                ])
-                ->limit(50000);
+                        ->order(['Tags.count_ref DESC'])
+                        ->where([
+                            'OR' => [
+                                'Tags.count_ref >' => '1',
+                                'Tags.status' => \App\Model\Entity\Tag::STATUS_VALIDATED
+                            ]
+                        ])
+                        ->limit(50000);
     }
-    public function updateSlug($id){
+
+    public function updateSlug($id) {
         $entity = $this->get($id, [
             'contain' => ['Categories', 'Sports']
         ]);
         $entity->generateSlug($entity->sport, $entity->category);
         return $this->save($entity);
     }
+
 }

@@ -291,3 +291,5 @@ Plugin::load('ADmad/Sequence');
 Plugin::load('Recaptcha', ['bootstrap' => true, 'routes' => true]);
 Plugin::load('Burzum/UserTools');
 
+
+Plugin::load('Search');

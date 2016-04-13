@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller\Admin;
+
 use App\Lib\ResultMessage;
 
 /**
@@ -13,16 +14,18 @@ class TagsController extends AppController {
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
     }
-    
+
     public function index() {
-        $query = $this->Tags->find('all')
+        $query = $this->Tags
+                ->find('search', $this->Tags->filterParams($this->request->query))
                 ->contain([
-                    'Categories', 
-                    'Sports'
-                ]);
+            'Categories',
+            'Sports'
+        ]);
+
         ResultMessage::paginate($query, $this);
     }
-    
+
     /**
      * View method
      *
@@ -35,16 +38,35 @@ class TagsController extends AppController {
         ResultMessage::overwriteData($tag);
         ResultMessage::setWrapper(false);
     }
-    
-    public function updateSlug($id = null){
+
+    public function updateSlug($id = null) {
         $entity = $this->Tags->updateSlug($id);
-        if (empty($entity->errors())){
+        if (empty($entity->errors())) {
             ResultMessage::setMessage("Slug updated!", true);
             ResultMessage::setData('slug', $entity->slug);
-        }
-        else{
+        } else {
             ResultMessage::setMessage("Cannot update slug", false);
 //            ResultMessage::addValidationErrorsModel($entity)
         }
     }
+
+    /**
+     * @queryType POST
+     */
+    public function edit($id = null) {
+        $this->request->allowMethod(['post', 'put', 'patch']);
+        ResultMessage::setWrapper(true);
+        $tag = $this->Tags->get($id);
+        $tag = $this->Tags->patchEntity($tag, $this->request->data, [
+            'fieldList' => ['status', 'name', 'slug', 'category_id'],
+            'guard' => false
+        ]);
+        if ($this->Tags->save($tag)) {
+            ResultMessage::setMessage(__('The tag has been saved.'), true);
+        } else {
+            ResultMessage::setMessage(__('The tag could not be saved. Please, try again.'), false);
+            ResultMessage::addValidationErrorsModel($tag);
+        }
+    }
+
 }

@@ -21,7 +21,9 @@
         "vimeo/vimeo-api": "^1.2",
         "admad/cakephp-sequence": "^2.0",
         "cakephp-fr/recaptcha": "~0.4",
-        "burzum/cakephp-user-tools": "^1.0"
+        "burzum/cakephp-user-tools": "^1.0",
+        "friendsOfCake/Search": "^1.2",
+        "friendsofcake/search": "^1.2"
     },
     "require-dev": {
         "psy/psysh": "@stable",

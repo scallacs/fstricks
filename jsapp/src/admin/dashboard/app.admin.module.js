@@ -1,5 +1,5 @@
 
-angular.module('app.admin.dashboard', ['ng-admin'])
+angular.module('app.admin.dashboard', ['ng-admin', 'app.admin.util'])
         .config(Config)
         .config(RestangularProviderConfig);
 
@@ -86,7 +86,7 @@ function Config(nga) {
         nga.field('quota_year'),
         nga.field('quota_overall')
     ])
-            .listActions(['edit', 'delete'])
+            .listActions(['show', 'edit', 'delete'])
             .batchActions(['delete']);
 
     userQuota.creationView()
@@ -138,35 +138,68 @@ function Config(nga) {
     admin.addEntity(quotaType);
     // -------------------------------------------------------------
     // set the fields of the user entity list view
-    tag.listView().fields([
-        nga.field('id'),
-        nga.field('name'),
-        nga.field('count_ref'),
-        nga.field('slug'),
-        nga.field('created'),
-        nga.field('sport_id', 'reference')
-                .targetEntity(sport)
-                .targetField(nga.field('name'))
-                .label('Sport'),
-        nga.field('category_id', 'reference')
-                .targetEntity(category)
-                .targetField(nga.field('name'))
-                .label('Category')
-    ])
+    var statusChoices = [
+        {label: 'pending', value: 'pending'},
+        {label: 'rejected', value: 'rejected'},
+        {label: 'validated', value: 'validated'},
+//        {label: 'blocked', value: 'blocked'}
+    ];
+
+    tag.listView()
+            .perPage(15)
+            .fields([
+//        nga.field('id'),
+                nga.field('name').isDetailLink(true),
+                nga.field('count_ref'),
+                nga.field('slug'),
+                nga.field('status', 'choice')
+                        .choices(statusChoices)
+                        .cssClasses(function(entry) { // add custom CSS classes to inputs and columns
+                            if (!entry)
+                                return;
+                            var baseClass = 'text-center text-bold';
+                            var status = entry.values.status;
+                            if (status === 'accepted' || status === 'validated') {
+                                return baseClass + ' bg-success';
+                            }
+                            if (status === 'rejected' || status === 'blocked') {
+                                return baseClass + ' bg-danger';
+                            }
+                            if (status === 'pending') {
+                                return baseClass + ' bg-info';
+                            }
+                            return baseClass + ' bg-warning';
+                        }),
+                nga.field('created', 'datetime')
+                        .map(function timeago(value) {
+                            if (!value) {
+                                return '';
+                            }
+                            return jQuery.timeago(value);
+                        }),
+                nga.field('sport_id', 'reference')
+                        .targetEntity(sport)
+                        .targetField(nga.field('name'))
+                        .label('Sport'),
+                nga.field('category_id', 'reference')
+                        .targetEntity(category)
+                        .targetField(nga.field('name'))
+                        .label('Category')
+            ])
             .filters([
                 nga.field('q')
                         .label('Full-Text')
                         .pinned(true),
                 nga.field('status', 'choices')
-                        .choices([
-                            {label: 'validated', value: 'validated'},
-                            {label: 'unknown', value: 'unknown'},
-                            {label: 'pending', value: 'pending'}
-                        ])
+                        .choices(statusChoices)
                         .label('status')
                         .pinned(false)
             ])
-            .listActions(['edit', 'delete'])
+            .listActions([
+                'edit',
+                'delete',
+                '<status-buttons model="tags" entry="entry" status="[\'validated\',\'rejected\',\'pending\']"></status-buttons>'
+            ])
             .batchActions(['delete']);
 
     tag.creationView()
@@ -228,6 +261,9 @@ function Config(nga) {
                 nga.field('name').isDetailLink(true),
                 nga.field('slug'),
                 nga.field('status')
+            ])
+            .listActions([
+                'show', 'edit', 'delete'
             ]);
     sport.showView()
             .fields([
@@ -240,14 +276,20 @@ function Config(nga) {
                         .targetField(nga.field('name'))
                         .sortField('id')
                         .sortDir('DESC')
-            ]);
+            ])
+            ;
 
-    sport.creationView().fields([
-        nga.field('name')
-                .validation({required: true, minlength: 2, maxlength: 25}),
-        nga.field('status')
-                .validation({required: true, minlength: 2, maxlength: 25}),
-    ]);
+    sport.creationView()
+            .fields([
+                nga.field('name')
+                        .validation({required: true, minlength: 2, maxlength: 25}),
+                nga.field('slug')
+                        .validation({required: true, minlength: 2, maxlength: 25}),
+                nga.field('status')
+                        .validation({required: true, minlength: 2, maxlength: 25}),
+            ]);
+    sport.editionView()
+            .fields(sport.creationView().fields());
 
     admin.addEntity(sport);
 
@@ -288,38 +330,6 @@ function Config(nga) {
                 nga.field('provider_id')
             ]);
     admin.addEntity(video);
-    // ---------------------------------------------------------
-
-
-    // set the fields of the user entity list view
-    var tag = nga.entity('tags');
-    tag
-            .listView()
-            .fields([
-                nga.field('name'),
-                nga.field('category_id', 'reference')
-                        .targetEntity(category)
-                        .targetField(nga.field('name'))
-                        .label('Category')
-            ])
-            .listActions(['show', 'edit', 'delete'])
-            .batchActions(['delete'])
-            .filters([
-                nga.field('name')
-                        .label('Full-Text')
-                        .pinned(true)
-            ]);
-    tag.showView()
-            .fields([
-                nga.field('id'),
-                nga.field('username'),
-                nga.field('email'),
-                nga.field('status'),
-                nga.field('created', 'datetime'),
-                nga.field('last_login', 'datetime')
-            ]);
-    // add the user entity to the admin application
-    admin.addEntity(tag);
 
     // ---------------------------------------------------------
 

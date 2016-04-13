@@ -147,9 +147,9 @@ gulp.task('concat-js-admin', function() {
         ADMIN_APP + '*.js'
     ])
             .pipe(wrap('(function(){\n"use strict";\n<%= contents %>\n})();'))
-            .pipe(stripDebug())
+//            .pipe(stripDebug())
             .pipe(concat(ADMIN_HIDDEN_PATH + '.js'))
-            .pipe(uglify())
+//            .pipe(uglify())
             .pipe(gulp.dest(JS_OUTPUT));
 });
 
