@@ -1,5 +1,6 @@
 angular
-        .module('app.rider', ['ngFileUpload', 'ngMessages', 'ui.router']);
+        //.module('app.rider', ['ngFileUpload', 'ngMessages', 'ui.router']);
+        .module('app.rider', ['ngMessages', 'ui.router']);
 //        .config(ConfigRouting)
 //        .controller('RiderProfileController', RiderProfileController);
 

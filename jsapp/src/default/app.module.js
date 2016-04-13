@@ -141,7 +141,6 @@ function ConfigRouting($stateProvider) {
 ConfigInterceptor.$inject = ['$httpProvider', '$locationProvider'];
 function ConfigInterceptor($httpProvider, $locationProvider) {
     'use strict';
-    //$locationProvider.html5Mode(true).hashPrefix('!');
     $locationProvider.html5Mode(true);
 
     var interceptor = ['$rootScope', '$q', '$injector', '$timeout',

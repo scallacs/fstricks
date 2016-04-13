@@ -5,7 +5,7 @@
     <?php echo \Cake\Core\Configure::read('Company.title'); ?> | {{SharedData.pageTitle()}}
 </title>
 
-<?= $this->Html->meta('icon', 'img/favicon.png'); ?>
+<?= $this->Html->meta('icon', \Cake\Routing\Router::url('/img/favicon.png', true)); ?>
 
 <meta name="fragment" content="!">
 <!--<meta name="description" content="{{seo.metaDescription}}">-->
@@ -26,7 +26,9 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />
 
 <?php if (\Cake\Core\Configure::read('concat_css')) { ?>
-    <?= $this->Html->css('style.min.css') ?>
+    <?= $this->Html->css('style.min.css', [
+        'fullBase' => true
+    ]) ?>
 <?php } else { ?>
     <?= $this->Html->css('select.css'); ?> 
     <?= $this->Html->css('bootstrap.css') ?>

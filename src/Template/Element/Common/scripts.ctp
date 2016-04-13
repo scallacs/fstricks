@@ -90,7 +90,9 @@
 
 if (\Cake\Core\Configure::read('user_feedback')) {
     echo $this->Html->script("components/angular-send-feedback/dist/angular-send-feedback.min.js");
-    echo $this->Html->css("../js/components/angular-send-feedback/dist/angular-send-feedback.min.css");
+    echo $this->Html->css("../js/components/angular-send-feedback/dist/angular-send-feedback.min.css", [
+        'fullBase' => true
+    ]);
     ?>
     <script type="text/javascript">
         var app = angular.module('app');

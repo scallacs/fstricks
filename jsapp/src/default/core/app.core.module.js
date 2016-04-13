@@ -1126,11 +1126,6 @@ function PlaylistItemEntity($resource) {
             params: {action: 'edit'},
             isArray: false
         }
-//        down: {
-//            method: 'POST',
-//            params: {action: 'down'},
-        //            isArray: false
-//        }
     });
 }
 ServerConfigEntity.$inject = ['$resource'];

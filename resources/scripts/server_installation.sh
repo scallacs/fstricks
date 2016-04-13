@@ -60,6 +60,7 @@ sudo mv composer.phar /usr/local/bin/composer
 sudo yum install npm
 sudo npm install bower -g
 sudo npm install grunt -g
+sudo npm install forever -g # for snapshots
 
 # gulp-sourcemaps
 
