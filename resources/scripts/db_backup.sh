@@ -1,4 +1,5 @@
-BACKUP_FOLDER="~/backup/fstricks/database"
+cd ~
+BACKUP_FOLDER=backup/fstricks/database
 #COMPRESSOR_BIN = "C:\Program Files\WinRar\rar.exe"
 COMPRESSOR_BIN="tar"
 COMPRESSOR_FLAGS="cfz ${BACKUP_FOLDER}/$(date +%Y-%m-%d).tar.gz"
