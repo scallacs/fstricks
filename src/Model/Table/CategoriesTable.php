@@ -71,5 +71,9 @@ class CategoriesTable extends Table
         return $rules;
     }
     
+
+    public function afterSave($event, $entity, $options = []) {
+        Cake\Cache\Cache::clearGroup('sports', 'veryLongCache');
+    }
     
 }

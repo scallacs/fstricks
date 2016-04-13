@@ -68,6 +68,7 @@ class SportsTable extends Table {
                         ->contain(['Categories'])
                         ->cache('sports', 'veryLongCache');
     }
+
     public function findForSitemap() {
 //        debug(\Cake\Cache\Cache::clearGroup('sports', 'veryLongCache'));
 //        debug(\Cake\Cache\Cache::delete('sports', 'veryLongCache'));
@@ -105,9 +106,7 @@ class SportsTable extends Table {
     }
 
     public function afterSave($event, $entity, $options = []) {
-        if ($entity->isNew()) {
-            Cake\Cache\Cache::clearGroup('sports', 'veryLongCache');
-        }
+        Cake\Cache\Cache::clearGroup('sports', 'veryLongCache');
     }
 
 }
