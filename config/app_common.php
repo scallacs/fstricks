@@ -1,7 +1,7 @@
 <?php
+
 return [
     'admin_hidden_prefix' => 'moFEJPQQS320909j2309923II2ODI2993',
-
     'debug' => false,
     'maintenance' => 0,
     'user_feedback' => true,
@@ -49,7 +49,6 @@ return [
             'locales' => [APP . 'Locale' . DS],
         ],
     ],
-
     /**
      * Security and encryption configuration
      *
@@ -60,7 +59,6 @@ return [
     'Security' => [
         'salt' => '19320fedcb6c58e919f54b74c6091e004f3d4cbba69a5b69df263057e91c5f5d',
     ],
-
     /**
      * Apply timestamps with the last modified time to static assets (js, css, images).
      * Will append a querystring parameter containing the time the file was modified.
@@ -70,9 +68,8 @@ return [
      * enable timestamping regardless of debug value.
      */
     'Asset' => [
-        // 'timestamp' => true,
+    // 'timestamp' => true,
     ],
-
     /**
      * Configure the cache adapters.
      */
@@ -105,8 +102,28 @@ return [
             'serialize' => true,
             'duration' => '+2 minutes',
         ],
+        'veryLongCache' => [
+            'className' => 'File',
+            'duration' => '+1 days',
+            'path' => CACHE . 'queries/long',
+            'groups' => [\App\Model\Table\SportsTable::CACHE_GROUP]
+        ],
+        'oneDayCache' => [
+            'className' => 'File',
+            'duration' => '+1 days',
+            'path' => CACHE . 'queries/day',
+            //'groups' => [\App\Model\Table\SportsTable::CACHE_GROUP]
+        ],
+        'oneHourCache' => [
+            'className' => 'File',
+            'duration' => '+1 hours',
+            'path' => CACHE . 'queries/hour',
+            'groups' => [
+                \App\Model\Table\VideoTagsTable::CACHE_GROUP_TRENDING,
+                \App\Model\Table\PlaylistsTable::CACHE_GROUP_TRENDING
+            ]
+        ]
     ],
-
     /**
      * Configure the Error and Exception handlers used by your application.
      *
@@ -140,7 +157,6 @@ return [
         'log' => true,
         'trace' => true,
     ],
-
     /**
      * Email delivery profiles
      *
@@ -154,11 +170,10 @@ return [
         'default' => [
             'transport' => 'default',
             'from' => 'you@localhost',
-            //'charset' => 'utf-8',
-            //'headerCharset' => 'utf-8',
+        //'charset' => 'utf-8',
+        //'headerCharset' => 'utf-8',
         ],
     ],
-
     /**
      * Configures logging options
      */
@@ -176,7 +191,6 @@ return [
             'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
         ],
     ],
-
     /**
      * Session configuration.
      *

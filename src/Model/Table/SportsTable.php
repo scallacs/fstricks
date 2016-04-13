@@ -7,6 +7,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Cache\Cache;
 
 /**
  * Sports Model
@@ -18,9 +19,8 @@ class SportsTable extends Table {
 
     const STATUS_PUBLIC = 'public';
     const STATUS_PRIVATE = 'private';
-
-    
     const CACHE_GROUP = 'sports';
+
     /**
      * Initialize method
      *
@@ -113,8 +113,14 @@ class SportsTable extends Table {
      * @param \App\Model\Table\ArrayObject $options
      */
     public function afterSave($event, $entity, $options = []) {
-        \Cake\Cache\Cache::clearGroup(self::CACHE_GROUP);
-        \Cake\Cache\Cache::delete(self::CACHE_GROUP);
+//        debug(Cache::groupConfigs());
+//        debug(Cache::configured());
+//        debug(Cache::config('oneHourCache'));die();
+//        $configs = Cache::groupConfigs(self::CACHE_GROUP);
+//        foreach ($configs[self::CACHE_GROUP] as $config) {
+//            Cache::clearGroup(self::CACHE_GROUP, $config);
+//        }
+        Cache::clearGroup(self::CACHE_GROUP, 'veryLongCache');
     }
 
 }

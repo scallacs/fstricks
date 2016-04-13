@@ -265,26 +265,6 @@ Configure::write('Pagination', [
     'Users' => ['maxLimit' => 20, 'limit' => 20],
 ]);
 
-Cache::config('veryLongCache', [
-    'className' => 'File',
-    'duration' => '+1 days',
-    'group' => [\App\Model\Table\SportsTable::CACHE_GROUP]
-]);
-Cache::config('oneDayCache', [
-    'className' => 'File',
-    'duration' => '+1 days',
-    'group' => [\App\Model\Table\SportsTable::CACHE_GROUP]
-]);
-
-Cache::config('oneHourCache', [
-    'className' => 'File',
-    'duration' => '+1 hours',
-    'group' => [
-        \App\Model\Table\SportsTable::CACHE_GROUP, 
-        \App\Model\Table\VideoTagsTable::CACHE_GROUP_TRENDING, 
-        \App\Model\Table\PlaylistsTable::CACHE_GROUP_TRENDING
-    ]
-]);
 
 Plugin::load('ADmad/HybridAuth', ['bootstrap' => true, 'routes' => true]);
 Plugin::load('Proffer');

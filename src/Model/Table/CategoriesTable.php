@@ -71,9 +71,13 @@ class CategoriesTable extends Table
         return $rules;
     }
     
-
+    /**
+     * @param \App\Model\Table\Event $event
+     * @param \Cake\ORM\Entity $entity
+     * @param \App\Model\Table\ArrayObject $options
+     */
     public function afterSave($event, $entity, $options = []) {
-        \Cake\Cache\Cache::clearGroup(SportsTable::CACHE_GROUP);
+        Cache::clearGroup(SportsTable::CACHE_GROUP, 'veryLongCache');
     }
     
 }
