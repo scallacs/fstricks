@@ -3,7 +3,7 @@ angular.module('app.tag', ['app.core', 'ui.bootstrap', 'ui.select', 'ui.router',
 ])
         .controller('SearchTagController', SearchTagController)
         .controller('ModalReportErrorController', ModalReportErrorController)
-        .factory('EditionTag', EditionTag)
+        .factory('EditionTag', EditionTag) 
         .config(Config);
 
 Config.$inject = ['$stateProvider'];

@@ -66,6 +66,14 @@ class VideoTagsTable extends Table {
                 ->add('user_id', 'Search.Value')
                 ->add('sport_id', 'Search.Value')
                 ->add('category_id', 'Search.Value')
+                ->add('min_duration', 'Search.Compare', [
+                    'field' => $this->aliasField('end').' - '. $this->aliasField('begin'),
+                    'operator' => '>='
+                ])
+                ->add('max_duration', 'Search.Compare', [
+                    'field' => $this->aliasField('end').' - '. $this->aliasField('begin'),
+                    'operator' => '<='
+                ])
                 ->add('status', 'Search.Value', [
                     'field' => $this->aliasField('status')
         ]);

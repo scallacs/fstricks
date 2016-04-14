@@ -47,7 +47,7 @@
     "angular-send-feedback": "^1.0.2",
     "html2canvas": "^0.4.1",
     "gentelella": "puikinsh/gentelella#^1.0.0",
-    "ng-admin": "^0.9.1",
+    "ng-admin": "marmelab/ng-admin#master",
     "angularjs-viewhead": "apparentlymart/angularjs-viewhead#^0.0.1"
   }
 }

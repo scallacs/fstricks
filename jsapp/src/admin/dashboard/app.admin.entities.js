@@ -452,38 +452,76 @@ function Config(nga) {
                 nga.field('id'),
                 nga.field('status')
                         .cssClasses(cssStatus),
-                nga.field('begin'),
-                nga.field('end'),
-                nga.field('slug'),
-                nga.field('created').map(timeago),
+                nga.field('begin', 'number'),
+                nga.field('_duration', 'number')
+                        .label('Duration')
+                        .map(function (val, data) {
+                            if (!data) return 0;
+                            val = Math.round((data.end - data.begin)*100.0);
+                            return val / 100.0;
+                        })
+                        .cssClasses(function (entry) {
+                            if (!entry) return;
+                            if (entry.values._duration <= 2 || entry.values._duration >= 44){
+                                return 'bg-error';
+                            }
+                            else {
+                                return 'bg-success';
+                            }
+                        }),
+                nga.field('tag_id', 'reference')
+                        .targetEntity(tag)
+                        .targetField(nga.field('name'))
+                        .label('Trick'),
+//                nga.field('created').map(timeago),
                 nga.field('modified').map(timeago),
-                nga.field('video_id', 'reference')
-                        .targetEntity(video)
-                        .targetField(nga.field('video_url'))
-                        .label('Video'),
+                nga.field('provider_id').label('Provider'),
+//                nga.field('video_id', 'reference')
+//                        .targetEntity(video)
+//                        .targetField(nga.field('video_url'))
+//                        .label('Video'),
                 nga.field('rider_id', 'reference')
                         .targetEntity(rider)
 //                        .targetReferenceField('rider_id') 
 //                        .targetFields([nga.field('firstname'), nga.field('lastname')])
                         .targetField(nga.field('lastname'))
-                        .label('Rider'),
-                nga.field('category_id', 'reference')
-                        .targetEntity(category)
-                        .targetField(nga.field('name'))
-                        .label('Category'),
+                        .label('Rider')
+                        .cssClasses(function (entry) {
+                            if (!entry) return;
+                            if (!entry.values.rider_id){
+                                return 'bg-error';
+                            }
+                            else {
+                                return '';
+                            }
+                        }),
+//                nga.field('category_id', 'reference')
+//                        .targetEntity(category)
+//                        .targetField(nga.field('name'))
+//                        .label('Category'),
                 nga.field('user_id', 'reference')
                         .targetEntity(user)
                         .targetField(nga.field('username'))
-                        .label('User'),
+                        .label('User')
+                        .cssClasses(function (entry) {
+                            if (!entry) return;
+                            if (!entry.values.user_id){
+                                return 'bg-error';
+                            }
+                            else {
+                                return '';
+                            }
+                        }),
                 nga.field('status_action', 'template')
                         .label('Status action')
                         .template('<status-buttons model="video-tags" entry="entry" status="[\'validated\',\'rejected\',\'pending\']"></status-buttons>')
             ])
             .listActions([
                 'show',
-                'edit',
+//                'edit',
                 'delete',
-                '<custom-link text="edit" entry="entry" url="video-tags/custom-edit"></custom-link>'
+                '<custom-link text="edit" entry="entry" url="video-tags/custom-edit"></custom-link>',
+                '<preview-tag entry="entry"></preview-tag>'
             ])
             .filters([
 //                nga.field('q')

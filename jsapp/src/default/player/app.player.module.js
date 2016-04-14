@@ -617,9 +617,9 @@ function StartValidationController(SharedData) {
 
 // TODO add current sport ...
 ViewValidationController.$inject = ['$scope', 'VideoTagData', 'PlayerData', 'SharedData', '$state',
-    'VideoTagEntity', 'VideoTagAccuracyRateEntity', '$uibModal'];
+    'VideoTagEntity', 'VideoTagAccuracyRateEntity'];
 function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, $state, VideoTagEntity,
-        VideoTagAccuracyRateEntity, $uibModal) {
+        VideoTagAccuracyRateEntity) {
     var skipped = [];
 
     if (!SharedData.currentSport) {
