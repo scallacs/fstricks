@@ -2,8 +2,8 @@ angular
         .module('app.rider')
         .directive('formAddRider', formAddRiderfunction);
 
-formAddRiderfunction.$inject = ['Upload'];
-function formAddRiderfunction(Upload) {
+formAddRiderfunction.$inject = [];
+function formAddRiderfunction() {
     return {
         restrict: 'EA',
         templateUrl: TEMPLATE_URL + '/rider/partials/form-add-rider.html',
