@@ -1,6 +1,7 @@
 angular.module('app.admin.util', [])
         .directive('statusButtons', statusButtons);
 
+statusButtons.$inject = ['Restangular', '$state', 'notification'];
 function statusButtons(Restangular, $state, notification) {
     'use strict';
 
@@ -60,4 +61,3 @@ function statusButtons(Restangular, $state, notification) {
     };
 }
 
-statusButtons.$inject = ['Restangular', '$state', 'notification'];

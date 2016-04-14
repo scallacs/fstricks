@@ -27,8 +27,8 @@ class PagesController extends AppController
     public function app(){
         $this->render('app');
     }
-    public function dashboard(){
-        $this->viewBuilder()->layout('admin_dashboard');
-        $this->render(false);
-    }
+//    public function dashboard(){
+//        $this->viewBuilder()->layout('admin_dashboard');
+//        $this->render(false);
+//    }
 }

@@ -1,58 +1,33 @@
+angular.module('app.admin')
+        .config(Config);
 
-angular.module('app.admin.dashboard', ['ng-admin', 'app.admin.util'])
-        .config(Config)
-        .config(RestangularProviderConfig);
-
-RestangularProviderConfig.$inject = ['RestangularProvider', '$windowProvider'];
-function RestangularProviderConfig(RestangularProvider, $windowProvider) {
-    // RESPONSE
-    RestangularProvider.addResponseInterceptor(function(data, operation, what, url, response) {
-        if (response.status === 401) {
-            alert('ok');
-            window.location.href = '/make-me-god-please';
-//            $windowProvider.$get = ['$window', function($window) {
-//                    $window.location.href = '/make-me-god-please';
-//                }];
-        }
-        if (operation === "getList") {
-//            var contentRange = response.headers('Content-Range');
-//            response.totalCount = contentRange.split('/')[1];
-//            console.log(response);
-            //var body = response.body();
-            response.totalCount = response.data.total;
-            data = response.data.items;
-        }
-
-        return data;
-    });
-    // REQUEST
-    RestangularProvider.addFullRequestInterceptor(function(element, operation, what, url, headers, params, httpConfig) {
-        if (operation === 'getList') {
-            params.page = params._page;
-            params.limit = params._perPage;
-
-            params.sort = params._sortField || null;
-            params.direction = params._sortDir || null;
-
-            delete params._page;
-            delete params._perPage;
-            delete params._sortField;
-            delete params._sortDir;
-
-            if (params._filters) {
-                for (var filter in params._filters) {
-                    params[filter] = params._filters[filter];
-                }
-                delete params._filters;
-            }
-        }
-        return {params: params};
-    });
-}
-;
 
 Config.$inject = ['NgAdminConfigurationProvider'];
 function Config(nga) {
+
+    function cssStatus(entry) {
+        if (!entry)
+            return;
+        var baseClass = 'text-center text-bold';
+        var status = entry.values.status;
+        if (status === 'accepted' || status === 'validated' || status === 'activated' || status === 'public') {
+            return baseClass + ' bg-success';
+        }
+        if (status === 'rejected' || status === 'blocked' || status === 'private') {
+            return baseClass + ' bg-danger';
+        }
+        if (status === 'pending') {
+            return baseClass + ' bg-info';
+        }
+        return baseClass + ' bg-warning';
+    }
+    function timeago(value) {
+        if (!value) {
+            return '';
+        }
+        return jQuery.timeago(value);
+    }
+
     // create an admin application
     var admin = nga.application('Freestyle Tricks Admin')
             .baseApiUrl(ADMIN_API_BASE_URL); // main API endpoint;
@@ -62,11 +37,16 @@ function Config(nga) {
     var sport = nga.entity('sports');
     var category = nga.entity('categories');
     var video = nga.entity('videos');
+    var rider = nga.entity('riders');
+    var reportError = nga.entity('report-errors');
+    var videoTags = nga.entity('video-tags');
+    var feedback = nga.entity('feedbacks');
 
     var quotaType = nga.entity('quota-types');
     quotaType.baseApiUrl(ADMIN_API_BASE_URL + 'activity-quota/');
     var userQuota = nga.entity('user-quotas');
     userQuota.baseApiUrl(ADMIN_API_BASE_URL + 'activity-quota/');
+
 
 
     // -------------------------------------------------------------
@@ -156,29 +136,9 @@ function Config(nga) {
                 nga.field('slug'),
                 nga.field('status', 'choice')
                         .choices(statusChoices)
-                        .cssClasses(function(entry) { // add custom CSS classes to inputs and columns
-                            if (!entry)
-                                return;
-                            var baseClass = 'text-center text-bold';
-                            var status = entry.values.status;
-                            if (status === 'accepted' || status === 'validated') {
-                                return baseClass + ' bg-success';
-                            }
-                            if (status === 'rejected' || status === 'blocked') {
-                                return baseClass + ' bg-danger';
-                            }
-                            if (status === 'pending') {
-                                return baseClass + ' bg-info';
-                            }
-                            return baseClass + ' bg-warning';
-                        }),
+                        .cssClasses(cssStatus),
                 nga.field('created', 'datetime')
-                        .map(function timeago(value) {
-                            if (!value) {
-                                return '';
-                            }
-                            return jQuery.timeago(value);
-                        }),
+                        .map(timeago),
                 nga.field('sport_id', 'reference')
                         .targetEntity(sport)
                         .targetField(nga.field('name'))
@@ -219,7 +179,8 @@ function Config(nga) {
     user.listView().fields([
         nga.field('username'),
         nga.field('email'),
-        nga.field('status'),
+        nga.field('status')
+                .cssClasses(cssStatus),
         nga.field('provider_id'),
         nga.field('provider_uid'),
         nga.field('created', 'date'),
@@ -263,6 +224,7 @@ function Config(nga) {
                 nga.field('name').isDetailLink(true),
                 nga.field('slug'),
                 nga.field('status')
+                        .cssClasses(cssStatus),
             ])
             .listActions([
                 'show', 'edit', 'delete'
@@ -302,7 +264,8 @@ function Config(nga) {
                 nga.field('id'),
                 nga.field('video_url'),
                 nga.field('duration'),
-                nga.field('status'),
+                nga.field('status')
+                        .cssClasses(cssStatus),
                 nga.field('provider_id')
             ])
             .listActions(['show'])
@@ -328,7 +291,8 @@ function Config(nga) {
                 nga.field('id'),
                 nga.field('video_url'),
                 nga.field('duration'),
-                nga.field('status'),
+                nga.field('status')
+                        .cssClasses(cssStatus),
                 nga.field('provider_id')
             ]);
     admin.addEntity(video);
@@ -336,11 +300,11 @@ function Config(nga) {
     // ---------------------------------------------------------
 
 
-    var reportError = nga.entity('report-errors');
     // set the fields of the user entity list view
     reportError.listView()
             .fields([
-                nga.field('status'),
+                nga.field('status')
+                        .cssClasses(cssStatus),
                 nga.field('description', 'text'),
                 nga.field('created', 'datetime'),
                 nga.field('modified', 'datetime')
@@ -362,7 +326,8 @@ function Config(nga) {
                 nga.field('id'),
                 nga.field('username'),
                 nga.field('email'),
-                nga.field('status'),
+                nga.field('status')
+                        .cssClasses(cssStatus),
                 nga.field('created', 'datetime'),
                 nga.field('last_login', 'datetime')
             ]);
@@ -371,7 +336,6 @@ function Config(nga) {
 
     // ---------------------------------------------------------
 
-    var rider = nga.entity('riders');
     // set the fields of the user entity list view
     rider.listView()
             .fields([
@@ -380,7 +344,8 @@ function Config(nga) {
                 nga.field('lastname'),
                 nga.field('nationality'),
                 nga.field('slug'),
-                nga.field('status'),
+                nga.field('status')
+                        .cssClasses(cssStatus),
                 nga.field('created', 'datetime'),
                 nga.field('modified', 'datetime'),
                 nga.field('sexe')
@@ -418,7 +383,8 @@ function Config(nga) {
                 nga.field('firstname'),
                 nga.field('lastname'),
                 nga.field('nationality'),
-                nga.field('status'),
+                nga.field('status')
+                        .cssClasses(cssStatus),
                 nga.field('created', 'datetime'),
                 nga.field('modified', 'datetime'),
                 nga.field('sexe')
@@ -427,7 +393,6 @@ function Config(nga) {
 
     // ---------------------------------------------------------
 
-    var feedback = nga.entity('feedbacks');
     // set the fields of the user entity list view
     feedback.listView()
             .fields([
@@ -439,7 +404,8 @@ function Config(nga) {
                 nga.field('browser'),
                 nga.field('url'),
                 nga.field('note'),
-                nga.field('status'),
+                nga.field('status')
+                        .cssClasses(cssStatus),
                 nga.field('created', 'datetime'),
                 nga.field('modified', 'datetime')
             ])
@@ -466,7 +432,8 @@ function Config(nga) {
                         .targetEntity(user)
                         .targetField(nga.field('username'))
                         .label('Author'),
-                nga.field('status', 'text').cssClasses('label label-primary'),
+                nga.field('status')
+                        .cssClasses(cssStatus),
                 nga.field('created', 'datetime'),
                 nga.field('modified', 'datetime'),
                 nga.field('browser'),
@@ -478,17 +445,18 @@ function Config(nga) {
     admin.addEntity(feedback);
     // ---------------------------------------------------------
 
-    var videoTags = nga.entity('video-tags');
     // set the fields of the user entity list view
     videoTags.listView()
+            .perPage(10)
             .fields([
                 nga.field('id'),
-                nga.field('status'),
+                nga.field('status')
+                        .cssClasses(cssStatus),
                 nga.field('begin'),
                 nga.field('end'),
                 nga.field('slug'),
-                nga.field('created', 'datetime'),
-                nga.field('modified', 'datetime'),
+                nga.field('created').map(timeago),
+                nga.field('modified').map(timeago),
                 nga.field('video_id', 'reference')
                         .targetEntity(video)
                         .targetField(nga.field('video_url'))
@@ -506,15 +474,59 @@ function Config(nga) {
                 nga.field('user_id', 'reference')
                         .targetEntity(user)
                         .targetField(nga.field('username'))
-                        .label('User')
+                        .label('User'),
+                nga.field('status_action', 'template')
+                        .label('Status action')
+                        .template('<status-buttons model="video-tags" entry="entry" status="[\'validated\',\'rejected\',\'pending\']"></status-buttons>')
             ])
-            .listActions(['show'])
-            .batchActions([]);
+            .listActions([
+                'show',
+                'edit',
+                'delete',
+                '<custom-link text="edit" entry="entry" url="video-tags/custom-edit"></custom-link>'
+            ])
+            .filters([
+//                nga.field('q')
+//                        .label('Full-Text')
+//                        .pinned(true),
+                nga.field('status', 'choices')
+                        .choices(statusChoices)
+                        .label('status')
+                        .pinned(true),
+                nga.field('min_duration', 'number')
+                        .label('Min duration')
+                        .pinned(true),
+                nga.field('max_duration', 'number')
+                        .label('Max duration')
+                        .pinned(true),
+                nga.field('user_id', 'reference')
+                        .targetEntity(user)
+                        .targetField(nga.field('username'))
+                        .label('User')
+                        .pinned(false),
+                nga.field('rider_id', 'reference')
+                        .targetEntity(rider)
+                        .targetField(nga.field('lastname'))
+                        .label('Rider')
+                        .pinned(false),
+                nga.field('sport_id', 'reference')
+                        .targetEntity(sport)
+                        .targetField(nga.field('name'))
+                        .label('Sport')
+                        .pinned(false),
+                nga.field('category_id', 'reference')
+                        .targetEntity(category)
+                        .targetField(nga.field('name'))
+                        .label('Category')
+                        .pinned(false)
+            ])
+            .batchActions(['delete']);
 
     videoTags.showView()
             .fields([
                 nga.field('id'),
-                nga.field('status'),
+                nga.field('status')
+                        .cssClasses(cssStatus),
                 nga.field('begin'),
                 nga.field('end'),
                 nga.field('slug'),
@@ -538,6 +550,12 @@ function Config(nga) {
                         .targetEntity(user)
                         .targetField(nga.field('username'))
                         .label('User')
+            ]);
+
+    videoTags.editionView()
+
+            .fields([
+                nga.field('id')
             ]);
     // add the user entity to the admin application
     admin.addEntity(videoTags);
@@ -557,7 +575,8 @@ function Config(nga) {
                 .targetEntity(sport)
                 .targetField(nga.field('name'))
                 .label('Sport'),
-        nga.field('status'),
+        nga.field('status')
+                .cssClasses(cssStatus),
         nga.field('position')
     ])
             .listActions(['show', 'edit', 'delete'])

@@ -44,7 +44,18 @@ Router::defaultRouteClass('Route');
 Router::prefix('Admin', function ($routes) {
     $routes->scope('/api', function ($routes) {
         $routes->extensions(['json']);
-        $routes->resources('ReportErrors');
+        $routes->resources('VideoTags', [
+            'inflect' => 'dasherize',
+            'map' => [
+                'updateSlug' => [
+                    'action' => 'updateSlug',
+                    'method' => 'GET'
+                ],
+            ]
+        ]);
+        $routes->resources('ReportErrors', [
+            'inflect' => 'dasherize',
+        ]);
         $routes->resources('Users');
         $routes->resources('Riders');
         $routes->resources('Sports');
@@ -58,20 +69,11 @@ Router::prefix('Admin', function ($routes) {
                 ]
             ]
         ]);
-        $routes->resources('VideoTags', [
-            'map' => [
-                'updateSlug' => [
-                    'action' => 'updateSlug',
-                    'method' => 'GET'
-                ],
-            ]
-        ]);
         $routes->resources('Feedbacks');
         $routes->fallbacks('DashedRoute');
     });
     $routes->connect('/login', ['controller' => 'users', 'action' => 'login']);
     $routes->connect('/**', ['controller' => 'Pages', 'action' => 'app']);
-    $routes->connect('/dashboard', ['controller' => 'Pages', 'action' => 'dashboard']);
 });
 
 Router::scope('/api', function ($routes) {

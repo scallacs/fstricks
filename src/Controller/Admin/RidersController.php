@@ -11,6 +11,12 @@ use App\Lib\ResultMessage;
 class RidersController extends AppController
 {
 
+    public function beforeFilter(\Cake\Event\Event $event) {
+        parent::beforeFilter($event);
+        $this->Riders->initFilters('admin');
+    }
+    
+
     /**
      * Index method
      *
@@ -18,8 +24,8 @@ class RidersController extends AppController
      */
     public function index()
     {
-//        $this->Paginator->config(Configure::read('Pagination.Users'));
-        $query = $this->Riders->find('all');
+        $query = $this->Riders
+                ->find('search', $this->Riders->filterParams($this->request->query));
         ResultMessage::paginate($query, $this);
     }
 

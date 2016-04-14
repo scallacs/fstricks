@@ -41,10 +41,10 @@ class TagsTable extends Table {
             'foreignKey' => 'sport_id',
         ]);
 
-        // Add the behaviour to your table
-        $this->addBehavior('Search.Search');
 
+        $this->addBehavior('Search.Search');
         if (method_exists($this, 'searchManager')) {
+            // Add the behaviour to your table
             $this->searchManager()
                     ->add('user_id', 'Search.Value')
                     ->add('status', 'Search.Value', [
@@ -88,8 +88,8 @@ class TagsTable extends Table {
                     ],
                     'allowedChars' => [
                         'rule' => function($value, $context) {
-                    return !preg_match(JsonConfigHelper::rules('tags', 'name', 'regex'), $value);
-                },
+                            return !preg_match(JsonConfigHelper::rules('tags', 'name', 'regex'), $value);
+                        },
                         'message' => 'Only alpha numeric chars with accents.'
                     ]
         ]);

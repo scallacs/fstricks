@@ -22,7 +22,7 @@ angular.module('app.player', [
         .controller('ViewValidationController', ViewValidationController)
         .controller('StartValidationController', StartValidationController)
         .controller('ViewPlaylistController', ViewPlaylistController)
-        .controller('DashboardController', DashboardController)
+        .controller('MyTricksController', MyTricksController)
         .controller('ManagePlaylistController', ManagePlaylistController)
         .controller('EditPlaylistController', EditPlaylistController)
         .controller('ModalPlaylistController', ModalPlaylistController);
@@ -48,10 +48,10 @@ function ConfigRoute($stateProvider) {
                     pageLoader: false
                 }
             })
-            .state('dashboard', {
+            .state('mytricks', {
                 url: '/my-tricks',
-                controller: 'DashboardController',
-                templateUrl: baseUrl + 'dashboard.html',
+                controller: 'MyTricksController',
+                templateUrl: baseUrl + 'my-tricks.html',
                 data: {
                     requireLogin: true,
                     pageLoader: true
@@ -182,8 +182,8 @@ function ConfigRoute($stateProvider) {
 //            });
 }
 
-DashboardController.$inject = ['$scope', 'PaginateDataLoader', 'SharedData', '$state', 'VideoTagEntity', 'ApiFactory'];
-function DashboardController($scope, PaginateDataLoader, SharedData, $state, VideoTagEntity, ApiFactory) {
+MyTricksController.$inject = ['$scope', 'PaginateDataLoader', 'SharedData', '$state', 'VideoTagEntity', 'ApiFactory'];
+function MyTricksController($scope, PaginateDataLoader, SharedData, $state, VideoTagEntity, ApiFactory) {
 
     $scope.removeOptions = {
         trigger: '.btn-remove-item',

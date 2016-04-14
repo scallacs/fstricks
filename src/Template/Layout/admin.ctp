@@ -1,47 +1,25 @@
-
 <!DOCTYPE html>
-<html>
+<html ng-app="app.admin">
     <head>
         <?= $this->Element('Common/head'); ?>
         <?= $this->Element('Common/scripts'); ?>
 
-        <?php if (!\Cake\Core\Configure::read('concat_js')) { ?>
+        <meta charset="utf-8">
+        <title>Freestyle Tricks Administration</title>
 
-            <?= $this->Html->script('admin/app.admin.module.js'); ?>
-            <?= $this->Html->script('admin/app.admin.api.js'); ?>
-            <?= $this->Html->script('admin/app.admin.routes.js'); ?>
-            <?= $this->Html->script('admin/dashboard/dashboard.controller.js'); ?>
-            <?= $this->Html->script('admin/video-tags/video-tags.controller.js'); ?>
+        <?= $this->Html->script('components.js'); ?>
+        <?= $this->Html->script('components/ng-admin/build/ng-admin.min.js'); ?>
+        <?= $this->Html->css('/js/components/ng-admin/build/ng-admin.min.css'); ?>
+        <?= $this->Html->script(\Cake\Core\Configure::read('admin_hidden_prefix') . '.js'); ?>
 
-        <?php } else { ?>
-            <?= $this->Html->script('moFEJPQQS320909j2309923II2ODI2993.js'); ?>
-        <?php } ?>
-
-        <script>
-            var ADMIN_API_BASE_URL = '<?= \Cake\Routing\Router::url('/admin/api', true); ?>';
-            var ADMIN_TEMPLATE_URL = '<?= \Cake\Routing\Router::url('/views/moFEJPQQS320909j2309923II2ODI2993/', true); ?>';
+        <script type="text/javascript">
+            var ADMIN_API_BASE_URL = '<?= \Cake\Routing\Router::url('/admin/api/', true); ?>';
+            var ADMIN_TEMPLATE_URL = '<?= \Cake\Routing\Router::url('/views/' . \Cake\Core\Configure::read('admin_hidden_prefix'), true) . '/'; ?>';
         </script>
 
-        <?= $this->fetch('meta') ?>
-        <?= $this->fetch('css') ?>
-        <?= $this->fetch('script') ?>
-        
-        
-
     </head>
-    <body ng-app="app.admin" ng-controller="MainAdminController as main" id="ng-app">
-        <base href="<?= \Cake\Routing\Router::url('/admin/'); ?>"/>
-        <toaster-container toaster-options="{'close-button': true}"></toaster-container>
-        <?= $this->Element('Admin/header'); ?>
-
-        <div id="container" style="position: relative;" class="clearfix">
-
-            <div page-loader is-loading="SharedData.loadingState"></div>
-
-            <div id="content">
-                <div ui-view></div>
-            </div>
-        </div>
-        <?= $this->Element('Admin/footer'); ?>
-    </body>
+    <body>
+    <base href="<?= \Cake\Routing\Router::url('/admin/'); ?>"/>
+    <div ui-view></div>
+</body>
 </html>

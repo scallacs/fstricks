@@ -65,16 +65,21 @@ class RidersTable extends Table {
 
         $listener = new \App\Event\UpdatePictureListener();
         $this->eventManager()->on($listener);
+    }
 
-        if (method_exists($this, 'searchManager')) {
-            $this->searchManager()
-//                ->add('user_id', 'Search.Value')
-                    ->add('q', 'Search.Like', [
-                        'before' => true,
-                        'after' => true,
-                        'field' => [$this->aliasField('firstname'), $this->aliasField('lastname')]
-            ]);
-        }
+    public function initFilters($type = 'default') {
+        $this->addBehavior('Search.Search');
+
+        $this->searchManager()
+                ->add('user_id', 'Search.Value')
+                ->add('category_id', 'Search.Value')
+                ->add('sport_id', 'Search.Value')
+                ->add('status', 'Search.Value')
+                ->add('q', 'Search.Like', [
+                    'before' => true,
+                    'after' => true,
+                    'field' => [$this->aliasField('firstname'), $this->aliasField('lastname')]
+        ]);
     }
 
     /**
@@ -95,14 +100,14 @@ class RidersTable extends Table {
                 ->requirePresence('nationality', 'create')
                 ->add('nationality', 'custom', [
                     'rule' => function ($value, $context) {
-                $countries = JsonConfigHelper::countries();
-                foreach ($countries as $county) {
-                    if ($county['code'] === $value) {
-                        return true;
-                    }
-                }
-                return false;
-            },
+                        $countries = JsonConfigHelper::countries();
+                        foreach ($countries as $county) {
+                            if ($county['code'] === $value) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    },
                     'message' => 'Choose a valid nationality'
         ]);
 
@@ -136,14 +141,14 @@ class RidersTable extends Table {
 
         $validator
                 ->add('level', 'valid', ['rule' => function ($value) {
-                $levels = JsonConfigHelper::rules("riders", "level", "values");
-                foreach ($levels as $level) {
-                    if ($level['code'] == $value) {
-                        return true;
-                    }
-                }
-                return false;
-            }])
+                        $levels = JsonConfigHelper::rules("riders", "level", "values");
+                        foreach ($levels as $level) {
+                            if ($level['code'] == $value) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }])
                 ->requirePresence('level', 'create')
                 ->notEmpty('level');
 

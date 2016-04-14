@@ -20,6 +20,8 @@ class UsersController extends AppController {
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
         $this->Auth->allow(['login']);
+        
+        $this->Users->initFilters('admin');
     }
     
 
@@ -29,7 +31,8 @@ class UsersController extends AppController {
 
     public function index() {
         $this->Paginator->config(Configure::read('Pagination.Users'));
-        $query = $this->Users->find('all');
+        $query = $this->Users
+                ->find('search', $this->Users->filterParams($this->request->query));
         ResultMessage::paginate($query, $this);
     }
     

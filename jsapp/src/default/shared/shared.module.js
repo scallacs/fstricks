@@ -1,4 +1,4 @@
-angular.module('shared', ['app.config', 'ui.bootstrap'])
+angular.module('shared', ['ui.bootstrap', 'app.config'])
     .filter('imageUrl', imageUrl)
     .filter('sportIconUrl', sportIconUrl);
 

@@ -49,6 +49,23 @@ class UsersTable extends TableWithTags {
         $this->hasMany('Playlists', [
             'foreignKey' => 'user_id'
         ]);
+
+//        if (method_exists($this, 'searchManager')) {
+//        }
+    }
+
+    public function initFilters($type = 'default') {
+        $this->addBehavior('Search.Search');
+
+        $this->searchManager()
+                ->add('status', 'Search.Value', [
+                    'field' => $this->aliasField('status')
+                ])
+                ->add('q', 'Search.Like', [
+                    'before' => true,
+                    'after' => true,
+                    'field' => [$this->aliasField('username'), $this->aliasField('email')]
+        ]);
     }
 
     /**
@@ -85,8 +102,8 @@ class UsersTable extends TableWithTags {
                     ],
                     'allowedChars' => [
                         'rule' => function($value, $context) {
-                    return !preg_match(JsonConfigHelper::rules('users', 'username', 'regex'), $value);
-                },
+                            return !preg_match(JsonConfigHelper::rules('users', 'username', 'regex'), $value);
+                        },
                         'message' => 'Only alpha numeric chars with accents.'
             ]])
                 ->add('username', 'unique', [
@@ -180,23 +197,23 @@ class UsersTable extends TableWithTags {
         }
         return $data;
     }
-    
-    
-    public function search($q, $limit = 10){
+
+    public function search($q, $limit = 10) {
         return $this->find('all')
-                ->where([
-                    'Users.username LIKE ' => '%'.$q.'%'
-                ])
-                ->limit($limit);
+                        ->where([
+                            'Users.username LIKE ' => '%' . $q . '%'
+                        ])
+                        ->limit($limit);
     }
 
     public function beforeSave($event, $entity, $options) {
-        if ($entity->isNew()){
+        if ($entity->isNew()) {
             $entity->playlists = [];
             $tablePlaylists = \Cake\ORM\TableRegistry::get('Playlists');
-            foreach (\Cake\Core\Configure::read('Users.default_playlists') as $data){
+            foreach (\Cake\Core\Configure::read('Users.default_playlists') as $data) {
                 $entity->playlists[] = $tablePlaylists->newEntity($data);
             }
         }
     }
+
 }

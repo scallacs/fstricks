@@ -22,7 +22,6 @@ class VideoTagsTable extends Table {
     const MAX_TAG_DURATION = 40;
     const SIMILARITY_RATIO_THRESHOLD = 0.6;
     const SIMILARITY_PRECISION_SECONDS = 2;
-    
     const CACHE_GROUP_TRENDING = 'videotagstrending';
 
     /**
@@ -58,6 +57,23 @@ class VideoTagsTable extends Table {
         $this->hasMany('VideoTagAccuracyRates', [
             'foreignKey' => 'video_tag_id'
         ]);
+    }
+
+    public function initFilters($mode = 'default') {
+
+        $this->addBehavior('Search.Search');
+        $this->searchManager()
+                ->add('user_id', 'Search.Value')
+                ->add('sport_id', 'Search.Value')
+                ->add('category_id', 'Search.Value')
+                ->add('status', 'Search.Value', [
+                    'field' => $this->aliasField('status')
+        ]);
+//                    ->add('q', 'Search.Like', [
+//                        'before' => true,
+//                        'after' => true,
+//                        'field' => [$this->aliasField('name')]
+//            ]);
     }
 
     public function findTrending($limit = 5) {
@@ -354,8 +370,8 @@ class VideoTagsTable extends Table {
             ]);
         }
     }
-    
-    public function updateSlug($id){
+
+    public function updateSlug($id) {
         $entity = $this->get($id, [
             'contain' => ['Riders', 'Tags']
         ]);

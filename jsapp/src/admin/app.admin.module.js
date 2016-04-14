@@ -1,32 +1,23 @@
 angular.module('app.admin', [
     'ngResource',
+    'ng-admin', 
     'ui.router',
     'app.core',
     'app.player',
-    'app.config',
     'app.tag',
     'app.rider',
     'toaster',
     'satellizer',
-    'app.account', // Required by form-video-tag !!???
-    'toaster'
+    'shared',
+//    'app.account', // Required by form-video-tag !!???
+    'toaster',
+    'app.admin.util'
 ])
         .config(ConfigInterceptor)
-        .controller('ModalInstanceCtrl', ModalInstanceCtrl)
         .controller('MainAdminController', MainAdminController)
         .controller('LogoutController', LogoutController)
         .run(Run);
 
-ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance'];
-function ModalInstanceCtrl($scope, $uibModalInstance) {
-    $scope.ok = function() {
-        $uibModalInstance.close('close');
-    };
-
-    $scope.cancel = function() {
-        $uibModalInstance.dismiss('cancel');
-    };
-}
 
 MainAdminController.$inject = ['$scope', 'PlayerData', 'VideoTagData', 'SharedData', 'AuthenticationService', '$state', 'Config'];
 function MainAdminController($scope, PlayerData, VideoTagData, SharedData, AuthenticationService, $state, Config) {
@@ -91,7 +82,6 @@ function Run($rootScope, AuthenticationService, $state, SharedData) {
 ConfigInterceptor.$inject = ['$httpProvider', '$locationProvider'];
 function ConfigInterceptor($httpProvider, $locationProvider) {
     'use strict';
-    //$locationProvider.html5Mode(true).hashPrefix('!');
     $locationProvider.html5Mode(true);
     var interceptor = ['$rootScope', '$q', '$injector', '$timeout',
         function(scope, $q, $injector, $timeout) {

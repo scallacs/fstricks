@@ -1,10 +1,8 @@
 angular.module('app.admin')
-        .controller('VideoTagsController', VideoTagsController)
-        .controller('VideoTagIndexController', VideoTagIndexController)
+//        .controller('VideoTagsController', VideoTagsController)
+        //.controller('VideoTagIndexController', VideoTagIndexController)
         .controller('VideoTagEditController', VideoTagEditController);
 
-function VideoTagsController() {
-}
 
 VideoTagIndexController.$inject = ['$scope', 'AdminApiFactory', 'SharedData', 'toaster', 'PaginateDataLoader'];
 function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, PaginateDataLoader) {
@@ -130,12 +128,12 @@ function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, P
     }
 }
 
-VideoTagEditController.$inject = ['$scope', 'SharedData', '$stateParams', 'AdminApiFactory', 'VideoEntity', 'EditionTag', '$state', 'VideoTagData', 'PlayerData'];
-function VideoTagEditController($scope, SharedData, $stateParams, AdminApiFactory, VideoEntity, EditionTag, $state, VideoTagData, PlayerData) {
+VideoTagEditController.$inject = ['$scope', 'Restangular', 'SharedData', '$stateParams', 'AdminApiFactory', 'VideoEntity', 'EditionTag', '$state', 'VideoTagData', 'PlayerData'];
+function VideoTagEditController($scope, Restangular, SharedData, $stateParams, AdminApiFactory, VideoEntity, EditionTag, $state, VideoTagData, PlayerData) {
     SharedData.pageLoader(false);
     $scope.user = false;
 
-    var id = $stateParams.videoTagId;
+    var id = $stateParams.id;
 
     EditionTag.prototype.callApi = function(name, params) {
         switch (name) {
@@ -166,8 +164,10 @@ function VideoTagEditController($scope, SharedData, $stateParams, AdminApiFactor
 ////            .setFilter('with_pending', true)
 ////            .setFilter('video_id', $stateParams.videoId);
 //
-    var videoTagsEndpoint = AdminApiFactory.endpoint('VideoTags', 'view', id);
-    videoTagsEndpoint.get().$promise
+   Restangular
+            .setBaseUrl(ADMIN_API_BASE_URL)
+            .one('video-tags', id)
+            .get()
             .then(function(result) {
                 console.log(result);
                 $scope.video = {

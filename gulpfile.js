@@ -138,9 +138,6 @@ gulp.task('concat-js', function() {
 
 gulp.task('concat-js-admin', function() {
     gulp.src([
-        '!' + ADMIN_APP + '*.spec.js',
-        '!' + ADMIN_APP + '**/*.spec.js',
-        '!' + ADMIN_APP + '**/**/*.spec.js',
         ADMIN_APP + '**/*.module.js',
         ADMIN_APP + '**/*.js',
         ADMIN_APP + 'app.admin.module.js',
