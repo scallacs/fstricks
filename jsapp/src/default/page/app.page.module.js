@@ -48,6 +48,15 @@ function ConfigRoute($stateProvider) {
                     requireLogin: false,
                     loader: true
                 }
+            })
+            .state('index', {
+                url: '/index.html',
+                templateUrl: baseUrl + '/home.html',
+                controller: 'HomeController',
+                data: {
+                    requireLogin: false,
+                    loader: true
+                }
             });
 }
 
