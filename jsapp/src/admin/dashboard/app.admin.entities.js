@@ -456,39 +456,30 @@ function Config(nga) {
                 nga.field('_duration', 'number')
                         .label('Duration')
                         .map(function (val, data) {
-                            if (!data) return 0;
-                            val = Math.round((data.end - data.begin)*100.0);
+                            if (!data)
+                                return 0;
+                            val = Math.round((data.end - data.begin) * 100.0);
                             return val / 100.0;
                         })
                         .cssClasses(function (entry) {
-                            if (!entry) return;
-                            if (entry.values._duration <= 2 || entry.values._duration >= 44){
+                            if (!entry)
+                                return;
+                            if (entry.values._duration <= 2 || entry.values._duration >= 44) {
                                 return 'bg-danger';
                             }
                             else {
                                 return 'bg-success';
                             }
                         }),
-                nga.field('tag_id', 'reference')
-                        .targetEntity(tag)
-                        .targetField(nga.field('name'))
-                        .label('Trick'),
-//                nga.field('created').map(timeago),
+                nga.field('tag_name').label('Tag'),
                 nga.field('modified').map(timeago),
                 nga.field('provider_id').label('Provider'),
-//                nga.field('video_id', 'reference')
-//                        .targetEntity(video)
-//                        .targetField(nga.field('video_url'))
-//                        .label('Video'),
-                nga.field('rider_id', 'reference')
-                        .targetEntity(rider)
-//                        .targetReferenceField('rider_id') 
-//                        .targetFields([nga.field('firstname'), nga.field('lastname')])
-                        .targetField(nga.field('lastname'))
+                nga.field('rider_name')
                         .label('Rider')
                         .cssClasses(function (entry) {
-                            if (!entry) return;
-                            if (!entry.values.rider_id){
+                            if (!entry)
+                                return;
+                            if (!entry.values.rider_id) {
                                 return 'bg-danger';
                             }
                             else {
@@ -504,8 +495,9 @@ function Config(nga) {
                         .targetField(nga.field('username'))
                         .label('User')
                         .cssClasses(function (entry) {
-                            if (!entry) return;
-                            if (!entry.values.user_id){
+                            if (!entry)
+                                return;
+                            if (!entry.values.user_id) {
                                 return 'bg-danger';
                             }
                             else {
@@ -541,11 +533,28 @@ function Config(nga) {
                         .targetEntity(user)
                         .targetField(nga.field('username'))
                         .label('User')
+                        .remoteComplete(true, {
+                            refreshDelay: 500,
+                            searchQuery: function (search) {
+                                return {q: search};
+                            }
+                        })
+                        .remoteComplete(true)
                         .pinned(false),
                 nga.field('rider_id', 'reference')
                         .targetEntity(rider)
-                        .targetField(nga.field('lastname'))
+                        .targetField(nga.field('_fullname')
+                            .map(function(val, data){
+                                if (!data) return '';
+                                return data.firstname + ' ' + data.lastname + ' ' + data.nationality;
+                            }))
                         .label('Rider')
+                        .remoteComplete(true, {
+                            refreshDelay: 500,
+                            searchQuery: function (search) {
+                                return {q: search};
+                            }
+                        })
                         .pinned(false),
                 nga.field('sport_id', 'reference')
                         .targetEntity(sport)

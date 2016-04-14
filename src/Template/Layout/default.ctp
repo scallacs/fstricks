@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="app" ng-controller="MainController as main" id="ng-app">
+<html ng-app="app" ng-controller="MainController as main" id="ng-app" ng-strict-di>
     <head>
         <?= $this->Element('Common/head'); ?>
         <?= $this->Element('Common/scripts'); ?>

@@ -45,16 +45,16 @@
             </h3>
             <form id="FormAddVideoTag"
                   class="form padding-sm" 
+                  server-form
                   name="formAddVideoTag" 
                   novalidate 
-                  ng-submit="saveVideoTag(editionTag)"
-                  server-form>
+                  ng-submit="saveVideoTag(editionTag)">
 
                 <fieldset >
 
                     <div class="clearfix"
                          ng-class="{ 'has-error' : (formAddVideoTag.begin.$invalid && formAddVideoTag.username.$dirty)
-                             || (formAddVideoTag.end.$invalid && formAddVideoTag.end.$dirty)}">
+                                     || (formAddVideoTag.end.$invalid && formAddVideoTag.end.$dirty)}">
                         <div class="form-group col-md-12 col-sm-6 clearfix">
 
                             <label class="control-label col-xs-3">Start time</label>
@@ -135,16 +135,16 @@
                                 <button class="btn btn-sm" 
                                         type="button"
                                         ng-click="playerData.startLooping()"
-                                        ng-class="playerData.looping ? 'btn-primary' : 'btn-default'">
+                                        ng-class="playerData.looping ? 'btn-primary' : 'btn - default'">
                                     <span class="glyphicon glyphicon-repeat text-big" title="Repeating trick"></span> 
-                                    <!--&nbsp; Repeat time range-->
+                                    &nbsp; Repeat trick
                                 </button>
                                 <button class="btn btn-sm" 
                                         type="button"
                                         ng-click="playerData.stopLooping()"
-                                        ng-class="!playerData.looping ? 'btn-primary' : 'btn-default'">
+                                        ng-class="!playerData.looping ? 'btn-primary' : 'btn - default'">
                                     <span class="glyphicon glyphicon-play text-big" title="Playing video"></span> 
-                                    <!--&nbsp; Play video normally-->
+                                    &nbsp; Play video
                                 </button>
                             </div>
                         </div>
@@ -262,6 +262,22 @@
                                 </button>
                             </div>
                         </div>
+
+
+                        <div class="form-group clearfix" ng-if="editionTag._role === 'admin'">
+                            <div class="form-group col-md-12 col-sm-6 clearfix">
+                                <label class="control-label col-xs-3">Status</label>
+                                <div  class="col-xs-8">
+                                    <select
+                                        ng-model="editionTag._video_tag.status"
+                                        name="status"
+                                        class="form-control"
+                                        servererror
+                                        ng-options="status.value as status.label for status in [{label:'validated', value:'validated'}, {label: 'pending', value:'pending'}, {label: 'rejected', value:'rejected'}]">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <p 
@@ -284,9 +300,9 @@
                         Please correct them. 
                     </p>
 
-                    <p ng-if="editionTag.isEditabled() && 
-                       !editionTag.isNew() && 
-                       editionTag._video_tag.status === 'pending'"
+                    <p ng-if="editionTag.isEditabled() &&
+                                            !editionTag.isNew() &&
+                                            editionTag._video_tag.status === 'pending'"
                        class="padding-sm margin-top text-center text-bold text-info">
                         <span class="glyphicon glyphicon-warning-sign"></span>
                         This trick is being validated. If you make changes, the validation process 

@@ -9,6 +9,7 @@ angular.module('app.admin', [
     'toaster',
     'satellizer',
     'shared',
+    'shared.form',
     'ui.bootstrap',
 //    'app.account', // Required by form-video-tag !!???
     'toaster',

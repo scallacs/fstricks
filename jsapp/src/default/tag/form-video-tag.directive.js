@@ -129,6 +129,10 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
     $scope.$watch('editionTag._extra.rider', function() {
         editionTag.syncRider();
     });
+    
+    $scope.$watch('formAddVideoTag', function(newVal){
+        editionTag._form = newVal;
+    });
 
     init();
 
@@ -144,12 +148,7 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
         editionTag.resetOriginal();
     }
     function deleteTag(editionTag) {
-        var promise = editionTag.remove();
-        if ($scope.formAddVideoTag.submit){
-            $scope.formAddVideoTag.submit(promise, 'button[name="button_remove"]');
-        }
-
-        promise.then(function(response) {
+        editionTag.remove().then(function(response) {
             if (response.success) {
                 VideoTagData.getLoader()
                         .remove(editionTag.getId());
@@ -182,7 +181,7 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
     function saveVideoTag(editionTag) {
         var isNew = editionTag.isNew();
 
-        editionTag.save($scope.formAddVideoTag)
+        editionTag.save()
                 .then(function(response) {
                     $scope.similarTags = [];
 

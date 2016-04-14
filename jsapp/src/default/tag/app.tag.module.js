@@ -130,11 +130,17 @@ function EditionTag() {
         remove: remove,
         callApi: callApi,
         hasApi: hasApi,
-        moveForward: moveForward
+        moveForward: moveForward,
+        onApiCall: onApiCall
     };
 
+    function onApiCall(name, fct){
+        this._apiMap[name] = fct;
+        return this;
+    }
+
     function remove() {
-        return this.callApi('delete', {id: this.getId()}).$promise;
+        return this.callApi('delete', {id: this.getId()});
     }
     function isOwner() {
         return this._user_id === this._video_tag.user_id;
@@ -153,7 +159,8 @@ function EditionTag() {
                 || ((a.tag_id && a.tag_id !== b.tag_id) || (!a.tag_id && a.tag_name !== b.tag_name))
                 || a.rider_id !== b.rider_id
                 || a.category_id !== b.category_id 
-                || a.video_id !== b.video_id;
+                || a.video_id !== b.video_id
+                || a.status !== b.status;
     }
 
     function setStatus(val) {
@@ -174,13 +181,10 @@ function EditionTag() {
         return this._apiCall[name] == true;
     }
 
-
-    function save(form) {
-        console.log(form);
+    function save() {
         var self = this;
         if (this.isNew()) {
-            var promise = this.callApi('add', this.toPostData()).$promise;
-            form.submit(promise);
+            var promise = this.callApi('add', this.toPostData());
             promise
                     .then(function(response) {
                         if (response.success) {
@@ -193,8 +197,7 @@ function EditionTag() {
             return promise;
         }
         else {
-            var promise = this.callApi('edit', this.toPostData()).$promise;
-            form.submit(promise);
+            var promise = this.callApi('edit', this.toPostData());
             promise.then(function(response) {
                 if (response.success) {
                     angular.copy(self._video_tag, self._original);

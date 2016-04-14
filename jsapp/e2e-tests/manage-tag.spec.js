@@ -14,7 +14,7 @@ describe('Manage tags: ', function() {
     });
 
     beforeEach(function() {
-        nav.navigateTo('dashboard');
+        nav.navigateTo('mytricks');
     });
 
     it('Should be possible to change tabs', function() {

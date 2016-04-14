@@ -63,15 +63,24 @@ class VideoTagsTable extends Table {
 
         $this->addBehavior('Search.Search');
         $this->searchManager()
-                ->add('user_id', 'Search.Value')
-                ->add('sport_id', 'Search.Value')
-                ->add('category_id', 'Search.Value')
+                ->add('user_id', 'Search.Value', [
+                    'field' => $this->aliasField('user_id')
+                ])
+                ->add('rider_id', 'Search.Value', [
+                    'field' => $this->aliasField('rider_id')
+                ])
+                ->add('sport_id', 'Search.Value', [
+                    'field' => 'Tags.sport_id'
+                ])
+                ->add('category_id', 'Search.Value', [
+                    'field' => 'Tags.category_id'
+                ])
                 ->add('min_duration', 'Search.Compare', [
-                    'field' => $this->aliasField('end').' - '. $this->aliasField('begin'),
+                    'field' => $this->aliasField('end') . ' - ' . $this->aliasField('begin'),
                     'operator' => '>='
                 ])
                 ->add('max_duration', 'Search.Compare', [
-                    'field' => $this->aliasField('end').' - '. $this->aliasField('begin'),
+                    'field' => $this->aliasField('end') . ' - ' . $this->aliasField('begin'),
                     'operator' => '<='
                 ])
                 ->add('status', 'Search.Value', [

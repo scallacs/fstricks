@@ -4,172 +4,39 @@ angular.module('app.admin')
         .controller('VideoTagEditController', VideoTagEditController);
 
 
-VideoTagIndexController.$inject = ['$scope', 'AdminApiFactory', 'SharedData', 'toaster', 'PaginateDataLoader'];
-function VideoTagIndexController($scope, AdminApiFactory, SharedData, toaster, PaginateDataLoader) {
-    $scope.removeOptions = {trigger: '.btn-remove-item', endpoint: AdminApiFactory.endpoint('VideoTags', 'delete').save, confirm: true, wait: false};
-    $scope.refreshUsers = refreshUsers;
-    $scope.isSearchCollapsed = true;
-    $scope.search = {
-        status: {'pending': true, 'rejected': false, 'validated': false, 'blocked': false},
-        sports: {},
-        user: null,
-        order: 'modified'
-    };
-    $scope.orders = [
-        {code: 'modified', label: 'Modified'},
-        {code: 'created', label: 'created'},
-        {code: 'best', label: 'best'}
-    ];
 
-    $scope.computeRatio = computeRatio;
-    $scope.validateVideoTag = validateVideoTag;
-    $scope.rejectVideoTag = rejectVideoTag;
-    $scope.blockVideoTag = blockVideoTag;
-    $scope.submitSearch = submitSearch;
-    $scope.loadMore = loadMore;
-
-    $scope.videoTags = [];
-
-    SharedData.onReady(function() {
-        $scope.sports = SharedData.sports;
-        angular.forEach(SharedData.sports, function(data) {
-            $scope.search.sports[data.id] = true;
-        });
-    });
-
-    var api = AdminApiFactory.api();
-    var dataLoader = PaginateDataLoader.create(AdminApiFactory.endpoint('VideoTags', 'index').get);
-    dataLoader.setMode('append');
-
-    submitSearch($scope.search);
-
-    function submitSearch(search) {
-        updateFilters(search);
-        dataLoader
-                .startLoading()
-                .then(function(results) {
-                    $scope.videoTags = results.items;
-                    SharedData.pageLoader(false);
-                });
-    }
-
-    function loadMore() {
-        dataLoader.loadNextPage();
-    }
-
-    function updateFilters(s) {
-        console.log(s);
-        dataLoader.init();
-        if (s.user) {
-            dataLoader.setFilter('user_id', s.user.id);
-        }
-        var selected = [];
-        angular.forEach(s.status, function(isSelected, name) {
-            if (isSelected) {
-                selected.push(name);
-            }
-        });
-        dataLoader.setFilter('status', selected.join());
-
-        var selected = [];
-        var allSelected = true;
-        angular.forEach(s.sports, function(isSelected, sportId) {
-            if (isSelected) {
-                selected.push(sportId);
-            }
-            allSelected = allSelected && isSelected;
-        });
-        if (!allSelected) {
-            dataLoader.setFilter('sports', selected.join());
-        }
-        
-        dataLoader.setFilter('order', $scope.search.order);
-    }
-
-    function computeRatio(videoTag) {
-        var total = videoTag.count_fake + videoTag.count_accurate;
-        if (total === 0) {
-            return 0;
-        }
-        return videoTag.count_accurate * 100 / (videoTag.count_fake + videoTag.count_accurate);
-    }
-
-    function refreshUsers(term) {
-        if (term.length >= 2) {
-            api.query('Users', 'search', {q: term})
-                    .then(function(users) {
-                        $scope.users = users;
-                    });
-        }
-    }
-
-    function validateVideoTag(videoTag) {
-        _changeStatusVideoTag(videoTag, 'validated');
-    }
-
-    function rejectVideoTag(videoTag) {
-        _changeStatusVideoTag(videoTag, 'rejected');
-    }
-    function blockVideoTag(videoTag) {
-        _changeStatusVideoTag(videoTag, 'blocked');
-    }
-
-    function _changeStatusVideoTag(videoTag, status) {
-        api.save('VideoTags', 'edit', {_id: videoTag.id, status: status})
-                .then(function(results) {
-                    if (results.success) {
-                        videoTag.status = status;
-                        toaster.pop('success', results.message);
-                    }
-                    else {
-                        toaster.pop('failure', results.message);
-                    }
-                });
-    }
-}
-
-VideoTagEditController.$inject = ['$scope', 'Restangular', 'SharedData', '$stateParams', 'AdminApiFactory', 'VideoEntity', 'EditionTag', '$state', 'VideoTagData', 'PlayerData'];
-function VideoTagEditController($scope, Restangular, SharedData, $stateParams, AdminApiFactory, VideoEntity, EditionTag, $state, VideoTagData, PlayerData) {
+VideoTagEditController.$inject = ['$scope', '$location', 'Restangular', 'SharedData', '$stateParams', 'EditionTag', '$state', 'VideoTagData', 'PlayerData'];
+function VideoTagEditController($scope, $location, Restangular, SharedData, $stateParams, EditionTag, $state, VideoTagData, PlayerData) {
+    var restApi = Restangular.setBaseUrl(ADMIN_API_BASE_URL);
+    
     SharedData.pageLoader(false);
     $scope.user = false;
-
     var id = $stateParams.id;
 
-    EditionTag.prototype.callApi = function(name, params) {
-        switch (name) {
-            case 'delete':
-                params = {_id: params.id};
-                break;
-            case 'edit':
-                params._id = params.id;
-                break;
-        }
-        return this._apiMap[name](params);
-    };
-
-    $scope.editionTag = new EditionTag(null, {
-        'edit': AdminApiFactory.endpoint('VideoTags', 'edit').save,
-        'add': AdminApiFactory.endpoint('VideoTags', 'add').save,
-        'delete': AdminApiFactory.endpoint('VideoTags', 'delete').save
-    }, 'admin', {
+    var editionTag = new EditionTag(null, {}, 'admin', {
         min_duration: 2,
         max_duration: 40, 
         similar_tag_limit_ratio: 0.6
     });
-//
-////    PlayerData.showEditionMode();
-////    PlayerData.showListTricks = false;
-////    VideoTagData.reset();
-////    VideoTagData.getLoader()
-////            .setFilter('with_pending', true)
-////            .setFilter('video_id', $stateParams.videoId);
-//
-   Restangular
-            .setBaseUrl(ADMIN_API_BASE_URL)
+    
+    editionTag
+        .onApiCall('add', function(data){
+            return editionTag._form.submit(restApi.all('video-tags').customPOST(data));
+        })
+        .onApiCall('edit', function(data){
+            return editionTag._form.submit(restApi.one('video-tags', data.id).customPUT(data));
+        })
+        .onApiCall('delete', function(data){
+            return editionTag._form.submit(restApi.one('video-tags', data.id).remove());
+        });
+        
+    $scope.editionTag = editionTag;
+    
+    restApi
             .one('video-tags', id)
             .get()
             .then(function(result) {
-                console.log(result);
+                if (result.statusText) result = result.data; // TODO change quick fix
                 $scope.video = {
                     video_url: result.video_url,
                     id: result.video_id,
@@ -192,21 +59,18 @@ function VideoTagEditController($scope, Restangular, SharedData, $stateParams, A
                 SharedData.pageLoader(false);
             })
             .catch(function() {
-                // TODO
-//               $state.go('notfound');
+               $location.path('/video-tags/list');
             });
 
     function loadUser(id) {
-        var usersEndpoint = AdminApiFactory.endpoint('Users', 'view', id).get;
-        usersEndpoint().$promise.then(function(result) {
+        restApi.one('users', id).get().then(function(result) {
             console.log(result);
             $scope.user = result;
         });
     }
-    ;
-
+    
     $scope.$on('on-video-tag-remove', function() {
-        $state.$go('videotags.index');
+        $location.path('/video-tags/list');
     });
 }
 

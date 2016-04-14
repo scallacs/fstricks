@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="app.admin">
+<html ng-app="app.admin" ng-strict-di>
     <head>
         <meta charset="utf-8">
         <title>Freestyle Tricks Administration</title>
