@@ -1,19 +1,17 @@
-<p>
-    <a ui-sref="videotag.index"><span class="glyphicon glyphicon-arrow-left"></span></a>
-</p>
-<div class="padding-sm bg-primary">
-    <p ng-if="!user" class="text-danger">
-        Author does not exists anymore
-    </p>
-    <div ng-if="user" user-item="user"></div>
-</div>
-<div>
-    <div class="clearfix bg-primary row" form-video-tag video="video" edition-tag="editionTag"></div>
-</div>
+<div class="row">
+    <div class="clearfix row" form-video-tag video="video" edition-tag="editionTag"></div>
 
-<p>
-    {{video}}
-</p>
-<p>
-    {{editionTag}}  
-</p>
+    <div class="padding-sm">
+        <p ng-if="!user" class="text-danger text-bold">
+            Author does not exists anymore
+        </p>
+        <div ng-if="user" user-item="user"></div>
+    </div>
+
+    <p>
+        {{video}}
+    </p>
+    <p>
+        {{editionTag}}  
+    </p>
+</div> 
