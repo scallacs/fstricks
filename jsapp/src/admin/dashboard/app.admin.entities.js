@@ -463,7 +463,7 @@ function Config(nga) {
                         .cssClasses(function (entry) {
                             if (!entry) return;
                             if (entry.values._duration <= 2 || entry.values._duration >= 44){
-                                return 'bg-error';
+                                return 'bg-danger';
                             }
                             else {
                                 return 'bg-success';
@@ -489,7 +489,7 @@ function Config(nga) {
                         .cssClasses(function (entry) {
                             if (!entry) return;
                             if (!entry.values.rider_id){
-                                return 'bg-error';
+                                return 'bg-danger';
                             }
                             else {
                                 return '';
@@ -506,7 +506,7 @@ function Config(nga) {
                         .cssClasses(function (entry) {
                             if (!entry) return;
                             if (!entry.values.user_id){
-                                return 'bg-error';
+                                return 'bg-danger';
                             }
                             else {
                                 return '';
