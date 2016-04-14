@@ -20,7 +20,7 @@ angular
         .factory('VideoTagAccuracyRateEntity', VideoTagAccuracyRateEntity)
         .directive('notifyOnLoad', NotifyOnLoad)
         .filter('searchCategory', searchCategory)
-        .filter('getSportByName', getSportByName)
+        .filter('getByProperty', getByProperty)
         .filter('trickListFilter', trickListFilter);
 
 NotifyOnLoad.$inject = ['$rootScope', '$timeout'];
@@ -712,11 +712,11 @@ function searchCategory() {
 
 }
 
-function getSportByName() {
-    return function(sports, name) {
-        for (var i = 0; i < sports.length; i++) {
-            var item = sports[i];
-            if (item.name == name) {
+function getByProperty() {
+    return function(collection, value, attr) {
+        for (var i = 0; i < collection.length; i++) {
+            var item = collection[i];
+            if (item[attr] === value) {
                 return item;
             }
         }

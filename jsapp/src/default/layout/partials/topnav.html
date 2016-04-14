@@ -18,10 +18,10 @@
                 All sports
             </a>
             <ul class="dropdown-menu" id="DropDownMenuSports">
-                <li><a ui-sref="videoplayer.sport({sportName: 'all', category: null, q: null})" 
+                <li><a ui-sref="videoplayer.sport({sportSlug: 'all', category: null, q: null})" 
                        ng-click="SharedData.setCurrentSport(null)">All sports</a></li>
                 <li ng-repeat="sport in sports">
-                    <a ui-sref="videoplayer.sport({sportName: sport.name, category: null, q: null})" 
+                    <a ui-sref="videoplayer.sport({sportSlug: sport.slug, category: null, q: null})" 
                        ng-click="SharedData.setCurrentSport(sport)">
                         <img ng-src="{{sport.slug | sportIconUrl}}"> &nbsp;
                         {{sport.name}}

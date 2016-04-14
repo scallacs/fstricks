@@ -6,7 +6,7 @@
         class="nav nav-pills nav-justified text-big margin-bottom margin-top text-capitalize">
         <li class="bg-primary-darker"
             ng-class="{active: SharedData.currentCategory === null}">
-            <a href="#" 
+            <a ui-sref="videoplayer.sport({category: null})"
                ng-click="setCategory(null)">
                 All 
             </a>
@@ -14,8 +14,8 @@
         <li class="bg-primary-darker" 
             ng-repeat="category in SharedData.currentSport.categories"
             ng-class="{active: SharedData.currentCategory.id === category.id}">
-            <a href="#" 
-               ng-click="setCategory(category)">
+            <a  ui-sref="videoplayer.sport({category: category.slug})"
+                ng-click="setCategory(category)">
                 {{category.name}}
             </a>
         </li>

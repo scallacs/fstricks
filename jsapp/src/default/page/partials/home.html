@@ -9,7 +9,7 @@
         </p>
         <ul class="nav nav-pills nav-justified text-capitalize">
             <li ng-repeat="sport in sports">
-                <a ui-sref="videoplayer.sport({sportName: sport.name})" 
+                <a ui-sref="videoplayer.sport({sportSlug: sport.slug})" 
                    ng-click="setCurrentSport(sport)">
                     <img ng-src="{{sport.slug | sportIconUrl}}"> &nbsp;
                     {{sport.name}}

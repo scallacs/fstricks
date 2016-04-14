@@ -13,11 +13,11 @@
     </div>
     <div class="col-xs-9 item-content">
         <div class="">
-            <div class="col-xs-10 clickable"  ng-click="view(videoTag)">
+            <div class="col-xs-10 clickable"  ng-click="view(videoTag)" >
                 <p class="item-title text-capitalize" ng-if="videoTag.tag_name">
-                    <!--<a ui-sref="videoplayer.realization({videoTagId: videoTag.id})">
-                    </a>-->
+                    <a ui-sref="videoplayer.realization({videoTagId: videoTag.slug})" ng-click="$event.preventDefault();">
                     {{videoTag.tag_name}} ({{videoTag.category_name}})
+                    </a>
                 </p>
                 <p class="item-title text-success" ng-if="!videoTag.tag_name && videoTag.mode === 'edition'">
                     <span class="glyphicon glyphicon-edit"></span> 

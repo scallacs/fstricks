@@ -585,6 +585,13 @@ ul[dnd-list] li.selected {
 .item-title{
     font-size: 1.15em;
 }
+.item-title > a{
+    color: #CCC;
+    text-decoration: none;
+}
+.item-title > a:hover{
+    color: #FFF;
+}
 .item-body{
     padding: 10px 5px;
     background: whitesmoke;

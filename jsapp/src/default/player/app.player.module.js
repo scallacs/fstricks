@@ -101,7 +101,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer.sport', {
-                url: '/bestof/:sportName?category&q',
+                url: '/bestof/:sportSlug?category&q',
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewSportController',
@@ -342,8 +342,8 @@ function PlayerController($scope, PlayerData, SharedData, VideoTagData, $locatio
 
     $scope.$on('on-category-changed', function(event, category) {
         console.log("Received 'on-category-changed'");
-        SharedData.pageLoader(true);
-        $location.search('category', category ? category.name : null);
+        //SharedData.pageLoader(true);
+        //$location.search('category', category ? category.name : null);
 
 //        VideoTagData.getLoader()
 //                .initData()
@@ -416,21 +416,25 @@ function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData, T
 
 ViewSportController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'TopSearchMapper', '$filter'];
 function ViewSportController($scope, VideoTagData, $stateParams, PlayerData, SharedData, TopSearchMapper, $filter) {
-//    console.log("View sport: " + $stateParams.sportName);
+//    console.log("View sport: " + $stateParams.sportSlug);
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = true;
     SharedData.showCategories = true;
-    var sportName = $stateParams.sportName;
-    var categoryName = $stateParams.category;
+    var sportSlug = $stateParams.sportSlug;
+    var categorySlug = $stateParams.category;
 
-    console.log("Viewing sport: " + sportName);
+    console.log("Viewing sport: " + sportSlug);
     SharedData.onReady().then(function() {
-        var sport = $filter('getSportByName')(SharedData.sports, sportName);
+        var sport = $filter('getByProperty')(SharedData.sports, sportSlug, 'slug');
         SharedData.currentSport = sport;
 
         if (sport !== null) {
-            SharedData.setCurrentCategory($filter('getSportByName')(sport.categories, categoryName));
+            var category = $filter('getByProperty')(sport.categories, categorySlug, 'slug');
+            SharedData.setCurrentCategory(category);
+        }
+        else{
+            SharedData.setCurrentCategory(null);
         }
         
         
@@ -439,8 +443,8 @@ function ViewSportController($scope, VideoTagData, $stateParams, PlayerData, Sha
         }
         else {
             SharedData.setCurrentSearch(TopSearchMapper['sport']({
-                name: sportName,
-                category: categoryName
+                name: sport ? sport.name : sportSlug,
+                category: category ? category.name : null
             }));
         }
 
