@@ -78,7 +78,7 @@ function TopSearchMapper(SharedData) {
 topSearchDirective.$inject = ['TopSearchMapper', 'ApiFactory'];
 function topSearchDirective(TopSearchMapper, ApiFactory) {
     return {
-        templateUrl: TEMPLATE_URL + '/layout/partials/top-search.html',
+        templateUrl: __PathConfig__.template + '/layout/partials/top-search.html',
         scope: {
             currentSearch: '='
         },

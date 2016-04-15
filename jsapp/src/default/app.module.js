@@ -37,7 +37,7 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
     $scope.config = Config.website;
 //    $scope.seo = Seo;
     $scope.feedbackOptions = {
-        ajaxURL: API_BASE_URL + '/feedbacks/send.json',
+        ajaxURL: __APIConfig__.baseUrl + '/feedbacks/send.json',
         html2canvasURL : 'js/components/html2canvas/build/html2canvas.min.js'
     };
 

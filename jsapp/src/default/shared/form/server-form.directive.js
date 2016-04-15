@@ -6,7 +6,7 @@ angular.module('shared.form')
  */
 serverForm.$inject = ['toaster'];
 function serverForm(toaster) {
-    var loader = $('<img class="form-loader" src="' + WEBROOT_FULL + '/img/ajax_loader.gif" alt="Loading..."/>');
+    var loader = $('<img class="form-loader" src="' + __PathConfig__.webroot + '/img/ajax_loader.gif" alt="Loading..."/>');
     return {
         require: 'form',
         link: function(scope, elem, attr, form) {

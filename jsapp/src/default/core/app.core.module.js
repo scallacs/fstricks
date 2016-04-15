@@ -808,7 +808,7 @@ function SharedData(SportEntity) {
 NationalityEntity.$inject = ['$resource'];
 function NationalityEntity($resource) {
 
-    var url = API_BASE_URL + '/nationalities/:action.json';
+    var url = __APIConfig__.baseUrl + '/nationalities/:action.json';
     return $resource(url, {id: '@id', action: '@action'}, {
         all: {
             method: 'GET',
@@ -820,7 +820,7 @@ function NationalityEntity($resource) {
 
 RiderEntity.$inject = ['$resource'];
 function RiderEntity($resource) {
-    var url = API_BASE_URL + '/Riders/:action/:id.json';
+    var url = __APIConfig__.baseUrl + '/Riders/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
         search: {
             method: 'GET',
@@ -846,7 +846,7 @@ function RiderEntity($resource) {
 
 UserEntity.$inject = ['$resource'];
 function UserEntity($resource) {
-    var url = API_BASE_URL + '/Users/:action/:id.json';
+    var url = __APIConfig__.baseUrl + '/Users/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {profile: {
             method: 'GET',
             params: {action: 'profile'},
@@ -897,7 +897,7 @@ function UserEntity($resource) {
 
 ErrorReportEntity.$inject = ['$resource'];
 function ErrorReportEntity($resource) {
-    var url = API_BASE_URL + '/ReportErrors/:action/:id.json';
+    var url = __APIConfig__.baseUrl + '/ReportErrors/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
         post: {
             method: 'POST',
@@ -909,7 +909,7 @@ function ErrorReportEntity($resource) {
 
 VideoEntity.$inject = ['$resource'];
 function VideoEntity($resource) {
-    var url = API_BASE_URL + '/Videos/:action/:id/:provider.json';
+    var url = __APIConfig__.baseUrl + '/Videos/:action/:id/:provider.json';
     return $resource(url, {id: '@id', action: '@action'}, {
         addOrGet: {
             method: 'POST',
@@ -936,7 +936,7 @@ function VideoEntity($resource) {
 
 SportEntity.$inject = ['$resource'];
 function SportEntity($resource) {
-    var url = API_BASE_URL + '/Sports/:action/:id.json';
+    var url = __APIConfig__.baseUrl + '/Sports/:action/:id.json';
     //var url = '/sys/MediaTagTricks/:action/:id';
     return $resource(url, {id: '@id', action: '@action'}, {
         index: {
@@ -951,7 +951,7 @@ function SportEntity($resource) {
 
 TagEntity.$inject = ['$resource'];
 function TagEntity($resource) {
-    var url = API_BASE_URL + '/Tags/:action/:id.json';
+    var url = __APIConfig__.baseUrl + '/Tags/:action/:id.json';
     //var url = '/sys/MediaTagTricks/:action/:id';
     return $resource(url, {id: '@id', action: '@action', sport: '@sport', category: '@category', trick: '@trick'}, {suggest: {
             method: 'GET',
@@ -968,7 +968,7 @@ function TagEntity($resource) {
 
 UpDownPointEntity.$inject = ['$resource'];
 function UpDownPointEntity($resource) {
-    var url = API_BASE_URL + '/:controller/:action/:id.json';
+    var url = __APIConfig__.baseUrl + '/:controller/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action', controller: '@controller'}, {
         up: {
             method: 'POST',
@@ -985,7 +985,7 @@ function UpDownPointEntity($resource) {
 
 VideoTagAccuracyRateEntity.$inject = ['$resource'];
 function VideoTagAccuracyRateEntity($resource) {
-    var url = API_BASE_URL + '/VideoTagAccuracyRates/:action.json';
+    var url = __APIConfig__.baseUrl + '/VideoTagAccuracyRates/:action.json';
     return $resource(url, {action: '@action'}, {
         accurate: {
             method: 'POST',
@@ -1007,7 +1007,7 @@ function VideoTagAccuracyRateEntity($resource) {
 
 VideoTagEntity.$inject = ['$resource'];
 function VideoTagEntity($resource) {
-    var url = API_BASE_URL + '/VideoTags/:action/:id.json';
+    var url = __APIConfig__.baseUrl + '/VideoTags/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
         view: {
             method: 'GET',
@@ -1062,7 +1062,7 @@ function VideoTagEntity($resource) {
 }
 PlaylistEntity.$inject = ['$resource'];
 function PlaylistEntity($resource) {
-    var url = API_BASE_URL + '/Playlists/:action/:id.json';
+    var url = __APIConfig__.baseUrl + '/Playlists/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
         user: {
             method: 'GET',
@@ -1104,7 +1104,7 @@ function PlaylistEntity($resource) {
 
 PlaylistItemEntity.$inject = ['$resource'];
 function PlaylistItemEntity($resource) {
-    var url = API_BASE_URL + '/PlaylistVideoTags/:action/:id.json';
+    var url = __APIConfig__.baseUrl + '/PlaylistVideoTags/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
         playlist: {
             method: 'GET',
@@ -1130,7 +1130,7 @@ function PlaylistItemEntity($resource) {
 }
 ServerConfigEntity.$inject = ['$resource'];
 function ServerConfigEntity($resource) {
-    var resource = $resource(WEBROOT_FULL + '/data/:action.json', {action: '@action'}, {
+    var resource = $resource(__PathConfig__.webroot + '/data/:action.json', {action: '@action'}, {
         rules: {
             method: 'GET',
             params: {action: 'rules'},

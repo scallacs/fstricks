@@ -10,19 +10,6 @@
 <meta name="fragment" content="!">
 <!--<meta name="description" content="{{seo.metaDescription}}">-->
 
-<script>
-    var WEBROOT_FULL = '<?= \Cake\Routing\Router::url('/', true); ?>';
-    var DOMAIN_URL = '<?= \Cake\Routing\Router::fullbaseUrl(); ?>';
-    
-    var API_BASE_URL = '<?= \Cake\Routing\Router::url('/api', true); ?>';
-    var TEMPLATE_URL = '<?= \Cake\Routing\Router::url('/views/default/', true); ?>';
-    var APIS = {
-        facebook: '<?= \Cake\Core\Configure::read('Facebook.id'); ?>',
-        youtube: '<?= \Cake\Core\Configure::read('Youtube.key'); ?>'
-    };
-    //window.prerenderReady = false;
-</script>
-
 <link href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/1.1.0/toaster.min.css" rel="stylesheet" />
 
 <?php if (\Cake\Core\Configure::read('concat_css')) { ?>

@@ -2,7 +2,9 @@
 CSS_FILES = $(filter-out %.min.css,$(wildcard \
 	webroot/css/*.css \
 ))
-GULP_BIN = node_modules/gulp/bin/gulp.js
+
+NODE_MODULES_PATH = jsapp/node_modules
+GULP_BIN = $(NODE_MODULES_PATH)/gulp/bin/gulp.js
 DB_SOURCE = resources/database/prod.sql
 DB_PROD_NAME = trickers 
 DB_DEV_NAME = trickers
@@ -12,9 +14,9 @@ DB_DEV_CREDENTIAL = -uroot -hlocalhost -hlocalhost
 DB_TEST_CREDENTIAL = -uroot -hlocalhost -hlocalhost
 DB_PROD_CREDENTIAL = -uroot -pr4xc3oSFSTDB -hlocalhost
 
-KARMA_BIN = node_modules/karma/bin/karma
-WEBDRIVER_MANAGER_BIN = node_modules/webdriver-manager/bin/webdriver-manager
-PROTRACTOR_BIN = node_modules/protractor/bin/protractor
+KARMA_BIN = $(NODE_MODULES_PATH)/karma/bin/karma
+WEBDRIVER_MANAGER_BIN = $(NODE_MODULES_PATH)/webdriver-manager/bin/webdriver-manager
+PROTRACTOR_BIN = $(NODE_MODULES_PATH)/protractor/bin/protractor
 
 
 ###############################################################
@@ -97,13 +99,13 @@ init-db-tests:
 .PHONY: test-frontend
 ifdef s
 test-frontend: config-test init-db-tests
-	$(PROTRACTOR_BIN) jsapp/e2e-tests/conf/protractor-conf.js $(q) --specs jsapp/e2e-tests/$(s).spec.js | tee -i logs/test-frontend.log
+	$(PROTRACTOR_BIN) jsapp/tests/e2e-tests/conf/protractor-conf.js $(q) --specs jsapp/tests/e2e-tests/$(s).spec.js | tee -i logs/test-frontend.log
 endif
 ifndef s
 
-s="--specs jsapp/e2e-tests/$(s).spec.js"
+s="--specs jsapp/tests/e2e-tests/$(s).spec.js"
 test-frontend: config-test init-db-tests
-	$(PROTRACTOR_BIN) jsapp/e2e-tests/conf/protractor-conf.js $(q) | tee -i logs/test-frontend.log
+	$(PROTRACTOR_BIN) jsapp/tests/e2e-tests/conf/protractor-conf.js $(q) | tee -i logs/test-frontend.log
 endif
 
 

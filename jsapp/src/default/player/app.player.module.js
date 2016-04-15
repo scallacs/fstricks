@@ -29,7 +29,7 @@ angular.module('app.player', [
 
 ConfigRoute.$inject = ['$stateProvider'];
 function ConfigRoute($stateProvider) {
-    var baseUrl = TEMPLATE_URL + '/player/partials/';
+    var baseUrl = __PathConfig__.template + '/player/partials/';
 
     $stateProvider
             .state('addvideo', {

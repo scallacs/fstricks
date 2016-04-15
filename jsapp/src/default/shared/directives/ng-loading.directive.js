@@ -8,7 +8,7 @@ angular.module('shared')
             isLoading: '='
         },
         template: '<span class="ajax-loader" >\n\
-                        <img src="' + WEBROOT_FULL + '/img/ajax_loader.gif" alt="Loading, please wait..."/>\n\
+                        <img src="' + __PathConfig__.webroot + '/img/ajax_loader.gif" alt="Loading, please wait..."/>\n\
                     </span>',
         link: function(scope, element, attrs) {
             scope.$watch('isLoading', function(v) {

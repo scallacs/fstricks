@@ -4,7 +4,7 @@ angular.module('app.account')
 formChangePasswordDirective.$inject = ['UserEntity'];
 function formChangePasswordDirective(UserEntity) {
     return {
-        templateUrl: TEMPLATE_URL + '/account/partials/form-change-password.html',
+        templateUrl: __PathConfig__.template + '/account/partials/form-change-password.html',
         link: function(scope, element, attrs) {
             scope.changePassword = changePassword;
             scope.hasToken = angular.isDefined(attrs.token);

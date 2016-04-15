@@ -6,7 +6,7 @@ angular.module('app.layout')
  */
 function topnav() {
     return {
-        templateUrl: TEMPLATE_URL + '/layout/partials/topnav.html',
+        templateUrl: __PathConfig__.template + '/layout/partials/topnav.html',
         controller: ['$scope', 'AuthenticationService', '$state', 'SharedData', 'VideoTagData', 'PlayerData',
             function($scope, AuthenticationService, $state, SharedData, VideoTagData, PlayerData) {
                 // create a message to display in our view

@@ -7,7 +7,7 @@ function FormVideoTagDirective() {
             video: '=video',
             editionTag: '=editionTag'
         },
-        templateUrl: TEMPLATE_URL + '/tag/partials/form-video-tag.html',
+        templateUrl: __PathConfig__.template + '/tag/partials/form-video-tag.html',
         controller: FormVideoTagController
     };
 
@@ -110,11 +110,7 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
 
     $scope.$on('add-new-tag', addNewTag);
     $scope.$on('rider-selected', onRiderSelectedEvent);
-
-//    $scope.$watch('editionTag._extra.range', watchEditionTagRange, true);
-    $scope.$watch('editionTag._extra.category', function() {
-        editionTag.syncCategory();
-    });
+    
     $scope.$watch('editionTag._extra.tag', function(newVal) {
         if (!newVal){
             return;
@@ -122,12 +118,6 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
         var valid = newVal.name.length <= TAG_MAX_LENGTH;
         $scope.formAddVideoTag.tag_id.$setValidity("maxlength", valid);
         console.log("Set validity for " + newVal.name + " ("+newVal.name.lenth+" <=? " +TAG_MAX_LENGTH+ " ): " + valid);
-        if (valid){
-            editionTag.syncTag();
-        }
-    });
-    $scope.$watch('editionTag._extra.rider', function() {
-        editionTag.syncRider();
     });
     
     $scope.$watch('formAddVideoTag', function(newVal){

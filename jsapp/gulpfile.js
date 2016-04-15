@@ -7,16 +7,32 @@ var cleanCSS = require('gulp-clean-css');
 var browserify = require('gulp-browserify');
 var jshint = require('gulp-jshint');
 var sourcemaps = require('gulp-sourcemaps');
+var addsrc = require('gulp-add-src');
 //var ngAnnotate = require('gulp-ng-annotate')
 
 var ADMIN_HIDDEN_PATH = 'moFEJPQQS320909j2309923II2ODI2993';
-var ROOT = './jsapp/';
+var ROOT = './';
+var BUILD = ROOT + 'build/';
 var APP_SRC = ROOT + 'src/';
 var DEFAULT_APP = APP_SRC + 'default/';
 var ADMIN_APP = APP_SRC + 'admin/';
-var JS_OUTPUT = './webroot/js/';
-var CSS_PATH = './webroot/css/';
+var JS_OUTPUT = '../webroot/js/';
+var CSS_PATH = '../webroot/css/';
 
+
+var APP_SRC = [
+        '!' + DEFAULT_APP + '*.spec.js',
+        '!' + DEFAULT_APP + '**/*.spec.js',
+        '!' + DEFAULT_APP + '**/**/*.spec.js',
+//        BUILD + 'server-constants.js',
+        DEFAULT_APP + 'app.config.module.js',
+        DEFAULT_APP + 'shared/**/*.module.js',
+        DEFAULT_APP + 'shared/**/*.js',
+        DEFAULT_APP + 'shared/shared.module.js',
+        DEFAULT_APP + '**/*.module.js',
+        DEFAULT_APP + '**/*.js',
+        DEFAULT_APP + 'app.module.js'
+    ];
 
 // JSHint task
 gulp.task('lint', function() {
@@ -98,38 +114,18 @@ gulp.task('concat-js-lib', function() {
 });
 
 gulp.task('concat-js-dev', function() {
-    gulp.src([
-        '!' + DEFAULT_APP + '*.spec.js',
-        '!' + DEFAULT_APP + '**/*.spec.js',
-        '!' + DEFAULT_APP + '**/**/*.spec.js',
-        DEFAULT_APP + 'app.config.module.js',
-        DEFAULT_APP + 'shared/**/*.module.js',
-        DEFAULT_APP + 'shared/**/*.js',
-        DEFAULT_APP + 'shared/shared.module.js',
-        DEFAULT_APP + '**/*.module.js',
-        DEFAULT_APP + '**/*.js',
-        DEFAULT_APP + 'app.module.js'
-    ])
+    gulp.src(APP_SRC)
             .pipe(wrap('(function(){\n"use strict";\n<%= contents %>\n})();'))
             .pipe(concat('app.js'))
+            .pipe(addsrc(BUILD + 'server-constants.js'))
             .pipe(sourcemaps.write('maps'))
             .pipe(gulp.dest(JS_OUTPUT))
 });
 gulp.task('concat-js', function() {
-    gulp.src([
-        '!' + DEFAULT_APP + '*.spec.js',
-        '!' + DEFAULT_APP + '**/*.spec.js',
-        '!' + DEFAULT_APP + '**/**/*.spec.js',
-        DEFAULT_APP + 'app.config.module.js',
-        DEFAULT_APP + 'shared/**/*.module.js',
-        DEFAULT_APP + 'shared/**/*.js',
-        DEFAULT_APP + 'shared/shared.module.js',
-        DEFAULT_APP + '**/*.module.js',
-        DEFAULT_APP + '**/*.js',
-        DEFAULT_APP + 'app.module.js'
-    ])
+    gulp.src(APP_SRC)
             .pipe(wrap('(function(){\n"use strict";\n<%= contents %>\n})();'))
             .pipe(stripDebug())
+            .pipe(addsrc(BUILD + 'server-constants.js'))
             .pipe(concat('app.js'))
             .pipe(uglify())
             .pipe(gulp.dest(JS_OUTPUT))
@@ -163,38 +159,4 @@ gulp.task('concat-css', function() {
             .pipe(cleanCSS())
             .pipe(concat('style.min.css'))
             .pipe(gulp.dest(CSS_PATH));
-});
-
-
-
-var sitemap = require('gulp-sitemap');
-var save = require('gulp-save');
- 
- 
-var sports = [
-    'all', 'snowboard', 'ski'
-];
-
-var pages = [];
-for (var i = 0; i < sports.length; i++){
-    pages.push('player/bestof/' + sports[i]);
-}
-
-// TODO dynamically get pages to index
-// Get most famouse riders
- 
-gulp.task('generate-sitemap', function() {
-    gulp.src('./webroot/snapshots/**/*.html')
-//        .pipe(save('before-sitemap'))
-        .pipe(sitemap({
-                siteUrl: 'http://www.fstricks.com',
-                changefreq: 'always',
-                lastmod: null,
-                pages: pages,
-                verbose: true
-        })) // Returns sitemap.xml 
-        .pipe(gulp.dest('./webroot/snapshots'))
-//        .pipe(save.restore('before-sitemap')) //restore all files to the state when we cached them 
-        // -> continue stream with original html files 
-        // ... 
 });

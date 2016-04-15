@@ -4,7 +4,7 @@ var FormAddTag = require('./includes/form-add-tag.js');
 var Util = require('./includes/util.js');
 var PlayerBar = require('./includes/player-bar.js');
 
-describe('Add tag on video: ', function() {
+describe('Add tag on video: ', function () {
     var app = new Application();
     var nav = app.topNav();
     var util = new Util();
@@ -13,20 +13,20 @@ describe('Add tag on video: ', function() {
 //    var videoId = 45;
     var formAddVideoTag;
 
-    beforeAll(function() {
-        app.login().then(function() {
+    beforeAll(function () {
+        app.login().then(function () {
             nav.navigateTo('addvideo');
             var videoForm = new FormAddVideo(element(by.id('FormAddVideo')));
-            videoForm.changeTab('Youtube').then(function() {
+            videoForm.changeTab('Youtube').then(function () {
                 videoForm.setUrl(validYoutubeId);
-                videoForm.submit().then(function() {
+                videoForm.submit().then(function () {
                     formAddVideoTag = new FormAddTag(element(by.id('FormAddVideoTag')));
                 });
             });
         });
     });
 //
-    it('Should be possible to create a tag', function() {
+    it('Should be possible to create a tag and then delete it', function () {
         formAddVideoTag.increaseBeginTime();
         formAddVideoTag.decreaseBeginTime();
 
@@ -44,25 +44,25 @@ describe('Add tag on video: ', function() {
         formAddVideoTag.setTag('double backflip');
         expect(formAddVideoTag.isValid()).toBe(true);
 
-        formAddVideoTag.submit().then(function() {
+        formAddVideoTag.submit().then(function () {
             browser.waitForAngular();
             formAddVideoTag.expectFeedbackSuccess();
 
-            formAddVideoTag.continueEditing().then(function() {
-                it('It should be possible to remove the newly created tag', function() {
-                    formAddVideoTag.remove().then(function() {
+            formAddVideoTag.continueEditing().then(function () {
+//                it('It should be possible to remove the newly created tag', function() {
+                formAddVideoTag.remove().then(function () {
 
-                    });
                 });
+//                });
             });
         });
 
     });
 
-    it('Should be possible to edit a tag', function() {
+    it('Should be possible to edit a tag', function () {
         // Select the tag to edit in the player bar
         var playerBar = new PlayerBar();
-        playerBar.watchByIndex(1).then(function() {
+        playerBar.watchByIndex(1).then(function () {
             expect(formAddVideoTag.isEditionForm()).toBe(true);
             formAddVideoTag.increaseEndTime();
             formAddVideoTag.increaseBeginTime();
@@ -74,12 +74,47 @@ describe('Add tag on video: ', function() {
 
             formAddVideoTag.expectHasChanged(true);
 
-            formAddVideoTag.submit().then(function() {
+            formAddVideoTag.submit().then(function () {
                 formAddVideoTag.expectFeedbackSuccess();
             });
         });
     });
 
+
+    /**
+     * TODO TEST
+     */
+    it('Add tag -> save -> edit this tag -> do nothing -> add new tag -> save ', function () {
+        formAddVideoTag.setRider('Torstein');
+        expect(formAddVideoTag.isValid()).toBe(false);
+        formAddVideoTag.setCategory('snowboard kicker');
+        expect(formAddVideoTag.isValid()).toBe(false);
+        formAddVideoTag.setTag('double backflip');
+        expect(formAddVideoTag.isValid()).toBe(true);
+        formAddVideoTag.increaseEndTime();
+        formAddVideoTag.increaseEndTime();
+        formAddVideoTag.increaseEndTime();
+
+        // -> save the new tag
+        formAddVideoTag.submit().then(function () {
+            formAddVideoTag.expectFeedbackSuccess();
+            // -> Continue editing
+            formAddVideoTag.continueEditing().then(function () {
+                // -> got to add new tag
+                formAddVideoTag.addNewTag().then(function () {
+                    // Trick should be reset
+                    expect(formAddVideoTag.isValid()).toBe(false);
+                    formAddVideoTag.setTag('grosse sardine');
+
+                    expect(formAddVideoTag.isValid()).toBe(true);
+                    // Should be possible to save the new tag
+                    formAddVideoTag.submit().then(function () {
+                        formAddVideoTag.expectFeedbackSuccess();
+                    });
+                });
+            });
+        });
+    });
 
     // Testing to provide invalid value for trick
     // TODO 
@@ -88,19 +123,19 @@ describe('Add tag on video: ', function() {
 //       
 //    });
 //
-    describe('RIDER', function() {
+    describe('RIDER', function () {
 
         function getRiderForm() {
             return element(by.id('FormAddRider'));
         }
 
-        beforeEach(function() {
+        beforeEach(function () {
 //            getRiderForm().element(by.css('button[ng-click="cancel()"]')).click();
         });
 
-        it('Should be possible to add a new rider with the plus button', function() {
+        it('Should be possible to add a new rider with the plus button', function () {
 
-            formAddVideoTag.showRiderForm().then(function() {
+            formAddVideoTag.showRiderForm().then(function () {
                 var formAddRider = new util.form(element(by.id('FormAddRider')));
 
                 formAddRider.fill([
@@ -110,12 +145,12 @@ describe('Add tag on video: ', function() {
                 ]);
 
 
-                formAddRider.submit().then(function() {
+                formAddRider.submit().then(function () {
                 });
             });
         });
 
-        it('Should be possible to add a new rider when searching', function() {
+        it('Should be possible to add a new rider when searching', function () {
 
             formAddVideoTag.setRider('newrider lastname');
             var formAddRider = new util.form(getRiderForm());
@@ -125,7 +160,7 @@ describe('Add tag on video: ', function() {
             formAddRider.fill([
                 {model: 'rider.nationality', value: 'fr'}
             ]);
-            formAddRider.submit().then(function() {
+            formAddRider.submit().then(function () {
 
             });
         });

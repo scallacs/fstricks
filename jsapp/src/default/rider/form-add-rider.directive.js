@@ -6,7 +6,7 @@ formAddRiderfunction.$inject = [];
 function formAddRiderfunction() {
     return {
         restrict: 'EA',
-        templateUrl: TEMPLATE_URL + '/rider/partials/form-add-rider.html',
+        templateUrl: __PathConfig__.template + '/rider/partials/form-add-rider.html',
         scope: {
             profilePicture: '=profilePicture',
             saveMethod: '=saveMethod',

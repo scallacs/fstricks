@@ -124,12 +124,12 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
         $this->assertArrayHasKey('items', $result);
         $this->assertGreaterThan(0, count($result['items']));
         $first = $result['items'][0];
-        $this->assertArrayHasKey('tag_id', $first);
-        $this->assertArrayHasKey('tag_name', $first);
-        $this->assertArrayHasKey('video_id', $first);
-        $this->assertArrayHasKey('video_url', $first);
-        $this->assertArrayHasKey('begin', $first);
-        $this->assertArrayHasKey('end', $first);
+        $expectedKeys = [
+            'begin', 'end', 'id',
+            'video' => ['video_url', 'id'],
+            'tag' => ['id', 'namee', 'slug']
+        ];
+        $this->assertArrayHasKeys($expectedKeys, $first);
     }
 
     /**

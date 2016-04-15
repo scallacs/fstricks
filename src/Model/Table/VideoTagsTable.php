@@ -63,17 +63,32 @@ class VideoTagsTable extends Table {
 
         $this->addBehavior('Search.Search');
         $this->searchManager()
+                ->add('video_id', 'Search.Value', [
+                    'field' => $this->aliasField('video_ir')
+                ])
                 ->add('user_id', 'Search.Value', [
                     'field' => $this->aliasField('user_id')
                 ])
                 ->add('rider_id', 'Search.Value', [
                     'field' => $this->aliasField('rider_id')
                 ])
+                ->add('rider_slug', 'Search.Value', [
+                    'field' => 'Riders.slug'
+                ])
                 ->add('sport_id', 'Search.Value', [
                     'field' => 'Tags.sport_id'
                 ])
                 ->add('category_id', 'Search.Value', [
                     'field' => 'Tags.category_id'
+                ])
+                ->add('tag_id', 'Search.Value', [
+                    'field' => 'Tags.id'
+                ])
+                ->add('trick_slug', 'Search.Value', [
+                    'field' => 'Tags.slug'
+                ])
+                ->add('tag_slug', 'Search.Value', [
+                    'field' => 'Tags.slug'
                 ])
                 ->add('min_duration', 'Search.Compare', [
                     'field' => $this->aliasField('end') . ' - ' . $this->aliasField('begin'),
@@ -118,13 +133,12 @@ class VideoTagsTable extends Table {
             $queryTags = function($q) {
                 return $q
                                 ->select([
-                                    'category_name' => 'Categories.name',
-                                    'category_id' => 'Categories.id',
-                                    'category_slug' => 'Categories.slug',
-                                    'sport_name' => 'Sports.name',
-                                    'sport_slug' => 'Sports.slug',
-                                    'sport_id' => 'Sports.id',
-                                    'tag_name' => 'Tags.name',
+                                    'Categories.name',
+                                    'Categories.id',
+                                    'Categories.slug',
+                                    'Sports.name',
+                                    'Sports.slug',
+                                    'Sports.id'
                                 ])
                                 ->contain(['Sports', 'Categories']);
             };
@@ -132,11 +146,11 @@ class VideoTagsTable extends Table {
         if ($queryRiders === null) {
             $queryRiders = function($q) {
                 return $q->select([
-                            'rider_name' => 'CONCAT(Riders.firstname, \' \', Riders.lastname)',
-                            'rider_picture' => 'Riders.picture',
-                            'rider_nationality' => 'Riders.nationality',
-                            'rider_slug' => 'Riders.slug',
-                            'rider_id' => 'Riders.id'
+                            'Riders__name' => 'CONCAT(Riders.firstname, \' \', Riders.lastname)',
+                            'Riders.picture',
+                            'Riders.nationality',
+                            'Riders.slug',
+                            'Riders.id'
                 ]);
             };
         }
@@ -145,20 +159,22 @@ class VideoTagsTable extends Table {
         }
         return $query
                         ->select([
-                            'tag_slug' => 'Tags.slug',
-                            'tag_name' => 'Tags.name',
-                            'tag_id' => 'Tags.id',
-                            'count_points' => 'VideoTags.count_points',
-                            'id' => 'VideoTags.id',
-                            'slug' => 'VideoTags.slug',
-                            'provider_id' => 'Videos.provider_id',
-                            'video_url' => 'Videos.video_url',
-                            'video_duration' => 'Videos.duration',
-                            'video_id' => 'Videos.id',
-                            'begin' => 'VideoTags.begin',
-                            'end' => 'VideoTags.end',
-                            'user_id' => 'VideoTags.user_id',
-                            'status' => 'VideoTags.status'
+                            'Tags.slug',
+                            'Tags.name',
+                            'Tags.id',
+                            
+                            'VideoTags.id',
+                            'VideoTags.count_points',
+                            'VideoTags.begin',
+                            'VideoTags.end',
+                            'VideoTags.user_id',
+                            'VideoTags.status',
+                            'VideoTags.slug',
+                            
+                            'Videos.provider_id',
+                            'Videos.video_url',
+                            'Videos.duration',
+                            'Videos.id',
                         ])
                         ->contain([
                             'Videos' => $queryVideo,

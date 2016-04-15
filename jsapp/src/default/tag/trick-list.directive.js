@@ -6,7 +6,7 @@ angular.module('app.tag')
  */
 function trickList() {
     return {
-        templateUrl: TEMPLATE_URL + '/tag/partials/player-trick-list.html',
+        templateUrl: __PathConfig__.template + '/tag/partials/player-trick-list.html',
         controller: ['$scope', 'PlayerData', 'SharedData', function($scope, PlayerData, SharedData) {
             $scope.playerData = PlayerData;
             $scope.setCategory = setCategory;

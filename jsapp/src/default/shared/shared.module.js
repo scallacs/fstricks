@@ -4,11 +4,11 @@ angular.module('shared', ['ui.bootstrap', 'app.config'])
 
 function imageUrl(){
     return function(input) {
-        return WEBROOT_FULL + '/img/' + input;
+        return __PathConfig__.webroot + '/img/' + input;
     };
 }
 function sportIconUrl(){
     return function(input) {
-        return WEBROOT_FULL + '/img/sports/' + input + '.png';
+        return __PathConfig__.webroot + '/img/sports/' + input + '.png';
     };
 }

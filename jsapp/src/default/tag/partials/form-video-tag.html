@@ -155,7 +155,7 @@
                             <div class="col-xs-9">
                                 <ui-select 
                                     class="ui-select-category"
-                                    ng-model="editionTag._extra.category" 
+                                    ng-model="editionTag._video_tag.category" 
                                     ng-disabled="!editionTag.isFieldEditabled('category')"
                                     theme="bootstrap"
                                     reset-search-input="false"
@@ -183,7 +183,7 @@
                                 <ui-select 
                                     name="tag_id"
                                     class="ui-select-tag"
-                                    ng-model="editionTag._extra.tag" 
+                                    ng-model="editionTag._video_tag.tag" 
                                     theme="bootstrap"
                                     ng-disabled="!editionTag.hasCategory() || !editionTag.isFieldEditabled('tag')"
                                     reset-search-input="false"
@@ -227,7 +227,7 @@
                             <div  class="col-xs-8">
                                 <ui-select 
                                     class="ui-select-rider"
-                                    ng-model="editionTag._extra.rider" 
+                                    ng-model="editionTag._video_tag.rider" 
                                     theme="bootstrap"
                                     ng-disabled="!editionTag.isFieldEditabled('rider')"
                                     reset-search-input="false"

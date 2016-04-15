@@ -2,7 +2,7 @@ angular.module('shared')
         .directive('pageLoader', function() {
             return {
                 restrict: 'A',
-                templateUrl: TEMPLATE_URL + '/shared/directives/page-loader.html',
+                templateUrl: __PathConfig__.template + '/shared/directives/page-loader.html',
                 scope: {
                     isLoading: '&isLoading'
                 },

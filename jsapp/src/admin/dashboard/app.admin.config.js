@@ -6,7 +6,7 @@ RestangularProviderConfig.$inject = ['RestangularProvider', '$windowProvider'];
 function RestangularProviderConfig(RestangularProvider, $windowProvider) {
     // RESPONSE
     RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response) {
-        if (response.status === 401) {
+        if (response.status == 401) {
             alert('ok');
             window.location.href = '/make-me-god-please';
 //            $windowProvider.$get = ['$window', function($window) {

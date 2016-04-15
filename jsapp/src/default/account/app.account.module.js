@@ -21,7 +21,7 @@ function ConfigRoute($stateProvider) {
     $stateProvider
             .state('login', {
                 url: '/login',
-                templateUrl: TEMPLATE_URL + '/account/partials/login.html',
+                templateUrl: __PathConfig__.template + '/account/partials/login.html',
                 controller: 'UserLoginController',
                 data: {
                     requireLogin: false
@@ -29,7 +29,7 @@ function ConfigRoute($stateProvider) {
             })
             .state('signup', {
                 url: '/signup',
-                templateUrl: TEMPLATE_URL + '/account/partials/signup.html',
+                templateUrl: __PathConfig__.template + '/account/partials/signup.html',
                 controller: 'SignupController',
                 data: {
                     requireLogin: false
@@ -37,7 +37,7 @@ function ConfigRoute($stateProvider) {
             })
             .state('settings', {
                 url: '/settings',
-                templateUrl: TEMPLATE_URL + '/account/partials/settings.html',
+                templateUrl: __PathConfig__.template + '/account/partials/settings.html',
                 controller: 'SettingsController',
                 data: {
                     requireLogin: true
@@ -45,7 +45,7 @@ function ConfigRoute($stateProvider) {
             })
             .state('resetpassword', {
                 url: '/reset-password?token',
-                templateUrl: TEMPLATE_URL + '/account/partials/reset-password.html',
+                templateUrl: __PathConfig__.template + '/account/partials/reset-password.html',
                 controller: 'ResetPasswordController',
                 data: {
                     requireLogin: false
@@ -56,18 +56,18 @@ function ConfigRoute($stateProvider) {
 ConfigSocialApi.$inject = ['$authProvider'];
 function ConfigSocialApi($authProvider) {
     $authProvider.facebook({
-        clientId: APIS.facebook,
-        url: API_BASE_URL + '/users/facebook_login.json',
-        redirectUri: WEBROOT_FULL
+        clientId: __APIConfig__.facebook.id,
+        url: __APIConfig__.baseUrl + '/users/facebook_login.json',
+        redirectUri: __PathConfig__.webroot
     });
 
     $authProvider.withCredentials = true;
     $authProvider.tokenRoot = null;
     $authProvider.cordova = false;
     $authProvider.baseUrl = '/';
-//    $authProvider.loginUrl = API_BASE_URL + 'users/login';
-//    $authProvider.signupUrl = API_BASE_URL + 'users/signup';
-//    $authProvider.unlinkUrl = API_BASE_URL + 'users/unlink';
+//    $authProvider.loginUrl = __APIConfig__.baseUrl + 'users/login';
+//    $authProvider.signupUrl = __APIConfig__.baseUrl + 'users/signup';
+//    $authProvider.unlinkUrl = __APIConfig__.baseUrl + 'users/unlink';
     $authProvider.tokenName = 'token';
     $authProvider.tokenPrefix = '';//'satellizer';
     $authProvider.authHeader = 'Authorization';
@@ -149,7 +149,7 @@ function loginModal($uibModal) {
             }
             console.log("LoginModal: Open");
             instance = $uibModal.open({
-                templateUrl: TEMPLATE_URL + '/account/partials/login_modal.html',
+                templateUrl: __PathConfig__.template + '/account/partials/login_modal.html',
                 controller: 'LoginModalController',
                 controllerAs: 'LoginModalController'
             });

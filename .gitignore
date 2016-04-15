@@ -4,6 +4,7 @@ CakePHP 3
 /config/app.php
 /tmp/*
 /logs/*
+/jsapp/node_modules/*
 /webroot/js/node_modules/*
 /webroot/js/bower_components/*
 /webroot/js/components/*
@@ -31,3 +32,4 @@ Netbeans
 /nbproject/private/private.xml
 /resources/webserver-fstricks-linux.pem
 /nbproject/private/config.properties
+/jsapp/build/

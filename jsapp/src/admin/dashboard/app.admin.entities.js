@@ -167,7 +167,9 @@ function Config(nga) {
     tag.creationView()
             .fields([
                 nga.field('name')
-                        .validation({required: true})
+                        .validation({required: true}),
+                nga.field('slug'
+                        .validation({required: false})),
             ]);
 
     tag.editionView()

@@ -5,7 +5,7 @@ angular.module('app.page', ['ui.router', 'app.core', 'app.tag', 'app.player'])
 
 ConfigRoute.$inject = ['$stateProvider'];
 function ConfigRoute($stateProvider) {
-    var baseUrl = TEMPLATE_URL + '/page/partials/';
+    var baseUrl = __PathConfig__.template + '/page/partials/';
     
     $stateProvider
             .state('faq', {

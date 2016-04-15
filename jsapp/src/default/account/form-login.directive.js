@@ -3,7 +3,7 @@ angular.module('app.account')
 
 function formLoginDirective() {
     return {
-        templateUrl: TEMPLATE_URL + '/account/partials/form-login.html',
+        templateUrl: __PathConfig__.template + '/account/partials/form-login.html',
         controller: ['$scope', '$auth', 'AuthenticationService', function($scope, $auth, AuthenticationService) {
                 $scope.authenticate = authenticate;
                 $scope.login = login;

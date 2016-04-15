@@ -7,14 +7,14 @@ function ConfigRouting($stateProvider) {
     $stateProvider
             .state("otherwise", {
                 url: "*path",
-                templateUrl: TEMPLATE_URL + "views/error-not-found.html",
+                templateUrl: __PathConfig__.template + "views/error-not-found.html",
                 data: {
                     requireLogin: false
                 }
             })
             .state("notfound", {
                 url: "*path",
-                templateUrl: TEMPLATE_URL + "views/error-not-found.html",
+                templateUrl: __PathConfig__.template + "views/error-not-found.html",
                 data: {
                     requireLogin: false
                 }
