@@ -379,7 +379,8 @@ function EditionTag() {
             end: this._video_tag.end,
             rider_id: this._video_tag.rider_id,
             tag_id: this._video_tag.tag_id,
-            id: this._video_tag.id
+            id: this._video_tag.id,
+            status: this._video_tag.status
         };
         if (this._extra.tag.is_new) {
             console.log("CREATING NEW TAG:");

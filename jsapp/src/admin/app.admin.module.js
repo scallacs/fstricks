@@ -84,7 +84,7 @@ function Run($rootScope, AuthenticationService, $state, SharedData) {
 ConfigInterceptor.$inject = ['$httpProvider', '$locationProvider'];
 function ConfigInterceptor($httpProvider, $locationProvider) {
     'use strict';
-    $locationProvider.html5Mode(true);
+//    $locationProvider.html5Mode(true);
     var interceptor = ['$rootScope', '$q', '$injector', '$timeout',
         function(scope, $q, $injector, $timeout) {
             var $http, $state;

@@ -211,7 +211,8 @@ class VideoTagsTable extends Table {
 
         $validator
                 ->requirePresence('user_id', 'create')
-                ->notEmpty('user_id');
+                ->notEmpty('user_id', 'create')
+                ->allowEmpty('user_id', 'update');
 
         $validator
                 ->requirePresence('video_id', 'create')
