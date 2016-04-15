@@ -11,18 +11,18 @@ function ConfigRouting($stateProvider) {
                 params: {id: null},
                 controller: 'VideoTagEditController',
                 controllerAs: 'controller',
-                templateUrl: ADMIN_TEMPLATE_URL + "video-tags/partials/edit.html",
+                templateUrl: __AdminPathConfig__.template + "video-tags/partials/edit.html",
             })
             .state('logout', {
                 url: "/logout",
                 controller: 'LogoutController',
-            })
+            }) 
             .state("otherwise", {
                 url: "*path",
-                templateUrl: TEMPLATE_URL + "/views/error-not-found.html",
+                templateUrl: __PathConfig__.template + "/views/error-not-found.html",
             })
             .state("notfound", {
                 url: "*path",
-                templateUrl: TEMPLATE_URL + "/views/error-not-found.html"
+                templateUrl: __PathConfig__.template + "/views/error-not-found.html"
             });
 }

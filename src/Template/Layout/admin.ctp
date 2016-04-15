@@ -7,11 +7,6 @@
         <?= $this->Element('Common/head'); ?>
         <?= $this->Element('Common/scripts'); ?>
 
-        <script type="text/javascript">
-            var ADMIN_API_BASE_URL = '<?= \Cake\Routing\Router::url('/admin/api/', true); ?>';
-            var ADMIN_TEMPLATE_URL = '<?= \Cake\Routing\Router::url('/views/' . \Cake\Core\Configure::read('admin_hidden_prefix'), true) . '/'; ?>';
-        </script>
-
         <?= $this->Html->script('components/ng-admin/build/ng-admin.min.js'); ?>
         <?= $this->Html->css('/js/components/ng-admin/build/ng-admin.min.css'); ?>
         <?= $this->Html->script(\Cake\Core\Configure::read('admin_hidden_prefix') . '.js'); ?>

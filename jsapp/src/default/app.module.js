@@ -28,13 +28,13 @@ function ModalInstanceCtrl($scope, $uibModalInstance) {
     };
 }
 
-MainController.$inject = ['$scope', 'PlayerData', 'VideoTagData', 'SharedData', 'AuthenticationService', '$state', 'Config'];
-function MainController($scope, PlayerData, VideoTagData, SharedData, AuthenticationService, $state, Config) {
+MainController.$inject = ['$scope', 'PlayerData', 'VideoTagData', 'SharedData', 'AuthenticationService', '$state'];
+function MainController($scope, PlayerData, VideoTagData, SharedData, AuthenticationService, $state) {
     $scope.playerData = PlayerData;
     $scope.videoTagData = VideoTagData;
     $scope.SharedData = SharedData;
     $scope.authData = AuthenticationService.authData;
-    $scope.config = Config.website;
+    $scope.config = __WebsiteConfig__;
 //    $scope.seo = Seo;
     $scope.feedbackOptions = {
         ajaxURL: __APIConfig__.baseUrl + '/feedbacks/send.json',

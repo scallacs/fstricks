@@ -4,7 +4,6 @@ angular.module('app.tag', ['app.core', 'ui.bootstrap', 'ui.select', 'ui.router',
         .controller('SearchTagController', SearchTagController)
         .controller('ModalReportErrorController', ModalReportErrorController)
         .config(Config);
-
 Config.$inject = ['$stateProvider'];
 function Config($stateProvider) {
     var baseUrl = __PathConfig__.template + '/tag/partials/';

@@ -52,11 +52,11 @@ function videoTagItem() {
 
         }],
         link: function($scope, element, attr) {
-            if ($scope.videoTag.provider_id === 'youtube'){
-                $scope.videoTag.thumbnail = 'https://i.ytimg.com/vi/'+$scope.videoTag.video_url+'/default.jpg';
+            if ($scope.videoTag.video.provider_id === 'youtube'){
+                $scope.videoTag.thumbnail = 'https://i.ytimg.com/vi/'+$scope.videoTag.video.video_url+'/default.jpg';
             }
-            else if ($scope.videoTag.provider_id === 'vimeo'){
-                $scope.videoTag.thumbnail = "https://i.vimeocdn.com/video/"+$scope.videoTag.video_url+".jpg";
+            else if ($scope.videoTag.video.provider_id === 'vimeo'){
+                $scope.videoTag.thumbnail = "https://i.vimeocdn.com/video/"+$scope.videoTag.video.video_url+".jpg";
             }
             
         }

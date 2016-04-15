@@ -14,6 +14,26 @@ return [
     'user_feedback' => true,
     'concat_js' => true,
     'concat_css' => true,
+    'App' => [
+        'namespace' => 'App',
+        'encoding' => 'UTF-8',
+        'base' => false,
+        'dir' => 'src',
+        'webroot' => 'webroot',
+        'wwwRoot' => WWW_ROOT,
+        // 'baseUrl' => env('SCRIPT_NAME'),
+        'fullBaseUrl' => false,
+        'apiBaseUrl' => 'http://www.fstricks.com/api',
+        'adminApiBaseUrl' => 'http://www.fstricks.com/admin/api',
+        'imageBaseUrl' => 'img/',
+        'cssBaseUrl' => 'css/',
+        'jsBaseUrl' => 'js/',
+        'paths' => [
+            'plugins' => [ROOT . DS . 'plugins' . DS],
+            'templates' => [APP . 'Template' . DS],
+            'locales' => [APP . 'Locale' . DS],
+        ],
+    ],
     'EmailTransport' => [
         'default' => [
             'className' => 'Mail',

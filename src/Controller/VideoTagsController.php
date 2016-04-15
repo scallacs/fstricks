@@ -189,11 +189,10 @@ class VideoTagsController extends AppController {
     public function search() {
         $filterStatus = true;
         $this->Paginator->config(Configure::read('Pagination.VideoTags'));
-        
         $this->VideoTags->initFilters();
 
         $query = $this->VideoTags->find('search', $this->VideoTags->filterParams($this->request->query));
-        $query = $this->VideoTags->findAndJoin();
+        $query = $this->VideoTags->findAndJoin($query);
         $query->where(['Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC]);
 
             $order = empty($this->request->query['order']) ? 'best' : $this->request->query['order'];

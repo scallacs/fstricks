@@ -38,9 +38,9 @@ function trickListFilter(SharedData) {
         var result = [];
         input.forEach(function(item){
             var keep = (SharedData.currentCategory === null ||
-                    (SharedData.currentCategory.id === item.category_id)) 
+                    (SharedData.currentCategory.id === item.category.id)) 
                     && (SharedData.currentSport === null ||
-                            (SharedData.currentSport.id === item.sport_id));
+                            (SharedData.currentSport.id === item.sport.id));
             if (keep){
                 result.push(item);
             }
@@ -133,9 +133,9 @@ function PlayerData(VideoTagData, $q) {
         };
     }
 
-    function setVideo(data) {
-        obj.data.provider = data.provider_id;
-        obj.data.duration = data.duration;
+    function setVideo(video) {
+        obj.data.provider = video.provider_id;
+        obj.data.duration = video.duration;
     }
 
     function hasVideo() {
@@ -305,7 +305,7 @@ function PlayerData(VideoTagData, $q) {
         obj.showListTricks = false;
         obj.looping = !angular.isDefined(looping) ? (obj.playMode === 'tag') : looping;
         //        console.log("Play mode: " + obj.playMode + ". Set looping: " + obj.looping);
-        return obj.loadVideo(videoTag.provider_id, videoTag);
+        return obj.loadVideo(videoTag.video.provider_id, videoTag);
     }
 
     function replay(videoTag) {

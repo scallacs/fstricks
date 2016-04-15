@@ -64,7 +64,7 @@ class VideoTagsTable extends Table {
         $this->addBehavior('Search.Search');
         $this->searchManager()
                 ->add('video_id', 'Search.Value', [
-                    'field' => $this->aliasField('video_ir')
+                    'field' => $this->aliasField('video_id')
                 ])
                 ->add('user_id', 'Search.Value', [
                     'field' => $this->aliasField('user_id')

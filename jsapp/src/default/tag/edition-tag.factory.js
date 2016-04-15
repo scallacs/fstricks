@@ -66,8 +66,8 @@ function EditionTag() {
 //        console.log(a);console.log(b);
         return  a.begin !== b.begin 
                 || a.end !== b.end
-                || ((a.tag_id && a.tag_id !== b.tag_id) || (!a.tag_id && a.tag_name !== b.tag_name))
-                || a.rider_id !== b.rider_id
+                || ((a.tag.id && a.tag.id !== b.tag.id) || (!a.tag.id && a.tag.name !== b.tag.name))
+                || a.rider.id !== b.rider.id
                 || a.category.id !== b.category.id 
                 || a.video.id !== b.video.id
                 || a.status !== b.status;
@@ -123,7 +123,7 @@ function EditionTag() {
     }
 
     function hasCategory() {
-        return this._video_tag.category;
+        return this._video_tag.tag.category.id;
     }
 
     function getId() {
@@ -148,7 +148,12 @@ function EditionTag() {
             mode: 'edition',
             id: null,
             user_id: this._user_id,
-            provider_id: null
+            provider_id: null,
+            tag: {
+                category: {},
+                sport: {},
+            },
+            rider: {}
         };
 
         this.setEditabled();
@@ -214,11 +219,11 @@ function EditionTag() {
 
     function toPostData() {
         var postData = {
-            video_id: this._video_tag.video_id,
+            video_id: this._video_tag.video.id,
             begin: this._video_tag.begin,
             end: this._video_tag.end,
-            rider_id: this._video_tag.rider_id,
-            tag_id: this._video_tag.tag_id,
+            rider_id: this._video_tag.rider.id,
+            tag_id: this._video_tag.tag.id,
             id: this._video_tag.id,
             status: this._video_tag.status
         };

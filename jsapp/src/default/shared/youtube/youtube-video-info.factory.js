@@ -46,7 +46,7 @@ angular.module('shared.youtube')
                 }
             };
         })
-        .factory('YoutubeVideoInfo', ['$q', 'Config', 'YoutubeItem', function($q, Config, YoutubeItem) {
+        .factory('YoutubeVideoInfo', ['$q', 'YoutubeItem', function($q, YoutubeItem) {
             var API_KEY = __APIConfig__.youtube.id;
             function YoutubeVideoInfo() {
                 this._query = null;

@@ -13,14 +13,15 @@ var addsrc = require('gulp-add-src');
 var ADMIN_HIDDEN_PATH = 'moFEJPQQS320909j2309923II2ODI2993';
 var ROOT = './';
 var BUILD = ROOT + 'build/';
-var APP_SRC = ROOT + 'src/';
-var DEFAULT_APP = APP_SRC + 'default/';
-var ADMIN_APP = APP_SRC + 'admin/';
+var APP_SRC_DIR = ROOT + 'src/';
+var DEFAULT_APP = APP_SRC_DIR + 'default/';
+var ADMIN_APP = APP_SRC_DIR + 'admin/';
 var JS_OUTPUT = '../webroot/js/';
 var CSS_PATH = '../webroot/css/';
+var VIEWS_PATH = '../webroot/views/';
 
 
-var APP_SRC = [
+var APP_SOURCES = [
         '!' + DEFAULT_APP + '*.spec.js',
         '!' + DEFAULT_APP + '**/*.spec.js',
         '!' + DEFAULT_APP + '**/**/*.spec.js',
@@ -46,12 +47,12 @@ gulp.task('build', ['concat-js', 'concat-js-admin', 'concat-css', 'concat-js-lib
 
 gulp.task('watch', ['lint'], function() {
     // Watch our scripts
-    gulp.watch([APP_SRC + '*.js', APP_SRC + '**/*.js', APP_SRC + '**/**/*.js', APP_SRC + '**/**/**/*.js'], [
+    gulp.watch([APP_SRC_DIR + '*.js', APP_SRC_DIR + '**/*.js', APP_SRC_DIR + '**/**/*.js', APP_SRC_DIR + '**/**/**/*.js'], [
         'lint',
         'concat-js-dev',
         'concat-js-admin'
     ]);
-    gulp.watch([APP_SRC + '*.html', APP_SRC + '**/*.html', APP_SRC + '**/**/*.html', APP_SRC + '**/**/**/*.html'], [
+    gulp.watch([APP_SRC_DIR + '*.html', APP_SRC_DIR + '**/*.html', APP_SRC_DIR + '**/**/*.html', APP_SRC_DIR + '**/**/**/*.html'], [
         'build-views'
     ]);
 
@@ -68,8 +69,8 @@ gulp.task('watch', ['lint'], function() {
 
 
 gulp.task('build-views', function() {
-    gulp.src([DEFAULT_APP + '/**/**/*.html']).pipe(gulp.dest('./webroot/views/default/'));
-    gulp.src([ADMIN_APP + '/**/**/*.html']).pipe(gulp.dest('./webroot/views/' + ADMIN_HIDDEN_PATH + '/'));
+    gulp.src([DEFAULT_APP + '/**/**/*.html']).pipe(gulp.dest(VIEWS_PATH + 'default/'));
+    gulp.src([ADMIN_APP + '/**/**/*.html']).pipe(gulp.dest(VIEWS_PATH + ADMIN_HIDDEN_PATH + '/'));
 });
 
 gulp.task('concat-js-components', function() {
@@ -114,15 +115,15 @@ gulp.task('concat-js-lib', function() {
 });
 
 gulp.task('concat-js-dev', function() {
-    gulp.src(APP_SRC)
+    gulp.src(APP_SOURCES)
             .pipe(wrap('(function(){\n"use strict";\n<%= contents %>\n})();'))
-            .pipe(concat('app.js'))
             .pipe(addsrc(BUILD + 'server-constants.js'))
-            .pipe(sourcemaps.write('maps'))
+            .pipe(concat('app.js'))
+//            .pipe(sourcemaps.write('maps'))
             .pipe(gulp.dest(JS_OUTPUT))
 });
 gulp.task('concat-js', function() {
-    gulp.src(APP_SRC)
+    gulp.src(APP_SOURCES)
             .pipe(wrap('(function(){\n"use strict";\n<%= contents %>\n})();'))
             .pipe(stripDebug())
             .pipe(addsrc(BUILD + 'server-constants.js'))
@@ -141,6 +142,7 @@ gulp.task('concat-js-admin', function() {
     ])
             .pipe(wrap('(function(){\n"use strict";\n<%= contents %>\n})();'))
 //            .pipe(stripDebug())
+            .pipe(addsrc(BUILD + 'server-constants-admin.js'))
             .pipe(concat(ADMIN_HIDDEN_PATH + '.js'))
 //            .pipe(uglify())
             .pipe(gulp.dest(JS_OUTPUT));

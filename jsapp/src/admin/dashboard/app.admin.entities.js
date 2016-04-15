@@ -30,7 +30,7 @@ function Config(nga) {
 
     // create an admin application
     var admin = nga.application('Freestyle Tricks Admin')
-            .baseApiUrl(ADMIN_API_BASE_URL); // main API endpoint;
+            .baseApiUrl(__AdminAPIConfig__.baseUrl); // main API endpoint;
     // -------------------------------------------------------------
     var user = nga.entity('users');
     var tag = nga.entity('tags');
@@ -43,9 +43,9 @@ function Config(nga) {
     var feedback = nga.entity('feedbacks');
 
     var quotaType = nga.entity('quota-types');
-    quotaType.baseApiUrl(ADMIN_API_BASE_URL + 'activity-quota/');
+    quotaType.baseApiUrl(__AdminAPIConfig__.baseUrl + 'activity-quota/');
     var userQuota = nga.entity('user-quotas');
-    userQuota.baseApiUrl(ADMIN_API_BASE_URL + 'activity-quota/');
+    userQuota.baseApiUrl(__AdminAPIConfig__.baseUrl + 'activity-quota/');
 
 
 
@@ -168,8 +168,8 @@ function Config(nga) {
             .fields([
                 nga.field('name')
                         .validation({required: true}),
-                nga.field('slug'
-                        .validation({required: false})),
+                nga.field('slug')
+                        .validation({required: false}),
             ]);
 
     tag.editionView()
@@ -648,7 +648,7 @@ function Config(nga) {
     admin.addEntity(category);
     // -------------------------------------------------------------
 
-//    admin.header(require(ADMIN_TEMPLATE_URL + '/dashboard/header.html'));
+//    admin.header(require(__AdminPathConfig__.template + '/dashboard/header.html'));
 
     // attach the admin application to the DOM and execute it
     nga.configure(admin);

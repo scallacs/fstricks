@@ -35,7 +35,7 @@ function statusButtons(Restangular, $state, notification) {
 
             scope.updateStatus = function(status) {
                 Restangular
-                        .setBaseUrl(ADMIN_API_BASE_URL)
+                        .setBaseUrl(__AdminAPIConfig__.baseUrl)
                         .one(scope.model, scope.entry.values.id)
                         .get()
                         .then(function(entry) {
@@ -57,7 +57,7 @@ function statusButtons(Restangular, $state, notification) {
                 scope.choices.splice(scope.choices.indexOf(status), 1);
             }
         },
-        templateUrl: ADMIN_TEMPLATE_URL + 'utils/partials/status-buttons.html'
+        templateUrl: __AdminPathConfig__.template + 'utils/partials/status-buttons.html'
     };
 }
 

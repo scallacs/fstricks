@@ -155,7 +155,7 @@
                             <div class="col-xs-9">
                                 <ui-select 
                                     class="ui-select-category"
-                                    ng-model="editionTag._video_tag.category" 
+                                    ng-model="editionTag._video_tag.tag.category" 
                                     ng-disabled="!editionTag.isFieldEditabled('category')"
                                     theme="bootstrap"
                                     reset-search-input="false"
@@ -164,7 +164,7 @@
                                     required>
                                     <ui-select-match placeholder="Sport and category">
                                         {{$select.selected.sport_name}} 
-                                        {{$select.selected.category_name}} 
+                                        {{$select.selected.name}} 
                                     </ui-select-match>
                                     <ui-select-choices
                                         group-by="selectGroupBySport"
@@ -192,7 +192,7 @@
                                     <ui-select-match placeholder="Trick name" allow-clear="true">
                                         <span class="text-bold">{{$select.selected.name}} </span>
                                         <span class="text-muted" ng-if="$select.selected.sport_name">
-                                            ({{$select.selected.sport_name}} - {{$select.selected.category_name}})
+                                            ({{$select.selected.sport.name}} - {{$select.selected.category.name}})
                                         </span>
                                     </ui-select-match>
                                     <ui-select-choices

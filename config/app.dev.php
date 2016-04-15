@@ -15,6 +15,27 @@ return [
     'user_feedback' => true,
     'concat_js' => true,
     'concat_css' => false,
+    'App' => [
+        'namespace' => 'App',
+        'encoding' => 'UTF-8',
+        'base' => false,
+        'dir' => 'src',
+        'webroot' => 'webroot',
+        'wwwRoot' => WWW_ROOT,
+        // 'baseUrl' => env('SCRIPT_NAME'),
+        'fullBaseUrl' => false,
+        'baseUrlSuffix' => 'Tricker/',
+        'apiBaseUrl' => 'http://localhost:8082/Tricker/api',
+        'adminApiBaseUrl' => 'http://localhost:8082/Tricker/admin/api',
+        'imageBaseUrl' => 'img/',
+        'cssBaseUrl' => 'css/',
+        'jsBaseUrl' => 'js/',
+        'paths' => [
+            'plugins' => [ROOT . DS . 'plugins' . DS],
+            'templates' => [APP . 'Template' . DS],
+            'locales' => [APP . 'Locale' . DS],
+        ],
+    ],
     'Email' => [
         'default' => [
             'transport' => 'default',

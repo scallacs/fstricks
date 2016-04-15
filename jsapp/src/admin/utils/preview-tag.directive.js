@@ -11,7 +11,7 @@ function PreviewTagDirective(modal) {
             var entry = scope.entry();
             scope.preview = function () {
                 var instance = modal.open({
-                    templateUrl: ADMIN_TEMPLATE_URL + 'utils/partials/modal-preview-tag.html',
+                    templateUrl: __AdminPathConfig__.template + 'utils/partials/modal-preview-tag.html',
                     controller: 'ModalPreviewTagController',
                     controllerAs: 'modalPreviewTagController',
                     size: 'lg',

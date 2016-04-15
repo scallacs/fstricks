@@ -7,7 +7,7 @@ angular.module('app.admin')
 
 VideoTagEditController.$inject = ['$scope', '$location', 'Restangular', 'SharedData', '$stateParams', 'EditionTag', '$state', 'VideoTagData', 'PlayerData'];
 function VideoTagEditController($scope, $location, Restangular, SharedData, $stateParams, EditionTag, $state, VideoTagData, PlayerData) {
-    var restApi = Restangular.setBaseUrl(ADMIN_API_BASE_URL);
+    var restApi = Restangular.setBaseUrl(__AdminAPIConfig__.baseUrl);
     
     SharedData.pageLoader(false);
     $scope.user = false;
