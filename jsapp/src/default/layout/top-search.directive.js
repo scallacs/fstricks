@@ -15,15 +15,15 @@ function TopSearchMapper(SharedData) {
         },
         tag: function(data) {
             data.title = data.name;
-            data.sub_title = data.sport_name + ' ' + data.category_name;
+            data.sub_title = data.category.sport.name + ' ' + data.category.name;
             data.points = data.count_ref;
             data.type = 'tag';
             data.category = 'Trick';
             return data;
         },
         trick: function(data) {
-            data.title = data.tag_name;
-            data.sub_title = data.sport_name + ' ' + data.category_name;
+            data.title = data.name;
+            data.sub_title = data.category.sport.name + ' ' + data.category.name;
             data.points = data.count_ref;
             data.type = 'tag';
             data.category = 'Trick';
