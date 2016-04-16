@@ -186,7 +186,7 @@ class TagsTable extends Table {
         return $this->find('all')
                         ->order(['Tags.count_ref DESC'])
                         ->where([
-                            'Tags.count_ref >' => '1',
+                            'Tags.count_ref >=' => '1',
                             'Tags.status' => \App\Model\Entity\Tag::STATUS_VALIDATED
                         ])
                         ->limit(50000);
