@@ -23,7 +23,7 @@ function AddVideoTagController($scope, $state, $stateParams, VideoTagData, Video
                 return $scope.editionTag._form.submit(VideoTagEntity.edit(data).$promise);
             })
             .onApiCall('delete', function (data) {
-                return $scope.editionTag._form.submit(VideoTagEntity.delete(data.id).$promise);
+                return $scope.editionTag._form.submit(VideoTagEntity.delete(data).$promise);
             });
 
     init();

@@ -57,7 +57,7 @@ ConfigSocialApi.$inject = ['$authProvider'];
 function ConfigSocialApi($authProvider) {
     $authProvider.facebook({
         clientId: __APIConfig__.facebook.id,
-        url: __APIConfig__.baseUrl + '/users/facebook_login.json',
+        url: __APIConfig__.baseUrl + 'users/facebook_login.json',
         redirectUri: __PathConfig__.webroot
     });
 

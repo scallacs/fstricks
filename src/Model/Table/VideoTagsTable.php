@@ -140,13 +140,17 @@ class VideoTagsTable extends Table {
                                     'Sports.slug',
                                     'Sports.id'
                                 ])
-                                ->contain(['Sports', 'Categories']);
+                                ->contain([
+                                    'Categories' => ['Sports']
+                                ]);
             };
         }
         if ($queryRiders === null) {
             $queryRiders = function($q) {
                 return $q->select([
-                            'Riders__name' => 'CONCAT(Riders.firstname, \' \', Riders.lastname)',
+//                            'Riders__display_name' => 'CONCAT(Riders.firstname, \' \', Riders.lastname)',
+                            'Riders.firstname', 
+                            'Riders.lastname',
                             'Riders.picture',
                             'Riders.nationality',
                             'Riders.slug',

@@ -4,8 +4,8 @@ angular.module('app.tag')
 function FormVideoTagDirective() {
     return {
         scope: {
-            video: '=video',
-            editionTag: '=editionTag'
+            video: '=',
+            editionTag: '='
         },
         templateUrl: __PathConfig__.template + '/tag/partials/form-video-tag.html',
         controller: FormVideoTagController
@@ -13,31 +13,6 @@ function FormVideoTagDirective() {
 
 }
 
-/*
- 
- VideoTag
- - begin: 245.5
- - category_name: "jib"
- - count_points: 0
- - end: 248.5
- - id: 96
- - provider_id: "youtube"
- - rider_name: "sebastien toutant"
- - rider_picture: null
- - sport_name: "snowboard"
- - tag_name: "backside 360 in"
- - tag_slug: "backside-360-in"
- - video_id: 113
- - video_url: "hDnGPpHEM6U"
- 
- 
- PostData
- - begin
- - end
- - sport_id
- - category_id
- - rider_id [optional]
- */
 FormVideoTagController.$inject = ['$scope', '$filter', 'TagEntity', 'RiderEntity', 'SharedData', 'PlayerData',
             'VideoTagData', 'PaginateDataLoader'];
 function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedData, PlayerData,
@@ -92,7 +67,8 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
     $scope.refreshSuggestedCategories = refreshSuggestedCategories;
     $scope.refreshSuggestedRiders = refreshSuggestedRiders;
     $scope.onSelectRider = onSelectRider;
-
+    $scope.onRemoveTrick = onRemoveTrick;
+    
     $scope.addStartRange = addStartRange;
     $scope.addEndRange = addEndRange;
     $scope.setStartRangeNow = setStartRangeNow;
@@ -100,6 +76,10 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
     $scope.loadSimilarTags = loadSimilarTags;
     $scope.selectGroupBySport = selectGroupBySport;
 
+    SharedData.onReady().then(function(){
+        $scope.suggestedCategories = SharedData.categories;
+    });
+    
     $scope.$on('play-video-tag', function(event, tag) {
         event.stopPropagation();
         editVideoTag(tag); // TODO check
@@ -111,14 +91,15 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
     $scope.$on('add-new-tag', addNewTag);
     $scope.$on('rider-selected', onRiderSelectedEvent);
     
-    $scope.$watch('editionTag._extra.tag', function(newVal) {
-        if (!newVal){
+    $scope.$watch('editionTag._video_tag.tag', function(newVal) {
+        if (!newVal || !newVal.name){
+            $scope.formAddVideoTag.tag_id.$setValidity("required", false);
             return;
         }
         var valid = newVal.name.length <= TAG_MAX_LENGTH;
         $scope.formAddVideoTag.tag_id.$setValidity("maxlength", valid);
-        console.log("Set validity for " + newVal.name + " ("+newVal.name.lenth+" <=? " +TAG_MAX_LENGTH+ " ): " + valid);
-    });
+        console.log("Set validity for " + newVal.name + " ("+newVal.name.length+" <=? " +TAG_MAX_LENGTH+ " ): " + valid);
+    }, true);
     
     $scope.$watch('formAddVideoTag', function(newVal){
         editionTag._form = newVal;
@@ -348,33 +329,41 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
     function refreshSuggestedCategories(term) {
         $scope.suggestedCategories = $filter('searchCategory')(SharedData.categories, term);
     }
+    
+    function onRemoveTrick($item, $model){
+        console.log($item); console.log($model);
+    }
+//    function onRemoveCategory($item, $model){
+//        console.log($item); console.log($model);
+//    }
 
     function refreshSuggestedTags(trick) {
         trick = trick.trim().toLowerCase();
-        if (trick.length >= 2 && editionTag._extra.category !== null) {
-            var categoryId = editionTag._extra.category.category_id;
-            var sportId = editionTag._extra.category.sport_id;
+        var videoTag = editionTag._video_tag;
+        $scope.suggestedTags = [];
+        if (trick.length >= 2 && videoTag.tag.category) {
+            var categoryId = videoTag.tag.category.id;
+            var sportId = videoTag.tag.category.sport.id;
             TagEntity.suggest({
                 q: trick,
                 category_id: categoryId,
                 sport_id: sportId,
                 count_ref_min: 0
             }, function(results) {
-                $scope.suggestedTags = [];
+                
                 var exists = false;
                 console.log(trick);
                 for (var i = 0; i < results.length; i++) {
+                    results[i].category = videoTag.tag.category;
                     $scope.suggestedTags.push(results[i]);
                     exists = exists || (results[i].name === trick);
                 }
                 if (!exists) {
+                    console.log(videoTag.tag);
                     $scope.suggestedTags.push({
                         is_new: true,
                         name: trick,
-                        sport_name: editionTag._extra.category.sport_name,
-                        category_name: editionTag._extra.category.category_name,
-                        sport_id: sportId,
-                        category_id: categoryId
+                        category: videoTag.tag.category
                     });
                 }
             });
@@ -383,10 +372,6 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
 
     var lastRefreshSuggestedRidersCall = null;
     function refreshSuggestedRiders(name) {
-//        if (lastRefreshSuggestedRidersCall !== null && !lastRefreshSuggestedRidersCall.$resolved) {
-//            lastRefreshSuggestedRidersCall.$cancelRequest();
-//            lastRefreshSuggestedRidersCall = null;
-//        }
         if (name.length >= 2) {
             lastRefreshSuggestedRidersCall = RiderEntity.search({
                 q: name
@@ -414,6 +399,6 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
     }
 
     function selectGroupBySport(item) {
-        return item.sport_name;
+        return item.sport.name;
     }
 }

@@ -68,8 +68,10 @@ build-backend:
 	composer install
 	npm install
 	
+# TODO use constants
 build-frontend: 
 	bower install
+        sudo bin/cake AngularConfig http://www.fstricks.com
 	$(GULP_BIN) build
 
 .PHONY: generate-sitemap

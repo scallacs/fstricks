@@ -31,7 +31,7 @@ class VideoTagPointsTable extends Table
         $this->primaryKey('id');
 
         $this->belongsTo('Users', [
-            'foreignKey' => 'users_id',
+            'foreignKey' => 'user_id',
             'joinType' => 'INNER'
         ]);
         $this->belongsTo('VideoTags', [
@@ -80,7 +80,7 @@ class VideoTagPointsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['users_id'], 'Users'));
+        $rules->add($rules->existsIn(['user_id'], 'Users'));
         $rules->add($rules->existsIn(['video_tag_id'], 'VideoTags'));
         $rules->add($rules->isUnique(['video_tag_id', 'user_id']));
         return $rules;

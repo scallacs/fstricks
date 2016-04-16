@@ -226,13 +226,6 @@ class VideoTagsController extends AppController {
                 $sport = $sports->findFromNameCached($sportName);
                 if (!empty($sport)) {
                     $query->where(['Tags.sport_id' => $sport['id']]);
-//                    if (!empty($this->request->query['category_name'])) {
-//                        $categoryName = \App\Lib\DataUtil::lowername($this->request->query['category_name']);
-//                        $category = $sports->findFromCategoryCached($sportName, $categoryName);
-//                        if (!empty($category)) {
-//                            $query->where(['Tags.category_id' => $category['id']]);
-//                        }
-//                    }
                 }
             }
             if (!empty($this->request->query['category_name']) && isset($sportName)) {

@@ -1,7 +1,10 @@
 <div ng-show="!playerData.data.video_url && !SharedData.loadingState && !videoTagData.loading
      && videoTagData.getLoader().hasData()">
     <p class="pick-video-message">
-        Pick a trick to play<br/>
-        <span class="text-muted"><a ui-sref="addvideo"> or create new ones</a></span>
+        <a href=#" ng-click="playerData.showListTricks = true"> Pick a trick to play </a>
+        <br/>
+        or 
+        <br/>
+        <span class="text-muted"><a ui-sref="addvideo">create new ones</a></span>
     </p>
 </div>

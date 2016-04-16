@@ -1,7 +1,7 @@
 
 angular.module('shared.form')
         .factory('DataExistsService', ['$resource', function($resource) {
-            var url = __APIConfig__.baseUrl + '/:controller/:action.json';
+            var url = __APIConfig__.baseUrl + ':controller/:action.json';
 
             return $resource(url, {controller: '@controller', action: '@action'}, {
                 check: {

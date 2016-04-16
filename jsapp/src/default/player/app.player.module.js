@@ -136,7 +136,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer.validation', {
-                url: '/validate',
+                url: '/validate/:sportSlug',
                 views: {
                     videoPlayerExtra: {
                         templateUrl: baseUrl + 'view-validation.html',
@@ -577,23 +577,19 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
 
     function autoPlayVideo(response) {
         console.log("Autho play video");
-        if (response.items.length > 0) {
-            var first = response.items[0];
-            PlayerData.loadVideo(first.provider_id, {
-                video_url: first.video_url
-            }).finally(function() {
-                SharedData.pageLoader(false);
-            });
-            $scope.videoDuration = first.video_duration;
-            $scope.videoTags = response.items;
-
+        
+        if (response.items.length === 0) {
+            console.error("This video has no trick");
         }
-        else {
-            console.log("This video has no trick");
-            $state.go('notfound');
-        }
-
         var video = response.extra.video;
+        PlayerData.loadVideo(video.provider_id, {
+            video_url: video.video_url
+        }).finally(function() {
+            SharedData.pageLoader(false);
+        });
+        $scope.videoDuration = video.duration;
+        $scope.videoTags = response.items;
+
 
         var providerFactory = ProviderVideoInfo.get(video.provider_id);
 
@@ -617,12 +613,13 @@ function StartValidationController(SharedData) {
 
 // TODO add current sport ...
 ViewValidationController.$inject = ['$scope', 'VideoTagData', 'PlayerData', 'SharedData', '$state',
-    'VideoTagEntity', 'VideoTagAccuracyRateEntity'];
+    'VideoTagEntity', 'VideoTagAccuracyRateEntity', '$stateParams', '$filter'];
 function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, $state, VideoTagEntity,
-        VideoTagAccuracyRateEntity) {
+        VideoTagAccuracyRateEntity, $stateParams, $filter) {
     var skipped = [];
-
-    if (!SharedData.currentSport) {
+    var sport = $filter('getByProperty')(SharedData.sports, $stateParams.sportSlug, 'slug');
+    
+    if (!sport) {
         $state.go('startvalidation');
         return;
     }
@@ -630,7 +627,6 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     VideoTagData.reset();
     loadNext();
     PlayerData.showValidationMode();
-    SharedData.setCurrentCategory(null);
     PlayerData.showListTricks = false;
 
     $scope.rateAccurate = rateAccurate;
@@ -673,7 +669,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     function loadNext() {
         SharedData.pageLoader(true);
         return VideoTagEntity
-                .validation({skipped: skipped.join(','), sport_id: SharedData.currentSport ? SharedData.currentSport.id : null})
+                .validation({skipped: skipped.join(','), sport_id: sport.id})
                 .$promise
                 .then(successLoadCallback)
                 .catch(function() {

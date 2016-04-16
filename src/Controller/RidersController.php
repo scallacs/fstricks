@@ -103,22 +103,23 @@ class RidersController extends AppController {
         ResultMessage::setWrapper(false);
         if ($this->request->is('get')) {
             $data = $this->request->query;
-            
+            $this->Riders->initFilters();
             if (!isset($data['q']) && (!isset($data['firstname']) || !isset($data['lastname']))) {
                 throw new \Cake\Network\Exception\NotFoundException();
             }
-            $query = $this->Riders->findPublic()
+            $query = $this->Riders->find('search', $this->Riders->filterParams($this->request->query))
                     ->select([
-                        'firstname' => 'Riders.firstname',
-                        'lastname' => 'Riders.lastname',
-                        'nationality' => 'Riders.nationality',
-                        'slug' => 'Riders.slug',
-                        'count_tags' => 'Riders.count_tags',
-                        'level', 'Riders.level',
-                        'id' => 'Riders.id',
+                        'Riders.firstname',
+                        'Riders.lastname',
+                        'Riders.nationality',
+                        'Riders.slug',
+                        'Riders.count_tags',
+//                        'Riders.level',
+                        'Riders.id',
                     ])
                     ->order(['Riders.count_tags DESC','Riders.level DESC'])
                     ->limit(20);
+            $this->Riders->findPublic($query);
             
             if (isset($data['q'])) {
                 $searchHelper = new \App\Lib\SearchHelper($data, $query);

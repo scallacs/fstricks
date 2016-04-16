@@ -1,6 +1,5 @@
 angular
         .module('app.core', ['ngCookies'])
-        .factory('PlayerData', PlayerData)
         .factory('VideoTagData', VideoTagData)
         .factory('PaginateDataLoader', PaginateDataLoader)
         .factory('SharedData', SharedData)
@@ -35,365 +34,18 @@ function NotifyOnLoad($rootScope, $timeout) {
 trickListFilter.$inject = ['SharedData'];
 function trickListFilter(SharedData) {
     return function(input) {
-        var result = [];
-        input.forEach(function(item){
-            var keep = (SharedData.currentCategory === null ||
-                    (SharedData.currentCategory.id === item.category.id)) 
-                    && (SharedData.currentSport === null ||
-                            (SharedData.currentSport.id === item.sport.id));
-            if (keep){
-                result.push(item);
-            }
-        });
-        return result;
+//        var result = [];
+//        input.forEach(function(item){
+//            var keep = (SharedData.currentCategory === null ||
+//                    (SharedData.currentCategory.id === item.category.id)) 
+//                    && (SharedData.currentSport === null ||
+//                            (SharedData.currentSport.id === item.category.sport.id));
+//            if (keep){
+//                result.push(item);
+//            }
+//        });
+        return input;
     };
-}
-
-PlayerData.$inject = ['VideoTagData', '$q'];
-function PlayerData(VideoTagData, $q) {
-    var obj = {
-        initPlayers: initPlayers,
-        initData: initData,
-        init: init,
-        showEditionMode: showEditionMode,
-        showViewMode: showViewMode,
-        showValidationMode: showValidationMode,
-        isMode: isMode,
-        getPromise: getPromise, getPlayer: getPlayer,
-        isProvider: isProvider,
-        setPlayer: setPlayer,
-        errorPlayer: errorPlayer,
-        reset: reset,
-        startLooping: startLooping,
-        stopLooping: stopLooping,
-        replay: replay,
-        playVideoTag: playVideoTag,
-        play: play,
-        pause: pause,
-        stop: stop,
-        _view: _view,
-        seekTo: seekTo,
-        loadVideo: loadVideo,
-        hasError: hasError,
-        getCurrentTime: getCurrentTime,
-        resetPlayer: resetPlayer,
-        toggleLooping: toggleLooping,
-        setProvider: setProvider,
-        onTimeRangeEnd: onTimeRangeEnd,
-        onPlayProgress: onPlayProgress,
-        onFinish: onFinish,
-        onPause: onPause,
-        onPlay: onPlay,
-        hasVideo: hasVideo,
-        hide: hide,
-        setVideo: setVideo
-    };
-
-    obj.init();
-
-    return obj;
-
-    function init() {
-        console.log("PlayerData::init");
-        obj.initPlayers();
-        obj.initData();
-    }
-    function initData() {
-        console.log("PlayerData::initData");
-        obj.state = 'hide';
-        obj.timer = null;
-        obj.visible = true;
-        obj.showListTricks = true;
-        obj.mode = 'view';
-        obj.looping = true; // True if we want to loop on the current tag
-        obj.playMode = 'tag'; // tag, playlist, video
-        obj.data = {
-            begin: 0, end: 0,
-            video_url: null,
-            duration: 0, currentTime: 0,
-            id: null,
-            provider: null
-        };
-        //            obj.onSeek = function() {
-        //                obj.getCurrentTime().then(function(currentTime) {
-        //                    if ((obj.data.begin !== null && currentTime < obj.data.begin)
-        //                            || (obj.data.end !== null && currentTime > obj.data.end)) { //                        obj.looping = false;
-        //                    }
-        //                });
-        //            };
-    }
-    function initPlayers() {
-        obj.deferred = {
-            youtube: $q.defer(),
-            vimeo: $q.defer()
-        };
-        obj.players = {
-            youtube: null,
-            vimeo: null
-        };
-    }
-
-    function setVideo(video) {
-        obj.data.provider = video.provider_id;
-        obj.data.duration = video.duration;
-    }
-
-    function hasVideo() {
-        return !obj.hasError() && obj.state !== 'hide';
-    }
-
-    function hide() {
-        console.log("Hidding video player");
-        obj.state = 'hide';
-    }
-
-    function onFinish() {
-        console.log('Player::onFinish');
-        obj.state = 'stop';
-    }
-    function onPause() {
-        console.log('Player::onPause');
-        obj.state = 'pause';
-    }
-    function onPlay() {
-        console.log('Player::onPlay');
-        obj.state = 'play';
-    }
-
-    function setProvider(p) {
-        if (obj.data.provider !== p) {
-            if (obj.data.provider) {
-                obj.stop(obj.data.provider);
-            }
-            clearInterval(PlayerData.timer);
-            console.log('Changing provider to: ' + p + '(before: ' + obj.data.provider + ')');
-            obj.data.provider = p;
-            obj.data.video_url = null;
-            obj.state = 'pause';
-        }
-    }
-
-    function toggleLooping() {
-        obj.looping ? obj.stopLooping() : obj.startLooping();
-    }
-    function isMode(m) {
-//        console.log("PlayerData::isMode(" + m + ") ? " + obj.mode);
-        return obj.mode === m;
-    }
-
-    function onTimeRangeEnd(provider, currentTime) {
-        console.log("PlayerData::onTimeRangeEnd() mode: " + obj.playMode + ', state: ' + obj.state);
-        if (obj.state !== 'play') {
-            return;
-        }
-        if (obj.looping) {
-            console.log('Looping on video tag');
-            obj.seekTo(obj.data.begin);
-        }
-        //console.log("onTimeRangeEnd() reached !");
-        else if (obj.playMode === 'playlist' && VideoTagData.getLoader().hasData()) {
-            if (VideoTagData.hasNext()) {
-                obj.playVideoTag(VideoTagData.next(), false);
-            } else {
-                obj.playVideoTag(VideoTagData.getLoader().getItem(0));
-            }
-        }
-    }
-    function hasError() {
-//        return obj.data.provider !== null &&
-        //                obj.players[obj.data.provider] === false;
-        return obj.data.provider !== null &&
-                obj.players[obj.data.provider] === false;
-    }
-    function onPlayProgress(currentTime) {
-        //        console.log(currentTime);
-        obj.data.currentTime = currentTime;
-        //        console.log( obj.data);
-
-        if (obj.playMode === 'video' && !obj.looping) {
-            //        console.log(VideoTagData.currentTag);
-            var current = VideoTagData.currentTag;
-            if (angular.isDefined(current) && current !== null) {
-                console.log("current tag is defined: " + currentTime + " in ? " + current.id + " [" + current.begin + ", " + current.end + "]");
-                if (current.begin <= currentTime && current.end >= currentTime) {
-                    current.time_to_play = 0;
-                    obj.data.end = current.end;
-                    obj.data.begin = current.begin;
-                    return;
-                }
-                else if (current.begin > currentTime) {
-                    current.time_to_play = Math.round(current.begin - currentTime, 0);
-                    return;
-                }
-            }
-            console.log("Searching for next tag...");
-            VideoTagData.setCurrentTag(VideoTagData.findNextTagToPlay(currentTime));
-        }
-        else if (obj.data.provider !== null
-                && obj.data.end !== null
-                && currentTime >= obj.data.end) {
-            obj.onTimeRangeEnd(obj.data.provider, currentTime);
-        }
-    }
-    function startLooping() {
-        if (VideoTagData.currentTag) {
-            obj.looping = true;
-        }
-    }
-
-    function stopLooping() {
-        obj.looping = false;
-    }
-
-    function showEditionMode() {
-        obj.reset();
-        obj.mode = 'edition';
-    }
-
-    function showViewMode() {
-        obj.reset();
-        obj.mode = 'view';
-        obj.visible = true;
-    }
-
-    function showValidationMode() {
-        obj.reset();
-        obj.mode = 'validation';
-        obj.visible = true;
-    }
-
-    function errorPlayer(type, error) {
-        console.log("Error for player: " + type + " (" + error + ")");
-        obj.deferred[type].reject(error);
-        obj.players[type] = false;
-    }
-
-    function isProvider(provider) {
-        return obj.data.provider === provider;
-    }
-
-    function setPlayer(type, player) {
-        console.log("PlayerData::setPlayer : " + type);
-        obj.players[type] = player;
-        obj.deferred[type].resolve(player);
-    }
-    // TODO reset players
-    function resetPlayer(type) {
-        if (obj.deferred[type]) {
-            console.log("Resetting player: " + type);
-            obj.deferred[type].reject("player reset");
-        }
-        obj.players[type] = null;
-        obj.deferred[type] = $q.defer();
-    }
-    function getPlayer() {
-        //console.log(obj.players[obj.data.provider]);
-        return obj.players[obj.data.provider];
-    }
-    function playVideoTag(videoTag, looping) {
-        return _view(videoTag, looping);
-    }
-    function _view(videoTag, looping) {
-        VideoTagData.setCurrentTag(videoTag);
-        if (!videoTag) {
-            console.log("Try to view a null videoTag");
-            return;
-        }
-        console.log("PlayerData._view: " + videoTag.id);
-        console.log(videoTag);
-        obj.data.id = videoTag.id;
-        obj.showListTricks = false;
-        obj.looping = !angular.isDefined(looping) ? (obj.playMode === 'tag') : looping;
-        //        console.log("Play mode: " + obj.playMode + ". Set looping: " + obj.looping);
-        return obj.loadVideo(videoTag.video.provider_id, videoTag);
-    }
-
-    function replay(videoTag) {
-        return obj.seekTo(videoTag.begin);
-    }
-
-    function reset() {
-        console.log("PlayerData::reset()");
-        VideoTagData.reset();
-        obj.stop();
-        clearInterval(obj.timer);
-        obj.initData();
-        return this;
-    }
-
-    function play() {
-        return obj.getPromise().then(function(player) {
-            player.play();
-        });
-    }
-
-    function seekTo(val) {
-        return obj.getPromise().then(function(player) {
-            player.seekTo(val);
-        });
-    }
-    function pause() {
-        return obj.getPromise().then(function(player) {
-            player.pause();
-        });
-    }
-
-    function stop(provider) {
-        if (!angular.isDefined(provider) && obj.data.provider === null) {
-            return $q.defer();
-        }
-        else if (!angular.isDefined(provider)) {
-            provider = obj.data.provider;
-        }
-        console.log('Stoping video from provider: ' + provider);
-        obj.looping = false;
-        return obj.deferred[provider].promise.then(function(player) {
-            player.stop();
-        });
-    }
-
-    function loadVideo(provider, data) {
-        if (obj.isProvider(provider) &&
-                data.video_url === obj.data.video_url) {
-            console.log('Same video, same provider');
-            obj.data.begin = data.begin;
-            obj.data.end = data.end;
-            return obj.seekTo(data.begin);
-        }
-        else {
-            console.log('Load video: ' + data.video_url + ' with ' + provider);
-            obj.setProvider(provider);
-            obj.data.video_url = data.video_url;
-            return obj.getPromise().then(function(player) {
-                console.log('Load video in playerData: ' + data.video_url);
-                var toLoad = {
-                    video_url: data.video_url,
-                };
-                obj.data.begin = angular.isDefined(data.begin) ? data.begin : 0;
-                toLoad.begin = obj.data.begin;
-
-                obj.data.end = angular.isDefined(data.end) ? data.end : null;
-                toLoad.end = obj.data.end;
-                obj.state = 'stop';
-                obj.state = 'play';
-                player.loadVideo(toLoad);
-            });
-        }
-    }
-
-
-    function getPromise() {
-        console.log("Getting promise for: " + obj.data.provider);
-        if (!obj.data.provider) {
-            throw "Unkown video provider: " + obj.data.provider;
-        }
-        return obj.deferred[obj.data.provider].promise;
-    }
-
-
-    function getCurrentTime() {
-        return obj.getPlayer().getCurrentTime();
-    }
 }
 
 PaginateDataLoader.$inject = ['$q'];
@@ -698,8 +350,8 @@ function searchCategory() {
             var found = 0;
             for (var i = 0; i < terms.length; i++) {
                 var term = terms[i].trim();
-                if ((item.category_name.indexOf(term) !== -1) ||
-                        (item.sport_name.indexOf(term) !== -1)) {
+                if ((item.name.indexOf(term) !== -1) ||
+                        (item.sport.name.indexOf(term) !== -1)) {
                     found++;
                 }
             }
@@ -793,11 +445,9 @@ function SharedData(SportEntity) {
                 for (var j = 0; j < sport.categories.length; j++) {
                     var category = sport.categories[j];
                     self.categories.push({
-                        category_name: category.name,
-                        category_id: category.id,
-                        sport_name: sport.name,
-                        sport_image: sport.image,
-                        sport_id: sport.id
+                        id: category.id,
+                        name: category.name,
+                        sport: sport
                     });
                 }
             }
@@ -808,7 +458,7 @@ function SharedData(SportEntity) {
 NationalityEntity.$inject = ['$resource'];
 function NationalityEntity($resource) {
 
-    var url = __APIConfig__.baseUrl + '/nationalities/:action.json';
+    var url = __APIConfig__.baseUrl + 'nationalities/:action.json';
     return $resource(url, {id: '@id', action: '@action'}, {
         all: {
             method: 'GET',
@@ -820,7 +470,7 @@ function NationalityEntity($resource) {
 
 RiderEntity.$inject = ['$resource'];
 function RiderEntity($resource) {
-    var url = __APIConfig__.baseUrl + '/Riders/:action/:id.json';
+    var url = __APIConfig__.baseUrl + 'Riders/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
         search: {
             method: 'GET',
@@ -846,7 +496,7 @@ function RiderEntity($resource) {
 
 UserEntity.$inject = ['$resource'];
 function UserEntity($resource) {
-    var url = __APIConfig__.baseUrl + '/Users/:action/:id.json';
+    var url = __APIConfig__.baseUrl + 'Users/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {profile: {
             method: 'GET',
             params: {action: 'profile'},
@@ -897,7 +547,7 @@ function UserEntity($resource) {
 
 ErrorReportEntity.$inject = ['$resource'];
 function ErrorReportEntity($resource) {
-    var url = __APIConfig__.baseUrl + '/ReportErrors/:action/:id.json';
+    var url = __APIConfig__.baseUrl + 'ReportErrors/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
         post: {
             method: 'POST',
@@ -909,7 +559,7 @@ function ErrorReportEntity($resource) {
 
 VideoEntity.$inject = ['$resource'];
 function VideoEntity($resource) {
-    var url = __APIConfig__.baseUrl + '/Videos/:action/:id/:provider.json';
+    var url = __APIConfig__.baseUrl + 'Videos/:action/:id/:provider.json';
     return $resource(url, {id: '@id', action: '@action'}, {
         addOrGet: {
             method: 'POST',
@@ -936,7 +586,7 @@ function VideoEntity($resource) {
 
 SportEntity.$inject = ['$resource'];
 function SportEntity($resource) {
-    var url = __APIConfig__.baseUrl + '/Sports/:action/:id.json';
+    var url = __APIConfig__.baseUrl + 'Sports/:action/:id.json';
     //var url = '/sys/MediaTagTricks/:action/:id';
     return $resource(url, {id: '@id', action: '@action'}, {
         index: {
@@ -951,7 +601,7 @@ function SportEntity($resource) {
 
 TagEntity.$inject = ['$resource'];
 function TagEntity($resource) {
-    var url = __APIConfig__.baseUrl + '/Tags/:action/:id.json';
+    var url = __APIConfig__.baseUrl + 'Tags/:action/:id.json';
     //var url = '/sys/MediaTagTricks/:action/:id';
     return $resource(url, {id: '@id', action: '@action', sport: '@sport', category: '@category', trick: '@trick'}, {suggest: {
             method: 'GET',
@@ -968,7 +618,7 @@ function TagEntity($resource) {
 
 UpDownPointEntity.$inject = ['$resource'];
 function UpDownPointEntity($resource) {
-    var url = __APIConfig__.baseUrl + '/:controller/:action/:id.json';
+    var url = __APIConfig__.baseUrl + ':controller/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action', controller: '@controller'}, {
         up: {
             method: 'POST',
@@ -985,7 +635,7 @@ function UpDownPointEntity($resource) {
 
 VideoTagAccuracyRateEntity.$inject = ['$resource'];
 function VideoTagAccuracyRateEntity($resource) {
-    var url = __APIConfig__.baseUrl + '/VideoTagAccuracyRates/:action.json';
+    var url = __APIConfig__.baseUrl + 'VideoTagAccuracyRates/:action.json';
     return $resource(url, {action: '@action'}, {
         accurate: {
             method: 'POST',
@@ -1007,7 +657,7 @@ function VideoTagAccuracyRateEntity($resource) {
 
 VideoTagEntity.$inject = ['$resource'];
 function VideoTagEntity($resource) {
-    var url = __APIConfig__.baseUrl + '/VideoTags/:action/:id.json';
+    var url = __APIConfig__.baseUrl + 'VideoTags/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
         view: {
             method: 'GET',
@@ -1062,7 +712,7 @@ function VideoTagEntity($resource) {
 }
 PlaylistEntity.$inject = ['$resource'];
 function PlaylistEntity($resource) {
-    var url = __APIConfig__.baseUrl + '/Playlists/:action/:id.json';
+    var url = __APIConfig__.baseUrl + 'Playlists/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
         user: {
             method: 'GET',
@@ -1104,7 +754,7 @@ function PlaylistEntity($resource) {
 
 PlaylistItemEntity.$inject = ['$resource'];
 function PlaylistItemEntity($resource) {
-    var url = __APIConfig__.baseUrl + '/PlaylistVideoTags/:action/:id.json';
+    var url = __APIConfig__.baseUrl + 'PlaylistVideoTags/:action/:id.json';
     return $resource(url, {id: '@id', action: '@action'}, {
         playlist: {
             method: 'GET',

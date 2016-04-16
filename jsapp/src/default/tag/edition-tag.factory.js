@@ -43,7 +43,7 @@ function EditionTag() {
         onApiCall: onApiCall
     };
 
-    function onApiCall(name, fct){
+    function onApiCall(name, fct) {
         this._apiMap[name] = fct;
         return this;
     }
@@ -57,20 +57,29 @@ function EditionTag() {
     function isValidated() {
         return 'validated' === this._video_tag.status;
     }
+    
+    function __getSafeProperty(obj, path){
+        var attrs = path.split('.');
+        for (var i = 0; i < attrs.length; i++){
+            if (!obj) return obj;
+            obj = obj[attrs[i]];
+        }
+        return obj;
+    }
     function isDirty() {
         if (!angular.isDefined(this._original) || this._original === null || !this._video_tag.id) {
             return true;
         }
         var a = this._video_tag;
         var b = this._original;
-//        console.log(a);console.log(b);
-        return  a.begin !== b.begin 
+        return a.begin !== b.begin
                 || a.end !== b.end
-                || ((a.tag.id && a.tag.id !== b.tag.id) || (!a.tag.id && a.tag.name !== b.tag.name))
-                || a.rider.id !== b.rider.id
-                || a.category.id !== b.category.id 
-                || a.video.id !== b.video.id
-                || a.status !== b.status;
+                || a.status !== b.status
+                || __getSafeProperty(a, 'rider.id') !== __getSafeProperty(b, 'rider.id')
+                || __getSafeProperty(a, 'tag.id') !== __getSafeProperty(b, 'tag.id')
+                || __getSafeProperty(a, 'tag.name') !== __getSafeProperty(b, 'tag.name')
+                || __getSafeProperty(a, 'tag.category.id') !== __getSafeProperty(b, 'tag.category.id');
+        
     }
 
     function setStatus(val) {
@@ -116,14 +125,16 @@ function EditionTag() {
             return promise;
         }
     }
-    
+
     function resetTag() {
-        this._video_tag.tag = null;
+        this._video_tag.tag.id = null;
+        this._video_tag.tag.name = null;
+        this._video_tag.tag.slug = null;
         return this;
     }
 
     function hasCategory() {
-        return this._video_tag.tag.category.id;
+        return this._video_tag.tag && this._video_tag.tag.category && this._video_tag.tag.category.id;
     }
 
     function getId() {
@@ -150,10 +161,9 @@ function EditionTag() {
             user_id: this._user_id,
             provider_id: null,
             tag: {
-                category: {},
-                sport: {},
+                category: null
             },
-            rider: {}
+            rider: null
         };
 
         this.setEditabled();
@@ -169,11 +179,11 @@ function EditionTag() {
     function setRider(rider) {
         this._video_tag.rider = rider;
     }
-    function moveForward(){
+    function moveForward() {
         var duration = this._video_tag.end - this._video_tag.begin;
-        this._extra.range[0] = Math.min(this._video_tag.end, this._video_tag.video_duration - this._config.min_duration);
+        this._extra.range[0] = Math.min(this._video_tag.end, this._video_tag.video.duration - this._config.min_duration);
         this._video_tag.begin = this._extra.range[0];
-        this._extra.range[1] = this._video_tag.begin + Math.min(duration, (this._video_tag.video_duration - this._video_tag.begin));
+        this._extra.range[1] = this._video_tag.begin + Math.min(duration, (this._video_tag.video.duration - this._video_tag.begin));
         this._video_tag.end = this._extra.range[1];
     }
 
@@ -222,15 +232,19 @@ function EditionTag() {
             video_id: this._video_tag.video.id,
             begin: this._video_tag.begin,
             end: this._video_tag.end,
-            rider_id: this._video_tag.rider.id,
-            tag_id: this._video_tag.tag.id,
+            rider_id: __getSafeProperty(this._video_tag, 'rider.id'),
             id: this._video_tag.id,
             status: this._video_tag.status
         };
         if (this._video_tag.tag.is_new) {
             console.log("CREATING NEW TAG:");
-            postData.tag = this._video_tag.tag;
-//            postData.tag.category_id = this._extra.category.category_id;
+            postData.tag = {
+                name: this._video_tag.tag.name,
+                category_id: this._video_tag.tag.category.id
+            };
+        }
+        else {
+            postData.tag_id = this._video_tag.tag.id;
         }
         return postData;
     }

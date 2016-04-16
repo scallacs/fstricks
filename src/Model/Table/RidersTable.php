@@ -74,12 +74,15 @@ class RidersTable extends Table {
                 ->add('user_id', 'Search.Value')
                 ->add('category_id', 'Search.Value')
                 ->add('sport_id', 'Search.Value')
-                ->add('status', 'Search.Value')
                 ->add('q', 'Search.Like', [
                     'before' => true,
                     'after' => true,
                     'field' => [$this->aliasField('firstname'), $this->aliasField('lastname')]
         ]);
+        if ($type === 'admin') {
+            $this->searchManager()
+                ->add('status', 'Search.Value');
+        }
     }
 
     /**
@@ -100,14 +103,14 @@ class RidersTable extends Table {
                 ->requirePresence('nationality', 'create')
                 ->add('nationality', 'custom', [
                     'rule' => function ($value, $context) {
-                        $countries = JsonConfigHelper::countries();
-                        foreach ($countries as $county) {
-                            if ($county['code'] === $value) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    },
+                $countries = JsonConfigHelper::countries();
+                foreach ($countries as $county) {
+                    if ($county['code'] === $value) {
+                        return true;
+                    }
+                }
+                return false;
+            },
                     'message' => 'Choose a valid nationality'
         ]);
 
@@ -141,14 +144,14 @@ class RidersTable extends Table {
 
         $validator
                 ->add('level', 'valid', ['rule' => function ($value) {
-                        $levels = JsonConfigHelper::rules("riders", "level", "values");
-                        foreach ($levels as $level) {
-                            if ($level['code'] == $value) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }])
+                $levels = JsonConfigHelper::rules("riders", "level", "values");
+                foreach ($levels as $level) {
+                    if ($level['code'] == $value) {
+                        return true;
+                    }
+                }
+                return false;
+            }])
                 ->requirePresence('level', 'create')
                 ->notEmpty('level');
 
@@ -192,7 +195,10 @@ class RidersTable extends Table {
         $entity->slug = \Cake\Utility\Inflector::slug($entity->firstname . '-' . $entity->lastname . '-' . $entity->nationality);
     }
 
-    public function findPublic() {
+    public function findPublic($query = null) {
+        if ($query){
+            return $query;
+        }
         return $this->find('all');
     }
 

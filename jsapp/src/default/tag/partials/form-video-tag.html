@@ -162,8 +162,8 @@
                                     on-select="editionTag.resetTag()"
                                     on-remove="onRemoveCategory($item, $model)"
                                     required>
-                                    <ui-select-match placeholder="Sport and category">
-                                        {{$select.selected.sport_name}} 
+                                    <ui-select-match placeholder="Sport and category" allow-clear="true">
+                                        {{$select.selected.sport.name}} 
                                         {{$select.selected.name}} 
                                     </ui-select-match>
                                     <ui-select-choices
@@ -171,7 +171,7 @@
                                         repeat="category in suggestedCategories"
                                         refresh="refreshSuggestedCategories($select.search)"
                                         refresh-delay="0">
-                                        <span class="">{{category.category_name}}</span>
+                                        <span class="">{{category.name}}</span>
                                     </ui-select-choices>
                                 </ui-select>
                             </div>
@@ -186,14 +186,11 @@
                                     ng-model="editionTag._video_tag.tag" 
                                     theme="bootstrap"
                                     ng-disabled="!editionTag.hasCategory() || !editionTag.isFieldEditabled('tag')"
-                                    reset-search-input="false"
+                                    reset-search-input="true"
                                     on-remove="onRemoveTrick($item, $model)"
                                     required>
-                                    <ui-select-match placeholder="Trick name" allow-clear="true">
-                                        <span class="text-bold">{{$select.selected.name}} </span>
-                                        <span class="text-muted" ng-if="$select.selected.sport_name">
-                                            ({{$select.selected.sport.name}} - {{$select.selected.category.name}})
-                                        </span>
+                                    <ui-select-match placeholder="Trick name" >
+                                        <span class="text-bold">{{$select.selected.name}}  </span>
                                     </ui-select-match>
                                     <ui-select-choices
                                         repeat="tag in suggestedTags"
@@ -201,13 +198,11 @@
                                         refresh-delay="500">
                                         <div class="clearfix">
                                             <div class="col-xs-10" style="text-transform: capitalize;"  >
-                                                <span class="text-bold">{{tag.name}}</span> <br/>
-                                                <span class="">{{tag.sport_name}}</span> - 
-                                                <span class="">{{tag.category_name}}</span>
+                                                <span class="text-bold">{{tag.name}}</span>
                                             </div>
-                                            <div class="col-xs-2" style="overflow: hidden;" >
-                                                <span class="text-big" ng-if="!tag.is_new">{{tag.count_ref}}</span>
-                                                <span class="text-big text-warning" ng-if="tag.is_new">New!</span>
+                                            <div class="col-xs-2" >
+                                                <span class="text-big" ng-if="!tag.is_new">{{tag.count_ref}} </span>
+                                                <span class="text-big text-danger" ng-if="tag.is_new">New! </span> 
                                             </div>
                                         </div> 
                                     </ui-select-choices>
@@ -216,6 +211,7 @@
                                      ng-if="formAddVideoTag.tag_id.$dirty"
                                      ng-messages="formAddVideoTag.tag_id.$error">
                                     <div ng-message="server">{{formAddVideoTag.tag_id.$error.server}}</div>
+                                    <div ng-message="required">You must set the trick name</div>
                                     <div ng-message="maxlength">You cannot enter more than 50 caracters.</div>
                                 </div>
                             </div>

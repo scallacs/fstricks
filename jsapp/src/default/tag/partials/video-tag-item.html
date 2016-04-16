@@ -4,10 +4,10 @@
      ng-class="{ 'active': videoTagData.currentTag.id === videoTag.id}" >
 
     <div class="item-sport" itemprop="category">
-        <span ng-if="videoTag.tag.sport">
-            <img ng-src="{{videoTag.tag.sport.slug | sportIconUrl}}" 
-                 title="{{videoTag.tag.sport.name}}"
-                 alt="{{videoTag.tag.sport.name}}"/>
+        <span ng-if="videoTag.tag.category.sport">
+            <img ng-src="{{videoTag.tag.category.sport.slug | sportIconUrl}}" 
+                 title="{{videoTag.tag.category.sport.name}}"
+                 alt="{{videoTag.tag.category.sport.name}}"/>
         </span>
     </div>
     <div class="col-xs-3 item-thumbnail hide-no-room">
@@ -26,22 +26,16 @@
                     Provide the trick name
                 </p>
                 <div    itemprop="author"
-                        class="item-user-xs" 
-                        ng-if="videoTag.rider.name" >
-                    <span class="thumbnail-round-xs">
-                        <img ng-if="videoTag.rider.picture_round_xs" ng-src="videoTag.rider.picture_round_xs"/>
-                    </span>
-                    <a  ui-sref="videoplayer.rider({riderId: videoTag.rider.slug})"
-                        class="item-user-name text-info text-capitalize">
-                        {{videoTag.rider.name}} - 
-                        {{videoTag.rider.nationality}}
-                    </a>
-                </div>
-                <div    class="item-user-xs" 
-                        ng-if="!videoTag.rider.name" >
-                    <a class="item-user-name text-muted"
-                       >
+                        class="item-user-xs" >
+                    <span ng-if="!videoTag.rider.id" 
+                          class="item-user-name text-muted" >
                         Unknown rider
+                    </span>
+                    <a  ng-if="videoTag.rider.id" 
+                        ui-sref="videoplayer.rider({riderId: videoTag.rider.slug})"
+                        class="item-user-name text-info text-capitalize">
+                        {{videoTag.rider.display_name}} - 
+                        {{videoTag.rider.nationality}}
                     </a>
                 </div>
             </div>

@@ -8,25 +8,12 @@
         Pick the sport you want to review:
     </p>
     <ul class="nav nav-pills">
-        <li ng-repeat="sport in sports"
-            ng-class="{'active': SharedData.currentSport.id == sport.id}" >
-            <a  href="#" 
-                ng-click="setCurrentSport(sport)"
-                >
+        <li ng-repeat="sport in sports">
+            <a ng-click="SharedData.setCurrentSport(sport)" ui-sref="videoplayer.validation({sportSlug:sport.slug})" >
                 {{sport.name}} 
             </a>
         </li>
     </ul>
-    <div class="text-center padding-sm margin-top">
-        <button ui-sref="home" class="btn btn-danger">
-            Another time... 
-        </button>
-        <button  ui-sref="videoplayer.validation"  
-                 class="btn btn-success"
-                 ng-disabled="!SharedData.currentSport">
-            Okay, let's go!
-        </button>
-    </div>
 </div>
 
 

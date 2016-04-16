@@ -2,6 +2,13 @@
     class="container-fluid"
     ng-show="playerData.showListTricks"
     >
+    
+    <div class="text-right margin-top"  
+         ng-if="!videoTagData.currentTag"
+         ng-click="playerData.showListTricks = false" >
+        <a href="#" class="text-big padding-sm"><span class="glyphicon glyphicon-remove"></span></a>
+    </div>
+    
     <ul ng-if="SharedData.showCategories && SharedData.currentSport && SharedData.currentSport.categories.length > 1" 
         class="nav nav-pills nav-justified text-big margin-bottom margin-top text-capitalize">
         <li class="bg-primary-darker"
@@ -21,6 +28,7 @@
         </li>
     </ul>
 
+    
     <div ng-repeat="videoTag in videoTagData.getItems() | trickListFilter" ng-if="$index % 2 == 0" class="row clearfix">
         <div class="col-sm-6 nopadding">
             <div video-tag-item 

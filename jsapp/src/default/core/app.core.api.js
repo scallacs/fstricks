@@ -67,13 +67,13 @@ ApiFactory.$inject = ['Api', 'ApiResourceFactory'];
 function ApiFactory(Api, ApiResourceFactory ) {
     return {
         api: function() {
-            return new Api(ApiResourceFactory.create(__APIConfig__.baseUrl + '/:controller/:action/:_id.json', {_id: '@_id', action: '@action', controller: '@controller'}));
+            return new Api(ApiResourceFactory.create(__APIConfig__.baseUrl + ':controller/:action/:_id.json', {_id: '@_id', action: '@action', controller: '@controller'}));
         },
         endpoint: function(controller, action, id, extra){
             if (!angular.isDefined(extra)){
                 extra = {};
             }
-            var url = __APIConfig__.baseUrl + '/' + controller + '/' + action;
+            var url = __APIConfig__.baseUrl + '' + controller + '/' + action;
             if (angular.isDefined(id)){
                 url += '/' + id;
             }
