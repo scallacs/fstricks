@@ -11,7 +11,7 @@ return [
      */
     'debug' => false,
     'maintenance' => [
-        'on' => true,
+        'on' => false,
         'whitelist' => ['78.233.201.181']
     ],
     'user_feedback' => true,
