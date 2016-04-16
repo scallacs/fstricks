@@ -38,12 +38,13 @@ class VideosController extends AppController {
                                 ->order(['VideoTags.begin ASC'])
                                 ->contain(['Tags' => function($q) {
                                 return $q
+                                        // TODO check if usefull or not ???
                                         ->select([
                                             'category_name' => 'Categories.name',
                                             'sport_name' => 'Sports.name',
                                             'tag_name' => 'Tags.name',
                                         ])
-                                        ->contain(['Sports', 'Categories']);
+                                        ->contain(['Categories' => ['Sports']]);
                             }
                 ]);
             }
