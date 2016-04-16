@@ -22,6 +22,7 @@ class SearchsTable extends \Cake\ORM\Table {
         $this->displayField('title');
         $this->primaryKey('id');
 
+        
     }
 
 
