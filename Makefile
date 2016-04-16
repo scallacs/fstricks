@@ -4,7 +4,7 @@ CSS_FILES = $(filter-out %.min.css,$(wildcard \
 ))
 
 NODE_MODULES_PATH = jsapp/node_modules
-GULP_BIN = $(NODE_MODULES_PATH)/gulp/bin/gulp.js
+GULP_BIN = node_modules/gulp/bin/gulp.js
 DB_SOURCE = resources/database/prod.sql
 DB_PROD_NAME = trickers 
 DB_DEV_NAME = trickers
