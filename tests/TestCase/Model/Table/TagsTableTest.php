@@ -33,6 +33,8 @@ class TagsTableTest extends TestCase
         parent::setUp();
         $config = TableRegistry::exists('Tags') ? [] : ['className' => 'App\Model\Table\TagsTable'];
         $this->Tags = TableRegistry::get('Tags', $config);
+        $config = TableRegistry::exists('Categories') ? [] : ['className' => 'App\Model\Table\CategoriesTable'];
+        $this->Categories = TableRegistry::get('Categories', $config);
     }
 
     /**
@@ -43,10 +45,43 @@ class TagsTableTest extends TestCase
     public function tearDown()
     {
         unset($this->Tags);
+        unset($this->Categories);
 
         parent::tearDown();
     }
 
+    
+    public function testInvalidCategory() {
+        
+        $categoryId = -1;
+        $data = [
+            'name' => 'the new tag',
+            'category_id' => $categoryId,
+            'user_id' => 1
+        ];
+        $tag = $this->Tags->newEntity($data);
+        $tag->user_id = 1;
+        $success = (bool) $this->Tags->save($tag);
+        $this->assertFalse($success, "Should not be possible to save an invalid category");
+        
+        
+    }
+    public function testGenerateSlug() {
+        $categoryId = 1;
+        $category = $this->Categories->get($categoryId, ['contain' => 'Sports']);
+        $data = [
+            'name' => 'the new tag',
+            'category_id' => $category->id,
+            'user_id' => 1
+        ];
+        $tag = $this->Tags->newEntity($data);
+        $tag->user_id = 1;
+        $success = (bool) $this->Tags->save($tag);
+        $this->assertTrue($success);
+        
+        $this->assertEquals($tag->generateSlug($category), $tag->slug);
+        
+    }
 
     /**
      * Test adding a similar tag 
@@ -57,7 +92,6 @@ class TagsTableTest extends TestCase
         // Add a video:
         $data = [
             'name' => 'meme 3600 ',
-            'sport_id' => 1,
             'category_id' => 1,
             'user_id' => 1
         ];
@@ -78,7 +112,6 @@ class TagsTableTest extends TestCase
     {
         $entity = $this->Tags->newEntity([
             'name' => 'myuniqtag',
-            'sport_id' => 1,
             'category_id' => 1,
             'user_id' =>1
         ]);
@@ -88,7 +121,6 @@ class TagsTableTest extends TestCase
         }
         $entity = $this->Tags->newEntity([
             'name' => 'myuniqtag',
-            'sport_id' => 1,
             'category_id' => 1,
             'user_id' => 1
         ]);
@@ -117,7 +149,6 @@ class TagsTableTest extends TestCase
         
         $entity = $this->Tags->newEntity([
             'name' => '#salut',
-            'sport_id' => 1,
             'category_id' => 1,
             'user_id' =>1
         ]);
@@ -125,7 +156,6 @@ class TagsTableTest extends TestCase
         
         $entity = $this->Tags->newEntity([
             'name' => '$salut',
-            'sport_id' => 1,
             'category_id' => 1,
             'user_id' =>1
         ]);
@@ -133,7 +163,6 @@ class TagsTableTest extends TestCase
         
         $entity = $this->Tags->newEntity([
             'name' => 'saut@',
-            'sport_id' => 1,
             'category_id' => 1,
             'user_id' =>1
         ]);
@@ -142,7 +171,6 @@ class TagsTableTest extends TestCase
         
         $entity = $this->Tags->newEntity([
             'name' => 'accentué',
-            'sport_id' => 1,
             'category_id' => 1,
             'user_id' =>1
         ]);
