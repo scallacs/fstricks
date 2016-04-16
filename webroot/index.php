@@ -32,7 +32,8 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\DispatcherFactory;
 
-if (\Cake\Core\Configure::read('maintenance') > 0) {
+if ( (\Cake\Core\Configure::read('maintenance') === 'env' && env('WEBSITE_MAINTENANCE')) 
+        || \Cake\Core\Configure::read('maintenance') > 0){
     // TODO SET ERROR CODE 503
     require('maintenance.php');
     die();

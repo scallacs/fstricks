@@ -10,7 +10,7 @@ return [
      * true: Errors and warnings shown.
      */
     'debug' => false,
-    'maintenance' => 0,
+    'maintenance' => 'env',
     'user_feedback' => true,
     'concat_js' => true,
     'concat_css' => true,

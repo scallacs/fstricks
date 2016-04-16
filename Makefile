@@ -72,7 +72,7 @@ build-backend:
 build-frontend: 
 	bower install
         sudo bin/cake AngularConfig http://www.fstricks.com
-	$(GULP_BIN) build
+	cd jsapp && $(GULP_BIN) build
 
 .PHONY: generate-sitemap
 generate-sitemap: 
