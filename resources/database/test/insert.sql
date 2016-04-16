@@ -10,9 +10,9 @@ INSERT INTO `sports` (`id`, `name`, `status`, `slug`) VALUES
 (8, 'bmx', 'public', 'bmx'),
 (9, 'parkour', 'public', 'parkour');
 
-INSERT INTO `trickers_test_e2e`.`social_providers` (`id`) VALUES ('facebook');
+INSERT INTO `social_providers` (`id`) VALUES ('facebook');
 
-INSERT INTO `trickers_test_e2e`.`video_providers` (`name`) VALUES ('youtube'), ('vimeo');
+INSERT INTO `video_providers` (`name`) VALUES ('youtube'), ('vimeo');
 
 INSERT INTO `users` (`id`, `email`, `username`, `password`, `status`, `count_tags`, `count_report_errors`, `created`, `last_login`, `provider`, `provider_uid`, `count_tags_validated`, `count_tags_rejected`, `reputation_points`, `password_token`, `password_token_expires`, `email_token`, `email_token_expires`, `email_verified`) 
 VALUES
@@ -103,7 +103,7 @@ INSERT INTO `riders` (`id`, `firstname`, `lastname`, `picture`, `picture_dir`, `
 
 
 
-INSERT INTO `tags` (`id`, `name`, `count_ref`, `category_id`, `user_id`, `created`, `slug`) VALUES
+INSERT INTO `tags` (`id`, `name`, `count_ref`, `category_id`, `user_id`, `created`, `slug`, `status`) VALUES
 (1, 'frontside 360', 0, 1, NULL, '2015-12-26 08:01:35', 'frontside-360-1', 'pending'),
 (3, 'backside 360', 0, 1, NULL, '2015-12-26 08:01:35', 'backside-360-1', 'pending'),
 (4, 'backside 180', 0, 1, NULL, '2015-12-26 08:01:35', 'backside-180-1', 'pending'),

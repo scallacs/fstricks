@@ -193,6 +193,7 @@ class VideoTagsController extends AppController {
 
         $query = $this->VideoTags->find('search', $this->VideoTags->filterParams($this->request->query));
         $query = $this->VideoTags->findAndJoin($query);
+
         $query->where(['Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC]);
 
             $order = empty($this->request->query['order']) ? 'best' : $this->request->query['order'];
@@ -219,15 +220,6 @@ class VideoTagsController extends AppController {
                     ]);
             }
             
-            if (!empty($this->request->query['sport_name'])) {
-                // Get id from name
-                $sports = \Cake\ORM\TableRegistry::get('Sports');
-                $sportName = \App\Lib\DataUtil::lowername($this->request->query['sport_name']);
-                $sport = $sports->findFromNameCached($sportName);
-                if (!empty($sport)) {
-                    $query->where(['Tags.sport_id' => $sport['id']]);
-                }
-            }
             if (!empty($this->request->query['category_name']) && isset($sportName)) {
                 $categoryName = \App\Lib\DataUtil::lowername($this->request->query['category_name']);
                 $sports = \Cake\ORM\TableRegistry::get('Sports');
@@ -279,13 +271,9 @@ class VideoTagsController extends AppController {
             if (!empty($this->request->query['tag_name'])) {
                 $str = $this->request->query['tag_name'];
                 \App\Model\Table\TableUtil::multipleWordSearch($query, $str, 'Tags.name');
-            }
-//            if (!empty($this->request->query['with_total'])){
-//                $data = [
-//
-//                ]
-//            }
-//            debug($query->sql());
+            }               
+
+            
             ResultMessage::setPaginateData(
                     $this->paginate($query), $this->request->params['paging']['VideoTags']);
     }

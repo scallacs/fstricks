@@ -13,7 +13,6 @@ use Cake\Cache\Cache;
  * Sports Model
  *
  * @property \Cake\ORM\Association\HasMany $Categories
- * @property \Cake\ORM\Association\HasMany $Tags
  */
 class SportsTable extends Table {
 
@@ -35,9 +34,6 @@ class SportsTable extends Table {
         $this->primaryKey('id');
 
         $this->hasMany('Categories', [
-            'foreignKey' => 'sport_id'
-        ]);
-        $this->hasMany('Tags', [
             'foreignKey' => 'sport_id'
         ]);
     }
