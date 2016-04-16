@@ -29,12 +29,13 @@ class CategoriesFixture extends TestFixture
         [
             'id' => 1,
             'sport_id' => 1,
-            'name' => 'Jib'
+            'name' => 'Jib',
+            'slug' => 'kicker'
         ],
         [
             'id' => 2,
             'sport_id' => 1,
-            'name' => 'Kicker'
+            'slug' => 'jib'
         ],
     ];
 }

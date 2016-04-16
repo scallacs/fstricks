@@ -134,20 +134,20 @@ class TagsTable extends Table {
 
     public function buildRules(RulesChecker $rules) {
         parent::buildRules($rules);
-        $rules->add($rules->isUnique(['name', 'category_id']));
-        
         // Test exists category
         $rules->add(function($entity, $options) {
             $categoriesTable = \Cake\ORM\TableRegistry::get('Categories');
             try {
                 $category = $categoriesTable->get($entity->category_id, ['contain' => 'Sports']);
-                $entity->__category = $$category;
+                $entity->__category = $category;
 
                 return true;
             } catch (\Exception $ex) {
                 return false;
             }
         });
+        
+        $rules->add($rules->isUnique(['name', 'category_id']));
         
         return $rules;
     }
@@ -159,8 +159,7 @@ class TagsTable extends Table {
      */
     public function beforeSave($event, $entity, $options) {
         if ($entity->isNew() && empty($entity->slug)) {
-            // TODO SET SLUG
-            $entity->generateSlug($entity->__category->sport, $entity->category);
+            $entity->generateSlug($entity->__category);
         }
     }
 

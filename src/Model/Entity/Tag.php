@@ -29,6 +29,7 @@ class Tag extends Entity {
     
     public function generateSlug($category){
         $this->slug = $category['sport']['slug'].'-'.$category['slug'].'-'.\Cake\Utility\Inflector::slug($this->name);
+        return $this->slug;
     }
     
     public function _setName($name){

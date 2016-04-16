@@ -79,7 +79,8 @@ class TagsTableTest extends TestCase
         $success = (bool) $this->Tags->save($tag);
         $this->assertTrue($success);
         
-        $this->assertEquals($tag->generateSlug($category), $tag->slug);
+        $tag = $this->Tags->get($tag->id);
+        $this->assertEquals('snowboard-kicker-the-new-tag', $tag->slug);
         
     }
 
