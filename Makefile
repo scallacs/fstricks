@@ -69,10 +69,11 @@ build-backend:
 	cd jsapp && npm install
 	
 # TODO use constants
-build-frontend: 
-	bower install
-        sudo bin/cake AngularConfig http://www.fstricks.com
-	cd jsapp && $(GULP_BIN) build
+.PHONY: build-frontend
+build-frontend:  
+	cake AngularConfig http://www.fstricks.com 
+	bower install 
+	cd jsapp && $(GULP_BIN) build 
 
 .PHONY: generate-sitemap
 generate-sitemap: 
