@@ -88,8 +88,8 @@ class TagsTable extends Table {
                     ],
                     'allowedChars' => [
                         'rule' => function($value, $context) {
-                            return !preg_match(JsonConfigHelper::rules('tags', 'name', 'regex'), $value);
-                        },
+                    return !preg_match(JsonConfigHelper::rules('tags', 'name', 'regex'), $value);
+                },
                         'message' => 'Only alpha numeric chars with accents.'
                     ]
         ]);
@@ -186,10 +186,8 @@ class TagsTable extends Table {
         return $this->find('all')
                         ->order(['Tags.count_ref DESC'])
                         ->where([
-                            'OR' => [
-                                'Tags.count_ref >' => '1',
-                                'Tags.status' => \App\Model\Entity\Tag::STATUS_VALIDATED
-                            ]
+                            'Tags.count_ref >' => '1',
+                            'Tags.status' => \App\Model\Entity\Tag::STATUS_VALIDATED
                         ])
                         ->limit(50000);
     }
