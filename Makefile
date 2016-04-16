@@ -18,6 +18,7 @@ KARMA_BIN = $(NODE_MODULES_PATH)/karma/bin/karma
 WEBDRIVER_MANAGER_BIN = $(NODE_MODULES_PATH)/webdriver-manager/bin/webdriver-manager
 PROTRACTOR_BIN = $(NODE_MODULES_PATH)/protractor/bin/protractor
 
+source /home/ec2-user/.bashrc
 
 ###############################################################
 all: build mv2prod
