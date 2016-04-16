@@ -66,7 +66,7 @@ build: reset-repo build-backend build-frontend
 build-backend: 
 	chmod u+x bin/cake
 	composer install
-	npm install
+	cd jsapp && npm install
 	
 # TODO use constants
 build-frontend: 
