@@ -78,7 +78,7 @@ class TagsController extends AppController {
                     'sport_id' => 'Categories.sport_id',
                     'category_id' => 'Tags.category_id',
                     'category_name' => 'Categories.name',
-                    'sport_name' => 'Categories.Sports.name'])
+                    'sport_name' => 'Sports.name'])
                 ->where([
                     'Tags.name LIKE' => '%' . $term . '%',
                     'Tags.count_ref >= ' . $countRef

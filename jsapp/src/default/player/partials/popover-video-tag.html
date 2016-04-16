@@ -1,23 +1,23 @@
 <div class="bg-primary clearfix popover-video-tag text-center">
-    <div class="col-xs-3" ng-if="tag.sport_name">
+    <div class="col-xs-3" ng-if="tag.tag.category">
         <div class="item-sport">
             <p>
-                <img ng-src="{{tag.sport_slug | sportIconUrl}}" 
-                     title="{{tag.sport_name}}"
-                     alt="{{tag.sport_name}}"/>
+                <img ng-src="{{tag.tag.category.sport.slug | sportIconUrl}}" 
+                     title="{{tag.tag.category.sport.name}}"
+                     alt="{{tag.tag.category.sport.name}}"/>
             </p>
             <p class="item-category">
-                {{tag.category_name}}
+                {{tag.tag.category.name}}
             </p>
         </div>
     </div>
     <div class="col-xs-9">
         <p class="text-bold text-capitalize">
-            {{tag.tag_name}}
+            {{tag.tag.name}}
         </p>
-        <p ng-if="tag.rider_name" 
+        <p ng-if="tag.rider.display_name" 
            class="item-user-name text-info text-capitalize">
-            {{tag.rider_name}}
+            {{tag.rider.display_name}}
         </p>
         <p ng-if="tag.count_points">
             <span class="item-points">
