@@ -4,7 +4,7 @@
             <div class="col-sm-4">
                 <ul class="list-unstyled">
                     <li ng-repeat="sport in sports">
-                        <a  ui-sref="videoplayer.sport({sportName: sport.name})" lass="text-capitalize" ng-click="setCurrentSport(sport)">
+                        <a  ui-sref="videoplayer.sport({sportSlug: sport.slug})" lass="text-capitalize" ng-click="setCurrentSport(sport)">
                             {{sport.name}}
                         </a>
                     </li>
