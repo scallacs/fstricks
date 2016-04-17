@@ -34,18 +34,20 @@ function statusButtons(Restangular, $state, notification) {
             };
 
             scope.updateStatus = function(status) {
+                var data = {status: status};
                 Restangular
                         .setBaseUrl(__AdminAPIConfig__.baseUrl)
                         .one(scope.model, scope.entry.values.id)
-                        .get()
-                        .then(function(entry) {
-//                            console.log(entry);
-                            entry.data.status = status;
-                            return entry.data.put();
-                        })
+                        .customPUT(data)
+//                        .get()
+//                        .then(function(entry) {
+////                            console.log(entry);
+//                            var id = scope.entry.values.id;
+//                            return entry.data.put();
+//                        })
                         .then(function() {
                             scope.entry.values.status = status;
-                            notification.log('Review ' + status, {addnCls: 'humane-flatty-success'});
+                            notification.log('Changed status to ' + status, {addnCls: 'humane-flatty-success'});
                         })
                         .catch(function() {
                             notification.log('A problem occurred, please try again', {addnCls: 'humane-flatty-error'}) && console.error(e);

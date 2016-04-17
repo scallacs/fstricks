@@ -530,7 +530,7 @@ function Config(nga, EntityStatus) {
                         .cssClasses(function(entry) {
                             if (!entry)
                                 return;
-                            if (!entry.values.rider.id) {
+                            if (!entry.values.rider) {
                                 return 'bg-danger';
                             }
                             else {
