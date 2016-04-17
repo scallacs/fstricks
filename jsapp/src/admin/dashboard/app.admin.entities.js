@@ -522,15 +522,15 @@ function Config(nga, EntityStatus) {
                                 return 'bg-success';
                             }
                         }),
-                nga.field('tag_name').label('Tag'),
+                nga.field('tag.name').label('Tag'),
                 nga.field('modified').map(timeago),
-                nga.field('provider_id').label('Provider'),
-                nga.field('rider_name')
+                nga.field('video.provider_id').label('Provider'),
+                nga.field('rider.display_name')
                         .label('Rider')
                         .cssClasses(function(entry) {
                             if (!entry)
                                 return;
-                            if (!entry.values.rider_id) {
+                            if (!entry.values.rider.id) {
                                 return 'bg-danger';
                             }
                             else {
@@ -541,10 +541,10 @@ function Config(nga, EntityStatus) {
 //                        .targetEntity(category)
 //                        .targetField(nga.field('name'))
 //                        .label('Category'),
-                nga.field('user_id', 'reference')
-                        .targetEntity(user)
-                        .targetField(nga.field('username'))
-                        .label('User')
+                nga.field('user_id', 'text')
+//                        .targetEntity(user)
+//                        .targetField(nga.field('username'))
+//                        .label('User')
                         .cssClasses(function(entry) {
                             if (!entry)
                                 return;
