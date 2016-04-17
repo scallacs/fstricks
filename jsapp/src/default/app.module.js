@@ -35,6 +35,7 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
     $scope.SharedData = SharedData;
     $scope.authData = AuthenticationService.authData;
     $scope.config = __WebsiteConfig__;
+    $scope.PathConfig = __PathConfig__;
 //    $scope.seo = Seo;
     $scope.feedbackOptions = {
         ajaxURL: __APIConfig__.baseUrl + 'feedbacks/send.json',
