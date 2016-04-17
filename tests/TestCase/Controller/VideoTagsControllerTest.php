@@ -19,12 +19,12 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
         'app.videos',
         'app.users',
         'app.riders',
-        'app.video_tags',
-        'app.categories',
         'app.tags',
+        'app.video_tags',
         'app.video_tag_points',
         'app.video_tag_accuracy_rates',
-        'app.sports'
+        'app.sports',
+        'app.categories',
     ];
 
     /**
@@ -120,7 +120,9 @@ class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegratio
     public function testSearch() {
         $this->get('/api/VideoTags/search.json');
         $this->assertResponseOk();
-        $result = json_decode($this->_response->body(), true);
+        $result = $this->bodyAsJson();
+//        $this->VideoTags = \Cake\ORM\TableRegistry::get('VideoTags');
+//        debug($this->VideoTags->find()->all());
         $this->assertArrayHasKey('items', $result);
         $this->assertGreaterThan(0, count($result['items']));
         $first = $result['items'][0];

@@ -1,7 +1,7 @@
 <div resize >
-    <div ng-show="SharedData.loadingState" class="pick-video-message">
+    <div ng-if="SharedData.loadingState" class="pick-video-message">
         <p>
-            Loading...
+            Loading player...
         <p/>
     </div>
     <div ng-show="!SharedData.loadingState">
@@ -21,7 +21,9 @@
                 Oups, there is no tricks registered yet... 
             <p/>
             <p ng-if="playerData.isMode('validation')">
-                Thanks for your help but there is nothing to validate for now...
+                Thanks 
+                
+                for your help but there is nothing to validate for now...
             <p/>
             <p>
                 <a ui-sref="addvideo"> Add tricks now</a>

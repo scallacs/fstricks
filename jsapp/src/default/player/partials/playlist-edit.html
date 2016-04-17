@@ -18,7 +18,8 @@
         <div 
             ng-show="showEditionForm" 
             playlist-form 
-            playlist="playlist">
+            playlist="playlist"
+            class="margin-bottom">
         </div>
         <p class="text-center padding-sm" ng-show="!showEditionForm">
             <a href="#" ng-click="showEditionForm = true" id="ButtonEditPlaylistInformation">
@@ -28,39 +29,40 @@
     </div>
 
 
-    <h3 class="page-title">
-        <span ng-if="loader.hasData()">Tricks</span>
-        <span ng-if="!loader.hasData()">There is no tricks in this playlist</span>
+    <h3 ng-if="!loader.hasData()">
+        <span>There is no tricks in this playlist</span>
     </h3>
 
-    <p class="text-center padding-sm margin-top">
+    <p class="text-center" ng-if="loader.hasData()">
         <span class="glyphicon glyphicon-info-sign"></span> Drag and drop tricks to order them in the playlist
     </p>
-    
-    <ul dnd-list="loader.data.items"
-        dnd-drop="onDrop(event, index, item, external, type, 'list')"
-        class="list-unstyled wid"
-        style="max-width: 800px; margin:auto;"
-        >
-        <li ng-repeat="videoTag in loader.data.items" 
-            class="row clearfix bg-primary border-bottom"
-            dnd-draggable="videoTag"
-            dnd-effect-allowed="move"
-            dnd-selected="selectedVideoTag = videoTag"
-            dnd-moved="loader.data.items.splice($index, 1)"
-            removable-item
-            removable-item-id="{video_tag_id: videoTag.id, playlist_id: playlist.id}"
-            removable-item-options="removeOptions">
-            <div class="col-xs-1 text-center margin-top">
-                <button class="btn btn-danger btn-remove-item">
-                    <span class="glyphicon glyphicon-remove"></span> 
-                </button>
-            </div>
-            <div class="col-xs-11">
-                <div video-tag-item video-tag="videoTag"></div>
-            </div>
-        </li>
-    </ul>
+
+    <div class="margin-bottom">
+        <ul dnd-list="loader.data.items"
+            dnd-drop="onDrop(event, index, item, external, type, 'list')"
+            class="list-unstyled wid "
+            style="max-width: 800px; margin:auto;"
+            >
+            <li ng-repeat="playlistVideoTag in loader.data.items" 
+                class="row clearfix bg-primary border-bottom"
+                dnd-draggable="playlistVideoTag"
+                dnd-effect-allowed="move"
+                dnd-selected="selectedVideoTag = playlistVideoTag"
+                dnd-moved="loader.data.items.splice($index, 1)"
+                removable-item
+                removable-item-id="{video_tag_id: playlistVideoTag.id, playlist_id: playlist.id}"
+                removable-item-options="removeOptions">
+                <div class="col-xs-1 text-center margin-top">
+                    <button class="btn btn-danger btn-remove-item">
+                        <span class="glyphicon glyphicon-remove"></span> 
+                    </button>
+                </div>
+                <div class="col-xs-11">
+                    <div video-tag-item video-tag="playlistVideoTag.video_tag"></div>
+                </div>
+            </li>
+        </ul>
+    </div>
 
     <div class="text-center padding-sm" ng-if="loader.hasNextPage()">
         <button ng-disabled='loader.loading' class="btn btn-primary" ng-click="loader.loadNextPage()">

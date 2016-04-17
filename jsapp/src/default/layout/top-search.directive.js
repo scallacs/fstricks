@@ -22,8 +22,8 @@ function TopSearchMapper(SharedData) {
             return data;
         },
         trick: function(data) {
-            data.title = data.name;
-            data.sub_title = data.category.sport.name + ' ' + data.category.name;
+            data.title = data.tag.name;
+            data.sub_title = data.tag.category.sport.name + ' ' + data.tag.category.name;
             data.points = data.count_ref;
             data.type = 'tag';
             data.category = 'Trick';

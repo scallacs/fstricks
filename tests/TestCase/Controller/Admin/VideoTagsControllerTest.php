@@ -35,7 +35,8 @@ class VideoTagsControllerTest extends MyIntegrationTestCase {
         $videoTagsTable = \Cake\ORM\TableRegistry::get('VideoTags');
         $videoTagOrigin = $videoTagsTable->get($tagId);
         
-        $this->logUser($videoTagOrigin->user_id + 1);
+        $this->logAdmin();
+        
         $data = [
             'user_id' => 1,
             'video_id' => 1,
@@ -43,11 +44,10 @@ class VideoTagsControllerTest extends MyIntegrationTestCase {
             'end' => $videoTagOrigin->end + 1,
             'tag' => [
                 'name' => 'testnewtag',
-                'category_id' => 1,
-                'sport_id' => 1
+                'category_id' => 1
             ],
         ];
-        $this->post('/admin/api/VideoTags/edit/' . $tagId . '.json', $data);
+        $this->put('/admin/api/video-tags/edit/' . $tagId, $data);
         $this->assertResultMessageSuccess();
     }
     

@@ -190,10 +190,9 @@ class VideoTagsController extends AppController {
         $filterStatus = true;
         $this->Paginator->config(Configure::read('Pagination.VideoTags'));
         $this->VideoTags->initFilters();
-
         $query = $this->VideoTags->find('search', $this->VideoTags->filterParams($this->request->query));
         $query = $this->VideoTags->findAndJoin($query);
-
+        
         $query->where(['Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC]);
 
             $order = empty($this->request->query['order']) ? 'best' : $this->request->query['order'];
@@ -272,7 +271,6 @@ class VideoTagsController extends AppController {
                 $str = $this->request->query['tag_name'];
                 \App\Model\Table\TableUtil::multipleWordSearch($query, $str, 'Tags.name');
             }               
-
             
             ResultMessage::setPaginateData(
                     $this->paginate($query), $this->request->params['paging']['VideoTags']);

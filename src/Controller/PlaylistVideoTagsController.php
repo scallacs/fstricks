@@ -31,16 +31,6 @@ class PlaylistVideoTagsController extends AppController {
      */
     public function playlist($playlistId = null) {
         $this->Paginator->config(\Cake\Core\Configure::read('Pagination.PlaylistVideoTags'));
-
-        $playlist = $this->Playlists
-                ->findVisible($this->Auth->user('id'))
-                ->where(['Playlists.id' => $playlistId])
-                ->hydrate(false)
-                ->limit(1)
-                ->first();
-        if (empty($playlist)) {
-            throw new \Cake\Network\Exception\NotFoundException();
-        }
         $query = $this->PlaylistVideoTags
                 ->find('all')
                 ->where([
@@ -48,15 +38,14 @@ class PlaylistVideoTagsController extends AppController {
                 ])
                 ->contain([
                     'VideoTags' => function ($q) {
-                return \Cake\ORM\TableRegistry::get('VideoTags')->findAndJoin($q);
-            }
+                        return \Cake\ORM\TableRegistry::get('VideoTags')->findAndJoin($q);
+                    }
                 ])
                 ->order(['PlaylistVideoTags.position ASC']);
 
 
         ResultMessage::setPaginateData(
                 $this->paginate($query), $this->request->params['paging']['PlaylistVideoTags']);
-        ResultMessage::setPaginateExtra('playlist', $playlist);
     }
 
     /**

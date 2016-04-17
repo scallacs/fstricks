@@ -70,7 +70,7 @@ describe('Navigation', function() {
             videoTagItem.openOptionLinkByState('videoplayer.video').then(function() {
                 app.assertLocation('videoplayer.video');
 
-                browser.sleep(2000);
+                browser.sleep(4000);
                 expect(app.hasCurrentTag()).toBe(true);
                 videoTagItem = new VideoTagItem(app.getCurrentTag());
                 // Check the current time 
@@ -137,5 +137,12 @@ describe('Navigation', function() {
                 app.assertUrl('playlist/manage');
             });
         });
+    });
+    
+    // 
+    describe('With search bar: ', function() {
+        // TODO add test 
+        // Search for a trick -> select one with only one video ==> SOULD play automatically
+        
     });
 });

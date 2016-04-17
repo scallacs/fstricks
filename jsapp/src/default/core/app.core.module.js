@@ -72,8 +72,10 @@ function PaginateDataLoader($q) {
     PaginateDataLoader.prototype.prepend = prepend;
     PaginateDataLoader.prototype.hasData = hasData;
     PaginateDataLoader.prototype.setResource = setResource;
+    PaginateDataLoader.prototype.setMapper = setMapper;
     PaginateDataLoader.prototype.setMode = setMode;
     PaginateDataLoader.prototype.getItem = getItem;
+    PaginateDataLoader.prototype.getItems = getItems;
     PaginateDataLoader.prototype._onSuccessPageLoad = _onSuccessPageLoad;
 
     return {
@@ -97,6 +99,9 @@ function PaginateDataLoader($q) {
     function init() {
         this.filters = {};
         this.initData();
+        this.mapper = function(input) {
+            return input;
+        };
         this.limit = 20; // TODO synchro server
         this.disabled = true;
         this.loading = false;
@@ -104,13 +109,20 @@ function PaginateDataLoader($q) {
         this.mode = 'append'; // Append to data Other mode: 'replace'
         return this;
     }
-
+    function setMapper(mapper){
+        this.mapper = mapper; 
+        return this;
+    }
+        
     function hasNextPage() {
         return this.mode === 'append' && this.data.total > this.data.items.length;
     }
 
     function getItem(i) {
         return this.data.items[i];
+    }
+    function getItems() {
+        return this.data.items;
     }
 
     function setResource(r) {
@@ -226,15 +238,18 @@ function PaginateDataLoader($q) {
         this.data.extra = data.extra;
         var tags = data.items;
         console.log('[Loader] Loading page ' + this.filters.page + ': ' + tags.length + ' item(s)');
-        if (this.mode === 'append') {
+            if (this.mode !== 'append') {
+                this.data.items = [];
+            }
+
             for (var i = 0; i < tags.length; i++) {
-                this.data.items.push(tags[i]);
+                this.data.items.push(this.mapper(tags[i]));
             }
             console.log('[Loader] ' + this.data.items.length + '/' + data.total + ' items');
-        }
-        else {
-            this.data.items = tags;
-        }
+//        }
+//        else {
+//            this.data.items = tags;
+//        }
     }
 
     function setFilters(value) {
@@ -244,18 +259,18 @@ function PaginateDataLoader($q) {
         this.filters = value;
         return this;
     }
-    
-    function updateFilters(filters){
+
+    function updateFilters(filters) {
         var self = this;
 //        var restrictif = true;
-        angular.forEach(filters, function(val, key){
+        angular.forEach(filters, function(val, key) {
 //            restrictif = restrictif && !this.filters[key];
             self.filters[key] = val;
         });
         return this;
     }
-    
-    function initData(){
+
+    function initData() {
         this.data = {
             total: 0,
             perPage: null,
@@ -386,7 +401,6 @@ function SharedData(SportEntity) {
         pageTitle: pageTitle,
         init: init,
         toFilter: toFilter,
-        
         sports: [],
         loadingState: true,
         currentSearch: {},
@@ -398,7 +412,7 @@ function SharedData(SportEntity) {
 
     return self;
 
-    function toFilter(){
+    function toFilter() {
         return {
             category_id: self.currentCategory ? self.currentCategory.id : null,
             sport_id: self.currentSport ? self.currentSport.id : null,
