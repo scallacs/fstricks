@@ -11,7 +11,10 @@ return [
      * true: Errors and warnings shown.
      */
     'debug' => true,
-    'maintenance' => 0,
+    'maintenance' => [
+        'on' => false,
+        'whitelist' => ['78.233.201.181']
+    ],
     'user_feedback' => true,
     'concat_js' => true,
     'concat_css' => false,

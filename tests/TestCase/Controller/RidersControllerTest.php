@@ -164,24 +164,26 @@ class RidersControllerTest extends MyIntegrationTestCase {
     }
     
     public function testLocalSearchResults(){
-        $this->get('/api/riders/local_search.json?q=XaVIer de le rue');
+        $this->get('/api/riders/local_search.json?q=XaVier');
         $this->assertResponseOk();
-        $data = json_decode($this->_response->body(), true);
-        $this->assertCount(1, $data);
+        $data = $this->bodyAsJson();
+        $this->assertCount(1, $data, "Rider search should works");
         $this->assertEquals(3, $data[0]['id']);
         
         // Test ignore accents
-        $this->get('/api/riders/local_search.json?q=Stephane Leonard');
+        $this->get('/api/riders/local_search.json?q=Stephane');
         $this->assertResponseOk();
         $data = json_decode($this->_response->body(), true);
-        $this->assertCount(1, $data);
+        $this->assertCount(1, $data, "Searching accent should works");
         $this->assertEquals(1, $data[0]['id']);
         
         // Test no results
-        $this->get('/api/riders/local_search.json?q=Stephane De le rue');
+        $this->get('/api/riders/local_search.json?q=Stephaneinex');
         $this->assertResponseOk();
         $data = json_decode($this->_response->body(), true);
-        $this->assertCount(0, $data);
+        $this->assertCount(0, $data, "No result search should work");
+        
+        // TODO search with spaces...
     }    
     
     /**

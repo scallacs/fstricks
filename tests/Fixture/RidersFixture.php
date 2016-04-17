@@ -43,8 +43,8 @@ class RidersFixture extends TestFixture
         ],
         [
             'id' => 3,
-            'firstname' => 'Xavier',
-            'lastname' => 'De le rue',
+            'firstname' => 'xavier',
+            'lastname' => 'de le rue',
             'picture' => null,
             'user_id' => null,
             'level' => 1,

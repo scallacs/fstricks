@@ -16,6 +16,8 @@ use Cake\Validation\Validator;
 class CategoriesTable extends Table
 {
 
+    const STATUS_PUBLIC = 'public';
+    const STATUS_PRIVATE = 'private';
     /**
      * Initialize method
      *
@@ -77,7 +79,7 @@ class CategoriesTable extends Table
      * @param \App\Model\Table\ArrayObject $options
      */
     public function afterSave($event, $entity, $options = []) {
-        Cache::clearGroup(SportsTable::CACHE_GROUP, 'veryLongCache');
+        \Cake\Cache\Cache::clearGroup(SportsTable::CACHE_GROUP, 'veryLongCache');
     }
     
 }

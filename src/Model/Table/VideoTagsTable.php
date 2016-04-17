@@ -75,8 +75,9 @@ class VideoTagsTable extends Table {
                 ->add('rider_slug', 'Search.Value', [
                     'field' => 'Riders.slug'
                 ])
+
                 ->add('sport_id', 'Search.Value', [
-                    'field' => 'Tags.sport_id'
+                    'field' => 'Categories.sport_id'
                 ])
                 ->add('category_id', 'Search.Value', [
                     'field' => 'Tags.category_id'

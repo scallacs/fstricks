@@ -32,7 +32,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\DispatcherFactory;
 
-if (\Cake\Core\Configure::read('maintenance') > 0) {
+if (\Cake\Core\Configure::read('maintenance.on') && !in_array($_SERVER['REMOTE_ADDR'], \Cake\Core\Configure::read('maintenance.whitelist'))){
     // TODO SET ERROR CODE 503
     require('maintenance.php');
     die();

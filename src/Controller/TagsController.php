@@ -75,7 +75,7 @@ class TagsController extends AppController {
                     'slug' => 'Tags.slug',
                     'count_ref' => 'Tags.count_ref',
                     'id' => 'Tags.id',
-                    'sport_id' => 'Tags.sport_id',
+                    'sport_id' => 'Categories.sport_id',
                     'category_id' => 'Tags.category_id',
                     'category_name' => 'Categories.name',
                     'sport_name' => 'Sports.name'])
@@ -83,12 +83,15 @@ class TagsController extends AppController {
                     'Tags.name LIKE' => '%' . $term . '%',
                     'Tags.count_ref >= ' . $countRef
                 ])
-                ->contain(['Categories', 'Sports'])
+                ->contain(['Categories' =>  function($q) use ($sportId){
+                        if ($sportId !== null) {
+                            $q->where(['Categories.sport_id' => $sportId]);
+                        }
+                        $q->contain(['Sports']);
+                        return $q;
+                    }])
                 ->limit(20)
                 ->order(['Tags.count_ref DESC']);
-        if ($sportId !== null) {
-            $query->where(['Tags.sport_id' => $this->request->query['sport_id']]);
-        }
         if ($categoryId !== null) {
             $query->where(['Tags.category_id' => $this->request->query['category_id']]);
         }

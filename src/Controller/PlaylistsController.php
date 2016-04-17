@@ -152,9 +152,6 @@ class PlaylistsController extends AppController {
         if ($this->Playlists->delete($playlist)) {
             ResultMessage::setMessage('This playlist has been successfully removed', true);
         } 
-//        else {
-//            ResultMessage::setMessage('Sorry but we cannot delete this playlist', false);
-//        }
     }
 
     

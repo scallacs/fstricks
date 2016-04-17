@@ -20,7 +20,7 @@ class AngularConfigShell extends Shell {
     }
     
     private function url($url = ''){
-        return $this->baseUrl . '/' . $this->urlSuffix . '/' . $url;
+        return $this->baseUrl . '/' . ($this->urlSuffix ? $this->urlSuffix . '/' : '') . $url;
     }
 
     private function _default() {
@@ -67,6 +67,11 @@ class AngularConfigShell extends Shell {
         $file = new \Cake\Filesystem\File($output);
         $file->write($generator->generate());
 
+    }
+    
+    
+    public function _enums(){
+        
     }
 
 }

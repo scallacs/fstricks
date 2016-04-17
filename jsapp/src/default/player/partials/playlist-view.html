@@ -1,13 +1,25 @@
 <view-title>Playlist {{playlist.title}}</view-title>
 
-<div class="container padding-sm bg-primary margin-top border-radius">
-    <div ng-if="playlist" >
-        <div playlist-item playlist="playlist" short-mode="false" points="true"></div>
-    </div>
+<div ui-view></div>
 
-    <div class="text-center margin-top"  ng-if="!videoTagData.currentTag" >
-        <button class="btn btn-primary" ng-click="startPlaylist()">
-            <span class="glyphicon glyphicon-play"></span> play
-        </button>
+<div class="container padding-sm bg-primary margin-top border-radius">
+    <div class="col-sm-10">
+        <h2>{{playlist.title}}</h2>
+        <p class="text-sm text-muted">
+            <span class="text-bold">{{playlist.status}}</span> - {{ playlist.created | timeago}} 
+            - {{playlist.count_tags}} <span class="glyphicon glyphicon-tags"></span>
+        </p>
+        <p>
+            {{playlist.description}}
+        </p>
+    </div>
+    <div class="col-sm-2">
+        <div ng-if="videoTagData.currentTag" up-down-points data="playlist" controller="PlaylistPoints" allowed-to-vote="1"></div>
+
+        <div class="text-center margin-top"  ng-if="!videoTagData.currentTag" >
+            <a class="btn btn-primary btn-block btn-lg" ui-sref=".play" >
+                <span class="glyphicon glyphicon-play"></span> play
+            </a>
+        </div>
     </div>
 </div>

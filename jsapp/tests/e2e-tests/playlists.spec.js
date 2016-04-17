@@ -2,6 +2,7 @@ var Application = require('./includes/pages.js');
 var Util = require('./includes/util.js');
 var VideoTagItem = require('./includes/video-tag-item.js');
 var PlaylistItem = require('./includes/playlist-item.js');
+var SearchBar = require('./includes/search-bar.js');
 
 describe('Playlists: ', function() {
 
@@ -136,9 +137,9 @@ describe('Playlists: ', function() {
                 var btnRemove = container.element(by.css('button.btn-remove-item'));
 //                var promiseCountItems = element.all(by.css('li[removable-item]')).count();
 //                promiseCountItems.then(function(nbInitial){
-                    btnRemove.click().then(function() {
+                btnRemove.click().then(function() {
 //                        expect(element.all(by.css('li[removable-item]')).count()).toBe(nbInitial - 1);
-                    });
+                });
 //                });
             });
 
@@ -182,6 +183,24 @@ describe('Playlists: ', function() {
         // Number of tags should be 1 for the new playlist => TODO
         // Should have the up/down button !
 
+    });
+
+
+
+    describe('View playlist', function() {
+        // Search a playlist in the search bar
+        var searchBar = SearchBar();
+
+        it('Should be possible to search for a playlist in the search bar', function() {
+
+            searchBar.sendKeys("amazing").then(function() {
+                // TODO expect result number
+                searchBar.pickChoice(1).then(function() {
+                    
+                });
+            });
+            
+        });
     });
 
 

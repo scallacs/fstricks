@@ -71,9 +71,9 @@ class RidersTable extends Table {
         $this->addBehavior('Search.Search');
 
         $this->searchManager()
-                ->add('user_id', 'Search.Value')
-                ->add('category_id', 'Search.Value')
-                ->add('sport_id', 'Search.Value')
+//                ->add('user_id', 'Search.Value')
+//                ->add('category_id', 'Search.Value')
+//                ->add('sport_id', 'Search.Value')
                 ->add('q', 'Search.Like', [
                     'before' => true,
                     'after' => true,

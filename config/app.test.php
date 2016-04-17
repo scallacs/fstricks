@@ -2,7 +2,10 @@
 
 return [
     'debug' => true,
-    'maintenance' => 0,
+    'maintenance' => [
+        'on' => false,
+        'whitelist' => []
+    ],
     'user_feedback' => true,
     'concat_js' => true,
     'concat_css' => false,

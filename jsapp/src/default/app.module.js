@@ -61,12 +61,12 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
             $state.go('videoplayer.tag', {tagSlug: data.slug});
         }
         else if (data.type === 'playlist') {
-            $state.go('videoplayer.playlist', {playlistId: data.id});
+            $state.go('playlist', {playlistId: data.id});
         }
     });
 
     $scope.$on('on-playlist-title-clicked', function(event, playlist) {
-        $state.go("videoplayer.playlist", {playlistId: playlist.id});
+        $state.go("playlist", {playlistId: playlist.id});
     });
 }
 
@@ -84,7 +84,7 @@ function Run($rootScope, AuthenticationService, loginModal, $state, SharedData) 
             return;
         }
         //console.log('$stateChangeStart: ' + event);
-        var requireLogin = toState.data.requireLogin;
+        var requireLogin = toState.data ? toState.data.requireLogin : false;
 
         if (requireLogin && !AuthenticationService.isAuthed()) {
             console.log('DENY USER ACCESS FOR THIS LOCATION');

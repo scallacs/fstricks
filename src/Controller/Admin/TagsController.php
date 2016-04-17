@@ -16,12 +16,12 @@ class TagsController extends AppController {
     }
 
     public function index() {
+        $this->Tags->initFilters('admin');
         $query = $this->Tags
                 ->find('search', $this->Tags->filterParams($this->request->query))
                 ->contain([
-            'Categories',
-            'Sports'
-        ]);
+                    'Categories' => ['Sports']
+                ]);
 
         ResultMessage::paginate($query, $this);
     }

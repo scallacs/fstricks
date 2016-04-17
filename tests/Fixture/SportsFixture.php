@@ -28,11 +28,13 @@ class SportsFixture extends TestFixture
     public $records = [
         [
             'id' => 1,
-            'name' => 'Snowboard'
+            'name' => 'Snowboard',
+            'slug' => 'snowboard'
         ],
         [
             'id' => 2,
-            'name' => 'Ski'
+            'name' => 'Ski',
+            'slug' => 'ski'
         ],
     ];
 }

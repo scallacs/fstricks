@@ -36,6 +36,7 @@ class VideoTagsFixture extends TestFixture {
                 'tag_id' => 1,
                 'user_id' => 1,
                 'begin' => 0,
+                'rider_id' => 1,
                 'end' => 5,
                 'created' => 1451080432,
                 'count_points' => 1,

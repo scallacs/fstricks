@@ -17,8 +17,9 @@ class VideosController extends AppController
      */
     public function index()
     {
+        $this->Videos->initFilters('admin');
 //        $this->Paginator->config(Configure::read('Pagination.Users'));
-        $query = $this->Videos->find('all');
+        $query = $this->Videos->find('search', $this->Videos->filterParams($this->request->query));
         ResultMessage::paginate($query, $this);
     }
 

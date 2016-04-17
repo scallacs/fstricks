@@ -15,6 +15,18 @@ class MyIntegrationTestCase extends \Cake\TestSuite\IntegrationTestCase {
             ]
         ]);
     }
+    protected function logAdmin($id = 1) {
+        // Set session data
+        $this->session([
+            'Auth' => [
+                'User' => [
+                    'id' => $id,
+                    'username' => 'testing' . $id,
+                    'role' => 'admin'
+                ]
+            ]
+        ]);
+    }
 
     public function setUp() {
         parent::setUp();

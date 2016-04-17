@@ -13,7 +13,6 @@ use Cake\Cache\Cache;
  * Sports Model
  *
  * @property \Cake\ORM\Association\HasMany $Categories
- * @property \Cake\ORM\Association\HasMany $Tags
  */
 class SportsTable extends Table {
 
@@ -35,11 +34,15 @@ class SportsTable extends Table {
         $this->primaryKey('id');
 
         $this->hasMany('Categories', [
-            'foreignKey' => 'sport_id'
+            'foreignKey' => 'sport_id',
+            'saveStrategy' => 'append' // @warning Otherwise it will trigger to delete foreign key
         ]);
-        $this->hasMany('Tags', [
-            'foreignKey' => 'sport_id'
+        
+        $this->addBehavior('ADmad/Sequence.Sequence', [
+            'order' => 'position', // Field to use to store integer sequence. Default "position".
+            'start' => 1, // Initial value for sequence. Default 1.
         ]);
+
     }
 
     /**
@@ -61,13 +64,14 @@ class SportsTable extends Table {
     }
 
     public function findAllCached() {
-//        debug(\Cake\Cache\Cache::clearGroup('sports', 'veryLongCache'));
-//        debug(\Cake\Cache\Cache::delete('sports', 'veryLongCache'));
-
         return $this
                         ->find('all')
                         ->where(['status' => SportsTable::STATUS_PUBLIC])
-                        ->contain(['Categories'])
+                        ->contain(['Categories' => function ($q){
+                            return $q   ->where(['status' => CategoriesTable::STATUS_PUBLIC])
+                                        ->order(['Categories.position' => 'ASC']);
+                        }])
+                        ->order(['Sports.position' => 'ASC'])
                         ->cache(self::CACHE_GROUP, 'veryLongCache');
     }
 
@@ -112,14 +116,15 @@ class SportsTable extends Table {
      * @param \Cake\ORM\Entity $entity
      * @param \App\Model\Table\ArrayObject $options
      */
+    public function beforeSave($event, $entity, $options = []) {
+        
+    }
+    /**
+     * @param \App\Model\Table\Event $event
+     * @param \Cake\ORM\Entity $entity
+     * @param \App\Model\Table\ArrayObject $options
+     */
     public function afterSave($event, $entity, $options = []) {
-//        debug(Cache::groupConfigs());
-//        debug(Cache::configured());
-//        debug(Cache::config('oneHourCache'));die();
-//        $configs = Cache::groupConfigs(self::CACHE_GROUP);
-//        foreach ($configs[self::CACHE_GROUP] as $config) {
-//            Cache::clearGroup(self::CACHE_GROUP, $config);
-//        }
         Cache::clearGroup(self::CACHE_GROUP, 'veryLongCache');
     }
 

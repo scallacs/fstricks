@@ -18,6 +18,11 @@ use App\Lib\ResultMessage;
  */
 class TagsTable extends Table {
 
+    const STATUS_REJECTED       = 'rejected';
+    const STATUS_PENDING        = 'pending';
+    const STATUS_VALIDATED      = 'validated';
+    const STATUS_BLACKLISTED    = 'blacklisted';
+    
     /**
      * Initialize method
      *
@@ -37,29 +42,20 @@ class TagsTable extends Table {
         $this->belongsTo('Categories', [
             'foreignKey' => 'category_id',
         ]);
-        $this->belongsTo('Sports', [
-            'foreignKey' => 'sport_id',
-        ]);
+    }
 
-
+    public function initFilters($mode = 'default') {
         $this->addBehavior('Search.Search');
-        if (method_exists($this, 'searchManager')) {
-            // Add the behaviour to your table
-            $this->searchManager()
-                    ->add('user_id', 'Search.Value')
-                    ->add('status', 'Search.Value', [
-                        'field' => $this->aliasField('status')
-                    ])
-                    ->add('q', 'Search.Like', [
-                        'before' => true,
-                        'after' => true,
-                        'field' => [$this->aliasField('name')]
-            ]);
-//                ->add('foo', 'Search.Callback', [
-//                    'callback' => function ($query, $args, $manager) {
-//                // Modify $query as required
-//            }
-        }
+        $this->searchManager()
+                ->add('user_id', 'Search.Value')
+                ->add('status', 'Search.Value', [
+                    'field' => $this->aliasField('status')
+                ])
+                ->add('q', 'Search.Like', [
+                    'before' => true,
+                    'after' => true,
+                    'field' => [$this->aliasField('name')]
+        ]);
     }
 
     /**
@@ -88,16 +84,12 @@ class TagsTable extends Table {
                     ],
                     'allowedChars' => [
                         'rule' => function($value, $context) {
-                            return !preg_match(JsonConfigHelper::rules('tags', 'name', 'regex'), $value);
-                        },
+                    return !preg_match(JsonConfigHelper::rules('tags', 'name', 'regex'), $value);
+                },
                         'message' => 'Only alpha numeric chars with accents.'
                     ]
         ]);
 
-        // TODO add rule sport and category exists
-//        $validator
-//                ->requirePresence('sport_id', 'create')
-//                ->notEmpty('sport_id');
         $validator
                 ->requirePresence('category_id', 'create')
                 ->notEmpty('category_id');
@@ -141,17 +133,21 @@ class TagsTable extends Table {
 
     public function buildRules(RulesChecker $rules) {
         parent::buildRules($rules);
-        $rules->add($rules->isUnique(['name', 'category_id']));
+        // Test exists category
         $rules->add(function($entity, $options) {
             $categoriesTable = \Cake\ORM\TableRegistry::get('Categories');
             try {
-                $category = $categoriesTable->get($entity->category_id);
-                $entity->sport_id = $category->sport_id;
+                $category = $categoriesTable->get($entity->category_id, ['contain' => 'Sports']);
+                $entity->__category = $category;
+
                 return true;
-            } catch (Exception $ex) {
+            } catch (\Exception $ex) {
                 return false;
             }
         });
+
+        $rules->add($rules->isUnique(['name', 'category_id']));
+
         return $rules;
     }
 
@@ -162,8 +158,7 @@ class TagsTable extends Table {
      */
     public function beforeSave($event, $entity, $options) {
         if ($entity->isNew() && empty($entity->slug)) {
-            // TODO SET SLUG
-            $entity->generateSlug($entity->sport, $entity->category);
+            $entity->generateSlug($entity->__category);
         }
     }
 
@@ -186,19 +181,17 @@ class TagsTable extends Table {
         return $this->find('all')
                         ->order(['Tags.count_ref DESC'])
                         ->where([
-                            'OR' => [
-                                'Tags.count_ref >' => '1',
-                                'Tags.status' => \App\Model\Entity\Tag::STATUS_VALIDATED
-                            ]
+                            'Tags.count_ref >=' => '1',
+                            'Tags.status' => \App\Model\Entity\Tag::STATUS_VALIDATED
                         ])
                         ->limit(50000);
     }
 
     public function updateSlug($id) {
         $entity = $this->get($id, [
-            'contain' => ['Categories', 'Sports']
+            'contain' => ['Categories' => ['Sports']]
         ]);
-        $entity->generateSlug($entity->sport, $entity->category);
+        $entity->generateSlug($entity->category);
         return $this->save($entity);
     }
 

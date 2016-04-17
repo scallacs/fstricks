@@ -56,6 +56,31 @@ class VideosTable extends Table {
         
     }
 
+    public function initFilters($mode = 'default') {
+        $this->addBehavior('Search.Search');
+        $this->searchManager()
+                ->add('user_id', 'Search.Value', [
+                    'field' => $this->aliasField('user_id')
+                ])
+                ->add('status', 'Search.Value', [
+                    'field' => $this->aliasField('status')
+                ])
+                ->add('video_url', 'Search.Value', [
+                    'field' => $this->aliasField('video_url')
+                ])
+                ->add('provider_id', 'Search.Value', [
+                    'field' => $this->aliasField('provider_id')
+                ])
+                ->add('min_duration', 'Search.Compare', [
+                    'field' => $this->aliasField('duration'),
+                    'operator' => '>='
+                ])
+                ->add('max_duration', 'Search.Compare', [
+                    'field' => $this->aliasField('duration'),
+                    'operator' => '<='
+                ]);
+    }
+
     /**
      * Default validation rules.
      *

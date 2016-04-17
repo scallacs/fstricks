@@ -65,11 +65,12 @@ class AppController extends \App\Controller\AppController {
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
         $this->Auth->deny();
-        $this->viewBuilder()->layout('admin');
 
         if (strpos($this->request->url, '/api/') !== false) {
 //            $this->loadComponent('RequestHandler');
             $this->request->params['_ext'] = 'json';
+        } else {
+            $this->viewBuilder()->layout('admin');
         }
     }
 

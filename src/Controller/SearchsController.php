@@ -31,7 +31,7 @@ class SearchsController extends AppController {
                 $query = $this->Searchs->find('all')
                         ->order(['points DESC'])
                         ->limit(20);
-
+                // TODO replace with other lib ? 
                 $searchHelper = new \App\Lib\SearchHelper($this->request->query, $query);
                 $searchHelper->required('q', 'Searchs.title', [
                             'type' => 'keywords'
@@ -40,7 +40,6 @@ class SearchsController extends AppController {
                             'type' => 'default',
                             'acceptNull' => true
                         ]);
-
                 ResultMessage::overwriteData($query->all());
             }
         } catch (\App\Lib\MissingSearchParams $ex) {
