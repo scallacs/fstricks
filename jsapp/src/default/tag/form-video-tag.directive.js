@@ -226,21 +226,6 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
     //  RANGE FUNCTIONS 
     // ----------------------------------------------------------------------- */
 
-//    function watchEditionTagRange(newValue, oldValue) {
-//        if (newValue == undefined) {
-//            return;
-//        }
-//        if (oldValue == undefined || newValue[0] !== oldValue[0]) {
-//            PlayerData.seekTo(newValue[0]);
-//            adaptRange(newValue[0], 0);
-//            playEditionTag();
-//        }
-//        else if (newValue[1] !== oldValue[1]) {
-//            adaptRange(newValue[1], 1);
-//            PlayerData.seekTo(newValue[1]);
-//            PlayerData.pause();
-//        }
-//    }
 
     function addStartRange(value) {
         editionTag._extra.range[0] += value;
@@ -270,7 +255,7 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
         editionTag._video_tag.begin = output[0];
         editionTag._extra.range[1] = output[1];
         editionTag._video_tag.end = output[1];
-        if (editionTag._video_tag.provider_id !== null) {
+        if (editionTag._video_tag.video && editionTag._video_tag.video.provider_id !== null) {
             if (i === 0) {
                 playEditionTag(true);
             }
