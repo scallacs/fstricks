@@ -60,7 +60,9 @@ class VideoTag extends Entity {
 
     protected function _getSlug() {
         if (empty($this->slug)){
-            return $this->id . '-' . $this->tag_slug . (!empty($this->rider_slug) ? '-by-'.($this->rider_slug) : '');
+            return $this->id 
+                    . (!empty($this->tag['slug']) ? '-'. $this->tag['slug'] : '')
+                    . (!empty($this->rider['slug']) ? '-by-'.($this->rider['slug']) : '');
         }
         else {
             return $this->slug;
