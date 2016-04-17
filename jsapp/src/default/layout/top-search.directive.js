@@ -109,22 +109,13 @@ function topSearchDirective(TopSearchMapper, ApiFactory) {
                 function refresh(search) {
                     search = search.trim();
                     if (search.length >= 2) {
-//                        if (currentRequest!== null){
-//                            console.log("Cancelling search");
-//                            currentRequest.$cancel();
-//                            currentRequest = null;
-//                        }
-//                        searchIdCounter += 1;
-//                        var searchId = searchIdCounter;
                         $scope.results = [TopSearchMapper['search'](search)];
-                        var searchData = {q: search};
-                        if (SharedData.currentSport) {
-                            searchData.sport_id = SharedData.currentSport.id;
-                        }
-                        currentRequest = searchEndpoint(searchData, function(results) {
-//                            if (searchId !== searchIdCounter){
-//                                return;
-//                            }
+                        var searchData = {
+                            q: search,
+                            sport_id: SharedData.currentSport ? SharedData.currentSport.id : null
+                        };
+                        searchEndpoint(searchData, function(results) {
+                            $scope.results = [TopSearchMapper['search'](search)];
                             for (var i = 0; i < results.length; i++) {
                                 switch (results[i].type) {
                                     case 'playlist':
@@ -140,11 +131,6 @@ function topSearchDirective(TopSearchMapper, ApiFactory) {
                                 $scope.results.push(results[i]);
                             }
                         });
-                        currentRequest
-                                .$promise
-                                .finally(function() {
-//                                    searchDisabled = false;
-                                });
                     }
                 }
 
