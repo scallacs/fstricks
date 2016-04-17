@@ -48,15 +48,12 @@ class CategoriesController extends AppController
         if ($this->request->is('post')) {
             $category = $this->Categories->patchEntity($category, $this->request->data);
             if ($this->Categories->save($category)) {
-                ResultMessage::setMessage(__('The category has been saved.'));
-                return $this->redirect(['action' => 'index']);
+                ResultMessage::setMessage(__('The category has been saved.'), true);
             } else {
                 ResultMessage::setMessage(__('The category could not be saved. Please, try again.'));
+                ResultMessage::addValidationErrorsModel($category);
             }
         }
-        $sports = $this->Categories->Sports->find('list', ['limit' => 200]);
-        $this->set(compact('category', 'sports'));
-        $this->set('_serialize', ['category']);
     }
 
     /**
@@ -73,10 +70,12 @@ class CategoriesController extends AppController
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $category = $this->Categories->patchEntity($category, $this->request->data);
+//            $fieldlist = [];
             if ($this->Categories->save($category)) {
-                ResultMessage::setMessage(__('The category has been saved.'));
+                ResultMessage::setMessage(__('The category has been saved.'), true);
             } else {
                 ResultMessage::setMessage(__('The category could not be saved. Please, try again.'));
+                ResultMessage::addValidationErrorsModel($category);
             }
         }
     }
