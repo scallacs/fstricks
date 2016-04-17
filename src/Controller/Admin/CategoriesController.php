@@ -31,7 +31,7 @@ class CategoriesController extends AppController
     public function view($id = null)
     {
         $category = $this->Categories->get($id, [
-            'contain' => ['Sports', 'Tags']
+            'contain' => ['Sports']
         ]);
         ResultMessage::setWrapper(false);
         ResultMessage::overwriteData($category);
@@ -70,8 +70,8 @@ class CategoriesController extends AppController
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $category = $this->Categories->patchEntity($category, $this->request->data);
-//            $fieldlist = [];
-            if ($this->Categories->save($category)) {
+            $fieldlist = ['status', 'position', 'name', 'slug', 'sport_id'];
+            if ($this->Categories->save($category, ['fieldList' => $fieldlist])) {
                 ResultMessage::setMessage(__('The category has been saved.'), true);
             } else {
                 ResultMessage::setMessage(__('The category could not be saved. Please, try again.'));
