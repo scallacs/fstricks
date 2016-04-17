@@ -18,6 +18,11 @@ use App\Lib\ResultMessage;
  */
 class TagsTable extends Table {
 
+    const STATUS_REJECTED       = 'rejected';
+    const STATUS_PENDING        = 'pending';
+    const STATUS_VALIDATED      = 'validated';
+    const STATUS_BLACKLISTED    = 'blacklisted';
+    
     /**
      * Initialize method
      *
@@ -37,26 +42,20 @@ class TagsTable extends Table {
         $this->belongsTo('Categories', [
             'foreignKey' => 'category_id',
         ]);
+    }
 
-
+    public function initFilters($mode = 'default') {
         $this->addBehavior('Search.Search');
-        if (method_exists($this, 'searchManager')) {
-            // Add the behaviour to your table
-            $this->searchManager()
-                    ->add('user_id', 'Search.Value')
-                    ->add('status', 'Search.Value', [
-                        'field' => $this->aliasField('status')
-                    ])
-                    ->add('q', 'Search.Like', [
-                        'before' => true,
-                        'after' => true,
-                        'field' => [$this->aliasField('name')]
-            ]);
-//                ->add('foo', 'Search.Callback', [
-//                    'callback' => function ($query, $args, $manager) {
-//                // Modify $query as required
-//            }
-        }
+        $this->searchManager()
+                ->add('user_id', 'Search.Value')
+                ->add('status', 'Search.Value', [
+                    'field' => $this->aliasField('status')
+                ])
+                ->add('q', 'Search.Like', [
+                    'before' => true,
+                    'after' => true,
+                    'field' => [$this->aliasField('name')]
+        ]);
     }
 
     /**
@@ -146,9 +145,9 @@ class TagsTable extends Table {
                 return false;
             }
         });
-        
+
         $rules->add($rules->isUnique(['name', 'category_id']));
-        
+
         return $rules;
     }
 

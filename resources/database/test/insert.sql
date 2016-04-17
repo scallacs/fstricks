@@ -1,20 +1,21 @@
 
-INSERT INTO `sports` (`id`, `name`, `status`, `slug`) VALUES
-(1, 'snowboard', 'public', 'snowboard'),
-(2, 'ski', 'public', 'ski'),
-(3, 'skate', 'public', 'skate'),
-(4, 'roller', 'public', 'roller'),
-(5, 'FMX', 'public', 'fmx'),
-(6, 'wakeboard', 'public', 'wakeboard'),
-(7, 'surf', 'public', 'surf'),
-(8, 'bmx', 'public', 'bmx'),
-(9, 'parkour', 'public', 'parkour');
+INSERT INTO `sports` (`id`, `name`, `status`, `slug`, `position`) VALUES
+(1, 'snowboard', 'public', 'snowboard', 1),
+(2, 'ski', 'public', 'ski', 2),
+(3, 'skate', 'public', 'skate', 3),
+(4, 'roller', 'public', 'roller', 4),
+(5, 'FMX', 'public', 'fmx', 5),
+(6, 'wakeboard', 'public', 'wakeboard', 6),
+(7, 'surf', 'public', 'surf', 7),
+(8, 'bmx', 'public', 'bmx', 8),
+(9, 'parkour', 'public', 'parkour', 9);
 
 INSERT INTO `social_providers` (`id`) VALUES ('facebook');
 
 INSERT INTO `video_providers` (`name`) VALUES ('youtube'), ('vimeo');
 
-INSERT INTO `users` (`id`, `email`, `username`, `password`, `status`, `count_tags`, `count_report_errors`, `created`, `last_login`, `provider`, `provider_uid`, `count_tags_validated`, `count_tags_rejected`, `reputation_points`, `password_token`, `password_token_expires`, `email_token`, `email_token_expires`, `email_verified`) 
+INSERT INTO `users` 
+(`id`, `email`, `username`, `password`, `status`, `count_tags`, `count_report_errors`, `created`, `last_login`, `provider`, `provider_uid`, `count_tags_validated`, `count_tags_rejected`, `reputation_points`, `password_token`, `password_token_expires`, `email_token`, `email_token_expires`, `email_verified`) 
 VALUES
 (1, 'activated_user@mail.com', 'activated_user', NULL, 'activated', 0, 0, '2016-03-09 17:42:43', '2016-03-08 23:00:00', NULL, NULL, 0, 0, 0, NULL, NULL, NULL, NULL, 0),
 (2, 'stef@fstricks.com', 'stef', '$2y$10$BrAuL3GXU55X1kUYJs.m1eGkPcamVYAAYbG82evDQw47evxRvXnk6', 'activated', 0, 0, '2016-03-09 17:42:43', '2016-03-08 23:00:00', NULL, NULL, 0, 0, 0, NULL, NULL, NULL, NULL, 0),
@@ -25,37 +26,37 @@ VALUES
 
 
 
-INSERT INTO `categories` (`id`, `name`, `sport_id`, `slug`) VALUES
-(1, 'kicker', 1, 'kicker'),
-(2, 'jib', 1, 'jib'),
-(3, 'pipe', 1, 'pipe'),
-(4, 'flat', 1, 'flat'),
-(5, 'kicker', 2, 'kicker'),
-(6, 'jib', 2, 'jib'),
-(7, 'pipe', 2, 'pipe'),
-(8, 'flat', 2, 'flat'),
-(9, 'freestyle', 5, 'freestyle'),
-(10, 'dirt', 8, 'dirt'),
-(11, 'street', 8, 'street'),
-(14, 'flat', 8, 'flat'),
-(15, 'vert', 8, 'vert'),
-(16, 'all', 7, 'all'),
-(17, 'All', 9, 'All'),
-(20, 'jump', 6, 'jump'),
-(21, 'jib', 6, 'jib'),
-(22, 'waves', 6, 'waves'),
-(23, 'pipes', 3, 'pipes'),
-(24, 'pipes', 4, 'pipes'),
-(25, 'jump', 4, 'jump'),
-(26, 'vert', 4, 'vert'),
-(27, 'flat', 4, 'flat'),
-(28, 'others', 4, 'others'),
-(29, 'jump', 3, 'jump'),
-(30, 'vert', 3, 'vert'),
-(31, 'flat', 3, 'flat'),
-(32, 'other', 3, 'other'),
-(33, 'other', 1, 'other'),
-(34, 'other', 2, 'other');
+INSERT INTO `categories` (`id`, `name`, `sport_id`, `slug`, `status`, `position`) VALUES
+(1, 'kicker', 1, 'kicker', 'public', NULL),
+(2, 'jib', 1, 'jib', 'public', NULL),
+(3, 'pipe', 1, 'pipe', 'public', NULL),
+(4, 'flat', 1, 'flat', 'public', NULL),
+(5, 'kicker', 2, 'kicker', 'public', NULL),
+(6, 'jib', 2, 'jib', 'public', NULL),
+(7, 'pipe', 2, 'pipe', 'public', NULL),
+(8, 'flat', 2, 'flat', 'public', NULL),
+(9, 'freestyle', 5, 'freestyle', 'public', NULL),
+(10, 'dirt', 8, 'dirt', 'public', NULL),
+(11, 'street', 8, 'street', 'public', NULL),
+(14, 'flat', 8, 'flat', 'public', NULL),
+(15, 'vert', 8, 'vert', 'public', NULL),
+(16, 'all', 7, 'all', 'public', NULL),
+(17, 'All', 9, 'All', 'public', NULL),
+(20, 'jump', 6, 'jump', 'public', NULL),
+(21, 'jib', 6, 'jib', 'public', NULL),
+(22, 'waves', 6, 'waves', 'public', NULL),
+(23, 'pipes', 3, 'pipes', 'public', NULL),
+(24, 'pipes', 4, 'pipes', 'public', NULL),
+(25, 'jump', 4, 'jump', 'public', NULL),
+(26, 'vert', 4, 'vert', 'public', NULL),
+(27, 'flat', 4, 'flat', 'public', NULL),
+(28, 'others', 4, 'others', 'public', NULL),
+(29, 'jump', 3, 'jump', 'public', NULL),
+(30, 'vert', 3, 'vert', 'public', NULL),
+(31, 'flat', 3, 'flat', 'public', NULL),
+(32, 'other', 3, 'other', 'public', NULL),
+(33, 'other', 1, 'other', 'public', NULL),
+(34, 'other', 2, 'other', 'public', NULL);
 
 INSERT INTO `error_types` (`id`, `name`, `description`) VALUES
 (1, 'Invalid sport, category or trick', 'The tag is invalid for one of the following reason: - The sport or the category is not the good one - The trick is not the good one'),

@@ -68,5 +68,10 @@ class AngularConfigShell extends Shell {
         $file->write($generator->generate());
 
     }
+    
+    
+    public function _enums(){
+        
+    }
 
 }

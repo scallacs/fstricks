@@ -1,4 +1,4 @@
-<div ng-show="!playerData.data.video_url && !SharedData.loadingState && !videoTagData.loading
+<div ng-if="!playerData.data.video_url && !SharedData.loadingState && !videoTagData.loading
      && videoTagData.getLoader().hasData()">
     <p class="pick-video-message">
         <a href=#" ng-click="playerData.showListTricks = true"> Pick a trick to play </a>
