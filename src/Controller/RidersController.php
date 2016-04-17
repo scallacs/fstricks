@@ -21,6 +21,19 @@ class RidersController extends AppController {
     /**
      * API
      * 
+     * Count all sports and sport category for the user
+     */
+    public function sports($riderId = null){
+        if (empty($riderId)){
+            throw new \Cake\Network\Exception\NotFoundException();
+        }
+        $query = $this->Riders->findRiderSports($riderId);
+        ResultMessage::setWrapper(false);
+        ResultMessage::overwriteData($query->all());
+    }
+    /**
+     * API
+     * 
      * Get user rider profile is $profileId is null. Otherwise rider profile for $profileId
      */
     public function profile($slug = null) {
@@ -28,9 +41,15 @@ class RidersController extends AppController {
         if (!empty($slug)) {
             $query = $this->Riders->findPublic()
                     ->limit(1)
-                    ->where(['Riders.slug' => $slug]);
+                    ->where(['Riders.slug' => $slug])
+                    ->contain([
+                        'VideoTags' => function(){
+                        
+                        }
+                    ]);
             $data = $query->first();
             // TODO add cache //->cache('riders', 'veryLongCache')
+            
         } 
         if (empty($data)){
             throw new \Cake\Network\Exception\NotFoundException();

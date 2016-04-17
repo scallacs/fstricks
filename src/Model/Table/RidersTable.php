@@ -213,5 +213,24 @@ class RidersTable extends Table {
                         ])
                         ->limit(50000);
     }
+    
+    public function findRiderSports($riderId) {
+        $videoTags = \Cake\ORM\TableRegistry::get('VideoTags');
+        return $videoTags->find()
+                        ->select([
+                            'count_ref' => 'COUNT(VideoTags.id)',
+                            'Sports.id',
+                            'Sports.name',
+                            'Categories.id',
+                            'Categories.name'
+                        ])
+                        ->where([
+                            'VideoTags.status' => \App\Model\Entity\VideoTag::STATUS_VALIDATED,
+                            'Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC,
+                            'VideoTags.rider_id' => $riderId
+                        ])
+                        ->group(['Sports.id', 'Categories.id']) // , 'Categories.name', 'Sports.name'
+                        ->contain(['Categories' => ['Sports'], 'Videos']);
+    }
 
 }

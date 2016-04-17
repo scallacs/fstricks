@@ -19,6 +19,9 @@ class RidersTableTest extends TestCase
     public $fixtures = [
         'app.riders',
         'app.users',
+        'app.video_tags',
+        'app.sports',
+        'app.categories',
     ];
 
     /**
@@ -135,5 +138,12 @@ class RidersTableTest extends TestCase
         $entity = $this->Riders->newEntity($data);
         $this->assertFalse((bool)$this->Riders->save($entity), 
                 "It should not be possible to add a rider with the same name and nationality");
+    }
+    
+    
+    public function testFindRiderSports(){
+        $riderId = 1;
+        $results = $this->Riders->findRiderSports($riderId)->all();
+        $this->assertTrue(count($results) > 1, "Should return sports");
     }
 }

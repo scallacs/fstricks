@@ -142,14 +142,14 @@ class VideoTagsTable extends Table {
                                 ])
                                 ->contain([
                                     'Categories' => ['Sports']
-                                ]);
+                ]);
             };
         }
         if ($queryRiders === null) {
             $queryRiders = function($q) {
                 return $q->select([
 //                            'Riders__display_name' => 'CONCAT(Riders.firstname, \' \', Riders.lastname)',
-                            'Riders.firstname', 
+                            'Riders.firstname',
                             'Riders.lastname',
                             'Riders.picture',
                             'Riders.nationality',
@@ -166,7 +166,6 @@ class VideoTagsTable extends Table {
                             'Tags.slug',
                             'Tags.name',
                             'Tags.id',
-                            
                             'VideoTags.id',
                             'VideoTags.count_points',
                             'VideoTags.begin',
@@ -174,7 +173,6 @@ class VideoTagsTable extends Table {
                             'VideoTags.user_id',
                             'VideoTags.status',
                             'VideoTags.slug',
-                            
                             'Videos.provider_id',
                             'Videos.video_url',
                             'Videos.duration',
@@ -202,8 +200,8 @@ class VideoTagsTable extends Table {
                 ->add('begin', 'decimal', ['rule' => 'decimal'])
                 ->add('begin', 'postive', [
                     'rule' => function ($value, $context) {
-                        return $value >= 0;
-                    },
+                return $value >= 0;
+            },
                     'message' => 'Begin time must be a positive number.'
                 ])
                 ->requirePresence('begin', 'create')
@@ -212,16 +210,16 @@ class VideoTagsTable extends Table {
         $validator
                 ->add('end', 'trick_duration', [
                     'rule' => function ($value, $context) {
-                        if ($value < self::MIN_TAG_DURATION) {
-                            return false;
-                        }
-                        if (isset($context['data']['begin'])) {
-                            $duration = $value - $context['data']['begin'];
-                            return $duration >= self::MIN_TAG_DURATION &&
-                                    $duration <= self::MAX_TAG_DURATION;
-                        }
-                        return true;
-                    },
+                if ($value < self::MIN_TAG_DURATION) {
+                    return false;
+                }
+                if (isset($context['data']['begin'])) {
+                    $duration = $value - $context['data']['begin'];
+                    return $duration >= self::MIN_TAG_DURATION &&
+                            $duration <= self::MAX_TAG_DURATION;
+                }
+                return true;
+            },
                     'message' => 'The trick duration must be between ' . self::MIN_TAG_DURATION . ' and ' .
                     self::MAX_TAG_DURATION . ' seconds.'
                 ])
@@ -246,6 +244,7 @@ class VideoTagsTable extends Table {
 
         return $validator;
     }
+
 
     function findSimilarTags($videoId, $begin, $end) {
         $beginMin = $begin + self::SIMILARITY_PRECISION_SECONDS;
