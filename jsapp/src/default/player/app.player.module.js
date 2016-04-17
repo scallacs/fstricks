@@ -363,7 +363,7 @@ function ViewRealizationController(VideoTagData, $stateParams, PlayerData, Share
 
     VideoTagData
             .getLoader()
-            .setFilters({video_tag_id: videoTagId, status: 'rejected,pending,validated'})
+            .setFilters({video_tag_id: videoTagId})
             .startLoading()
             .then(function(results) {
                 if (results.items.length === 1) {
@@ -457,8 +457,8 @@ function ViewSportController($scope, VideoTagData, $stateParams, PlayerData, Sha
 
 }
 
-ViewRiderController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'RiderEntity', 'TopSearchMapper'];
-function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, SharedData, RiderEntity, TopSearchMapper) {
+ViewRiderController.$inject = ['$scope', '$state', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'RiderEntity', 'TopSearchMapper'];
+function ViewRiderController($scope, $state, VideoTagData, $stateParams, PlayerData, SharedData, RiderEntity, TopSearchMapper) {
     VideoTagData.reset();
     PlayerData.showViewMode();
     PlayerData.stop();
@@ -470,6 +470,9 @@ function ViewRiderController($scope, VideoTagData, $stateParams, PlayerData, Sha
     VideoTagData.getLoader()
             .setFilters({rider_slug: $stateParams.riderId, order: $stateParams.order})
             .startLoading()
+            .catch(function() {
+                $state.go('nofound');
+            })
             .finally(function() {
                 SharedData.pageLoader(false);
             });
@@ -717,9 +720,9 @@ function EditPlaylistController($scope, PaginateDataLoader, PlaylistEntity, Play
         PlaylistEntity.view({id: $stateParams.playlistId}).$promise.then(function(data) {
             $scope.playlist = data;
         })
-        .catch(function() {
-            $state.go('manageplaylist');
-        });
+                .catch(function() {
+                    $state.go('manageplaylist');
+                });
     }
 
     function loadItems() {

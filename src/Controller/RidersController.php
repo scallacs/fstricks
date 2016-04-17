@@ -43,9 +43,7 @@ class RidersController extends AppController {
                     ->limit(1)
                     ->where(['Riders.slug' => $slug])
                     ->contain([
-                        'VideoTags' => function(){
-                        
-                        }
+                        'VideoTags'
                     ]);
             $data = $query->first();
             // TODO add cache //->cache('riders', 'veryLongCache')
