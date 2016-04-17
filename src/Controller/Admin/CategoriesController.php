@@ -71,7 +71,7 @@ class CategoriesController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $category = $this->Categories->patchEntity($category, $this->request->data);
             $fieldlist = ['status', 'position', 'name', 'slug', 'sport_id'];
-            if ($this->Categories->save($category, ['fieldList' => $fieldlist])) {
+            if ($this->Categories->save($category, ['fieldList' => $fieldlist, 'associated' => []])) {
                 ResultMessage::setMessage(__('The category has been saved.'), true);
             } else {
                 ResultMessage::setMessage(__('The category could not be saved. Please, try again.'));
