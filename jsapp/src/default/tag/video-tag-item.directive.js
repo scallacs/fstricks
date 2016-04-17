@@ -18,6 +18,7 @@ function videoTagItem() {
             $scope.videoTagData = VideoTagData;
             $scope.addToPlaylist = addToPlaylist;
             $scope.authData = AuthenticationService.authData;
+            $scope.baseUrl = __PathConfig__.domain;
             
             function openReportErrorModal(videoTag) {
                 var modal = $uibModal.open({
