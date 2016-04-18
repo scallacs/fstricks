@@ -19,8 +19,8 @@ class AngularConfigShell extends Shell {
         $this->_admin();
     }
     
-    private function url($url = ''){
-        return $this->baseUrl . '/' . ($this->urlSuffix ? $this->urlSuffix . '/' : '') . $url;
+    private function url($url = '', $fullbase = true){
+        return ($fullbase ? $this->baseUrl . '/' : '') . ($this->urlSuffix ? $this->urlSuffix . '/' : '') . $url;
     }
 
     private function _default() {
