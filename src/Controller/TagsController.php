@@ -119,3 +119,4 @@ class TagsController extends AppController {
     }
 
 }
+
