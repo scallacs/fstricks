@@ -6,7 +6,7 @@
     </div>
     <div ng-show="!SharedData.loadingState">
 
-        <div ng-show="playerData.hasError()" 
+        <div ng-if="playerData.hasError()" 
              class="pick-video-message">
             <p>
                 Oups, we cannot load the player...
@@ -15,7 +15,7 @@
                 Try again later...
             </p>
         </div>
-        <div ng-show="!playerData.hasVideo() && !videoTagData.getLoader().hasData()" 
+        <div ng-if="!playerData.hasVideo() && !videoTagData.getLoader().hasData()" 
              class="pick-video-message">
             <p ng-if="playerData.isMode('view')">
                 Oups, there is no tricks registered yet... 
