@@ -4,6 +4,7 @@
         <?= $this->Element('Common/head'); ?>
         <?= $this->Element('Common/scripts'); ?>
 
+        
         <meta name="fragment" content="!">
         <?= $this->fetch('meta') ?>
         <?= $this->fetch('css') ?>
@@ -12,9 +13,7 @@
     <body>
     <base href="<?= \Cake\Routing\Router::url('/'); ?>"/>
     <toaster-container toaster-options="{'close-button': true}"></toaster-container>
-
     <?= $this->Element('Common/header_ajs'); ?>
-
 
     <div id="container" style="position: relative;" class="clearfix">
 
