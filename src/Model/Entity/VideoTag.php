@@ -45,7 +45,11 @@ class VideoTag extends Entity {
         'count_points' => false,
         'status' => false,
         'rider_id' => true,
-        '*' => true,
+        'begin' => true, 
+        'end' => true, 
+        'tag_id' => true,
+        'video_id' => true,
+        '*' => false,
     ];
 
     public function isEditabled($userId) {

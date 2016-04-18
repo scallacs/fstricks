@@ -13,12 +13,14 @@ angular.module('app.player', [
         .config(ConfigRoute)
         .controller('AddVideoController', AddVideoController)
         .controller('PlayerController', PlayerController)
+
         .controller('ViewVideoController', ViewVideoController)
         .controller('ViewTagController', ViewTagController)
         .controller('ViewSportController', ViewSportController)
         .controller('ViewRiderController', ViewRiderController)
-        .controller('PlaylistPlayerController', PlaylistPlayerController)
         .controller('ViewRealizationController', ViewRealizationController)
+
+        .controller('PlaylistPlayerController', PlaylistPlayerController)
         .controller('ViewValidationController', ViewValidationController)
         .controller('StartValidationController', StartValidationController)
         .controller('ViewPlaylistController', ViewPlaylistController)
@@ -105,7 +107,7 @@ function ConfigRoute($stateProvider) {
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewSportController',
-                        templateUrl: baseUrl + 'pick-video.html'
+                        templateUrl: baseUrl + 'view-sport.html'
                     }
                 }
             })
@@ -123,7 +125,7 @@ function ConfigRoute($stateProvider) {
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewTagController',
-                        templateUrl: baseUrl + 'pick-video.html'
+                        templateUrl: baseUrl + 'view-tag.html'
                     }
                 }
             })
@@ -131,7 +133,10 @@ function ConfigRoute($stateProvider) {
                 url: '/performance/:videoTagId',
                 views: {
                     videoPlayerExtra: {
-                        controller: 'ViewRealizationController'
+                        controller: 'ViewRealizationController',
+                        template: '<view-title>Trick {{videoTag.tag.name}} {{videoTag.category.name}} {{videoTag.category.sport.name}} \n\
+                                    by {{videoTag.rider.display_name}}\n\
+                                    {{videoTag.tag.category.name}} {{videoTag.tag.category.sport.name}}</view-title>'
                     }
                 }
             })
@@ -351,8 +356,8 @@ function PlayerController($scope, PlayerData) {
     });
 }
 
-ViewRealizationController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', '$state', 'TopSearchMapper'];
-function ViewRealizationController(VideoTagData, $stateParams, PlayerData, SharedData, $state, TopSearchMapper) {
+ViewRealizationController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', '$state', 'TopSearchMapper'];
+function ViewRealizationController($scope, VideoTagData, $stateParams, PlayerData, SharedData, $state, TopSearchMapper) {
     PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = false;
@@ -368,6 +373,7 @@ function ViewRealizationController(VideoTagData, $stateParams, PlayerData, Share
             .then(function(results) {
                 if (results.items.length === 1) {
                     var videoTag = results.items[0];
+                    $scope.videoTag = videoTag;
                     PlayerData.playVideoTag(videoTag).then(function() {
                         SharedData.pageLoader(false);
                         console.log(videoTag);
@@ -383,8 +389,8 @@ function ViewRealizationController(VideoTagData, $stateParams, PlayerData, Share
             });
 }
 
-ViewTagController.$inject = ['VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'TopSearchMapper'];
-function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData, TopSearchMapper) {
+ViewTagController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'TopSearchMapper'];
+function ViewTagController($scope, VideoTagData, $stateParams, PlayerData, SharedData, TopSearchMapper) {
     SharedData.currentSearch.category = 'Trick';
     PlayerData.showViewMode();
     PlayerData.stop();
@@ -398,6 +404,7 @@ function ViewTagController(VideoTagData, $stateParams, PlayerData, SharedData, T
                 if (results.items.length > 0) {
                     var firstTag = results.items[0];
                     SharedData.setCurrentSearch(TopSearchMapper['trick'](firstTag));
+                    $scope.tag = firstTag.tag;
                     // Auto play if there is only one realization for the trick
                     if (results.items.length === 1) {
                         PlayerData.showListTricks = false;

@@ -1,7 +1,7 @@
 angular.module('app.config.api', [])
         .config(ConfigInterceptor);
-        
-        
+
+
 ConfigInterceptor.$inject = ['$httpProvider', '$locationProvider'];
 function ConfigInterceptor($httpProvider, $locationProvider) {
     'use strict';
@@ -33,16 +33,19 @@ function ConfigInterceptor($httpProvider, $locationProvider) {
                     loginModal.open()
                             .result
                             .then(function() {
+                                console.log('Retrying query after login success');
                                 return $http(rejection.config);
                             })
                             .catch(function() {
-//                                $state.go('home');
+                                console.log('Clearing data and redirect to home');
                                 deferred.reject(rejection);
+                                var state = $injector.get('$state');
+                                if (state.current.data && state.current.data.requireLogin) {
+                                    $injector.get('PaginateDataLoader').clear();
+                                    $state.go('home');
+                                }
                             });
-//                    alert('ok');
                 }
-//                else if (status === 404){
-//                }
                 else if (status >= 500) {
                     alert('This functinality is not available for now, try again later.');
                     return;

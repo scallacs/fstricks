@@ -109,11 +109,11 @@ function PaginateDataLoader($q) {
         this.mode = 'append'; // Append to data Other mode: 'replace'
         return this;
     }
-    function setMapper(mapper){
-        this.mapper = mapper; 
+    function setMapper(mapper) {
+        this.mapper = mapper;
         return this;
     }
-        
+
     function hasNextPage() {
         return this.mode === 'append' && this.data.total > this.data.items.length;
     }
@@ -238,14 +238,14 @@ function PaginateDataLoader($q) {
         this.data.extra = data.extra;
         var tags = data.items;
         console.log('[Loader] Loading page ' + this.filters.page + ': ' + tags.length + ' item(s)');
-            if (this.mode !== 'append') {
-                this.data.items = [];
-            }
+        if (this.mode !== 'append') {
+            this.data.items = [];
+        }
 
-            for (var i = 0; i < tags.length; i++) {
-                this.data.items.push(this.mapper(tags[i]));
-            }
-            console.log('[Loader] ' + this.data.items.length + '/' + data.total + ' items');
+        for (var i = 0; i < tags.length; i++) {
+            this.data.items.push(this.mapper(tags[i]));
+        }
+        console.log('[Loader] ' + this.data.items.length + '/' + data.total + ' items');
 //        }
 //        else {
 //            this.data.items = tags;
@@ -360,13 +360,15 @@ function searchCategory() {
             return categories;
         }
         var results = [];
-        var terms = term.split(' ');
+        var terms = term.trim().toLowerCase().split(' ');
         angular.forEach(categories, function(item) {
             var found = 0;
             for (var i = 0; i < terms.length; i++) {
                 var term = terms[i].trim();
-                if ((item.name.indexOf(term) !== -1) ||
-                        (item.sport.name.indexOf(term) !== -1)) {
+                var categoryName = item.name.toLowerCase();
+                var sportName = item.sport.name.toLowerCase();
+                if ((categoryName.indexOf(term) !== -1) ||
+                        (sportName.indexOf(term) !== -1)) {
                     found++;
                 }
             }
@@ -398,7 +400,6 @@ function SharedData(SportEntity) {
         setCurrentCategory: setCurrentCategory,
         onReady: onReady,
         pageLoader: pageLoader,
-        pageTitle: pageTitle,
         init: init,
         toFilter: toFilter,
         sports: [],
@@ -407,7 +408,6 @@ function SharedData(SportEntity) {
         currentSport: null,
         currentCategory: null,
         categories: [],
-        _pageTitle: ''
     };
 
     return self;
@@ -428,17 +428,10 @@ function SharedData(SportEntity) {
         console.log('Setting current search: ');
         console.log(s);
         if (s === null) {
-            this._pageTitle = '';
             this.currentSearch = {};
             return;
         }
-        this._pageTitle = s.category;
-        this._pageTitle += ' ' + s.title;
         this.currentSearch = s;
-    }
-
-    function pageTitle() {
-        return this._pageTitle;
     }
 
     function onReady() {
@@ -966,9 +959,8 @@ function AuthenticationService($http, $cookies, $rootScope, UserEntity, $state, 
         UserEntity.logout(function() {
             clearCredentials();
         }, function() {
-
+            console.log("Cannot logout");
         });
-        PaginateDataLoader.clear();
     }
 
     function clearCredentials() {

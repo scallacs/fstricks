@@ -55,6 +55,12 @@ describe('Navigation', function() {
                 expect(app.hasCurrentTag()).toBe(true);
             });
         });
+        
+        it(' should be possible to share the trick ', function() {
+            videoTagItem.openSharingLink().then(function() {
+                // TODO 
+            });
+        });
 
         it(' should be possible to add points for the current trick and once done it should be disabled', function() {
             videoTagItem.watch().then(function() {

@@ -29,13 +29,16 @@ class CategoriesFixture extends TestFixture
         [
             'id' => 1,
             'sport_id' => 1,
-            'name' => 'Jib',
-            'slug' => 'kicker'
+            'name' => 'Kicker',
+            'slug' => 'kicker',
+            'status' => \App\Model\Entity\Category::STATUS_PUBLIC
         ],
         [
             'id' => 2,
             'sport_id' => 1,
-            'slug' => 'jib'
+            'name' => 'jib',
+            'slug' => 'jib',
+            'status' => \App\Model\Entity\Category::STATUS_PUBLIC
         ],
     ];
 }

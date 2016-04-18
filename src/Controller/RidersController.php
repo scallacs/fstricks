@@ -15,7 +15,7 @@ class RidersController extends AppController {
 
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['view', 'facebook_search', 'local_search', 'profile']);
+        $this->Auth->allow(['view', 'facebook_search', 'local_search', 'profile', 'sports', 'tags']);
     }
 
     /**
@@ -28,6 +28,19 @@ class RidersController extends AppController {
             throw new \Cake\Network\Exception\NotFoundException();
         }
         $query = $this->Riders->findRiderSports($riderId);
+        ResultMessage::setWrapper(false);
+        ResultMessage::overwriteData($query->all());
+    }
+    /**
+     * API
+     * 
+     * Count all sports and sport category for the user
+     */
+    public function tags($riderId = null){
+        if (empty($riderId)){
+            throw new \Cake\Network\Exception\NotFoundException();
+        }
+        $query = $this->Riders->findRiderTags($riderId);
         ResultMessage::setWrapper(false);
         ResultMessage::overwriteData($query->all());
     }

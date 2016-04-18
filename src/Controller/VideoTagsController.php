@@ -198,6 +198,9 @@ class VideoTagsController extends AppController {
             $order = empty($this->request->query['order']) ? 'best' : $this->request->query['order'];
             switch ($order) {
                 case 'begin_time':
+                    $query->order([
+                        'VideoTags.begin ASC',
+                    ]);
                     break;
                 case 'created':
                     $query->order([

@@ -230,8 +230,8 @@ class VideoTagsTable extends Table {
 
         $validator
                 ->requirePresence('user_id', 'create')
-                ->notEmpty('user_id', 'create')
                 ->allowEmpty('user_id', 'update');
+//                ->allowEmpty('user_id', 'update');
 
         $validator
                 ->requirePresence('video_id', 'create')
@@ -276,9 +276,14 @@ class VideoTagsTable extends Table {
         $rules->add($rules->existsIn(['tag_id'], 'Tags'));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
         $rules->add($rules->existsIn(['rider_id'], 'Riders'));
+        $rules->add($rules->existsIn(['video_id'], 'Videos'));
 
         // Check exists in video id and duration > 
         $rules->add(function ($entity) {
+            if (empty($entity->video_id)){
+                $entity->errors('video_id', ['Video must be set']);
+                return false;
+            }
             $videoTable = \Cake\ORM\TableRegistry::get('Videos');
             try {
                 $video = $videoTable->getPublic($entity->video_id);

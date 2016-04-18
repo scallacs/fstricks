@@ -8,6 +8,7 @@
         var app = this;
 
         app.states = {
+            home: '/',
             login: '/login',
             sinup: '/signup',
             addvideo: '/video/add',

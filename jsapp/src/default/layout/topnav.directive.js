@@ -7,8 +7,8 @@ angular.module('app.layout')
 function topnav() {
     return {
         templateUrl: __PathConfig__.template + '/layout/partials/topnav.html',
-        controller: ['$scope', 'AuthenticationService', '$state', 'SharedData', 'VideoTagData', 'PlayerData',
-            function($scope, AuthenticationService, $state, SharedData, VideoTagData, PlayerData) {
+        controller: ['$scope', 'AuthenticationService', '$state', 'SharedData', 'VideoTagData', 'PlayerData', 'PaginateDataLoader',
+            function($scope, AuthenticationService, $state, SharedData, VideoTagData, PlayerData, PaginateDataLoader) {
                 // create a message to display in our view
                 $scope.logout = logout;
 
@@ -27,6 +27,7 @@ function topnav() {
 
                 function logout() {
                     AuthenticationService.logout();
+                    PaginateDataLoader.clear();
                     $state.go("login");
                     $scope.isAuthed = AuthenticationService.isAuthed();
                 }

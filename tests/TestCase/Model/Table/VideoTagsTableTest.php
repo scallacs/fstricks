@@ -4,12 +4,11 @@ namespace App\Test\TestCase\Model\Table;
 
 use App\Model\Table\VideoTagsTable;
 use Cake\ORM\TableRegistry;
-use Cake\TestSuite\TestCase;
 
 /**
  * App\Model\Table\VideoTagsTable Test Case
  */
-class VideoTagsTableTest extends TestCase {
+class VideoTagsTableTest extends \App\Test\Util\TableTestCase {
 
     /**
      * Fixtures
@@ -27,13 +26,6 @@ class VideoTagsTableTest extends TestCase {
         'app.categories',
         'app.video_tag_accuracy_rates'
     ];
-
-
-    private function assertEntityHasErrors($entity, $errors, $message = null) {
-        foreach ($errors as $name) {
-            $this->assertArrayHasKey($name, $entity->errors(), $message);
-        }
-    }
 
     /**
      * setUp method
@@ -151,7 +143,8 @@ class VideoTagsTableTest extends TestCase {
     /**
      * 
      */
-    public function testInvalidTimeRange() {
+    public function testValidationErrors() {
+        $userId = 1;
         $video = $this->Videos->get(1);
         // Add a video:
         $data = [
@@ -162,7 +155,7 @@ class VideoTagsTableTest extends TestCase {
                     'begin' => 20,
                     'end' => 20.5,
                 ],
-                'validationErrors' => ['end'],
+                'errors' => ['end'],
                 'message' => "Should not be possible to add a too small range"
             ],
             [
@@ -172,7 +165,7 @@ class VideoTagsTableTest extends TestCase {
                     'begin' => 0,
                     'end' => 99,
                 ],
-                'validationErrors' => ['end'],
+                'errors' => ['end'],
                 'message' => "Time range should have a max"
             ],
             [
@@ -182,7 +175,7 @@ class VideoTagsTableTest extends TestCase {
                     'begin' => -10,
                     'end' => -6,
                 ],
-                'validationErrors' => ['end', 'begin'],
+                'errors' => ['end', 'begin'],
                 'message' => "Time range should not be negative"
             ],
             [
@@ -192,7 +185,7 @@ class VideoTagsTableTest extends TestCase {
                     'begin' => 10.2,
                     'end' => 6.5,
                 ],
-                'validationErrors' => ['end'],
+                'errors' => ['end'],
                 'message' => "Begin time should be greater than end time"
             ],
             [
@@ -202,7 +195,7 @@ class VideoTagsTableTest extends TestCase {
                     'begin' => "Salut",
                     'end' => "blob",
                 ],
-                'validationErrors' => ['begin', 'end'],
+                'errors' => ['begin', 'end'],
                 'message' => "Time range should be positive numbers"
             ],
             [
@@ -212,18 +205,45 @@ class VideoTagsTableTest extends TestCase {
                     'begin' => $video->duration - 1,
                     'end' => $video->duration + 3,
                 ],
-                'validationErrors' => ['end'],
+                'extra' => ['user_id' => $userId],
+                'errors' => ['end'],
                 'message' => "Should not be possible to have an end time greated than the video duration"
-            ]
+            ],
+//            [
+//                'data' => [
+//                    'tag_id' => $video->id,
+//                    'video_id' => 1,
+//                    'begin' => 1,
+//                    'end' => 10,
+//                ],
+//                'extra' => ['user_id' => null],
+//                'errors' => ['user_id'],
+//                'message' => "Should not be possible to add a video tag if user is not specified"
+//            ]
         ];
 
         foreach ($data as $d) {
-            $videoTag = $this->VideoTags->newEntity($d['data']);
-            $videoTag->user_id = 1;
-            $saved = $this->VideoTags->save($videoTag);
-            $this->assertFalse((bool) $saved, $d['message']);
-            $this->assertEntityHasErrors($videoTag, $d['validationErrors'], $d['message']);
+            $this->assertValidationErrors($this->VideoTags, $d);
         }
+    }
+
+    public function testCannotChangeUser() {
+        $videoTag = $this->VideoTags->get(1);
+        $userId = $videoTag->user_id;
+        $this->assertSaveModel($this->VideoTags, [
+            'edit' => $videoTag->id,
+            'data' => [
+                'user_id' => $userId + 1,
+                'begin' => 1,
+                'end' => 10
+            ],
+            ['extra' => $userId + 1],
+            'compare' => [
+                'user_id' => $userId,
+                'begin' => 1,
+                'end' => 10
+            ]
+        ]);
     }
 
 }

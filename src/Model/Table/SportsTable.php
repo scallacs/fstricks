@@ -68,7 +68,7 @@ class SportsTable extends Table {
                         ->find('all')
                         ->where(['status' => SportsTable::STATUS_PUBLIC])
                         ->contain(['Categories' => function ($q){
-                            return $q   ->where(['status' => CategoriesTable::STATUS_PUBLIC])
+                            return $q   ->where(['status' => \App\Model\Entity\Category::STATUS_PUBLIC])
                                         ->order(['Categories.position' => 'ASC']);
                         }])
                         ->order(['Sports.position' => 'ASC'])

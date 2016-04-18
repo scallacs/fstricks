@@ -14,6 +14,8 @@ use Cake\ORM\Entity;
  */
 class Category extends Entity
 {
+    const STATUS_PUBLIC = 'public';
+    const STATUS_PRIVATE = 'private';
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().

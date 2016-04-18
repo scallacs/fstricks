@@ -16,8 +16,6 @@ use Cake\Validation\Validator;
 class CategoriesTable extends Table
 {
 
-    const STATUS_PUBLIC = 'public';
-    const STATUS_PRIVATE = 'private';
     /**
      * Initialize method
      *
