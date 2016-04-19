@@ -47,13 +47,10 @@ class SportsController extends AppController {
             $sport = $this->Sports->patchEntity($sport, $this->request->data);
             if ($this->Sports->save($sport)) {
                 ResultMessage::setMessage(__('The sport has been saved.'));
-                return $this->redirect(['action' => 'index']);
             } else {
                 ResultMessage::setMessage(__('The sport could not be saved. Please, try again.'));
             }
         }
-        $this->set(compact('sport'));
-        $this->set('_serialize', ['sport']);
     }
 
     /**
@@ -69,11 +66,11 @@ class SportsController extends AppController {
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $sport = $this->Sports->patchEntity($sport, $this->request->data, [
-                'fieldList' => ['name', 'slug', 'status', 'categories', 'position']
+                'fieldList' => ['name', 'slug', 'status', 'position']
             ]);
-            $sport->dirty('categories', true);
+            //$sport->dirty('categories', true);
             if ($this->Sports->save($sport)) {
-                ResultMessage::setMessage(__('The sport has been saved.'));
+                ResultMessage::setMessage(__('The sport has been saved.'), true);
             } else {
                 ResultMessage::setMessage(__('The sport could not be saved. Please, try again.'));
             }

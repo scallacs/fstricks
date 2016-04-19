@@ -44,6 +44,7 @@ class RidersController extends AppController {
         ResultMessage::setWrapper(false);
         ResultMessage::overwriteData($query->all());
     }
+    
     /**
      * API
      * 
@@ -54,13 +55,12 @@ class RidersController extends AppController {
         if (!empty($slug)) {
             $query = $this->Riders->findPublic()
                     ->limit(1)
-                    ->where(['Riders.slug' => $slug])
-                    ->contain([
-                        'VideoTags'
-                    ]);
+                    ->where([
+                        'Riders.slug' => $slug]);
+//                    ->contain([
+//                        'VideoTags'
+//                    ]);
             $data = $query->first();
-            // TODO add cache //->cache('riders', 'veryLongCache')
-            
         } 
         if (empty($data)){
             throw new \Cake\Network\Exception\NotFoundException();

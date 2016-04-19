@@ -203,7 +203,7 @@ function MyTricksController($scope, PaginateDataLoader, SharedData, $state, Vide
 
     init();
 
-    $scope.$on('view-video-tag', function(event, data) {
+    $scope.$on('view-video-tag', function (event, data) {
         $state.go('videoplayer.realization', {
             videoTagId: data.id
         });
@@ -228,10 +228,10 @@ function MyTricksController($scope, PaginateDataLoader, SharedData, $state, Vide
         $scope.workspaces[0]
                 .loader
                 .startLoading()
-                .then(function() {
+                .then(function () {
                     SharedData.pageLoader(false);
                 })
-                .catch(function() {
+                .catch(function () {
                     // TODO 
                 });
     }
@@ -260,13 +260,13 @@ function AddVideoController($scope, ProviderVideoInfo, $state,
      */
     $scope.recentVideos = false;
 
-    $scope.pageChanged = function(newPage) {
+    $scope.pageChanged = function (newPage) {
         loadRecentlyTagged(newPage);
     };
 
     init();
 
-    ServerConfigEntity.rules().then(function(rules) {
+    ServerConfigEntity.rules().then(function (rules) {
         $scope.playerProviders = rules.videos.provider_id.values;
         $scope.data.provider_id = rules.videos.provider_id.values[0].code;
         console.log("Default provider: " + rules.videos.provider_id.values[0].code);
@@ -284,7 +284,7 @@ function AddVideoController($scope, ProviderVideoInfo, $state,
         }
 
         var promise = $scope.addVideoForm.submit(VideoEntity.addOrGet(data).$promise);
-        promise.then(function(response) {
+        promise.then(function (response) {
             if (response.success) {
                 $state.go('addtag', {videoId: response.data.id});
             }
@@ -298,26 +298,26 @@ function AddVideoController($scope, ProviderVideoInfo, $state,
         }
         $scope.isHistoryLoading = true;
 
-        VideoTagEntity.recentlyTagged({page: page}, function(response) {
+        VideoTagEntity.recentlyTagged({page: page}, function (response) {
             console.log("Set total video: " + response.total);
             $scope.totalVideos = response.total;
             $scope.videoPerPage = response.perPage;
             var items = response.items;
-            angular.forEach(items, function(video) {
+            angular.forEach(items, function (video) {
                 var providerFactory = ProviderVideoInfo.get(video.provider_id);
                 providerFactory
                         .create()
                         .addPart('snippet')
                         .setVideos([video.video_url])
                         .load()
-                        .then(function(data) {
+                        .then(function (data) {
                             video.provider_data = providerFactory.createItem(data);
                         });
             });
 
             $scope.recentVideos = items;
             videosInCache[page] = items;
-        }).$promise.finally(function() {
+        }).$promise.finally(function () {
             $scope.isHistoryLoading = false;
         });
     }
@@ -330,7 +330,7 @@ function PlayerController($scope, PlayerData) {
     PlayerData.showListTricks = true;
 
 
-    $scope.$on('play-video-tag', function(event, tag) {
+    $scope.$on('play-video-tag', function (event, tag) {
         event.stopPropagation();
 //        $state.transitionTo($state.$current, {realization: tag.id}, {notify: false, reload: false});
         PlayerData.playVideoTag(tag);
@@ -341,7 +341,7 @@ function PlayerController($scope, PlayerData) {
 //        console.log('Realization for player: ' + $stateParams.realization);
 //    }
 
-    $scope.$on('on-category-changed', function(event, category) {
+    $scope.$on('on-category-changed', function (event, category) {
         console.log("Received 'on-category-changed'");
         //SharedData.pageLoader(true);
         //$location.search('category', category ? category.name : null);
@@ -370,21 +370,20 @@ function ViewRealizationController($scope, VideoTagData, $stateParams, PlayerDat
             .getLoader()
             .setFilters({video_tag_id: videoTagId})
             .startLoading()
-            .then(function(results) {
+            .then(function (results) {
                 if (results.items.length === 1) {
                     var videoTag = results.items[0];
                     $scope.videoTag = videoTag;
-                    PlayerData.playVideoTag(videoTag).then(function() {
+                    PlayerData.playVideoTag(videoTag).then(function () {
                         SharedData.pageLoader(false);
                         console.log(videoTag);
                         SharedData.setCurrentSearch(TopSearchMapper['trick'](videoTag));
                     });
-                }
-                else {
+                } else {
                     $state.go('notfound');
                 }
             })
-            .catch(function() {
+            .catch(function () {
                 $state.go('notfound');
             });
 }
@@ -400,7 +399,7 @@ function ViewTagController($scope, VideoTagData, $stateParams, PlayerData, Share
     VideoTagData.getLoader()
             .setFilters({tag_slug: $stateParams.tagSlug, order: $stateParams.order})
             .startLoading()
-            .then(function(results) {
+            .then(function (results) {
                 if (results.items.length > 0) {
                     var firstTag = results.items[0];
                     SharedData.setCurrentSearch(TopSearchMapper['trick'](firstTag));
@@ -412,7 +411,7 @@ function ViewTagController($scope, VideoTagData, $stateParams, PlayerData, Share
                     }
                 }
             })
-            .finally(function() {
+            .finally(function () {
                 SharedData.pageLoader(false);
             });
 }
@@ -428,23 +427,21 @@ function ViewSportController($scope, VideoTagData, $stateParams, PlayerData, Sha
     var categorySlug = $stateParams.category;
 
     console.log("Viewing sport: " + sportSlug);
-    SharedData.onReady().then(function() {
+    SharedData.onReady().then(function () {
         var sport = $filter('getByProperty')(SharedData.sports, sportSlug, 'slug');
         SharedData.currentSport = sport;
 
         if (sport !== null) {
             var category = $filter('getByProperty')(sport.categories, categorySlug, 'slug');
             SharedData.setCurrentCategory(category);
-        }
-        else {
+        } else {
             SharedData.setCurrentCategory(null);
         }
 
 
         if ($stateParams.q) {
             SharedData.setCurrentSearch(TopSearchMapper['search']($stateParams.q));
-        }
-        else {
+        } else {
             SharedData.setCurrentSearch(TopSearchMapper['sport']({
                 name: sport ? sport.name : sportSlug,
                 category: category ? category.name : null
@@ -457,7 +454,7 @@ function ViewSportController($scope, VideoTagData, $stateParams, PlayerData, Sha
                 .setOrder($stateParams.order)
                 .setFilter('tag_name', $stateParams.q)
                 .startLoading()
-                .finally(function() {
+                .finally(function () {
                     SharedData.pageLoader(false);
                 });
     });
@@ -472,23 +469,37 @@ function ViewRiderController($scope, $state, VideoTagData, $stateParams, PlayerD
     PlayerData.showListTricks = false;
     SharedData.showCategories = false;
     SharedData.setCurrentCategory(null);
-
     $scope.rider = {id: $stateParams.riderId};
-    VideoTagData.getLoader()
-            .setFilters({rider_slug: $stateParams.riderId, order: $stateParams.order})
-            .startLoading()
-            .catch(function() {
-                $state.go('nofound');
-            })
-            .finally(function() {
-                SharedData.pageLoader(false);
-            });
+    
+    loadRider();
+    loadVideoTags();
 
-    RiderEntity.profile({id: $stateParams.riderId}, function(rider) {
-        console.log(rider);
-        $scope.rider = rider;
-        SharedData.setCurrentSearch(TopSearchMapper['rider'](rider));
-    });
+    function loadRider() {
+        RiderEntity
+                .profile({id: $stateParams.riderId})
+                .$promise
+                .then(function (rider) {
+                    console.log(rider);
+                    $scope.rider = rider;
+                    SharedData.setCurrentSearch(TopSearchMapper['rider'](rider));
+                })
+                .catch(function () {
+                    SharedData.pageLoader(false);
+                });
+    }
+
+
+    function loadVideoTags() {
+        VideoTagData.getLoader()
+                .setFilters({rider_id: $stateParams.riderId, order: $stateParams.order})
+                .startLoading()
+                .catch(function () {
+                    $state.go('nofound');
+                })
+                .finally(function () {
+                    SharedData.pageLoader(false);
+                });
+    }
 }
 
 
@@ -504,14 +515,14 @@ function ViewPlaylistController($scope, VideoTagData, $stateParams, PlayerData, 
     SharedData.setCurrentCategory(null);
 
     PlaylistEntity.view({id: $stateParams.playlistId}).$promise
-            .then(function(data) {
+            .then(function (data) {
                 $scope.playlist = data;
                 SharedData.setCurrentSearch(TopSearchMapper['playlist'](data));
             })
-            .finally(function() {
+            .finally(function () {
                 SharedData.pageLoader(false);
             })
-            .catch(function() {
+            .catch(function () {
                 $state.go('notfound');
             });
 
@@ -523,25 +534,24 @@ function PlaylistPlayerController($scope, VideoTagData, PlayerData, SharedData, 
     var loader = VideoTagData.getLoader();
     loader.setResource(PlaylistItemEntity.playlist)
             .setFilter('id', $stateParams.playlistId)
-            .setMapper(function(input) {
+            .setMapper(function (input) {
                 return input.video_tag;
             })
             .startLoading()
-            .then(function() {
+            .then(function () {
                 if (loader.getItems().length > 0) {
-                    PlayerData.playVideoTag(loader.getItem(0), false).then(function() {
+                    PlayerData.playVideoTag(loader.getItem(0), false).then(function () {
                         SharedData.pageLoader(false);
                     });
-                }
-                else {
+                } else {
                     SharedData.pageLoader(false);
                 }
             })
-            .catch(function() {
+            .catch(function () {
                 SharedData.pageLoader(false);
             });
 
-    $scope.$on('play-video-tag', function(event, tag) {
+    $scope.$on('play-video-tag', function (event, tag) {
         event.stopPropagation();
         PlayerData.playVideoTag(tag);
         PlayerData.startLooping();
@@ -569,7 +579,7 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
             .setFilters({video_id: $stateParams.videoId, order: 'begin_time'})
             .startLoading()
             .then(autoPlayVideo)
-            .catch(function() {
+            .catch(function () {
                 SharedData.pageLoader(false);
             });
 
@@ -582,7 +592,7 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
         var video = response.extra.video;
         PlayerData.loadVideo(video.provider_id, {
             video_url: video.video_url
-        }).finally(function() {
+        }).finally(function () {
             SharedData.pageLoader(false);
         });
         $scope.videoDuration = video.duration;
@@ -596,7 +606,7 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
                 .addVideo(video.video_url)
                 .addPart('snippet')
                 .load()
-                .then(function(results) {
+                .then(function (results) {
                     var item = providerFactory.createItem(results);
                     console.log(item);
                     SharedData.setCurrentSearch(TopSearchMapper['video']({title: item.title()}));
@@ -670,7 +680,7 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
                 .validation({skipped: skipped.join(','), sport_id: sport.id})
                 .$promise
                 .then(successLoadCallback)
-                .catch(function() {
+                .catch(function () {
                     $state.go('home');
                 });
     }
@@ -681,11 +691,10 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
             console.log('Auto play video tag');
             PlayerData
                     .playVideoTag(tags[0], true)
-                    .finally(function() {
+                    .finally(function () {
                         SharedData.pageLoader(false);
                     });
-        }
-        else {
+        } else {
             VideoTagData.currentTag = null;
             PlayerData.hide();
             SharedData.pageLoader(false);
@@ -702,7 +711,7 @@ function ManagePlaylistController($scope, PlaylistEntity, SharedData, PaginateDa
 
     $scope.loader
             .startLoading()
-            .finally(function() {
+            .finally(function () {
                 SharedData.pageLoader(false);
             });
 
@@ -724,10 +733,10 @@ function EditPlaylistController($scope, PaginateDataLoader, PlaylistEntity, Play
     $scope.onDrop = onDrop;
 
     function loadPlaylist() {
-        PlaylistEntity.view({id: $stateParams.playlistId}).$promise.then(function(data) {
+        PlaylistEntity.view({id: $stateParams.playlistId}).$promise.then(function (data) {
             $scope.playlist = data;
         })
-                .catch(function() {
+                .catch(function () {
                     $state.go('manageplaylist');
                 });
     }
@@ -740,19 +749,19 @@ function EditPlaylistController($scope, PaginateDataLoader, PlaylistEntity, Play
                 .setFilter('id', $stateParams.playlistId)
                 .setLimit(20) // TODO PARAM
                 .startLoading()
-                .catch(function() {
+                .catch(function () {
                     $state.go('manageplaylist');
                 })
-                .finally(function() {
+                .finally(function () {
                     SharedData.pageLoader(false);
                 });
     }
 
-    $scope.$on('on-playlist-form-cancel', function(event) {
+    $scope.$on('on-playlist-form-cancel', function (event) {
         $scope.showEditionForm = false;
         event.stopPropagation();
     });
-    $scope.$on('on-playlist-saved', function(event, playlist) {
+    $scope.$on('on-playlist-saved', function (event, playlist) {
         $scope.playlist = playlist;
         $scope.showEditionForm = false;
         event.stopPropagation();
@@ -782,7 +791,7 @@ function ModalPlaylistController($scope, $uibModalInstance, PlaylistEntity, Play
     $scope.showAddPlaylistForm = false;
     $scope.ok = ok;
     $scope.cancel = cancel;
-    $scope.toggleForm = function() {
+    $scope.toggleForm = function () {
         $scope.showAddPlaylistForm = !$scope.showAddPlaylistForm;
     };
     $scope.addToPlaylist = addToPlaylist;
@@ -791,14 +800,14 @@ function ModalPlaylistController($scope, $uibModalInstance, PlaylistEntity, Play
             .setLimit(12);
 
 
-    $scope.$on('on-playlist-saved', function(event, playlist) {
+    $scope.$on('on-playlist-saved', function (event, playlist) {
         $scope.showAddPlaylistForm = false;
         addToPlaylist(playlist);
         $scope.loader.prepend(playlist);
         $uibModalInstance.close($scope.videoTag);
     });
 
-    $scope.$on('on-playlist-title-clicked', function(event, playlist) {
+    $scope.$on('on-playlist-title-clicked', function (event, playlist) {
         event.stopPropagation();
         console.log('on-playlist-title-clicked');
         addToPlaylist(playlist);
@@ -816,7 +825,7 @@ function ModalPlaylistController($scope, $uibModalInstance, PlaylistEntity, Play
     function loadPlaylists() {
         $scope.loader
                 .startLoading()
-                .finally(function() {
+                .finally(function () {
 
                 });
     }
@@ -825,11 +834,11 @@ function ModalPlaylistController($scope, $uibModalInstance, PlaylistEntity, Play
         PlaylistItemEntity.add({
             video_tag_id: videoTag.id,
             playlist_id: playlist.id
-        }, function(result) {
+        }, function (result) {
             if (result.success) {
                 playlist.count_tags += 1;
             }
-        }, function() {
+        }, function () {
             // TODO remove playlist
         });
         toaster.pop('success', 'Added to the playlist!');

@@ -11,7 +11,7 @@
             <li ng-repeat="sport in sports">
                 <a ui-sref="videoplayer.sport({sportSlug: sport.slug})" 
                    ng-click="setCurrentSport(sport)">
-                    <img ng-src="{{sport.slug | sportIconUrl}}"> &nbsp;
+                    <img ng-src="{{sport.slug| sportIconUrl}}"> &nbsp;
                     {{sport.name}}
                 </a>
             </li>
@@ -19,17 +19,28 @@
     </div>
 </div>
 
-<div class="container margin-top">
-    <div class="col-md-6">
-        <div class="bg-primary border-radius padding-sm">
+<!--
+<div class="margin-top">
+    <div class="section bg-primary">
+        <div class="container padding-sm">
+            <p>
+                Hey we are looking for beta tester!
+            </p>
+        </div>
+    </div>
+</div>
+-->
+
+<div class="margin-top">
+    <div class="col-sm-6">
+        <div class="padding-sm border-radius margin-left bg-primary">
             <h3 class="page-title">Trending playlists</h3>
 
             <div ng-repeat="playlist in playlists"   playlist-item playlist="playlist" ></div>
         </div>
     </div>
-
-    <div class="col-md-6">
-        <div class="bg-primary border-radius padding-sm">
+    <div class="col-sm-6">
+        <div class="padding-sm border-radius margin-left bg-primary">
             <h3 class="page-title">Trending performances</h3>
             <div ng-repeat="videoTag in videoTags" video-tag-item video-tag="videoTag"></div>
 
