@@ -176,15 +176,7 @@ class VideoTagsController extends AppController {
     }
 
     /**
-     * GET data
-     *  - sport_id
-     *  - category_id
-     *  - tag_id
-     *  - video_id
-     *  - rider_id
-     * - trick_slug
-     *  - tag_name: "LIKE"
-     *  - page: page number
+     * GET dat
      */
     public function search() {
         $filterStatus = true;

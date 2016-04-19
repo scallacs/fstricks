@@ -180,7 +180,31 @@ function ConfigRoute($stateProvider) {
                         templateUrl: baseUrl + 'view-rider.html'
                     }
                 }
-            })
+            });
+
+//            .state('rider', {
+//                url: '/rider/:riderId',
+//                views: {
+//                    viewNavRight: {
+//                        'template': '<div player-nav></div>'
+//                    },
+//                    '': {
+//                        controller: 'ViewRiderController',
+//                        templateUrl: baseUrl + 'view-rider.html'
+//                    }
+//                },
+//                data: {
+//                    pageLoader: true
+//                }
+//            })
+//            .state('rider.play', {
+//                url: '/play',
+//                controller: 'RiderPlayerController',
+//                templateUrl: baseUrl + 'player.html',
+//                data: {
+//                    pageLoader: true
+//                }
+//            })
 }
 
 MyTricksController.$inject = ['$scope', 'PaginateDataLoader', 'SharedData', '$state', 'VideoTagEntity', 'ApiFactory'];
@@ -470,9 +494,9 @@ function ViewRiderController($scope, $state, VideoTagData, $stateParams, PlayerD
     SharedData.showCategories = false;
     SharedData.setCurrentCategory(null);
     $scope.rider = {id: $stateParams.riderId};
-    
+
     loadRider();
-    loadVideoTags();
+    loadVideoTags($stateParams.riderId);
 
     function loadRider() {
         RiderEntity
@@ -485,17 +509,15 @@ function ViewRiderController($scope, $state, VideoTagData, $stateParams, PlayerD
                 })
                 .catch(function () {
                     SharedData.pageLoader(false);
+                    $state.go('nofound');
                 });
     }
 
 
-    function loadVideoTags() {
+    function loadVideoTags(slug) {
         VideoTagData.getLoader()
-                .setFilters({rider_id: $stateParams.riderId, order: $stateParams.order})
+                .setFilters({rider_slug: slug, order: $stateParams.order})
                 .startLoading()
-                .catch(function () {
-                    $state.go('nofound');
-                })
                 .finally(function () {
                     SharedData.pageLoader(false);
                 });
