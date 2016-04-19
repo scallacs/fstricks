@@ -24,16 +24,30 @@
                 </td>
             </tr>
         </table>
-                        <!--
-        <div ng-if="sports.length > 0">
-            <h3>Performer seen in</h3>
-            <ul class="list-unstyled">
-                <li ng-repeat="sport in sports"><a ui-sref="videoplayer.sport({sportSlug: sport.slug})">{{sport.name}}</a></li>
-                <div ng-repeat="tag in sport.tags" class="">
-                    <a ui-sref="videoplayer.trick({tagId tag.id})" title="tag.name">{{tag.name}} ({{tag.category.name}})</a> 
-                </div>
+
+        <div ng-if="rider.sports.length > 0">
+            <h3>Sports</h3>
+            <ul class="list-unstyled list-inline">
+                <li ng-repeat="data in rider.sports" class="margin-top">
+                    <a class="btn btn-primary" 
+                       ui-sref="videoplayer.sport({sportSlug: sport.slug, categorySlug:data.category.slug})">
+                        {{data.sport.name}} {{data.category.name}} ({{data.count_ref}})
+                    </a>
+                </li>
             </ul>
         </div> 
-        -->
+
+        <div ng-if="rider.popular_tags.length > 0">
+            <h3>Top tricks</h3>
+            <ul class="list-unstyled list-inline">
+                <li ng-repeat="tag in rider.popular_tags"  class="margin-top">
+                    <a class="btn btn-primary" 
+                       ui-sref="videoplayer.sport({sportSlug: sport.slug, categorySlug:data.category.slug})">
+                        {{tag.name}} - {{tag.category.name}} {{tag.sport.name}} ({{tag.count_ref}})
+                    </a>
+                </li>
+            </ul>
+        </div> 
+
     </div>
 </div>

@@ -55,16 +55,15 @@ class RidersController extends AppController {
         if (!empty($slug)) {
             $query = $this->Riders->findPublic()
                     ->limit(1)
-                    ->where([
-                        'Riders.slug' => $slug]);
-//                    ->contain([
-//                        'VideoTags'
-//                    ]);
+                    ->where(['Riders.slug' => $slug]);
             $data = $query->first();
+            
         } 
         if (empty($data)){
             throw new \Cake\Network\Exception\NotFoundException();
         }
+        $data['sports'] = $this->Riders->findRiderSports($data['id']);
+        $data['popular_tags'] = $this->Riders->findRiderTags($data['id']);
         ResultMessage::overwriteData($data);
     }
 

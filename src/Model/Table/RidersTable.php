@@ -81,7 +81,7 @@ class RidersTable extends Table {
         ]);
         if ($type === 'admin') {
             $this->searchManager()
-                ->add('status', 'Search.Value');
+                    ->add('status', 'Search.Value');
         }
     }
 
@@ -103,14 +103,14 @@ class RidersTable extends Table {
                 ->requirePresence('nationality', 'create')
                 ->add('nationality', 'custom', [
                     'rule' => function ($value, $context) {
-                $countries = JsonConfigHelper::countries();
-                foreach ($countries as $county) {
-                    if ($county['code'] === $value) {
-                        return true;
-                    }
-                }
-                return false;
-            },
+                        $countries = JsonConfigHelper::countries();
+                        foreach ($countries as $county) {
+                            if ($county['code'] === $value) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    },
                     'message' => 'Choose a valid nationality'
         ]);
 
@@ -144,14 +144,14 @@ class RidersTable extends Table {
 
         $validator
                 ->add('level', 'valid', ['rule' => function ($value) {
-                $levels = JsonConfigHelper::rules("riders", "level", "values");
-                foreach ($levels as $level) {
-                    if ($level['code'] == $value) {
-                        return true;
-                    }
-                }
-                return false;
-            }])
+                        $levels = JsonConfigHelper::rules("riders", "level", "values");
+                        foreach ($levels as $level) {
+                            if ($level['code'] == $value) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }])
                 ->requirePresence('level', 'create')
                 ->notEmpty('level');
 
@@ -196,7 +196,7 @@ class RidersTable extends Table {
     }
 
     public function findPublic($query = null) {
-        if ($query){
+        if ($query) {
             return $query;
         }
         return $this->find('all');
@@ -213,54 +213,56 @@ class RidersTable extends Table {
                         ])
                         ->limit(50000);
     }
-    
-    public function findRiderTags($riderId) {
+
+    public function findRiderTags($riderId, $limit = 10) {
         $videoTags = \Cake\ORM\TableRegistry::get('VideoTags');
         $query = $videoTags->find()
-                        ->select([
-                            'tag_id' => 'Tags.id',
-                            'tag_name' => 'Tags.name',
-                            'count_ref' => 'COUNT(Tags.id)',
-                            'category__id' => 'Categories.id',
-                            'category__name' => 'Categories.name',
-                            'sport__id' => 'Sports.id',
-                            'sport__name' => 'Sports.name',
-                        ])
-                        ->where([
-                            'VideoTags.status' => \App\Model\Entity\VideoTag::STATUS_VALIDATED,
-                            'Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC,
-                            'VideoTags.rider_id' => $riderId
-                        ])
-                        ->order(['count_ref DESC'])
-                        ->group(['Tags.id']) // , 'Categories.name', 'Sports.name'
-                        ->contain(['Tags' => ['Categories' => ['Sports']], 'Videos'])
-                        ->hydrate(false)
-                        ->autoFields(false);
-        debug($query->sql());
+                ->select([
+                    'id' => 'Tags.id',
+                    'name' => 'Tags.name',
+                    'count_ref' => 'COUNT(Tags.id)',
+                    'category__id' => 'Categories.id',
+                    'category__name' => 'Categories.name',
+                    'sport__id' => 'Sports.id',
+                    'sport__name' => 'Sports.name',
+                ])
+                ->where([
+                    'VideoTags.status' => \App\Model\Entity\VideoTag::STATUS_VALIDATED,
+                    'Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC,
+                    'VideoTags.rider_id' => $riderId
+                ])
+                ->order(['count_ref DESC'])
+                ->group(['Tags.id']) // , 'Categories.name', 'Sports.name'
+                ->contain(['Tags' => ['Categories' => ['Sports']], 'Videos'])
+                ->hydrate(false)
+                ->autoFields(false)
+                ->limit($limit);
+//        debug($query->sql());
         return $query;
     }
-    
+
     public function findRiderSports($riderId) {
         $videoTags = \Cake\ORM\TableRegistry::get('VideoTags');
         $query = $videoTags->find()
-                        ->select([
-                            'sport__id' => 'Sports.id',
-                            'sport__name' => 'Sports.name',
-                            'category__id' => 'Categories.id',
-                            'category__name' => 'Categories.name',
-                            'count_ref' => 'COUNT(VideoTags.id)',
-                        ])
-                        ->where([
-                            'VideoTags.status' => \App\Model\Entity\VideoTag::STATUS_VALIDATED,
-                            'Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC,
-                            'VideoTags.rider_id' => $riderId
-                        ])
-                        ->order(['count_ref DESC'])
-                        ->group(['Sports.id', 'Categories.id']) // , 'Categories.name', 'Sports.name'
-                        ->contain(['Tags' => ['Categories' => ['Sports']], 'Videos'])
-                        ->hydrate(false)
-                        ->autoFields(false);
-        debug($query->sql());
+                ->select([
+                    'sport__id' => 'Sports.id',
+                    'sport__name' => 'Sports.name',
+                    'sport__slug' => 'Sports.slug',
+                    'category__id' => 'Categories.id',
+                    'category__name' => 'Categories.name',
+                    'category__slug' => 'Categories.slug',
+                    'count_ref' => 'COUNT(VideoTags.id)',
+                ])
+                ->where([
+                    'VideoTags.status' => \App\Model\Entity\VideoTag::STATUS_VALIDATED,
+                    'Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC,
+                    'VideoTags.rider_id' => $riderId
+                ])
+                ->order(['count_ref DESC'])
+                ->group(['Sports.id', 'Categories.id']) // , 'Categories.name', 'Sports.name'
+                ->contain(['Tags' => ['Categories' => ['Sports']], 'Videos'])
+                ->hydrate(false)
+                ->autoFields(false);
         return $query;
     }
 
