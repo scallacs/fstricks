@@ -63,25 +63,6 @@ angular
 //
 //    // =========================================================================
 //    // Init
-//    function loadProfile(riderId) {
-//        SharedData.pageLoader(true);
-//        RiderEntity.profile({id: riderId}, function(rider) {
-//            if (angular.isDefined(rider.id)) {
-//                console.log("Profile loaded: ");
-//                console.log(rider);
-//                $scope.rider = rider;
-//            }
-//            else {
-//                $scope.rider = {id: null};
-//            }
-//        }).$promise.finally(function() {
-//            SharedData.pageLoader(false);
-//        });
-//    }
-//
-//    function init() {
-//        loadProfile($stateParams.riderId ? $stateParams.riderId : null);
-//    }
 //
 //    // =========================================================================
 //    function hasRiderProfile() {

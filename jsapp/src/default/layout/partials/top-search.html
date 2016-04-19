@@ -1,27 +1,27 @@
 <form class="navbar-form" role="search">
+    {{searchData.selected}}
     <div  class="input-group">
+        <!--  | propsFilter: {title: $select.search} -->
         <ui-select 
             id="SearchBar"
-            ng-model="search.selected"
+            multiple 
+            ng-model="searchData.selected"
             theme="bootstrap"
             on-select="onSelect($item, $model)"
             reset-search-input="true">
             <ui-select-match placeholder="Search tricks, riders, playlists" >
-                <span  ng-if="$select.selected.category" class="text-bold text-uppercase" >{{$select.selected.category}}: </span> 
-                <span class="text-bold text-capitalize" >{{$select.selected.title}} </span> 
-                <span ng-if="$select.selected.sub_title"> - {{$select.selected.sub_title}} </span>
+                <span  ng-if="$item.icon" class="text-bold text-uppercase" >{{$item.icon}}: </span> 
+                <span class="text-bold text-capitalize" >{{$item.title}} </span> 
             </ui-select-match>
             <ui-select-choices
                 repeat="data in results"
                 refresh="refresh($select.search)"
-                refresh-delay="400">
+                refresh-delay="400"
+                group-by="'category'">
                 <div class="clearfix">
-                    <div class="hidden-xs col-sm-2">
-                        <span ng-if="data.category">{{data.category}}</span>
-                    </div>
-                    <div class="col-xs-9 col-sm-8" >
-                        <span class="text-bold text-capitalize">{{data.title}}</span> <br/>
-                        <span class="">{{data.sub_title}}</span>
+                    <div class="col-xs-9 col-sm-10" >
+                        <span ng-bind-html="trustAsHtml(data.title)" class="text-bold text-capitalize"></span> <br/>
+                        <span ng-bind-html="trustAsHtml(data.sub_title)" class=""></span>
                     </div>
                     <div class="col-xs-3 col-sm-2 text-center" style="overflow: hidden;" >
                         <span class="text-big" ng-if="data.points !== false">{{data.points}}</span>

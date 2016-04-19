@@ -87,7 +87,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer', {
-                url: '/player?order',
+                url: '/player?order&q&category',
                 views: {
                     viewNavRight: {
                         'template': '<div player-nav></div>'
@@ -103,7 +103,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer.sport', {
-                url: '/bestof/:sportSlug?category&q',
+                url: '/bestof/:sportSlug',
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewSportController',
@@ -173,7 +173,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer.rider', {
-                url: '/rider/:riderId',
+                url: '/rider/:rider_slug',
                 views: {
                     videoPlayerExtra: {
                         controller: 'ViewRiderController',
@@ -183,7 +183,7 @@ function ConfigRoute($stateProvider) {
             });
 
 //            .state('rider', {
-//                url: '/rider/:riderId',
+//                url: '/rider/:rider_slug',
 //                views: {
 //                    viewNavRight: {
 //                        'template': '<div player-nav></div>'
@@ -350,9 +350,6 @@ function AddVideoController($scope, ProviderVideoInfo, $state,
 
 PlayerController.$inject = ['$scope', 'PlayerData'];
 function PlayerController($scope, PlayerData) {
-    PlayerData.showViewMode();
-    PlayerData.showListTricks = true;
-
 
     $scope.$on('play-video-tag', function (event, tag) {
         event.stopPropagation();
@@ -487,20 +484,20 @@ function ViewSportController($scope, VideoTagData, $stateParams, PlayerData, Sha
 
 ViewRiderController.$inject = ['$scope', '$state', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'RiderEntity', 'TopSearchMapper'];
 function ViewRiderController($scope, $state, VideoTagData, $stateParams, PlayerData, SharedData, RiderEntity, TopSearchMapper) {
-    VideoTagData.reset();
-    PlayerData.showViewMode();
+
+//    PlayerData.showViewMode();
     PlayerData.stop();
     PlayerData.showListTricks = false;
     SharedData.showCategories = false;
     SharedData.setCurrentCategory(null);
-    $scope.rider = {id: $stateParams.riderId};
+    $scope.rider = {slug: $stateParams.rider_slug};
 
     loadRider();
-    loadVideoTags($stateParams.riderId);
-
+    loadVideoTags($stateParams.rider_slug);
+    
     function loadRider() {
         RiderEntity
-                .profile({id: $stateParams.riderId})
+                .profile({id: $stateParams.rider_slug})
                 .$promise
                 .then(function (rider) {
                     console.log(rider);
@@ -515,8 +512,8 @@ function ViewRiderController($scope, $state, VideoTagData, $stateParams, PlayerD
 
 
     function loadVideoTags(slug) {
-        VideoTagData.getLoader()
-                .setFilters({rider_slug: slug, order: $stateParams.order})
+        VideoTagData
+                .getLoader()
                 .startLoading()
                 .finally(function () {
                     SharedData.pageLoader(false);
@@ -528,7 +525,6 @@ function ViewRiderController($scope, $state, VideoTagData, $stateParams, PlayerD
 ViewPlaylistController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'PlaylistEntity', 'TopSearchMapper', '$state'];
 function ViewPlaylistController($scope, VideoTagData, $stateParams, PlayerData, SharedData, PlaylistEntity, TopSearchMapper, $state) {
     PlayerData.stop();
-    VideoTagData.reset();
     PlayerData.showViewMode();
     PlayerData.showListTricks = false;
     PlayerData.playMode = 'playlist';
@@ -598,6 +594,7 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
     };
 
     VideoTagData.getLoader()
+//            .parseFilter($stateParams)
             .setFilters({video_id: $stateParams.videoId, order: 'begin_time'})
             .startLoading()
             .then(autoPlayVideo)
@@ -654,10 +651,10 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
         return;
     }
 
-    VideoTagData.reset();
-    loadNext();
     PlayerData.showValidationMode();
     PlayerData.showListTricks = false;
+    
+    loadNext();
 
     $scope.rateAccurate = rateAccurate;
     $scope.rateFake = rateFake;

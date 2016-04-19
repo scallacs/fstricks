@@ -292,10 +292,16 @@ function PaginateDataLoader($q) {
     }
 }
 
-VideoTagData.$inject = ['PaginateDataLoader', 'VideoTagEntity'];
-function VideoTagData(PaginateDataLoader, VideoTagEntity) {
+VideoTagData.$inject = ['PaginateDataLoader', 'VideoTagEntity', '$stateParams', 'TopSearchData'];
+function VideoTagData(PaginateDataLoader, VideoTagEntity, $stateParams, TopSearchData) {
 
     var obj = {
+        updateSearch: function(){
+            console.log("Updating search results:");
+            console.log($stateParams);
+            TopSearchData.setFilters($stateParams);
+            this.getLoader().setFilters($stateParams);
+        },
         getLoader: function() {
             return PaginateDataLoader.instance('default', VideoTagEntity.search);
         },

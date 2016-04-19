@@ -20,10 +20,10 @@ angular.module('app', [
 
 ModalInstanceCtrl.$inject = ['$scope', '$uibModalInstance'];
 function ModalInstanceCtrl($scope, $uibModalInstance) {
-    $scope.ok = function() {
+    $scope.ok = function () {
         $uibModalInstance.close('close');
-    }; 
-    $scope.cancel = function() {
+    };
+    $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
     };
 }
@@ -39,44 +39,41 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
 //    $scope.seo = Seo;
     $scope.feedbackOptions = {
         ajaxURL: __APIConfig__.baseUrl + 'feedbacks/send.json',
-        html2canvasURL : 'js/components/html2canvas/build/html2canvas.min.js'
+        html2canvasURL: 'js/components/html2canvas/build/html2canvas.min.js'
     };
 
-    $scope.$on('view-video-tag', function(event, tag) {
+    $scope.$on('view-video-tag', function (event, tag) {
         console.log('MainController: Event view-video-tag');
         $scope.$broadcast('view-video-tag-broadcast', tag);
     });
 
-    $scope.$on('on-search-item-selected', function(event, data) {
+    $scope.$on('on-search-item-selected', function (event, data) {
         // immediate search
         if (data.type === 'partial') {
             console.log("Start partial seach");
             $state.go('videoplayer.sport', {
                 q: data.search
             });
-        }
-        else if (data.type === 'rider') {
-            $state.go('videoplayer.rider', {riderId: data.slug});
-        }
-        else if (data.type === 'tag') {
+        } else if (data.type === 'rider') {
+            $state.go('videoplayer.rider', {rider_slug: data.slug});
+        } else if (data.type === 'tag') {
             $state.go('videoplayer.tag', {tagSlug: data.slug});
-        }
-        else if (data.type === 'playlist') {
+        } else if (data.type === 'playlist') {
             $state.go('playlist', {playlistId: data.id});
         }
     });
 
-    $scope.$on('on-playlist-title-clicked', function(event, playlist) {
+    $scope.$on('on-playlist-title-clicked', function (event, playlist) {
         $state.go("playlist", {playlistId: playlist.id});
     });
 }
 
-Run.$inject = ['$rootScope', 'AuthenticationService', 'loginModal', '$state', 'SharedData'];
-function Run($rootScope, AuthenticationService, loginModal, $state, SharedData) {
+Run.$inject = ['$rootScope', 'AuthenticationService', 'loginModal', '$state', 'SharedData', 'VideoTagData', '$stateParams'];
+function Run($rootScope, AuthenticationService, loginModal, $state, SharedData, VideoTagData) {
     AuthenticationService.init();
     SharedData.init();
 
-    $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
+    $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
         SharedData.setCurrentSearch(null);
 
         if (toState.redirectTo) {
@@ -94,24 +91,30 @@ function Run($rootScope, AuthenticationService, loginModal, $state, SharedData) 
             var wasLoading = SharedData.loadingState;
             SharedData.pageLoader(false);
             loginModal.open().result
-                    .then(function() {
+                    .then(function () {
                         if (loginModal.isset()) {
                             console.log("Login success, continuing");
                             SharedData.pageLoader(wasLoading);
                             return $state.go(toState.name, toParams);
                         }
                     })
-                    .catch(function() {
+                    .catch(function () {
                         if (loginModal.isset()) {
                             console.log("Closing modal with catch");
                             return $state.go('home');
                         }
                     });
-        }
-        else {
+        } else {
             loginModal.dismiss();
         }
-        SharedData.pageLoader(toState.data.pageLoader);
+        SharedData.pageLoader(toState.data ? toState.data.pageLoader : false);
+
     });
+    $rootScope.$on('$stateChangeSuccess',
+            function (event, toState, toParams, fromState, fromParams) {
+//        if (toState.data && toState.data.player){
+                VideoTagData.updateSearch();
+//        }
+            });
 
 }

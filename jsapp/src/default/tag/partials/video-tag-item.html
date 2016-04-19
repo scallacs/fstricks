@@ -32,7 +32,7 @@
                         Unknown performer
                     </span>
                     <a  ng-if="videoTag.rider.id" 
-                        ui-sref="videoplayer.rider({riderId: videoTag.rider.slug})"
+                        ui-sref="videoplayer.rider({rider_slug: videoTag.rider.slug})"
                         class="item-user-name text-info text-capitalize">
                         {{videoTag.rider.display_name}}
                     </a>

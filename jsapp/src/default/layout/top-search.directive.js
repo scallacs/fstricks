@@ -1,11 +1,12 @@
 angular.module('app.layout')
         .factory('TopSearchMapper', TopSearchMapper)
+        .factory('TopSearchData', TopSearchData)
         .directive('topSearch', topSearchDirective);
 
 TopSearchMapper.$inject = ['SharedData'];
 function TopSearchMapper(SharedData) {
     return {
-        rider: function(data) {
+        rider: function (data) {
             data.title = data.firstname + ' ' + data.lastname;
             data.sub_title = ' (' + data.nationality + ')';
             data.points = data.count_tags;
@@ -13,7 +14,7 @@ function TopSearchMapper(SharedData) {
             data.category = 'Rider';
             return data;
         },
-        tag: function(data) {
+        tag: function (data) {
             data.title = data.name;
             data.sub_title = data.category.sport.name + ' ' + data.category.name;
             data.points = data.count_ref;
@@ -21,7 +22,7 @@ function TopSearchMapper(SharedData) {
             data.category = 'Trick';
             return data;
         },
-        trick: function(data) {
+        trick: function (data) {
             data.title = data.tag.name;
             data.sub_title = data.tag.category.sport.name + ' ' + data.tag.category.name;
             data.points = data.count_ref;
@@ -29,27 +30,27 @@ function TopSearchMapper(SharedData) {
             data.category = 'Trick';
             return data;
         },
-        playlist: function(data) {
+        playlist: function (data) {
             data.sub_title = '';
             data.points = data.count_points;
             data.type = 'playlist';
             data.category = 'Playlist';
             return data;
         },
-        video: function(data) {
+        video: function (data) {
             data.sub_title = '';
             data.type = 'video';
             data.category = 'Video';
             return data;
         },
-        sport: function(data) {
+        sport: function (data) {
             data.title = data.name;
-            data.sub_title = (data.category ? data.category: '');
+            data.sub_title = (data.category ? data.category : '');
             data.type = 'sport';
             data.category = 'Best of';
             return data;
         },
-        search: function(q) {
+        search: function (q) {
             var search = {
                 picture: false,
                 points: false,
@@ -62,14 +63,53 @@ function TopSearchMapper(SharedData) {
             if (SharedData.currentSport) {
                 search.sport_id = SharedData.currentSport.id;
                 search.sub_title = SharedData.currentSport.name;
-            }
-            else {
+            } else {
                 search.sub_title = 'any sports';
             }
             search.title = "* " + q + " *";
             return search;
         }
     };
+}
+
+function TopSearchData() {
+    var self = {
+        selected: [],
+        setFilters: setFilters,
+        addSelected: addSelected
+    };
+
+    return self;
+
+    function addSelected(type, data) {
+        data.category = type;
+        data.type = type;
+        this.selected.push(data);
+    }
+
+
+    function setFilters(params) {
+//        console.log(params);
+        angular.forEach(params, function (val, key) {
+            switch (key) {
+                case 'q':
+                    self.addSelected('trick', {
+                        title: val
+                    });
+                    break;
+                case 'rider_id':
+                    self.addSelected('rider', {
+                        title: 'Rider...'
+                    });
+                    break;
+                case 'rider_slug':
+                    self.addSelected('rider', {
+                        title: val
+                    });
+                    break;
+            }
+        });
+    }
 }
 /**
  * Server form. Extend ng form functionnalities.
@@ -79,26 +119,43 @@ topSearchDirective.$inject = ['TopSearchMapper', 'ApiFactory'];
 function topSearchDirective(TopSearchMapper, ApiFactory) {
     return {
         templateUrl: __PathConfig__.template + '/layout/partials/top-search.html',
-        scope: {
-            currentSearch: '='
-        },
-        controller: ['$scope', 'SharedData',
-            function($scope, SharedData) {
+        controller: ['$scope', 'SharedData', '$sce', 'TopSearchData', '$filter',
+            function ($scope, SharedData, $sce, TopSearchData, $filter) {
                 $scope.results = [];
                 $scope.onSelect = onSelect;
                 $scope.refresh = refresh;
-                $scope.search = {
-                    selected: $scope.currentSearch
+                $scope.searchData = TopSearchData;
+
+                $scope.trustAsHtml = function (value) {
+                    return $sce.trustAsHtml(value);
                 };
-////                
-                $scope.$watch('currentSearch', function(val){
-                    $scope.search.selected = val;
-                });
 
                 var searchEndpoint = ApiFactory.endpoint('Searchs', 'search').query;
 
-//                var searchIdCounter = 0;
-                var currentRequest = null;
+
+                function addSuggested(type, data) {
+                    data.category = type;
+                    data.type = type;
+                    $scope.results.push(data);
+                }
+
+                function immediateSearch(search) {
+                    console.log('Imediate search with term ' + search);
+                    $scope.results = [];
+                    if (search.length >= 2) {
+                        addSuggested('search', TopSearchMapper['search'](search));
+                    }
+                    var category = $filter('searchCategory')(SharedData.categories, search);
+                    if (category) {
+                        console.log(category);
+                        category.forEach(function (item) {
+                            addSuggested(item.sport.name, {
+                                title: item.name
+                            });
+                        });
+                    }
+                    return $scope.results;
+                }
                 /**
                  * Header search bar function
                  * @param {type} trick
@@ -108,14 +165,14 @@ function topSearchDirective(TopSearchMapper, ApiFactory) {
                  */
                 function refresh(search) {
                     search = search.trim();
+                    $scope.results = immediateSearch(search);
                     if (search.length >= 2) {
-                        $scope.results = [TopSearchMapper['search'](search)];
                         var searchData = {
                             q: search,
                             sport_id: SharedData.currentSport ? SharedData.currentSport.id : null
                         };
-                        searchEndpoint(searchData, function(results) {
-                            $scope.results = [TopSearchMapper['search'](search)];
+                        searchEndpoint(searchData, function (results) {
+                            $scope.results = immediateSearch(search);
                             for (var i = 0; i < results.length; i++) {
                                 switch (results[i].type) {
                                     case 'playlist':
@@ -128,7 +185,7 @@ function topSearchDirective(TopSearchMapper, ApiFactory) {
                                         results[i].category = 'Trick';
                                         break;
                                 }
-                                $scope.results.push(results[i]);
+                                addSuggested(results[i].type, results[i]);
                             }
                         });
                     }
@@ -137,17 +194,14 @@ function topSearchDirective(TopSearchMapper, ApiFactory) {
                 function onSelect(event, data) {
                     console.log("on-search-item-selected");
                     console.log(data);
-                    $scope.$emit("on-search-item-selected", data);
+                    if (TopSearchData.selected.length === 1) {
+                        $scope.$emit("on-search-item-selected", data);
+                    }
                 }
 
             }],
-        link: function(scope, element) {
+        link: function (scope, element) {
             scope.onSearchButtonClick = onSearchButtonClick;
-
-//            scope.$watch('currentSearch', function(newVal){
-//                console.log("-------------");
-//                console.log(newVal);
-//            });
 
             function onSearchButtonClick() {
                 var uiSelect = $(element).find('.ui-select-container').controller('uiSelect');
