@@ -62,7 +62,12 @@ class R {
     }
     
 
-    public static function addValidationErrorsModel(\Cake\ORM\Entity $entity, $context) {
+    /**
+     * 
+     * @param \Cake\ORM\Entity $entity
+     * @param \Cake\Controller\Controller $controller
+     */
+    public static function addValidationErrorsModel(\Cake\ORM\Entity $entity, $controller) {
         if (!isset(self::$result['validationErrors'])) {
             self::$result['validationErrors'] = [];
         }

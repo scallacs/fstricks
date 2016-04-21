@@ -68,7 +68,7 @@ class AppController extends Controller {
             ],
             'authorize' => 'Controller'
         ]);
-        
+
         $this->loadComponent('Search.Prg', [
             'actions' => ['index']
         ]);
@@ -98,7 +98,7 @@ class AppController extends Controller {
 
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        
+
 //        if (Configure::read('onlyLoggedUser') && !$this->Auth->user('id')){
 //            throw new \Cake\Network\Exception\UnauthorizedException();
 ////            return $this->redirect(['controller' => 'Users', 'action' => 'beta_login', 'prefix' => null]);
@@ -118,20 +118,9 @@ class AppController extends Controller {
             $this->set('_serialize', 'data');
             $this->response->type('json');
         } else {
-//            if (ResultMessage::hasMessage()) {
-//                $this->Flash->set(ResultMessage::$message);
-//            }
-//
-//            if (ResultMessage::$redirectUrl === null) {
-//                $this->redirect($this->referer());
-//            } else if (ResultMessage::$redirectUrl !== false) {
-//                $this->redirect(ResultMessage::getRedirectUrl());
-//            } else {
-                foreach (ResultMessage::$data as $d => $v) {
-                    $this->set($d, $v);
-                }
-//            }
-            // No redirection $data['redirectUrl'] === false
+            foreach (ResultMessage::$data as $d => $v) {
+                $this->set($d, $v);
+            }
         }
         return parent::beforeRender($event);
     }
