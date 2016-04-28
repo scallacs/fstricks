@@ -103,11 +103,61 @@ h3, h2, h1{
 .list-tricks{
     position: absolute;
     top:0px;
-    opacity: 0.92;
+    opacity: 0.96;
     width: 100%;
     background: #111;
     padding: 0px 0px 0px 0px;
     z-index: 999;
+}
+.search-card .search-card-remove{
+    display: none;
+}
+.search-card .search-card-remove .glyphicon{
+    top: 35%;
+}
+.search-card:hover .search-card-remove{
+    display: block;
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background: #333;
+    left: 0px;
+    opacity: 0.9;
+    border-radius: 5px;
+}
+.search-card{
+    padding: 9px 30px;
+    background: #000;
+    color: #EEE;
+    text-transform: capitalize;
+    border-radius: 5px;
+    margin: 2px 0px;
+    text-align: center;
+    position: relative;
+}
+.search-card.active{
+    background: #388EA2;
+}
+.search-card:hover{
+    cursor: pointer;
+}
+.search-card .search-card-title{
+    font-size: 1.2em;
+    font-weight: bold;
+}
+.search-card .search-card-points{
+    font-weight: bold;
+    font-size: 1.5em;
+}
+.search-title{
+    font-size: 1.8em;
+    color: whitesmoke;
+}
+.list-tricks .close-search{
+    right: 0px;
+    top: 3px;
+    position: absolute;
 }
 .list-tricks > div > .row{
     border-bottom: 1px solid #333;
@@ -184,6 +234,7 @@ h3, h2, h1{
 }
 .navbar-form .input-group span.ui-select-toggle.form-control {
     width: 100% !important;
+    border-radius: 4px 0px 0px 4px;
 }
 .navbar-form .input-group input.ui-select-search.form-control{
     width: 100% !important;	
@@ -198,7 +249,7 @@ h3, h2, h1{
     color: white;
     font-size: 15px;
     height: 45px;
-    background: #277D91;
+    background: #444;
     font-weight: bold;
 }
 .navbar-form .btn{
@@ -328,9 +379,14 @@ header .header-title{
 header .header-title a{
     color: white;
     text-decoration: none;
+    display: block;
+    background: #333;
+    border-radius: 20px;
+    padding: 0px 10px;
+    margin-top: 5px;
 }
 header .header-title img{
-    height: 29px;
+    height: 21px;
 }
 header .navbar-header{
     /* height: 50px; */

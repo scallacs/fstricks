@@ -1,20 +1,26 @@
 <div class="clearfix bg-secondary padding-sm-side">
-    <div class="navbar-header" id="BrandContainer">
-        <div class="header-title pull-left hidden-sm hidden-xs">
-            <a href="" ui-sref="home()" id="HomeLink">
-                <span class="hidden-sm hidden-xs">{{config.name}}</span>
-            </a> 
-        </div>
-    </div>
     <ul id="TopNav" class="nav navbar-nav navbar-no-collapse ">
-        <li class="dropdown text-capitalize" id="SportsNav">
-            <a data-toggle="dropdown" ng-if="SharedData.currentSport"  class="text-big" id="ToggleSportLink">
-                <b class="caret"></b>
-                {{SharedData.currentSport.name}}
+        <li class="padding-sm-side">
+            <div class="navbar-header" id="BrandContainer">
+                <div class="header-title pull-left">
+                    <a href="" ui-sref="home()" id="HomeLink">
+                        <img ng-src="{{'logo.png'| imageUrl}}" alt=""/>
+                        <span class="hidden">{{config.name}}</span>
+                    </a> 
+                </div>
+            </div>
+        </li>
+        <li>
+            <a ng-click="onSearchButtonClick()" class="text-bold">
+                <span class="glyphicon glyphicon-search"></span>
             </a>
-            <a data-toggle="dropdown" ng-if="!SharedData.currentSport"  class="text-big" id="ToggleSportLink">
-                <b class="caret"></b> 
-                All sports
+        </li>
+        <!--
+        <li class="dropdown text-capitalize" id="SportsNav">
+            <a data-toggle="dropdown" class="text-big" id="ToggleSportLink">
+                <b class="caret"></b>
+                <span  ng-if="SharedData.currentSport">{{SharedData.currentSport.name}}</span>
+                <span  ng-if="!SharedData.currentSport">All sports</span>
             </a>
             <ul class="dropdown-menu" id="DropDownMenuSports">
                 <li><a ui-sref="videoplayer.sport({sportSlug: 'all', category: null, q: null})" 
@@ -28,8 +34,14 @@
                 </li>
             </ul>
         </li>
-        <!--<li><a href=""><span class="glyphicon glyphicon-map-marker"></span> Best of</a></li>-->
-        <li ng-if="authData.isAuthed()">
+        -->
+        <!--<li><a h
+        <li>
+            <a ng-click="onSearchButtonClick()" class="text-bold">
+                <span class="glyphicon glyphicon-search"></span>
+            </a>
+        </li>ref=""><span class="glyphicon glyphicon-map-marker"></span> Best of</a></li>-->
+        <li>
             <a ui-sref="addvideo"><span class="glyphicon glyphicon-plus-sign"></span></a>
         </li>
         <li ng-if="!authData.isAuthed()">
@@ -57,5 +69,6 @@
         </li>
     </ul>
 </div>
-<div class="bg-secondary padding-sm-side" top-search current-search="SharedData.currentSearch">
+<div class="padding-sm-side">
+    <div tricks-search current-search="SharedData.currentSearch"> </div>
 </div>

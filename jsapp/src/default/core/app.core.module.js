@@ -19,8 +19,8 @@ angular
         .factory('VideoTagAccuracyRateEntity', VideoTagAccuracyRateEntity)
         .directive('notifyOnLoad', NotifyOnLoad)
         .filter('searchCategory', searchCategory)
-        .filter('getByProperty', getByProperty)
-        .filter('trickListFilter', trickListFilter);
+        .filter('getByProperty', getByProperty);
+//        .filter('trickListFilter', trickListFilter);
 
 NotifyOnLoad.$inject = ['$rootScope', '$timeout'];
 function NotifyOnLoad($rootScope, $timeout) {
@@ -30,23 +30,20 @@ function NotifyOnLoad($rootScope, $timeout) {
         });
     };
 }
-
-trickListFilter.$inject = ['SharedData'];
-function trickListFilter(SharedData) {
-    return function(input) {
+//
+//trickListFilter.$inject = ['VideoTagData'];
+//function trickListFilter(VideoTagData) {
+//    return function(input) {
 //        var result = [];
 //        input.forEach(function(item){
-//            var keep = (SharedData.currentCategory === null ||
-//                    (SharedData.currentCategory.id === item.category.id)) 
-//                    && (SharedData.currentSport === null ||
-//                            (SharedData.currentSport.id === item.category.sport.id));
+//            var keep = input.tag.name.inde
 //            if (keep){
 //                result.push(item);
 //            }
 //        });
-        return input;
-    };
-}
+//        return input;
+//    };
+//}
 
 PaginateDataLoader.$inject = ['$q'];
 function PaginateDataLoader($q) {
@@ -298,6 +295,30 @@ function VideoTagData(PaginateDataLoader, VideoTagEntity) {
     var obj = {
         getLoader: function() {
             return PaginateDataLoader.instance('default', VideoTagEntity.search);
+        },
+        filters: [ 
+            {
+                title: 'Video Alive and kickin', 
+                type: 'video',
+                removable: true
+            },
+            {
+                title: 'marck mc morris', 
+                sub_title: 'US', 
+                type:'rider',
+                removable: true
+            }
+        ],
+        removeSearchFilter: function(filter){
+            var i = obj.filters.indexOf(filter);
+            filter.removable = false;
+            filter.active = false;
+            obj.filters.splice(i, 1);
+        },
+        addSearchFilter: function(filter){
+            filter.removable = true;
+            filter.active = true;
+            obj.filters.push(filter);
         },
         currentTag: null,
         setCurrentTag: function(tag) {

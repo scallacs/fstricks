@@ -1,0 +1,24 @@
+
+<div class="search-card" ng-class="{'active': searchItem.active}">
+    <div class="search-card-content" ng-click="videoTagData.addSearchFilter(searchItem)">
+        <span class="search-card-icon" ng-if="searchItem.icon">
+            {{searchItem.icon}}
+        </span>
+        <p>
+            <span class="search-card-title">
+                {{searchItem.title}}
+            </span> <br/>
+            <span class="search-card-sub-title">
+                {{searchItem.sub_title}}
+            </span>
+        </p>
+        <p>
+            <span class="search-card-points">{{searchItem.points}}</span>
+        </p>
+    </div>
+    <div ng-if="searchItem.removable" ng-click="videoTagData.removeSearchFilter(searchItem)" class="search-card-remove">
+        <a href="#" class="remove-item">
+            <span class="glyphicon glyphicon-remove"></span>
+        </a>
+    </div>
+</div>
