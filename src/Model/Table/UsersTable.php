@@ -189,9 +189,6 @@ class UsersTable extends TableWithTags {
 
     public function getUserWithPassword($id, $password) {
         $data = $this->get($id);
-//        debug($password);
-//        debug($data->password);
-//        debug($this->passwordHasher()->check($password, $data->password));
         if (empty($data) || !$this->passwordHasher()->check($password, $data->password)) {
             throw new \Cake\Datasource\Exception\RecordNotFoundException('Invalid password');
         }

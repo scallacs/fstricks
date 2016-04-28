@@ -7,15 +7,20 @@
         <p class="moto">
             Be inspired by the best !
         </p>
-        <ul class="nav nav-pills nav-justified text-capitalize">
-            <li ng-repeat="sport in sports">
-                <a ui-sref="videoplayer.sport({sportSlug: sport.slug})" 
-                   ng-click="setCurrentSport(sport)">
-                    <img ng-src="{{sport.slug| sportIconUrl}}"> &nbsp;
-                    {{sport.name}}
-                </a>
-            </li>
-        </ul>
+        <div class="card-list">
+            <div ng-repeat="sport in sports" class="col-xs-6 col-sm-4 col-md-3">
+                <div class="card-item" 
+                     ui-sref="videoplayer.sport({sportSlug: sport.slug})"
+                        ng-click="setCurrentSport(sport)">
+                    <div class="card-image">
+                        <img ng-src="{{sport.slug| sportIconUrl}}"/>
+                    </div>
+                    <h2 class="card-title text-capitalize">
+                        <a ui-sref="videoplayer.sport({sportSlug: sport.slug})"> {{sport.name}} </a>
+                    </h2>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
