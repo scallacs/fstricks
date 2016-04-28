@@ -9,13 +9,30 @@ namespace App\Test\Util;
  */
 class TableTestCase extends \Cake\TestSuite\TestCase {
 
-    private function assertEntityHasErrors($entity, $errors, $message = null) {
+    /**
+     * Assert that the entity provided has errors specifieds in $errors
+     * @param \Cake\ORM\Entity $entity
+     * @param array $errors
+     * @param string $message
+     */
+    private function assertEntityHasErrors(\Cake\ORM\Entity $entity, array $errors, $message = null) {
         foreach ($errors as $name) {
             $this->assertArrayHasKey($name, $entity->errors(), $message . '[' . $name . ']' . ' shoud have an error');
         }
     }
 
-    public function trySavingModel($table, $options) {
+    /**
+     * Try saving the model 
+     * @param \Cake\ORM\Table $table
+     * @param array $options Accept multiple fields
+     *      - 'data': data to save
+     *      - 'extra': extra data field set directly without using patch or new entity
+     *      - 'edit': boolean true if update, false if insert
+     *      - 'success': true if save must be succcess full false, otherwise
+     *      - 'errors': validation errors expected
+     * @return \Cake\ORM\Entity
+     */
+    public function trySavingModel(\Cake\ORM\Table $table, array $options) {
         $tableName = '[' . $table->alias() . ']';
 
         if (!empty($options['edit']) && $options['edit'] !== false) {
@@ -40,12 +57,25 @@ class TableTestCase extends \Cake\TestSuite\TestCase {
         return $entity;
     }
 
-    public function assertValidationErrors($table, $options) {
+    /**
+     * Assert that saving the data with trigger validation errors
+     * @param \Cake\ORM\Table $table
+     * @param array $options
+     * @return \Cake\ORM\Entity
+     */
+    public function assertValidationErrors(\Cake\ORM\Table $table, array $options) {
         $options['success'] = false;
         return $this->trySavingModel($table, $options);
     }
 
-    public function assertSaveModel($table, $options) {
+    /**
+     * Assert that saving the data will be success full and compare values inserted to expected value
+     * @param \Cake\ORM\Table $table
+     * @param array $options
+     *      - compare: array with $field => expected value for the field
+     * @return \Cake\ORM\Entity
+     */
+    public function assertSaveModel(\Cake\ORM\Table $table, array $options) {
         $tableName = '[' . $table->alias() . ']';
         $options['success'] = true;
         $entity = $this->trySavingModel($table, $options);
@@ -55,6 +85,7 @@ class TableTestCase extends \Cake\TestSuite\TestCase {
                 $this->assertEquals($value, $entity->$field, $tableName . '[' . $field . '] sould be ' . $value);
             }
         }
+        return $entity;
     }
 
 }

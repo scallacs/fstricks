@@ -823,10 +823,12 @@ function ModalPlaylistController($scope, $uibModalInstance, PlaylistEntity, Play
 
 
     $scope.$on('on-playlist-saved', function (event, playlist) {
+        // Add the new playlist
         $scope.showAddPlaylistForm = false;
         addToPlaylist(playlist);
         $scope.loader.prepend(playlist);
         $uibModalInstance.close($scope.videoTag);
+        console.log($scope.loader.getItems());
     });
 
     $scope.$on('on-playlist-title-clicked', function (event, playlist) {
