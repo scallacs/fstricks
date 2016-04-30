@@ -9,8 +9,12 @@ function RiderBox() {
         scope: {
             rider: '=rider'
         },
-        controller: ['$scope', 'PlayerData', function($scope, PlayerData) {
+        controller: ['$scope', 'PlayerData', 'VideoTagData', function($scope, PlayerData, VideoTagData) {
             $scope.playerData = PlayerData;
+            
+            $scope.showRiderVideos = function(rider){
+                PlayerData.showTricksMenu(true);
+            };
         }]
     };
 };

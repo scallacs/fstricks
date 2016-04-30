@@ -109,6 +109,17 @@ h3, h2, h1{
     padding: 0px 0px 0px 0px;
     z-index: 999;
 }
+
+.btn-add-filters > .glyphicon-remove{
+    display: none;
+}
+.btn-add-filters:hover > .glyphicon-plus{
+    display: none;
+}
+.btn-add-filters:hover > .glyphicon-remove{
+    display: inherit;
+}
+
 .search-card .search-card-remove{
     display: none;
 }
@@ -127,7 +138,7 @@ h3, h2, h1{
     border-radius: 5px;
 }
 .search-card{
-    padding: 9px 30px;
+    padding: 5px 30px;
     background: #000;
     color: #EEE;
     text-transform: capitalize;

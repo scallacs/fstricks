@@ -1,31 +1,47 @@
 <form class="navbar-form" role="search">
-    <div  class="input-group">
+    <div  class="input-group">    
         <ui-select 
             ng-click="onSearchBarSelected()"
             id="SearchBar"
             ng-model="search.selected"
             theme="bootstrap"
             on-select="onSelect($item, $model)"
-            reset-search-input="false">
+            reset-search-input="true">
             <ui-select-match placeholder="Search tricks, riders, playlists" >
-                <span  ng-if="$select.selected.category" class="text-bold text-uppercase" >{{$select.selected.category}}: </span> 
                 <span class="text-bold text-capitalize" >{{$select.selected.title}} </span> 
                 <span ng-if="$select.selected.sub_title"> - {{$select.selected.sub_title}} </span>
             </ui-select-match>
             <ui-select-choices
                 repeat="data in results"
                 refresh="refresh($select.search)"
-                refresh-delay="400">
+                refresh-delay="400"
+                group-by="groupBySearchType">
+                <div class="clearfix">
+                    <!--
+                    <div class="col-xs-1" >
+                        <span class="glyphicon glyphicon-plus-sign" 
+                              title="Add this filter to the current search" 
+                              ng-click=""></span>
+                    </div>-->
+                    <div class="col-xs-9" >
+                        <span class="text-bold text-capitalize">{{data.title}}</span> <br/>
+                        <span class="">{{data.sub_title}}</span>
+                    </div>
+                    <div class="col-xs-3 text-center" style="overflow: hidden;" >
+                        <span class="text-big" ng-if="data.points !== false">{{data.points}}</span>
+                    </div>
+                </div>
             </ui-select-choices>
         </ui-select>        
-        <!--
-        <select id="lunch" 
-                class="form-control"
-                style="width: 20%">
-          <option>Everywhere</option>
-        </select>-->
         <div class="input-group-btn" style="width:1%">      
-            <button class="btn btn-default" type="button" ng-click="onSearchButtonClick()">
+            <button ng-if="videoTagData.appendFilters" 
+                    class="btn btn-default btn-add-filters" 
+                    type="button" 
+                    ng-click="videoTagData.appendFilters = false">
+                <span class="glyphicon glyphicon-plus" ></span>
+                <span class="glyphicon glyphicon-remove" title="Stop adding filters"></span>
+            </button>
+            <button class="btn btn-default" disabled type="button" ng-click="onSearchButtonClick()">
                 <span class="glyphicon glyphicon-search"></span>
             </button>
         </div>

@@ -11,11 +11,13 @@ function PaginateDataLoader($q) {
     PaginateDataLoader.prototype.init = init;
     PaginateDataLoader.prototype.initData = initData;
     PaginateDataLoader.prototype.loadAll = loadAll;
+    PaginateDataLoader.prototype.reload = reload;
     PaginateDataLoader.prototype.loadNextPage = loadNextPage;
     PaginateDataLoader.prototype.hasNextPage = hasNextPage;
     PaginateDataLoader.prototype.loadPage = loadPage;
     PaginateDataLoader.prototype.setFilters = setFilters;
     PaginateDataLoader.prototype.updateFilters = updateFilters;
+    PaginateDataLoader.prototype.appendFilter = appendFilter;
     PaginateDataLoader.prototype.setFilter = setFilter;
     PaginateDataLoader.prototype.setLimit = setLimit;
     PaginateDataLoader.prototype.remove = remove;
@@ -184,6 +186,10 @@ function PaginateDataLoader($q) {
         this.filters[name] = value;
         return this;
     }
+    function appendFilter(name, value) {
+        this.filters[name] = this.filters[name] ? this.filters[name] + ',' + value : value;
+        return this;
+    }
 
     function _onSuccessPageLoad(data) {
         this.data.perPage = data.perPage;
@@ -232,6 +238,13 @@ function PaginateDataLoader($q) {
         this.currentPage = 1;
         this.cachePage = {};
         return this;
+    }
+    
+    function reload(){
+        console.log('Reloading with following filters:');
+        console.log(this.filters);
+        this.initData();
+        return this.loadPage(1);
     }
 
     function remove(id) {

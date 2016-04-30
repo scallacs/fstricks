@@ -63,27 +63,41 @@ class VideoTagsTable extends Table {
 
         $this->addBehavior('Search.Search');
         $this->searchManager()
-                ->add('video_id', 'Search.Value', [
-                    'field' => $this->aliasField('video_id')
+                ->add('video_tag_id', 'Search.Value', [
+                    'field' => $this->aliasField('id'),
                 ])
-                ->add('user_id', 'Search.Value', [
-                    'field' => $this->aliasField('user_id')
+                ->add('video_tag_ids', 'MultipleValue', [
+                    'field' => $this->aliasField('id'),
+                    'delimiter' => ','
                 ])
-                ->add('rider_id', 'Search.Value', [
-                    'field' => $this->aliasField('rider_id')
+                ->add('status', 'MultipleValue', [
+                    'field' => $this->aliasField('status'),
+                    'delimiter' => ','
+                ])
+                ->add('video_id', 'MultipleValue', [
+                    'field' => $this->aliasField('video_id'),
+                    'delimiter' => ','
+                ])
+                ->add('user_id', 'MultipleValue', [
+                    'field' => $this->aliasField('user_id'),
+                    'delimiter' => ','
+                ])
+                ->add('rider_id', 'MultipleValue', [
+                    'field' => $this->aliasField('rider_id'),
+                    'delimiter' => ','
                 ])
                 ->add('rider_slug', 'Search.Value', [
-                    'field' => 'Riders.slug'
+                    'field' => 'Riders.slug',
                 ])
-
                 ->add('sport_id', 'Search.Value', [
                     'field' => 'Categories.sport_id'
                 ])
                 ->add('category_id', 'Search.Value', [
                     'field' => 'Tags.category_id'
                 ])
-                ->add('tag_id', 'Search.Value', [
-                    'field' => 'Tags.id'
+                ->add('tag_id', 'MultipleValue', [
+                    'field' => 'Tags.id',
+                    'delimiter' => ','
                 ])
                 ->add('trick_slug', 'Search.Value', [
                     'field' => 'Tags.slug'
@@ -101,12 +115,12 @@ class VideoTagsTable extends Table {
                 ])
                 ->add('status', 'Search.Value', [
                     'field' => $this->aliasField('status')
-        ]);
-//                    ->add('q', 'Search.Like', [
-//                        'before' => true,
-//                        'after' => true,
-//                        'field' => [$this->aliasField('name')]
-//            ]);
+                ])
+                ->add('q', 'Search.Like', [
+                    'before' => true,
+                    'after' => true,
+                    'field' => 'Tags.name'
+                ]);
     }
 
     public function findTrending($limit = 5) {

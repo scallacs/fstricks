@@ -1,0 +1,84 @@
+<div class="container-fluid">
+    
+    <div class="close-search" 
+         ng-if="!videoTagData.currentTag">
+        <a href="#" 
+           ng-click="playerData.showListTricks = false"
+           class="text-big padding-sm"><span class="glyphicon glyphicon-remove"></span>
+        </a>
+    </div>
+    
+    <!--  TODO remove ng-if="SharedData.showCategories" -->
+    <div class="clearfix">
+        <div    class="col-sm-3">
+            <ul class="col-sm-12 nav nav-pills nav-justified text-big margin-bottom margin-top text-capitalize">
+                <li class="bg-primary-darker" >
+                    <a data-toggle="dropdown" id="ToggleSportLink">
+                        <b class="caret"></b>
+                        <span  ng-if="SharedData.currentSport">{{SharedData.currentSport.name}}</span>
+                        <span  ng-if="!SharedData.currentSport">All sports</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a ui-sref="videoplayer.sport({sportSlug: 'all', category: null, q: null})" 
+                               ng-click="SharedData.setCurrentSport(null)">All sports</a></li>
+                        <li ng-repeat="sport in sports">
+                            <a ui-sref="videoplayer.sport({sportSlug: sport.slug, category: null, q: null})" 
+                               ng-click="SharedData.setCurrentSport(sport)">
+                                <img ng-src="{{sport.slug| sportIconUrl}}"> &nbsp;
+                                {{sport.name}}
+                            </a>    
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-9">
+            <ul
+                class="nav nav-pills  nav-justified text-big margin-bottom margin-top text-capitalize">
+                <li class="bg-primary-darker" 
+                    ng-if="haredData.currentSport.categories.length > 1"
+                    ng-class="{active: SharedData.currentCategory === null}">
+                    <a ui-sref="videoplayer.sport({category: null})"
+                       ng-click="setCategory(null)">
+                        All 
+                    </a>
+                </li>
+                <li class="bg-primary-darker" 
+                    ng-repeat="category in SharedData.currentSport.categories"
+                    ng-class="{active: SharedData.currentCategory.id === category.id || SharedData.currentSport.categories.length === 1}">
+                    <a  ui-sref="videoplayer.sport({category: category.slug})"
+                        ng-click="setCategory(category)">
+                        {{category.name}}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <div ng-if="videoTagData.searchResults['rider']">
+        <h3 class="search-title">Riders</h3>
+        <ul class="list-inline">
+            <li ng-repeat="item in videoTagData.searchResults['rider']"
+                search-item="item">
+            </li>
+        </ul>
+    </div>
+    <div ng-if="videoTagData.searchResults['tag']">
+        <h3 class="search-title">Tricks</h3>
+        <ul class="list-inline">
+            <li ng-repeat="item in videoTagData.searchResults['tag']"
+                search-item="item">
+            </li>
+        </ul>
+    </div>
+    <div ng-if="videoTagData.searchResults['playlists']">
+        <h3 class="search-title">Playists</h3>
+        <ul class="list-inline">
+            <li ng-repeat="item in videoTagData.searchResults['playlists']"
+                ui-sref="videoplayer.playlist({playlistId item.id})"
+                search-item="item">
+            </li>
+        </ul>
+    </div>
+
+</div>

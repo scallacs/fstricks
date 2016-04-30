@@ -135,7 +135,7 @@ function FormVideoTagController($scope, $filter, TagEntity, RiderEntity, SharedD
 
     function addNewTag() {
         $scope.showAddFeedback = false;
-        PlayerData.showListTricks = false;
+        PlayerData.showTricksMenu(false);
         editionTag.resetTag()
                 .setId(null)
                 .setVideo($scope.video)

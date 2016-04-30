@@ -7,14 +7,20 @@ angular.module('app.tag')
 function trickList() {
     return {
         templateUrl: __PathConfig__.template + '/tag/partials/player-trick-list.html',
-        controller: ['$scope', 'PlayerData', 'SharedData', function($scope, PlayerData, SharedData) {
+        controller: ['$scope', 'PlayerData', 'SharedData', 'VideoTagData', function($scope, PlayerData, SharedData, VideoTagData) {
             $scope.playerData = PlayerData;
             $scope.setCategory = setCategory;
+            $scope.addFilter = addFilter;
             
             function setCategory(c){
                 console.log("Setting category: " + c);
                 SharedData.setCurrentCategory(c);
                 $scope.$emit('on-category-changed', c);
+            }
+            
+            function addFilter(){
+                // focus the focusser, putting focus onto select but without opening the dropdown
+                VideoTagData.focusSearchBar();
             }
         }]
     };

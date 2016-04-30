@@ -8,9 +8,11 @@ function PlayerData(VideoTagData, $q) {
         initPlayers: initPlayers,
         initData: initData,
         init: init,
+        // TODO : redo
         showEditionMode: showEditionMode,
         showViewMode: showViewMode,
         showValidationMode: showValidationMode,
+        // -- 
         isMode: isMode,
         getPromise: getPromise, getPlayer: getPlayer,
         isProvider: isProvider,
@@ -39,7 +41,9 @@ function PlayerData(VideoTagData, $q) {
         onPlay: onPlay,
         hasVideo: hasVideo,
         hide: hide,
-        setVideo: setVideo
+        setVideo: setVideo,
+        setPlayMode: setPlayMode,
+        showTricksMenu: showTricksMenu
     };
 
     obj.init();
@@ -266,7 +270,6 @@ function PlayerData(VideoTagData, $q) {
 
     function reset() {
         console.log("PlayerData::reset()");
-        VideoTagData.reset();
         obj.stop();
         clearInterval(obj.timer);
         obj.initData();
@@ -338,5 +341,13 @@ function PlayerData(VideoTagData, $q) {
 
     function getCurrentTime() {
         return obj.getPlayer().getCurrentTime();
+    }
+    
+    function setPlayMode(mode){
+        this.playMode = mode;
+    }
+    
+    function showTricksMenu(val){
+        this.showListTricks = val;
     }
 }

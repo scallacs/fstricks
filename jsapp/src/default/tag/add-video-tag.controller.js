@@ -30,8 +30,7 @@ function AddVideoTagController($scope, $state, $stateParams, VideoTagData, Video
 
     function init() {
         PlayerData.showEditionMode();
-        PlayerData.showListTricks = false;
-        VideoTagData.reset();
+        PlayerData.showTricksMenu(false);
         VideoTagData.getLoader()
                 .setFilter('with_pending', true)
                 .setFilter('video_id', $stateParams.videoId);

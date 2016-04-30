@@ -32,12 +32,12 @@ class VideoTagsController extends AppController {
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
     public function view($id = null) {
-        if (empty($id)){
+        if (empty($id)) {
             throw new \Cake\Network\Exception\NotFoundException();
         }
         $parts = explode('-', $id, 2);
         $id = $parts[0];
-        
+
         $videoTag = $this->VideoTags->findAndJoin()
                 ->where(['VideoTags.id' => $id, 'VideoTags.status !=' => VideoTag::STATUS_BLOCKED])
                 ->limit(1)
@@ -144,7 +144,7 @@ class VideoTagsController extends AppController {
             $query->where(['VideoTags.id NOT IN' => $skipped]);
         }
         if (DataUtil::isPositiveInt($this->request->query, 'sport_id')) {
-            $query->where(['Tags.sport_id' => DataUtil::getPositiveInt($this->request->query, 'sport_id')]);
+            $query->where(['Categories.sport_id' => DataUtil::getPositiveInt($this->request->query, 'sport_id')]);
         }
         ResultMessage::overwriteData($query->all());
     }
@@ -184,74 +184,62 @@ class VideoTagsController extends AppController {
         $this->VideoTags->initFilters();
         $query = $this->VideoTags->find('search', $this->VideoTags->filterParams($this->request->query));
         $query = $this->VideoTags->findAndJoin($query);
-        
+
         $query->where(['Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC]);
 
-            $order = empty($this->request->query['order']) ? 'best' : $this->request->query['order'];
-            switch ($order) {
-                case 'begin_time':
-                    $query->order([
-                        'VideoTags.begin ASC',
-                    ]);
-                    break;
-                case 'created':
-                    $query->order([
-                        'VideoTags.created DESC',
-                        'VideoTags.count_points DESC',
-                    ]);
-                    break;
-                case 'modified':
-                    $query->order([
-                        'VideoTags.modified DESC',
-                        'VideoTags.count_points DESC',
-                    ]);
-                    break;
-                case 'best':
-                default:
-                    $query->order([
-                        'VideoTags.count_points DESC',
-                        'VideoTags.created DESC'
-                    ]);
-            }
-            
-            if (!empty($this->request->query['category_name']) && isset($sportName)) {
-                $categoryName = \App\Lib\DataUtil::lowername($this->request->query['category_name']);
-                $sports = \Cake\ORM\TableRegistry::get('Sports');
-                $category = $sports->findFromCategoryCached($sportName, $categoryName);
-                if (!empty($category)) {
-                    $query->where(['Tags.category_id' => $category['id']]);
-                }
-            }
-
-            if (!empty($this->request->query['video_tag_ids'])) {
-                $ids = explode(',', $this->request->query['video_tag_ids']);
-                $query->where(['VideoTags.id IN' => $ids]);
-            }
-            if (DataUtil::isPositiveInt($this->request->query, 'video_tag_id')) {
-                $filterStatus = false;
-                $query->where(['VideoTags.id' => $this->request->query['video_tag_id']]);
-            }
-            if (DataUtil::isPositiveInt($this->request->query, 'video_id')) {
-                $videoId = DataUtil::getPositiveInt($this->request->query, 'video_id');
-                $videosTable = \Cake\ORM\TableRegistry::get('Videos');
-                ResultMessage::setPaginateExtra('video', $videosTable->getPublic($videoId));
-            }
-            if (isset($this->request->query['only_owner'])) {
-                if (!$this->Auth->user('id')) {
-                    throw new \Cake\Network\Exception\UnauthorizedException();
-                }
-                $query->where(['VideoTags.user_id' => $this->Auth->user('id')]);
-            }
-
-            if (!empty($this->request->query['status'])) {
-                // TODO limit size of string
-                $status = explode(',', $this->request->query['status']);
-                $query->where([
-                    'VideoTags.status IN' => $status
-//                    'VideoTags.user_id' => $this->Auth->user('id')
+        $order = empty($this->request->query['order']) ? 'best' : $this->request->query['order'];
+        switch ($order) {
+            case 'begin_time':
+                $query->order([
+                    'VideoTags.begin ASC',
                 ]);
-            } // For validation
-            else if (!empty($this->request->query['with_pending'])) {
+                break;
+            case 'created':
+                $query->order([
+                    'VideoTags.created DESC',
+                    'VideoTags.count_points DESC',
+                ]);
+                break;
+            case 'modified':
+                $query->order([
+                    'VideoTags.modified DESC',
+                    'VideoTags.count_points DESC',
+                ]);
+                break;
+            case 'best':
+            default:
+                $query->order([
+                    'VideoTags.count_points DESC',
+                    'VideoTags.created DESC'
+                ]);
+        }
+
+        if (!empty($this->request->query['category_name']) && isset($sportName)) {
+            $categoryName = \App\Lib\DataUtil::lowername($this->request->query['category_name']);
+            $sports = \Cake\ORM\TableRegistry::get('Sports');
+            $category = $sports->findFromCategoryCached($sportName, $categoryName);
+            if (!empty($category)) {
+                $query->where(['Tags.category_id' => $category['id']]);
+            }
+        }
+
+        if (DataUtil::isPositiveInt($this->request->query, 'video_tag_id')) {
+            $filterStatus = false;
+        }
+        if (DataUtil::isPositiveInt($this->request->query, 'video_id')) {
+            $videoId = DataUtil::getPositiveInt($this->request->query, 'video_id');
+            $videosTable = \Cake\ORM\TableRegistry::get('Videos');
+            ResultMessage::setPaginateExtra('video', $videosTable->getPublic($videoId));
+        }
+        if (isset($this->request->query['only_owner'])) {
+            if (!$this->Auth->user('id')) {
+                throw new \Cake\Network\Exception\UnauthorizedException();
+            }
+            $query->where(['VideoTags.user_id' => $this->Auth->user('id')]);
+        }
+
+        if (!empty($this->request->query['status'])) {
+            if (!empty($this->request->query['with_pending'])) {
                 $query->where([
                     'OR' => [
                         ['VideoTags.status IN' => [VideoTag::STATUS_PENDING, VideoTag::STATUS_VALIDATED]],
@@ -261,14 +249,14 @@ class VideoTagsController extends AppController {
             } else if ($filterStatus) {
                 $query->where(['VideoTags.status ' => VideoTag::STATUS_VALIDATED]);
             }
+        }
+        if (!empty($this->request->query['tag_name'])) {
+            $str = $this->request->query['tag_name'];
+            \App\Model\Table\TableUtil::multipleWordSearch($query, $str, 'Tags.name');
+        }
 
-            if (!empty($this->request->query['tag_name'])) {
-                $str = $this->request->query['tag_name'];
-                \App\Model\Table\TableUtil::multipleWordSearch($query, $str, 'Tags.name');
-            }               
-            
-            ResultMessage::setPaginateData(
-                    $this->paginate($query), $this->request->params['paging']['VideoTags']);
+        ResultMessage::setPaginateData(
+                $this->paginate($query), $this->request->params['paging']['VideoTags']);
     }
 
     public function trending() {

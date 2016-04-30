@@ -1,6 +1,5 @@
 angular
         .module('app.core', ['ngCookies'])
-        .factory('VideoTagData', VideoTagData)
         .factory('PaginateDataLoader', PaginateDataLoader)
         .factory('SharedData', SharedData)
         .factory('NationalityEntity', NationalityEntity)
@@ -289,91 +288,6 @@ function PaginateDataLoader($q) {
     }
 }
 
-VideoTagData.$inject = ['PaginateDataLoader', 'VideoTagEntity'];
-function VideoTagData(PaginateDataLoader, VideoTagEntity) {
-
-    var obj = {
-        getLoader: function() {
-            return PaginateDataLoader.instance('default', VideoTagEntity.search);
-        },
-        filters: [ 
-            {
-                title: 'Video Alive and kickin', 
-                type: 'video',
-                removable: true
-            },
-            {
-                title: 'marck mc morris', 
-                sub_title: 'US', 
-                type:'rider',
-                removable: true
-            }
-        ],
-        removeSearchFilter: function(filter){
-            var i = obj.filters.indexOf(filter);
-            filter.removable = false;
-            filter.active = false;
-            obj.filters.splice(i, 1);
-        },
-        addSearchFilter: function(filter){
-            filter.removable = true;
-            filter.active = true;
-            obj.filters.push(filter);
-        },
-        currentTag: null,
-        setCurrentTag: function(tag) {
-            this.currentTag = tag;
-        },
-        reset: function() {
-            PaginateDataLoader.instance('default', VideoTagEntity.search).init();
-            this.currentTag = null;
-        },
-        next: function() {
-            return this.getItems()[Math.min(this.getItems().length - 1, this._getCurrentIndice() + 1)];
-        },
-        getItems: function() {
-            return this.getLoader().data.items;
-        }, hasPrev: function() {
-            return this.getItems().length > 0 && obj.currentTag !== null && obj.currentTag.id !== this.getItems()[0].id;
-        }, hasNext: function() {
-            //console.log(obj.currentTag.id+ ' != ' + this.getItems()[this.getItems().length - 1].id);
-            return this.getItems().length > 0 && obj.currentTag !== null && obj.currentTag.id !== this.getItems()[this.getItems().length - 1].id;
-        },
-        prev: function() {
-            return this.getItems()[Math.max(0, this._getCurrentIndice() - 1)];
-        },
-        findNextTagToPlay: function(playerTime) {
-            return this._findTagToPlay(playerTime, 1);
-        },
-        findPreviousTagToPlay: function(playerTime) {
-            return this._findTagToPlay(playerTime, -1);
-        },
-        _findTagToPlay: function(playerTime, m) {
-            for (var i = 0; i < this.getItems().length; i++) {
-                if (m * this.getItems()[i].begin > m * playerTime) {
-                    console.log("Found next tag: " + this.getItems()[i].id);
-                    return this.getItems()[i];
-                }
-            }
-            return null;
-        },
-        _getCurrentIndice: function() {
-            if (obj.currentTag === null) {
-                return 0;
-            }
-            for (var i = 0; i < this.getItems().length; i++) {
-                if (this.getItems()[i].id === obj.currentTag.id) {
-                    return i;
-                }
-            }
-            return 0;
-        }
-    };
-
-    obj.getLoader().setResource(VideoTagEntity.search);
-
-    return obj;
-}
 
 function searchCategory() {
     return function(categories, term) {
