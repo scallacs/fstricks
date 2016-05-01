@@ -1,17 +1,20 @@
 
-<div class="search-card" ng-class="{'active': searchItem.active}">
+<div class="search-card" ng-class="{'active': searchItem.active, 'disabled': searchItem.removable}">
     <div class="search-card-content" ng-click="videoTagData.addSearchFilter(searchItem)">
         <span class="search-card-icon" ng-if="searchItem.icon">
             {{searchItem.icon}}
         </span>
         <span class="search-card-title">
             {{searchItem.title}}
-        </span> <br/>
+        </span> 
+        <br/>
         <span class="search-card-sub-title">
             {{searchItem.sub_title}}
         </span>
     </div>
-    <div ng-if="searchItem.removable" ng-click="videoTagData.removeSearchFilter(searchItem)" class="search-card-remove">
+    <div ng-if="searchItem.removable" 
+         ng-click="videoTagData.removeSearchFilter(searchItem, true)" 
+         class="search-card-remove">
         <a href="#" class="remove-item">
             <span class="glyphicon glyphicon-remove"></span>
         </a>

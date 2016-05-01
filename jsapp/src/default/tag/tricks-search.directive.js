@@ -15,7 +15,7 @@ function SearchTypeToStr(val) {
         case 'sport':
             return 'Best of';
         case 'search':
-            return 'Trick';
+            return '';
         default:
             return '';
     }
@@ -25,8 +25,6 @@ TopSearchMapper.$inject = ['SharedData'];
 function TopSearchMapper(SharedData) {
     return function (type, data) {
         var res = angular.copy(data);
-        res.type = type;
-        res.category = SearchTypeToStr(type);
         switch (type) {
             case 'rider':
                 res.title = res.firstname + ' ' + res.lastname;
@@ -36,32 +34,33 @@ function TopSearchMapper(SharedData) {
             case 'tag':
                 console.log(res);
                 res.title = res.name;
-                res.sub_title = res.category.sport.name + ' ' + res.category.name;
+                res.sub_title = data.category.sport.name + ' ' + data.category.name;
                 res.points = res.count_ref;
                 break;
             case 'playlist':
-                res.sub_title = '';
+                res.sub_title = 'Playlist';
                 res.points = res.count_points;
                 break;
             case 'video':
-                res.sub_title = '';
+                res.sub_title = 'Video';
+                break;
+            case 'category':
+                res.title = res.sport.name;
+                res.sub_title = res.name;
                 break;
             case 'sport':
                 res.title = res.name;
-                res.sub_title = (res.category ? res.category : '');
+                res.sub_title = 'all';
                 break;
             case 'search':
-                res.title = "* " + res.q + " *";
-                if (SharedData.currentSport) {
-                    res.sport_id = SharedData.currentSport.id;
-                    res.sub_title = SharedData.currentSport.name;
-                } else {
-                    res.sub_title = 'any sports';
-                }
+                res.title = res.q;
+                res.sub_title = 'Trick';
                 break;
             default:
                 console.log("ERROR: no search type " + type);
         }
+        res.type = type;
+        res.category = SearchTypeToStr(type);
         return res;
     };
 }
@@ -70,8 +69,8 @@ function TopSearchMapper(SharedData) {
  * Server form. Extend ng form functionnalities.
  * Add a loader when the form is waiting for a server response.
  */
-tricksSearchDirective.$inject = ['ApiFactory', 'VideoTagData', 'TopSearchMapper'];
-function tricksSearchDirective(ApiFactory, VideoTagData, TopSearchMapper) {
+tricksSearchDirective.$inject = ['ApiFactory', 'VideoTagData', 'TopSearchMapper', 'PlayerData'];
+function tricksSearchDirective(ApiFactory, VideoTagData, TopSearchMapper, PlayerData) {
     return {
         templateUrl: __PathConfig__.template + '/tag/partials/tricks-search.html',
         scope: {
@@ -89,7 +88,7 @@ function tricksSearchDirective(ApiFactory, VideoTagData, TopSearchMapper) {
                 };
 
                 $scope.onSearchBarSelected = function () {
-
+                    PlayerData.showTricksMenu(true);
                 };
                 $scope.groupBySearchType = function (item) {
                     return item.category;
@@ -127,7 +126,8 @@ function tricksSearchDirective(ApiFactory, VideoTagData, TopSearchMapper) {
                                     results[i].category = SearchTypeToStr(results[i].type);
                                     $scope.results.push(results[i]);
                                 }
-//                                $scope.results = $scope.results.concat(results);
+                            }).$promise.finally(function(){
+                                // TODO stop loader
                             });
                         }
                     }

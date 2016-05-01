@@ -89,11 +89,13 @@ class VideoTagsTable extends Table {
                 ->add('rider_slug', 'Search.Value', [
                     'field' => 'Riders.slug',
                 ])
-                ->add('sport_id', 'Search.Value', [
-                    'field' => 'Categories.sport_id'
+                ->add('sport_id', 'MultipleValue', [
+                    'field' => 'Categories.sport_id',
+                    'delimiter' => ','
                 ])
-                ->add('category_id', 'Search.Value', [
-                    'field' => 'Tags.category_id'
+                ->add('category_id', 'MultipleValue', [
+                    'field' => 'Tags.category_id',
+                    'delimiter' => ','
                 ])
                 ->add('tag_id', 'MultipleValue', [
                     'field' => 'Tags.id',
@@ -116,10 +118,12 @@ class VideoTagsTable extends Table {
                 ->add('status', 'Search.Value', [
                     'field' => $this->aliasField('status')
                 ])
-                ->add('q', 'Search.Like', [
+                ->add('q', 'MultipleLike', [
                     'before' => true,
                     'after' => true,
-                    'field' => 'Tags.name'
+                    'delimiter' => ',',
+                    'field' => 'Tags.name',
+                    'mode' => 'OR'
                 ]);
     }
 

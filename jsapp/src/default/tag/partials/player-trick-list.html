@@ -1,7 +1,7 @@
-<div class="list-tricks">
+<div    class="list-tricks"
+        ng-show="playerData.showListTricks">
     <div
         class="container-fluid"
-        ng-show="playerData.showListTricks"
         >
         <div class="close-search" ng-if="!videoTagData.currentTag">
             <a href="#" 
@@ -10,12 +10,35 @@
             </a>
         </div>
 
+        <ul ng-if="showCategories()"
+            class="nav nav-pills nav-justified text-bold margin-bottom margin-top text-capitalize">
+            <li class="bg-primary-darker" 
+                ng-if="SharedData.currentSport.categories.length > 1"
+                ng-class="{active: SharedData.currentCategory === null}">
+                <a ui-sref="videoplayer.sport({category: null})"
+                   ng-click="setCategory(null)">
+                    All 
+                </a>
+            </li>
+            <li class="bg-primary-darker" 
+                ng-repeat="category in SharedData.currentSport.categories"
+                ng-class="{active: SharedData.currentCategory.id === category.id || SharedData.currentSport.categories.length === 1}">
+                <a  ui-sref="videoplayer.sport({category: category.slug})"
+                    ng-click="setCategory(category)">
+                    {{category.name}}
+                </a>
+            </li>
+        </ul>
+        
         <div class="search-context text-capitalize margin-top">
             <ul class="list-inline">
                 <li ng-repeat="filter in videoTagData.filters" search-item="filter"></li>
                 <li>
-                    <div class="search-card">
-                        <div class="search-card-content" ng-click="addFilter()">
+                    <div class="search-card" 
+                         id="AppendFilterBtn"
+                         ng-click="toggleAppendFilters()" 
+                         ng-class="{active: videoTagData.appendFilters}">
+                        <div class="search-card-content">
                             <span class="search-card-title">
                                 <span class="glyphicon glyphicon-plus"></span>
                             </span> 
@@ -29,14 +52,13 @@
             </ul>
         </div>
 
+
         <div ng-repeat="videoTag in videoTagData.getItems()" ng-if="$index % 2 == 0" class="row clearfix">
             <div class="col-sm-6 nopadding">
-                <div video-tag-item 
-                     video-tag="videoTag"></div>
+                <div video-tag-item video-tag="videoTag"></div>
             </div>
             <div class="col-sm-6 nopadding" ng-if="videoTagData.getItems().length > $index + 1">
-                <div video-tag-item 
-                     video-tag="videoTagData.getItems()[$index+1]"></div>
+                <div video-tag-item video-tag="videoTagData.getItems()[$index+1]"></div>
             </div>
             <div style='clear: both;'></div>
         </div>
@@ -46,6 +68,16 @@
                 <span ng-show='videoTagData.getLoader().loading'> Loading data...</span>
                 <span ng-show='!videoTagData.getLoader().loading'> Load more</span>
             </button>
+        </div>
+        
+        <div ng-if="!videoTagData.getLoader().hasData()" 
+             class="message-no-result">
+            <p ng-if="playerData.isMode('view')">
+                Oups, there is no results for this search...
+            <p/>
+            <p>
+                <a ui-sref="addvideo"> Add tricks now</a>
+            </p>
         </div>
 
     </div>

@@ -2,8 +2,8 @@ angular.module('app.player')
         .config(ConfigRoute)
         .run(Run);
 
-Run.$inject = ['$rootScope', 'VideoTagData', 'PlayerData'];
-function Run($rootScope, VideoTagData, PlayerData) {
+Run.$inject = ['$rootScope', 'VideoTagData', 'PlayerData', 'TopSearchMapper'];
+function Run($rootScope, VideoTagData, PlayerData, TopSearchMapper) {
 
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
         if (toState.name.startsWith('videoplayer')){
@@ -17,6 +17,11 @@ function Run($rootScope, VideoTagData, PlayerData) {
                 toState.player.onStart(PlayerData);
             }
         }
+        
+        if (toParams.q) {
+            VideoTagData.addSearchFilter(TopSearchMapper('search', {q: toParams.q}));
+        }
+        // TODO same for rider, trick, video, playlist
     });
 
 }
@@ -79,7 +84,7 @@ function ConfigRoute($stateProvider) {
                 }
             })
             .state('videoplayer', {
-                url: '/player?order',
+                url: '/player?order&tag&rider&playlist&video',
                 views: {
                     viewNavRight: {
                         'template': '<div player-nav></div>'

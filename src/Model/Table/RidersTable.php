@@ -221,10 +221,10 @@ class RidersTable extends Table {
                     'id' => 'Tags.id',
                     'name' => 'Tags.name',
                     'count_ref' => 'COUNT(Tags.id)',
-                    'category__id' => 'Categories.id',
-                    'category__name' => 'Categories.name',
-                    'sport__id' => 'Sports.id',
-                    'sport__name' => 'Sports.name',
+                    'category_id' => 'Tags.category_id',
+//                    'category__id' => 'Categories.id',
+//                    'category__name' => 'Categories.name',
+//                    'category__sport_id' => 'Categories.sport_id',
                 ])
                 ->where([
                     'VideoTags.status' => \App\Model\Entity\VideoTag::STATUS_VALIDATED,
@@ -233,7 +233,7 @@ class RidersTable extends Table {
                 ])
                 ->order(['count_ref DESC'])
                 ->group(['Tags.id']) // , 'Categories.name', 'Sports.name'
-                ->contain(['Tags' => ['Categories' => ['Sports']], 'Videos'])
+                ->contain(['Tags', 'Videos'])
                 ->hydrate(false)
                 ->autoFields(false)
                 ->limit($limit);
@@ -245,12 +245,12 @@ class RidersTable extends Table {
         $videoTags = \Cake\ORM\TableRegistry::get('VideoTags');
         $query = $videoTags->find()
                 ->select([
-                    'sport__id' => 'Sports.id',
-                    'sport__name' => 'Sports.name',
-                    'sport__slug' => 'Sports.slug',
-                    'category__id' => 'Categories.id',
-                    'category__name' => 'Categories.name',
-                    'category__slug' => 'Categories.slug',
+//                    'sport__id' => 'Sports.id',
+//                    'sport__name' => 'Sports.name',
+//                    'sport__slug' => 'Sports.slug',
+                    'category_id' => 'Categories.id',
+//                    'category__name' => 'Categories.name',
+//                    'category__slug' => 'Categories.slug',
                     'count_ref' => 'COUNT(VideoTags.id)',
                 ])
                 ->where([
@@ -259,8 +259,8 @@ class RidersTable extends Table {
                     'VideoTags.rider_id' => $riderId
                 ])
                 ->order(['count_ref DESC'])
-                ->group(['Sports.id', 'Categories.id']) // , 'Categories.name', 'Sports.name'
-                ->contain(['Tags' => ['Categories' => ['Sports']], 'Videos'])
+                ->group(['Categories.id']) // , 'Categories.name', 'Sports.name'
+                ->contain(['Tags' => ['Categories'], 'Videos'])
                 ->hydrate(false)
                 ->autoFields(false);
         return $query;

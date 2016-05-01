@@ -9,7 +9,6 @@ function AddVideoTagController($scope, $state, $stateParams, VideoTagData, Video
 //        edit: VideoTagEntity.edit,
 //        delete: VideoTagEntity.delete
 //    });
-    SharedData.showCategories = false;
     $scope.editionTag = new EditionTag(AuthenticationService.getCurrentUser().id, {}, 'default', {
         min_duration: 2,
         max_duration: 40,

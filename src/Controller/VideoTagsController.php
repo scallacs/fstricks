@@ -250,10 +250,10 @@ class VideoTagsController extends AppController {
                 $query->where(['VideoTags.status ' => VideoTag::STATUS_VALIDATED]);
             }
         }
-        if (!empty($this->request->query['tag_name'])) {
-            $str = $this->request->query['tag_name'];
-            \App\Model\Table\TableUtil::multipleWordSearch($query, $str, 'Tags.name');
-        }
+//        if (!empty($this->request->query['tag_name'])) {
+//            $str = $this->request->query['tag_name'];
+//            \App\Model\Table\TableUtil::multipleWordSearch($query, $str, 'Tags.name');
+//        }
 
         ResultMessage::setPaginateData(
                 $this->paginate($query), $this->request->params['paging']['VideoTags']);

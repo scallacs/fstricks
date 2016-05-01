@@ -2,8 +2,8 @@
 
 namespace App\Model\Filter;
 
-
-class MultipleValue extends \Search\Model\Filter\Like {
+// TODO
+class MultipleLike extends \Search\Model\Filter\Like {
 
     /**
      * Process a LIKE condition ($x LIKE $y).
@@ -22,7 +22,8 @@ class MultipleValue extends \Search\Model\Filter\Like {
             $left = $field . ' ' . $this->config('comparison');
 
             foreach ($values as $value) {
-                $conditions[] = [$left => $value];
+                $right = $this->_wildCards($value);
+                $conditions[] = [$left => $right];
             }
         }
         $this->query()->andWhere([$this->config('mode') => $conditions]);

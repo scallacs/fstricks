@@ -9,12 +9,18 @@ function RiderBox() {
         scope: {
             rider: '=rider'
         },
-        controller: ['$scope', 'PlayerData', 'VideoTagData', function($scope, PlayerData, VideoTagData) {
+        controller: ['$scope', 'PlayerData', 'VideoTagData', 'TopSearchMapper', function($scope, PlayerData, VideoTagData, TopSearchMapper) {
             $scope.playerData = PlayerData;
+            $scope.addSearchFilter = addSearchFilter;
             
             $scope.showRiderVideos = function(rider){
                 PlayerData.showTricksMenu(true);
             };
+            
+            function addSearchFilter(type, data){
+                PlayerData.showTricksMenu(true);
+                VideoTagData.addSearchFilter(TopSearchMapper(type, data), true);
+            }
         }]
     };
 };

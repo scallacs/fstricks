@@ -328,32 +328,26 @@ function getByProperty() {
     };
 
 }
-SharedData.$inject = ['SportEntity'];
-function SharedData(SportEntity) {
+SharedData.$inject = ['SportEntity', '$filter'];
+function SharedData(SportEntity, $filter) {
     var self = {
         setCurrentSearch: setCurrentSearch,
         setCurrentCategory: setCurrentCategory,
         onReady: onReady,
         pageLoader: pageLoader,
         init: init,
-        toFilter: toFilter,
         sports: [],
         loadingState: true,
         currentSearch: {},
         currentSport: null,
         currentCategory: null,
         categories: [],
+        getCategoryBy: getCategoryBy,
+        getSportBy: getSportBy,
+        populateCategory: populateCategory
     };
 
     return self;
-
-    function toFilter() {
-        return {
-            category_id: self.currentCategory ? self.currentCategory.id : null,
-            sport_id: self.currentSport ? self.currentSport.id : null,
-            q: self.currentSearch ? self.currentSearch.term : null
-        };
-    }
 
     function setCurrentCategory(c) {
         this.currentCategory = c;
@@ -377,6 +371,21 @@ function SharedData(SportEntity) {
         //console.log('Set loading sate: ' + val);
         self.loadingState = val ? true : false;
     }
+    
+    function getCategoryBy(field, value){
+        return $filter('getByProperty')(this.categories, value, field);
+    }
+    function getSportBy(field, value){
+        return $filter('getByProperty')(this.sports, value, field);
+    }
+    
+    function populateCategory(values){
+        for (var i = 0; i < values.length; i++){
+            if (values[i].category_id){
+                values[i].category = this.getCategoryBy('id', values[i].category_id);
+            }
+        }
+    }
 
     function init() {
         this.loadingPromise = SportEntity.index({}, function(response) {
@@ -386,11 +395,8 @@ function SharedData(SportEntity) {
                 var sport = response[i];
                 for (var j = 0; j < sport.categories.length; j++) {
                     var category = sport.categories[j];
-                    self.categories.push({
-                        id: category.id,
-                        name: category.name,
-                        sport: sport
-                    });
+                    category.sport = sport;
+                    self.categories.push(category);
                 }
             }
         }).$promise;

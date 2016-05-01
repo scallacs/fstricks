@@ -12,46 +12,63 @@ function VideoTagData(PaginateDataLoader, VideoTagEntity, SharedData, $timeout) 
         },
         focusSearchBar: function () {
             console.log("Focussing search bar: ");
-            this.appendFilters = true;
             $timeout(function () {
                 angular.element('#SearchBar .form-control').triggerHandler('click');
             }, 1);
-//            var uiSelect = angular.element('#SearchBar')
-//                    //.find('.ui-select-container')
-//                    .controller('uiSelect');
-//            uiSelect.focusser[0].focus();
-//            uiSelect.activate();
         },
         filters: [],
         removeSearchFilter: function (filter, triggerUpdate) {
             var i = obj.filters.indexOf(filter);
-            filter.removable = false;
-            filter.active = false;
             obj.filters.splice(i, 1);
-            if (triggerUpdate){
-                this.getLoader().update();
+            this._removeFilter(filter);
+            if (triggerUpdate) {
+                this.reload();
             }
         },
-        _appendFilter: function(data){
-            if (['playlist', 'tag', 'rider', 'video'].indexOf(data.type)){
-                this.getLoader().appendFilter(data.type+'_id', data.id);
-            }
-            else if (data.type === 'search'){
-                 this.getLoader().appendFilter(data.type, data.q);
+        _removeFilter: function (data) {
+            if (['playlist', 'tag', 'rider', 'video'].indexOf(data.type) !== -1) {
+                this.getLoader().removeFilter(data.type + '_id', data.id);
+            } else if (data.type === 'search') {
+                this.getLoader().removeFilter(data.type, data.q);
             }
         },
-        addSearchFilter: function (data, removable, triggerUpdate) {
-            data.removable = angular.isDefined(removable) ? removable : true;
+        reload: function () {
+            SharedData.pageLoader(true);
+            this.getLoader().reload().finally(function () {
+                SharedData.pageLoader(false);
+            });
+        },
+        _appendFilter: function (data) {
+            if (['playlist', 'tag', 'rider', 'video', 'category', 'sport'].indexOf(data.type) !== -1) {
+                this.getLoader().appendFilter(data.type + '_id', data.id);
+            } 
+            else if (data.type === 'search') {
+                this.getLoader().appendFilter('q', data.q);
+            }
+        },
+        addSearchFilter: function (data, triggerUpdate) {
+            if (data.active || this.hasSearchFilter(data)) return;
+            data.removable = angular.isDefined(data.removable) ? data.removable : true;
             data.active = true;
-            if (!data.removable) {
-                SharedData.setCurrentSearch(data);
-            }
-            obj.filters.push(data);
+            this.filters.push(data);
             this._appendFilter(data);
             // Trigger an update if required
-            if (triggerUpdate){
-                this.getLoader().reload();
+            if (triggerUpdate) {
+                this.reload();
             }
+            return this;
+        },
+        hasSearchFilter: function(data){
+            for (var i = 0; i < this.filters.length; i++){
+                if (this.filters[i].id == data.id && this.filters[i].type == data.type) return true;
+            }
+            return false;
+        },
+        addPermanentFilter: function (data, triggerUpdate) {
+            SharedData.setCurrentSearch(data);
+            data.removable = false;
+            this.addSearchFilter(data, triggerUpdate);
+            return this;
         },
         currentTag: null,
         setCurrentTag: function (tag) {

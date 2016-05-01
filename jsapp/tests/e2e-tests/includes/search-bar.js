@@ -9,6 +9,6 @@ var Util = require('./util.js');
     function SearchBar() {
         return new util.uiSelect(element(by.id('SearchBar')));
     }
-
+    
     module.exports = SearchBar;
 }());

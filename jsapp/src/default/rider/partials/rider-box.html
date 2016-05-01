@@ -1,25 +1,26 @@
 <view-title>performer {{rider.firstname}} {{rider.lastname}} ({{rider.nationality}})</view-title>
 <div class="view-rider clearfix">
+    <!--
     <div class="thumbnail col-sm-4">
         <img ng-if="rider.picture_portrait" ng-src="{{rider.picture_portrait}}">
         <img ng-if="!rider.picture_portrait" src="img/icon_avatar.png">
-    </div>
-    <div class="col-sm-8">
+    </div>-->
+    <div class="col-sm-12">
         <h2 class="page-title text-capitalize">{{rider.firstname}} {{rider.lastname}}</h2>
         <table class="table table-striped">
             <tr>
-                <td>Nationality</td>
-                <td class="text-bold">{{rider.nationality}}</td>
+                <td class="">Nationality</td>
+                <td class="text-bold">{{rider.nationality.toUpperCase()}}</td>
                 <!--<td>Level</td>
                 <td class="text-bold">{{rider.level_string}}</td>
             </tr>
             <tr>-->
-                <td>Tagged</td>
+                <td>Tricks tagged</td>
                 <td class="text-bold" ng-if="rider.count_tags > 0">
                     {{rider.count_tags}} time(s) <br/>
                     <a ui-sref="videoplayer.rider({rider_id: rider.slug})" 
                        ng-click="showRiderVideos(rider)">
-                        view videos
+                        view tricks
                     </a>
                 </td>
                 <td class="text-bold" ng-if="rider.count_tags === 0">
@@ -31,11 +32,21 @@
         <div ng-if="rider.sports.length > 0">
             <h3>Sports</h3>
             <ul class="list-unstyled list-inline">
-                <li ng-repeat="data in rider.sports" class="margin-top">
-                    <a class="btn btn-primary" 
-                       ui-sref="videoplayer.sport({sportSlug: sport.slug, categorySlug:data.category.slug})">
-                        {{data.sport.name}} {{data.category.name}} ({{data.count_ref}})
-                    </a>
+                <li ng-repeat="data in rider.sports">
+                    <div class="search-card"
+                         ng-click="addSearchFilter('category', data.category)">
+                        <div class="search-card-content">
+                            <span class="search-card-title"> 
+                                {{data.category.sport.name}} {{data.category.name}}
+                            </span> 
+                            <br/>
+                            <span class="search-card-sub-title">
+                            </span> 
+                            <span class="search-card-points">
+                                {{data.count_ref}}
+                            </span> 
+                        </div>
+                    </div>
                 </li>
             </ul>
         </div> 
@@ -43,11 +54,22 @@
         <div ng-if="rider.popular_tags.length > 0">
             <h3>Top tricks</h3>
             <ul class="list-unstyled list-inline">
-                <li ng-repeat="tag in rider.popular_tags"  class="margin-top">
-                    <a class="btn btn-primary" 
-                       ui-sref="videoplayer.sport({sportSlug: sport.slug, categorySlug:data.category.slug})">
-                        {{tag.name}} - {{tag.category.name}} {{tag.sport.name}} ({{tag.count_ref}})
-                    </a>
+                <li ng-repeat="tag in rider.popular_tags">
+                    <div class="search-card"
+                         ng-click="addSearchFilter('tag', tag)">
+                        <div class="search-card-content">
+                            <span class="search-card-title"> 
+                                {{tag.name}}
+                            </span> 
+                            <br/>
+                            <span class="search-card-sub-title">
+                                {{tag.category.name}} {{tag.category.sport.name}}
+                            </span> 
+                            <span class="search-card-points">
+                                {{data.count_ref}}
+                            </span> 
+                        </div>
+                    </div>
                 </li>
             </ul>
         </div> 

@@ -1,5 +1,5 @@
 
-<div class="container bg-primary margin-top border-radius padding-sm">
+<div class="container bg-primary margin-top border-radius padding-sm text-center">
     <h2 class="page-title" data-view-title>Start reviewing tricks</h2>
     <p>
         You can review tricks added by other members for a sport.
@@ -7,13 +7,21 @@
     <p class="text-danger"  ng-if="!SharedData.currentSport">
         Pick the sport you want to review:
     </p>
-    <ul class="nav nav-pills">
-        <li ng-repeat="sport in sports">
-            <a ng-click="SharedData.setCurrentSport(sport)" ui-sref="videoplayer.validation({sportSlug:sport.slug})" >
-                {{sport.name}} 
-            </a>
-        </li>
-    </ul>
+    
+    
+    <div class="card-list">
+        <div ng-repeat="sport in sports" class="col-xs-6 col-sm-4 col-md-3">
+            <div class="card-item" 
+                 ui-sref="videoplayer.validation({sportSlug:sport.slug})">
+                <div class="card-image">
+                    <img ng-src="{{sport.slug| sportIconUrl}}"/>
+                </div>
+                <h2 class="card-title text-capitalize">
+                    <a ui-sref="videoplayer.validation({sportSlug:sport.slug})"> {{sport.name}} </a>
+                </h2>
+            </div>
+        </div>
+    </div>
 </div>
 
 

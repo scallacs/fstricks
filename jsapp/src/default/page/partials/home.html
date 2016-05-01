@@ -10,8 +10,7 @@
         <div class="card-list">
             <div ng-repeat="sport in sports" class="col-xs-6 col-sm-4 col-md-3">
                 <div class="card-item" 
-                     ui-sref="videoplayer.sport({sportSlug: sport.slug})"
-                        ng-click="setCurrentSport(sport)">
+                     ui-sref="videoplayer.sport({sportSlug: sport.slug})">
                     <div class="card-image">
                         <img ng-src="{{sport.slug| sportIconUrl}}"/>
                     </div>

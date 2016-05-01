@@ -17,6 +17,7 @@ function PaginateDataLoader($q) {
     PaginateDataLoader.prototype.loadPage = loadPage;
     PaginateDataLoader.prototype.setFilters = setFilters;
     PaginateDataLoader.prototype.updateFilters = updateFilters;
+    PaginateDataLoader.prototype.removeFilter = removeFilter;
     PaginateDataLoader.prototype.appendFilter = appendFilter;
     PaginateDataLoader.prototype.setFilter = setFilter;
     PaginateDataLoader.prototype.setLimit = setLimit;
@@ -35,10 +36,10 @@ function PaginateDataLoader($q) {
 
     return {
         _instances: {},
-        create: function(r) {
+        create: function (r) {
             return new PaginateDataLoader(r);
         },
-        instance: function(name, r) {
+        instance: function (name, r) {
             if (!angular.isDefined(this._instances[name])) {
                 this._instances[name] = new PaginateDataLoader(r);
             } else {
@@ -46,7 +47,7 @@ function PaginateDataLoader($q) {
             }
             return this._instances[name];
         },
-        clear: function() {
+        clear: function () {
             this._instances = {};
         }
     };
@@ -54,7 +55,7 @@ function PaginateDataLoader($q) {
     function init() {
         this.filters = {};
         this.initData();
-        this.mapper = function(input) {
+        this.mapper = function (input) {
             return input;
         };
         this.limit = 20; // TODO synchro server
@@ -121,7 +122,7 @@ function PaginateDataLoader($q) {
 
         this.loadNextPage()
                 .then(successCallback)
-                .catch(function() {
+                .catch(function () {
                     deferred.reject(0);
                 });
 
@@ -148,7 +149,7 @@ function PaginateDataLoader($q) {
         this.disabled = true;
         var promise = this.loadPage(this.currentPage);
         this.currentPage += 1;
-        promise.then(function(data) {
+        promise.then(function (data) {
             if (data.items.length < data.perPage) {
                 console.log('disabling video tag data loader');
                 that.disabled = true;
@@ -170,13 +171,13 @@ function PaginateDataLoader($q) {
             this.cachePage[page] = this.resource(this.filters).$promise;
         }
         this.cachePage[page]
-                .then(function(data) {
+                .then(function (data) {
                     that._onSuccessPageLoad(data)
                 })
-                .catch(function() {
+                .catch(function () {
                     that.disabled = true;
                 })
-                .finally(function() {
+                .finally(function () {
                     that.loading = false;
                 });
         return this.cachePage[page];
@@ -188,6 +189,18 @@ function PaginateDataLoader($q) {
     }
     function appendFilter(name, value) {
         this.filters[name] = this.filters[name] ? this.filters[name] + ',' + value : value;
+        return this;
+    }
+    function removeFilter(name, value) {
+        if (!this.filters[name]) return this;
+        
+        if (arguments.length === 2) {
+            var values = this.filters[name].split(',');
+            values = values.splice(values.indexOf(value), 1);
+            this.filters[name] = values.join(',');
+        } else {
+            this.filters[name] = null;
+        }
         return this;
     }
 
@@ -221,9 +234,7 @@ function PaginateDataLoader($q) {
 
     function updateFilters(filters) {
         var self = this;
-//        var restrictif = true;
-        angular.forEach(filters, function(val, key) {
-//            restrictif = restrictif && !this.filters[key];
+        angular.forEach(filters, function (val, key) {
             self.filters[key] = val;
         });
         return this;
@@ -239,8 +250,8 @@ function PaginateDataLoader($q) {
         this.cachePage = {};
         return this;
     }
-    
-    function reload(){
+
+    function reload() {
         console.log('Reloading with following filters:');
         console.log(this.filters);
         this.initData();

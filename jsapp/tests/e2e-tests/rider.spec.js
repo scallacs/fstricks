@@ -20,5 +20,9 @@ describe('Rider profile: ', function() {
         });
     });
 
-
+    // TODO 
+    it('Should be possible to click on riders tag and that should update the tricks search accordingly', function(){
+        
+    });
+    
 });
