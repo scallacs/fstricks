@@ -19,6 +19,8 @@ var ADMIN_APP = APP_SRC_DIR + 'admin/';
 var JS_OUTPUT = '../webroot/js/';
 var CSS_PATH = '../webroot/css/';
 var VIEWS_PATH = '../webroot/views/';
+var COMPONENTS_PATH = "../webroot/js/components/";
+var LIB_PATH = "../webroot/js/lib/";
 
 
 var APP_SOURCES = [
@@ -75,24 +77,24 @@ gulp.task('build-views', function() {
 
 gulp.task('concat-js-components', function() {
     gulp.src([
-        "webroot/js/components/jquery/dist/jquery.min.js",
-        "webroot/js/components/angular/angular.min.js",
-        "webroot/js/components/angular-resource/angular-resource.min.js",
-        "webroot/js/components/angular-messages/angular-messages.min.js",
-        "webroot/js/components/angular-animate/angular-animate.min.js",
-        "webroot/js/components/angular-cookies/angular-cookies.min.js",
-        "webroot/js/components/angular-ui-router/release/angular-ui-router.min.js",
-        "webroot/js/components/AngularJS-Toaster/toaster.min.js",
-        'webroot/js/components/jquery-timeago/jquery.timeago.js',
-//        "webroot/js/components/angular-simple-logger/dist/angular-simple-logger.min.js",
-        'webroot/js/components/ui-select/dist/select.min.js',
-//        "webroot/js/components/ng-file-upload/ng-file-upload-shim.min.js",
-//        "webroot/js/components/ng-file-upload/ng-file-upload.min.js",
-//        "webroot/js/components/angular-socialshare/angular-socialshare.min.js",
-        "webroot/js/components/satellizer/satellizer.min.js",
-        "webroot/js/components/angularjs-viewhead/angularjs-viewhead.js",
-        "webroot/js/components/angular-utils-pagination/dirPagination.js",
-        "webroot/js/components/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js"
+        COMPONENTS_PATH + "jquery/dist/jquery.min.js",
+        COMPONENTS_PATH + "angular/angular.min.js",
+        COMPONENTS_PATH + "angular-resource/angular-resource.min.js",
+        COMPONENTS_PATH + "angular-messages/angular-messages.min.js",
+        COMPONENTS_PATH + "angular-animate/angular-animate.min.js",
+        COMPONENTS_PATH + "angular-cookies/angular-cookies.min.js",
+        COMPONENTS_PATH + "angular-ui-router/release/angular-ui-router.min.js",
+        COMPONENTS_PATH + "AngularJS-Toaster/toaster.min.js",
+        COMPONENTS_PATH + "jquery-timeago/jquery.timeago.js",
+//        COMPONENTS_PATH + "angular-simple-logger/dist/angular-simple-logger.min.js",
+        COMPONENTS_PATH + "ui-select/dist/select.min.js",
+//        COMPONENTS_PATH + "ng-file-upload/ng-file-upload-shim.min.js",
+//        COMPONENTS_PATH + "ng-file-upload/ng-file-upload.min.js",
+//        COMPONENTS_PATH + "angular-socialshare/angular-socialshare.min.js",
+        COMPONENTS_PATH + "satellizer/satellizer.min.js",
+        COMPONENTS_PATH + "angularjs-viewhead/angularjs-viewhead.js",
+        COMPONENTS_PATH + "angular-utils-pagination/dirPagination.js",
+        COMPONENTS_PATH + "angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js"
     ])
             .pipe(stripDebug())
             .pipe(concat('components.js'))
@@ -102,11 +104,11 @@ gulp.task('concat-js-components', function() {
 
 gulp.task('concat-js-lib', function() {
     gulp.src([
-        "webroot/js/lib/jquery-ui.min.js",
-        'webroot/js/lib/bootstrap.min.js',
-        "webroot/js/lib/ui-bootstrap-custom-tpls-0.14.3.min.js",
-        "webroot/js/lib/slider.min.js",
-        "webroot/js/lib/froogaloop.js"
+        LIB_PATH + "jquery-ui.min.js",
+        LIB_PATH + "bootstrap.min.js",
+        LIB_PATH + "ui-bootstrap-custom-tpls-0.14.3.min.js",
+        LIB_PATH + "slider.min.js",
+        LIB_PATH + "froogaloop.js"
     ])
             .pipe(stripDebug())
             .pipe(concat('lib.js'))
@@ -150,9 +152,9 @@ gulp.task('concat-js-admin', function() {
 
 gulp.task('concat-css', function() {
     return gulp.src([
-        'webroot/css/select.css',
-        'webroot/css/bootstrap.css',
-        'webroot/css/base.css'
+        CSS_PATH + 'select.css',
+        CSS_PATH + 'bootstrap.css',
+        CSS_PATH + 'base.css'
     ])
 //        .pipe(cleanCSS({debug: true}, function(details) {
 //            console.log(details.stats.originalSize);
