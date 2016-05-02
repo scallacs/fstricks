@@ -1,19 +1,19 @@
 <view-title>Home</view-title>
-<div class="about-fstricks section bg-primary">
-    <div class="container">
-        <h1 class="website-name">
-            Freestyle Tricks
-        </h1>
-        <p class="moto">
-            Be inspired by the best !
-        </p>
-        <div class="card-list">
-            <div ng-repeat="sport in sports" class="col-xs-6 col-sm-4 col-md-3">
-                <div class="card-item" 
-                     ui-sref="videoplayer.sport({sportSlug: sport.slug})">
-                    <div class="card-image">
-                        <img ng-src="{{sport.slug| sportIconUrl}}"/>
-                    </div>
+<div class="about-fstricks section bg-primary clearfix">
+    <h1 class="website-name">
+        Freestyle Tricks
+    </h1>
+    <p class="moto">
+        Be inspired by the best !
+    </p>
+</div>
+<div class="section clearfix">
+    <div class="card-list">
+        <div ng-repeat="sport in sports" class="col-xs-6 col-sm-4 col-md-3">
+            <div class="card-item" 
+                 ui-sref="videoplayer.sport({sportSlug: sport.slug})">
+                <div class="card-image">
+                    <img ng-src="{{sport.slug| sportImageUrl}}"/>
                     <h2 class="card-title text-capitalize">
                         <a ui-sref="videoplayer.sport({sportSlug: sport.slug})"> {{sport.name}} </a>
                     </h2>
@@ -37,14 +37,14 @@
 
 <div class="margin-top">
     <div class="col-sm-6">
-        <div class="padding-sm border-radius margin-left bg-primary">
+        <div class="padding-sm margin-left bg-primary">
             <h3 class="page-title">Trending playlists</h3>
 
             <div ng-repeat="playlist in playlists"   playlist-item playlist="playlist" ></div>
         </div>
     </div>
     <div class="col-sm-6">
-        <div class="padding-sm border-radius margin-left bg-primary">
+        <div class="padding-sm margin-left bg-primary">
             <h3 class="page-title">Trending performances</h3>
             <div ng-repeat="videoTag in videoTags" video-tag-item video-tag="videoTag"></div>
 

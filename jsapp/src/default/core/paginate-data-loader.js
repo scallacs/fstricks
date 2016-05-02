@@ -195,8 +195,8 @@ function PaginateDataLoader($q) {
         if (!this.filters[name]) return this;
         
         if (arguments.length === 2) {
-            var values = this.filters[name].split(',');
-            values = values.splice(values.indexOf(value), 1);
+            var values = String(this.filters[name]).split(',');
+            values.splice(values.indexOf(String(value)), 1);
             this.filters[name] = values.join(',');
         } else {
             this.filters[name] = null;

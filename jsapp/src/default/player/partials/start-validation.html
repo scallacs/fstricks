@@ -7,18 +7,18 @@
     <p class="text-danger"  ng-if="!SharedData.currentSport">
         Pick the sport you want to review:
     </p>
-    
-    
+
+
     <div class="card-list">
         <div ng-repeat="sport in sports" class="col-xs-6 col-sm-4 col-md-3">
             <div class="card-item" 
                  ui-sref="videoplayer.validation({sportSlug:sport.slug})">
                 <div class="card-image">
-                    <img ng-src="{{sport.slug| sportIconUrl}}"/>
+                    <img ng-src="{{sport.slug| sportImageUrl}}"/>
+                    <h2 class="card-title text-capitalize">
+                        <a ui-sref="videoplayer.validation({sportSlug:sport.slug})"> {{sport.name}} </a>
+                    </h2>
                 </div>
-                <h2 class="card-title text-capitalize">
-                    <a ui-sref="videoplayer.validation({sportSlug:sport.slug})"> {{sport.name}} </a>
-                </h2>
             </div>
         </div>
     </div>

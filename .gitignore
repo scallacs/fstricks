@@ -30,6 +30,9 @@ CakePHP 2
 
 Netbeans
 /nbproject/private/private.xml
-/resources/webserver-fstricks-linux.pem
+/nbproject/private/retriever
+/resources/design/build
 /nbproject/private/config.properties
 /jsapp/build/
+/resources/*.pem
+

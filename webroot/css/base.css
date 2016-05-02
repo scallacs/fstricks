@@ -249,7 +249,7 @@ h3, h2, h1{
 }
 .navbar-form .input-group span.ui-select-toggle.form-control {
     width: 100% !important;
-    border-radius: 4px 0px 0px 4px;
+    border-radius: 0px 0px 0px 0px;
 }
 .navbar-form .input-group input.ui-select-search.form-control{
     width: 100% !important;	
@@ -266,6 +266,7 @@ h3, h2, h1{
     height: 45px;
     background: #444;
     font-weight: bold;
+    border-radius: 0px;
 }
 .navbar-form .btn{
     padding-top: 12px;
@@ -463,13 +464,13 @@ header .navbar-nav > li > a{
 /* ------------------------------------------------------------ */
 .about-fstricks{
     text-align: center;
-    padding: 20px;
+    padding: 0px;
 }
 .about-fstricks .website-name{
-    font-size: 3.5em;
+    font-size: 4.5em;
 }
 .about-fstricks .moto{
-    font-size: 2em;
+    font-size: 1.5em;
     font-weight: bold;
     color: #a94442;
 }
@@ -889,27 +890,46 @@ ul[dnd-list] li.selected {
 /******************************/
 /* CARDS */
 
-.card-list{
-    
-}
 .card-item{
-    background: #222;
-    margin: 5px;
-    padding: 20px 5px;
+    /* background: #222; */
+    margin: 10px;
+    padding: 34%;
 }
-.card-item:hover{
-    background: #000;
+.card-item:hover .card-title{
     cursor: pointer;
+    opacity: 0;
 }
 .card-image{
+    position: absolute;
     text-align: center;
+    z-index: 1;
+    top: 5px;
+    left: 5px;
+    bottom: 5px;
+    right: 5px;
+    overflow: hidden;
+}
+.card-image img{
+    height: 100%;
+    width: 100%;
+    z-index: 1;
 }
 .card-title{
     text-align: center;
-    padding: 10px 0px 0px 0px;
+    background: #222;
+    z-index: 2;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    position: absolute;
+    opacity: 0.4;
 }
 .card-title a{
     color: white;
+    top: 43%;
+    position: absolute;
+    left: 10%;
 }
 /******************************/
 /* ITEM VIDEO TAG */

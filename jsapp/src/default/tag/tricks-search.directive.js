@@ -15,7 +15,9 @@ function SearchTypeToStr(val) {
         case 'sport':
             return 'Best of';
         case 'search':
-            return '';
+            return 'Trick';
+        case 'category':
+            return 'Sport';
         default:
             return '';
     }
@@ -53,7 +55,7 @@ function TopSearchMapper(SharedData) {
                 res.sub_title = 'all';
                 break;
             case 'search':
-                res.title = res.q;
+                res.title = '... ' + res.q + ' ...';
                 res.sub_title = 'Trick';
                 break;
             default:
@@ -76,8 +78,8 @@ function tricksSearchDirective(ApiFactory, VideoTagData, TopSearchMapper, Player
         scope: {
             currentSearch: '='
         },
-        controller: ['$scope', 'SharedData',
-            function ($scope, SharedData) {
+        controller: ['$scope', 'SharedData', '$filter',
+            function ($scope, SharedData, $filter) {
                 $scope.results = [];
                 $scope.onSelect = onSelect;
                 $scope.refresh = refresh;
@@ -86,6 +88,7 @@ function tricksSearchDirective(ApiFactory, VideoTagData, TopSearchMapper, Player
                 $scope.search = {
                     selected: $scope.currentSearch
                 };
+                $scope.isLoading = false;
 
                 $scope.onSearchBarSelected = function () {
                     PlayerData.showTricksMenu(true);
@@ -97,8 +100,10 @@ function tricksSearchDirective(ApiFactory, VideoTagData, TopSearchMapper, Player
                 $scope.$watch('currentSearch', function (val) {
                     $scope.search.selected = val;
                 });
+                
 
                 var searchEndpoint = ApiFactory.endpoint('Searchs', 'search').query;
+
 
                 /**
                  * Header search bar function
@@ -107,27 +112,30 @@ function tricksSearchDirective(ApiFactory, VideoTagData, TopSearchMapper, Player
                  * 
                  * TODO history
                  */
-                function refresh(search) {
-                    search = search.trim();
-                    VideoTagData.filters.text = search;
+                function refresh(term) {
+                    term = term.trim();
                     $scope.results = [];
-                    if (search.length >= 2) {
-                        var searchData = {
-                            q: search,
-                            sport_id: SharedData.currentSport ? SharedData.currentSport.id : null
-                        };
-                        var quickSearch = TopSearchMapper('search', {q: search});
-                        console.log(quickSearch);
-                        $scope.results = [quickSearch];
-                        if (search.length >= 2) {
+                    var searchData = {
+                        q: term,
+                        sport_id: SharedData.currentSport ? SharedData.currentSport.id : null
+                    };
+                    if (term.length >= 2) {
+                        $scope.isLoading = true;
+                        $scope.results = [];
+                        if (term.length >= 2) {
                             searchEndpoint(searchData, function (results) {
+                                var quickSearch = TopSearchMapper('search', {q: term});
+                                var categories = $filter('searchCategory')(SharedData.categories, term);
                                 $scope.results = [quickSearch];
+                                for (var i = 0; i < categories.length; i++){
+                                    $scope.results.push(TopSearchMapper('category', categories[i]));
+                                }
                                 for (var i = 0; i < results.length; i++) {
                                     results[i].category = SearchTypeToStr(results[i].type);
                                     $scope.results.push(results[i]);
                                 }
-                            }).$promise.finally(function(){
-                                // TODO stop loader
+                            }).$promise.finally(function () {
+                                $scope.isLoading = false;
                             });
                         }
                     }
@@ -136,10 +144,9 @@ function tricksSearchDirective(ApiFactory, VideoTagData, TopSearchMapper, Player
                 function onSelect(event, data) {
 //                    console.log("on-search-item-selected");
 //                    console.log(data);
-                    if (!VideoTagData.appendFilters){
+                    if (!VideoTagData.appendFilters) {
                         $scope.$emit("on-search-item-selected", data);
-                    }
-                    else{
+                    } else {
                         VideoTagData.addSearchFilter(data, true, true);
                     }
                 }

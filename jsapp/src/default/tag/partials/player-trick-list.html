@@ -29,7 +29,7 @@
                 </a>
             </li>
         </ul>
-        
+
         <div class="search-context text-capitalize margin-top">
             <ul class="list-inline">
                 <li ng-repeat="filter in videoTagData.filters" search-item="filter"></li>
@@ -46,6 +46,12 @@
                             <span class="search-card-sub-title">
                                 Add filter
                             </span> 
+                        </div>
+                        <div ng-if="videoTagData.appendFilters"
+                             class="search-card-remove">
+                            <a href="#" class="remove-item">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </a>
                         </div>
                     </div>
                 </li>
@@ -69,7 +75,7 @@
                 <span ng-show='!videoTagData.getLoader().loading'> Load more</span>
             </button>
         </div>
-        
+
         <div ng-if="!videoTagData.getLoader().hasData()" 
              class="message-no-result">
             <p ng-if="playerData.isMode('view')">

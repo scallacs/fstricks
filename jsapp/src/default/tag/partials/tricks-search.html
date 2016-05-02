@@ -1,5 +1,17 @@
 <form class="navbar-form" role="search">
     <div  class="input-group">    
+        <div class="input-group-btn" style="width:1%">  
+            <button class="btn btn-default"  type="button" ng-click="onSearchButtonClick()">
+                <span class="glyphicon glyphicon-search"></span>
+            </button>    
+            <button ng-if="videoTagData.appendFilters" 
+                    class="btn btn-default btn-add-filters" 
+                    type="button" 
+                    ng-click="videoTagData.appendFilters = false">
+                <span class="glyphicon glyphicon-plus" ></span>
+                <span class="glyphicon glyphicon-remove" title="Stop adding filters"></span>
+            </button>
+        </div>
         <ui-select 
             ng-click="onSearchBarSelected()"
             id="SearchBar"
@@ -34,15 +46,8 @@
             </ui-select-choices>
         </ui-select>        
         <div class="input-group-btn" style="width:1%">      
-            <button ng-if="videoTagData.appendFilters" 
-                    class="btn btn-default btn-add-filters" 
-                    type="button" 
-                    ng-click="videoTagData.appendFilters = false">
-                <span class="glyphicon glyphicon-plus" ></span>
-                <span class="glyphicon glyphicon-remove" title="Stop adding filters"></span>
-            </button>
-            <button class="btn btn-default"  type="button" ng-click="onSearchButtonClick()">
-                <span class="glyphicon glyphicon-search"></span>
+            <button class="btn btn-default" type="button" ng-if="isLoading">
+                <img ng-src="{{ 'ajax_loader.gif' | imageUrl }}" alt="Loading..."></span>
             </button>
         </div>
     </div>

@@ -1,4 +1,4 @@
-angular.module('app.config', [])
+angular.module('app.config', ['app.account'])
         .run(Run);
 
 

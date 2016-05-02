@@ -46,11 +46,11 @@ function VideoTagData(PaginateDataLoader, VideoTagEntity, SharedData, $timeout) 
                 this.getLoader().appendFilter('q', data.q);
             }
         },
-        addSearchFilter: function (data, triggerUpdate) {
+        addSearchFilter: function (data, triggerUpdate, prepend) {
             if (data.active || this.hasSearchFilter(data)) return;
             data.removable = angular.isDefined(data.removable) ? data.removable : true;
             data.active = true;
-            this.filters.push(data);
+            prepend ? this.filters.unshift(data) : this.filters.push(data);
             this._appendFilter(data);
             // Trigger an update if required
             if (triggerUpdate) {
@@ -67,7 +67,7 @@ function VideoTagData(PaginateDataLoader, VideoTagEntity, SharedData, $timeout) 
         addPermanentFilter: function (data, triggerUpdate) {
             SharedData.setCurrentSearch(data);
             data.removable = false;
-            this.addSearchFilter(data, triggerUpdate);
+            this.addSearchFilter(data, triggerUpdate, true);
             return this;
         },
         currentTag: null,
