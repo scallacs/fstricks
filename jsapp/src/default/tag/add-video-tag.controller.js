@@ -31,7 +31,7 @@ function AddVideoTagController($scope, $state, $stateParams, VideoTagData, Video
         PlayerData.showEditionMode();
         PlayerData.showTricksMenu(false);
         VideoTagData.getLoader()
-                .setFilter('with_pending', true)
+                .setFilter('status', 'validated,pending')
                 .setFilter('video_id', $stateParams.videoId);
         VideoEntity.view({id: $stateParams.videoId}, function (video) {
             $scope.video = video;

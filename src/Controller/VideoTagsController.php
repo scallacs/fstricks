@@ -184,7 +184,6 @@ class VideoTagsController extends AppController {
         $this->VideoTags->initFilters();
         $query = $this->VideoTags->find('search', $this->VideoTags->filterParams($this->request->query));
         $query = $this->VideoTags->findAndJoin($query);
-
         $query->where(['Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC]);
 
         $order = empty($this->request->query['order']) ? 'best' : $this->request->query['order'];
@@ -214,18 +213,15 @@ class VideoTagsController extends AppController {
                 ]);
         }
 
-        if (!empty($this->request->query['category_name']) && isset($sportName)) {
-            $categoryName = \App\Lib\DataUtil::lowername($this->request->query['category_name']);
-            $sports = \Cake\ORM\TableRegistry::get('Sports');
-            $category = $sports->findFromCategoryCached($sportName, $categoryName);
-            if (!empty($category)) {
-                $query->where(['Tags.category_id' => $category['id']]);
-            }
-        }
+//        if (!empty($this->request->query['category_name']) && isset($sportName)) {
+//            $categoryName = \App\Lib\DataUtil::lowername($this->request->query['category_name']);
+//            $sports = \Cake\ORM\TableRegistry::get('Sports');
+//            $category = $sports->findFromCategoryCached($sportName, $categoryName);
+//            if (!empty($category)) {
+//                $query->where(['Tags.category_id' => $category['id']]);
+//            }
+//        }
 
-        if (DataUtil::isPositiveInt($this->request->query, 'video_tag_id')) {
-            $filterStatus = false;
-        }
         if (DataUtil::isPositiveInt($this->request->query, 'video_id')) {
             $videoId = DataUtil::getPositiveInt($this->request->query, 'video_id');
             $videosTable = \Cake\ORM\TableRegistry::get('Videos');
@@ -237,26 +233,41 @@ class VideoTagsController extends AppController {
             }
             $query->where(['VideoTags.user_id' => $this->Auth->user('id')]);
         }
-
+        
+        // Must be the owner to filter by status
+        if ($this->Auth->user('id') && !empty($this->request->query['status'])){
+            $status = explode(',', $this->request->query['status']);
+            $allowedStatus = [VideoTag::STATUS_PENDING, VideoTag::STATUS_VALIDATED];
+            $status = array_intersect($allowedStatus, $status);
+            
+            $condition = !empty($status) ? ['VideoTags.status IN' => $status] : [];
+            if (in_array(VideoTag::STATUS_REJECTED, $status)){
+                $condition = [
+                    'OR' => [
+                        $condition,
+                        ['VideoTags.status IN' => [VideoTag::STATUS_REJECTED, VideoTag::STATUS_DUPLICATE], 
+                            'VideoTags.user_id' => $this->Auth->user('id')],
+                    ]
+                ];
+            }
+            $query->where($condition);
+        }
+        else{
+            $query->where(['VideoTags.status ' => VideoTag::STATUS_VALIDATED]);
+        }
+        
+//        if (DataUtil::isPositiveInt($this->request->query, 'video_tag_id')) {
+//            $filterStatus = false;
+//        }
         if (!empty($this->request->query['status'])) {
-            if (!empty($this->request->query['with_pending'])) {
                 $query->where([
                     'OR' => [
                         ['VideoTags.status IN' => [VideoTag::STATUS_PENDING, VideoTag::STATUS_VALIDATED]],
                         ['VideoTags.status' => VideoTag::STATUS_REJECTED, 'VideoTags.user_id' => $this->Auth->user('id')],
                     ]
                 ]);
-            } else if ($filterStatus) {
-                $query->where(['VideoTags.status ' => VideoTag::STATUS_VALIDATED]);
-            }
         }
-//        if (!empty($this->request->query['tag_name'])) {
-//            $str = $this->request->query['tag_name'];
-//            \App\Model\Table\TableUtil::multipleWordSearch($query, $str, 'Tags.name');
-//        }
-
-        ResultMessage::setPaginateData(
-                $this->paginate($query), $this->request->params['paging']['VideoTags']);
+        ResultMessage::paginate($query, $this);
     }
 
     public function trending() {
