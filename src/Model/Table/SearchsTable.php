@@ -17,13 +17,26 @@ class SearchsTable extends \Cake\ORM\Table {
      */
     public function initialize(array $config) {
         parent::initialize($config);
-
         $this->table('searchs');
         $this->displayField('title');
         $this->primaryKey('id');
-
-        
     }
-
+    
+    public function initFilters($mode = 'default') {
+        $this->addBehavior('Search.Search');
+        $this->searchManager()
+                ->add('sport_id', 'MultipleValue', [
+                    'field' => 'Searchs.sport_id',
+                    'delimiter' => ',',
+                    'acceptNull' => true,
+                ])
+                ->add('q', 'MultipleLike', [
+                    'before' => true,
+                    'after' => true,
+                    'delimiter' => ' ',
+                    'field' => 'Searchs.title',
+                    'mode' => 'AND'
+                ]);
+    }
 
 }

@@ -294,6 +294,7 @@ function PlayerData(VideoTagData, $q) {
     }
 
     function stop(provider) {
+        VideoTagData.setCurrentTag(null);
         if (!angular.isDefined(provider) && obj.data.provider === null) {
             return $q.defer();
         }

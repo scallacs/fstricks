@@ -27,19 +27,13 @@ class SearchsController extends AppController {
     public function search() {
         ResultMessage::setWrapper(false);
         try {
-            if ($this->request->is('get') && !empty($this->request->query)) {
-                $query = $this->Searchs->find('all')
+            if ($this->request->is('get') && !empty($this->request->query['q'])) {
+
+                $this->Searchs->initFilters();
+                $query = $this->Searchs
+                        ->find('search', $this->Searchs->filterParams($this->request->query))
                         ->order(['points DESC'])
-                        ->limit(20);
-                // TODO replace with other lib ? 
-                $searchHelper = new \App\Lib\SearchHelper($this->request->query, $query);
-                $searchHelper->required('q', 'Searchs.title', [
-                            'type' => 'keywords'
-                        ])
-                        ->optional('sport_id', 'Searchs.sport_id', [
-                            'type' => 'default',
-                            'acceptNull' => true
-                        ]);
+                        ->limit(10);
                 ResultMessage::overwriteData($query->all());
             }
         } catch (\App\Lib\MissingSearchParams $ex) {

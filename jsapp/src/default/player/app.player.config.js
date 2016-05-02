@@ -10,8 +10,8 @@ function Run($rootScope, VideoTagData, PlayerData, TopSearchMapper) {
             VideoTagData.reset();
         }
 //        console.log(toState);
+        PlayerData.stop();
         if (toState.player){
-            PlayerData.stop();
             PlayerData.showViewMode();
             if (toState.player.onStart){
                 toState.player.onStart(PlayerData);

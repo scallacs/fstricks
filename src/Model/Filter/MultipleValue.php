@@ -16,13 +16,20 @@ class MultipleValue extends \Search\Model\Filter\Like {
             return;
         }
         $values = explode($this->config('delimiter'), $this->value());
-
         $conditions = [];
         foreach ($this->fields() as $field) {
             $left = $field . ' ' . $this->config('comparison');
-
-            foreach ($values as $value) {
-                $conditions[] = [$left => $value];
+            if ($this->config('acceptNull')){
+                $newConditions = [];
+                foreach ($values as $value) {
+                    $newConditions[] = [$left => $value];
+                }
+                $conditions = ['OR' => [$this->config('mode') => $newConditions, $field .' IS NULL']];
+            }
+            else{
+                foreach ($values as $value) {
+                    $conditions[] = [$left => $value];
+                }
             }
         }
         $this->query()->andWhere([$this->config('mode') => $conditions]);

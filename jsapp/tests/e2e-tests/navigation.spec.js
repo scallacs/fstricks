@@ -57,7 +57,7 @@ describe('Navigation', function() {
         });
         
         it(' should be possible to share the trick ', function() {
-            videoTagItem.openSharingLink().then(function() {
+            videoTagItem.openSharingLink('videoplayer.realization').then(function() {
                 // TODO 
             });
         });

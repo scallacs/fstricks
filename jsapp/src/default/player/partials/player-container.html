@@ -15,13 +15,6 @@
                 Try again later...
             </p>
         </div>
-        <div ng-if="!playerData.hasVideo() && !videoTagData.getLoader().hasData()" 
-             class="pick-video-message">
-            <p ng-if="playerData.isMode('validation')">
-                Thanks 
-                for your help but there is nothing to validate for now...
-            <p/>
-        </div>
         <div ng-show="playerData.hasVideo()">
             <div class="nopadding player-container" >
                 <div 

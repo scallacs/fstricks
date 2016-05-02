@@ -2,8 +2,8 @@ angular
         .module('app.core')
         .factory('VideoTagData', VideoTagData);
 
-VideoTagData.$inject = ['PaginateDataLoader', 'VideoTagEntity', 'SharedData', '$timeout'];
-function VideoTagData(PaginateDataLoader, VideoTagEntity, SharedData, $timeout) {
+VideoTagData.$inject = ['PaginateDataLoader', 'VideoTagEntity', 'SharedData', '$timeout', '$state'];
+function VideoTagData(PaginateDataLoader, VideoTagEntity, SharedData, $timeout, $state) {
 
     var obj = {
         appendFilters: false,
@@ -20,6 +20,7 @@ function VideoTagData(PaginateDataLoader, VideoTagEntity, SharedData, $timeout) 
         removeSearchFilter: function (filter, triggerUpdate) {
             var i = obj.filters.indexOf(filter);
             obj.filters.splice(i, 1);
+
             this._removeFilter(filter);
             if (triggerUpdate) {
                 this.reload();
@@ -27,9 +28,20 @@ function VideoTagData(PaginateDataLoader, VideoTagEntity, SharedData, $timeout) 
         },
         _removeFilter: function (data) {
             if (['playlist', 'tag', 'rider', 'video'].indexOf(data.type) !== -1) {
-                this.getLoader().removeFilter(data.type + '_id', data.id);
+                filter = data.type + '_id';
+                value = data.id;
             } else if (data.type === 'search') {
-                this.getLoader().removeFilter(data.type, data.q);
+                var filter = 'q';
+                var value = data.q;
+            }
+
+            if (filter) {
+                this.getLoader().removeFilter(filter, value);
+                // TODO Remove the url parameter if exists
+                if ($state.params[filter]) {
+                    $state.params[filter] = null;
+                    $state.go('.', $state.params[filter], {notify: false});
+                }
             }
         },
         reload: function () {
@@ -41,13 +53,13 @@ function VideoTagData(PaginateDataLoader, VideoTagEntity, SharedData, $timeout) 
         _appendFilter: function (data) {
             if (['playlist', 'tag', 'rider', 'video', 'category', 'sport'].indexOf(data.type) !== -1) {
                 this.getLoader().appendFilter(data.type + '_id', data.id);
-            } 
-            else if (data.type === 'search') {
+            } else if (data.type === 'search') {
                 this.getLoader().appendFilter('q', data.q);
             }
         },
         addSearchFilter: function (data, triggerUpdate, prepend) {
-            if (data.active || this.hasSearchFilter(data)) return;
+            if (data.active || this.hasSearchFilter(data))
+                return;
             data.removable = angular.isDefined(data.removable) ? data.removable : true;
             data.active = true;
             prepend ? this.filters.unshift(data) : this.filters.push(data);
@@ -58,9 +70,10 @@ function VideoTagData(PaginateDataLoader, VideoTagEntity, SharedData, $timeout) 
             }
             return this;
         },
-        hasSearchFilter: function(data){
-            for (var i = 0; i < this.filters.length; i++){
-                if (this.filters[i].id == data.id && this.filters[i].type == data.type) return true;
+        hasSearchFilter: function (data) {
+            for (var i = 0; i < this.filters.length; i++) {
+                if (this.filters[i].id == data.id && this.filters[i].type == data.type)
+                    return true;
             }
             return false;
         },

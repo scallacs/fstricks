@@ -1,5 +1,14 @@
 <view-title>Reviewing trick</view-title>
 
+
+<div ng-if="!playerData.hasVideo() && !videoTagData.getLoader().hasData()" 
+     class="pick-video-message">
+    <p>
+        Thanks 
+        for your help but there is nothing to validate for now...
+    <p/>
+</div>
+
 <div notify-on-load class="padding-sm text-center player-offset" 
      ng-if="videoTagData.currentTag">
     <button type="button" 

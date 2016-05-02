@@ -173,6 +173,11 @@ h3, h2, h1{
     right: 0px;
     top: 3px;
     position: absolute;
+    z-index: 2;
+    background: #333;
+    border-radius: 30px;
+    padding: 2px;
+    line-height: 16px;
 }
 .list-tricks > div > .row{
     border-bottom: 1px solid #333;
