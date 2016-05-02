@@ -115,9 +115,10 @@ class VideoTagsTable extends Table {
                     'field' => $this->aliasField('end') . ' - ' . $this->aliasField('begin'),
                     'operator' => '<='
                 ])
-                ->add('status', 'Search.Value', [
-                    'field' => $this->aliasField('status')
-                ])
+//                ->add('status', 'MultipleValue', [
+//                    'field' => $this->aliasField('status'),
+//                    'delimiter' => ','
+//                ])
                 ->add('q', 'MultipleLike', [
                     'before' => true,
                     'after' => true,
