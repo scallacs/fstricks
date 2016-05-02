@@ -46,7 +46,7 @@
     <div class="col-sm-6">
         <div class="padding-sm margin-left bg-primary">
             <h3 class="page-title">Trending performances</h3>
-            <div ng-repeat="videoTag in videoTags" video-tag-item video-tag="videoTag"></div>
+            <div ng-repeat="videoTag in videoTags" video-tag-item mode="card" video-tag="videoTag"></div>
 
             <p class="padding-sm text-center">
                 <a ui-sref="videoplayer.sport" ng-click="SharedData.setCurrentSport(null)">view more</a>
