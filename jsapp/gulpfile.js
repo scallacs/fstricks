@@ -94,7 +94,8 @@ gulp.task('concat-js-components', function() {
         COMPONENTS_PATH + "satellizer/satellizer.min.js",
         COMPONENTS_PATH + "angularjs-viewhead/angularjs-viewhead.js",
         COMPONENTS_PATH + "angular-utils-pagination/dirPagination.js",
-        COMPONENTS_PATH + "angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js"
+        COMPONENTS_PATH + "angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js",
+        COMPONENTS_PATH + "angular-google-analytics/dist/angular-google-analytics.min.js"
     ])
             .pipe(stripDebug())
             .pipe(concat('components.js'))

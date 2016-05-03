@@ -76,7 +76,7 @@
             </button>
         </div>
 
-        <div ng-if="!videoTagData.getLoader().hasData()" 
+        <div ng-if="!videoTagData.getLoader().hasData() && !videoTagData.getLoader().loading" 
              class="message-no-result">
             <p ng-if="playerData.isMode('view')">
                 Oups, there is no results for this search...

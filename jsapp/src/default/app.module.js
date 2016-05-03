@@ -64,7 +64,8 @@ function MainController($scope, PlayerData, VideoTagData, SharedData, Authentica
             $state.go('playlist', {playlistId: data.id});
         }
         else if (data.type === 'category') {
-            $state.go('videoplayer.sport', {sportSlug: data.sport.slug, categorySlug: data.slug});
+//            console.log(data);
+            $state.go('videoplayer.sport', {sportSlug: data.sport.slug, category: data.slug});
         }
     });
 
