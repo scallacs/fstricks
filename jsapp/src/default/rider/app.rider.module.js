@@ -1,8 +1,21 @@
 angular
         //.module('app.rider', ['ngFileUpload', 'ngMessages', 'ui.router']);
-        .module('app.rider', ['ngMessages', 'ui.router']);
+        .module('app.rider', ['ngMessages', 'ui.router'])
+        .filter('sportCategoriesString', sportCategoriesStringFilter);
 //        .config(ConfigRouting)
 //        .controller('RiderProfileController', RiderProfileController);
+
+function sportCategoriesStringFilter(){
+    return function(inputs){
+        if (!inputs) return;
+        var str = [];
+        for (var i = 0; i < 5 && i < inputs.length; i++){
+            var input = inputs[i];
+            str.push(input.category.name + (input.category.sport ? ' ' + input.category.sport.name : ''));
+        }
+        return str.join(', ');
+    };
+}
 
 //ConfigRouting.$inject = ['$stateProvider'];
 //function ConfigRouting($stateProvider) {

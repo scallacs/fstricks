@@ -1,4 +1,7 @@
 <view-title>Home</view-title>
+<meta view-head property="og:description" content="Freestyle tricks allow you to easily find any tricks in many freestyle sports"/>
+
+
 <div class="about-fstricks section bg-primary clearfix">
     <h1 class="website-name">
         Freestyle Tricks
@@ -13,7 +16,7 @@
             <div class="card-item" 
                  ui-sref="videoplayer.sport({sportSlug: sport.slug})">
                 <div class="card-image">
-                    <img ng-src="{{sport.slug| sportImageUrl}}"/>
+                    <img ng-src="{{sport.slug| sportImageUrl}}" alt="{{sport.name}}"/>
                     <h2 class="card-title text-capitalize">
                         <a ui-sref="videoplayer.sport({sportSlug: sport.slug})"> {{sport.name}} </a>
                     </h2>

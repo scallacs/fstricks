@@ -1,4 +1,8 @@
-<view-title>performer {{rider.firstname}} {{rider.lastname}} ({{rider.nationality}})</view-title>
+<view-title>Performer {{rider.firstname}} {{rider.lastname}} ({{rider.nationality.toUpperCase()}})</view-title>
+<meta view-head 
+      property="og:description" 
+      content="View tricks performed by {{rider.firstname}} {{rider.lastname}} in {{rider.sports | sportCategoriesString}}"/>
+
 <div class="view-rider clearfix">
     <!--
     <div class="thumbnail col-sm-4">
