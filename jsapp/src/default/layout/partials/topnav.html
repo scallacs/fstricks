@@ -4,7 +4,7 @@
             <div class="navbar-header" id="BrandContainer">
                 <div class="header-title pull-left">
                     <a href="" ui-sref="home()" id="HomeLink">
-                        <img ng-src="{{'logo.png'| imageUrl}}" alt=""/>
+                        <img ng-src="{{'logo.png'| imageUrl}}" alt="{{config.name}}"/>
                         <span class="hidden">{{config.name}}</span>
                     </a> 
                 </div>
@@ -28,7 +28,7 @@
                 <li ng-repeat="sport in sports">
                     <a ui-sref="videoplayer.sport({sportSlug: sport.slug, category: null, q: null})" 
                        ng-click="SharedData.setCurrentSport(sport)">
-                        <img ng-src="{{sport.slug | sportIconUrl}}"> &nbsp;
+                        <img ng-src="{{sport.slug | sportIconUrl}}" alg="{{sport.name}}"> &nbsp;
                         {{sport.name}}
                     </a>    
                 </li>

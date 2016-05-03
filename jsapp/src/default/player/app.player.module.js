@@ -10,6 +10,7 @@ angular.module('app.player', [
     'ui.bootstrap',
     'dndLists'
 ])
+        .filter('videoTagsString', videoTagsToStringFilter)
         .controller('AddVideoController', AddVideoController)
         .controller('PlayerController', PlayerController)
 
@@ -27,6 +28,19 @@ angular.module('app.player', [
         .controller('ManagePlaylistController', ManagePlaylistController)
         .controller('EditPlaylistController', EditPlaylistController)
         .controller('ModalPlaylistController', ModalPlaylistController);
+
+
+function videoTagsToStringFilter(){
+    return function(inputs){
+        if (!inputs) return;
+        var str = [];
+        for (var i = 0; i < 5 && i < inputs.length; i++){
+            var input = inputs[i];
+            str.push(input.tag.name + (input.rider ? ' by ' + input.rider.firstname + ' ' + input.rider.lastname : ''));
+        }
+        return str.join(', ');
+    };
+}
 
 MyTricksController.$inject = ['$scope', 'PaginateDataLoader', 'SharedData', '$state', 'VideoTagEntity', 'ApiFactory'];
 function MyTricksController($scope, PaginateDataLoader, SharedData, $state, VideoTagEntity, ApiFactory) {
@@ -251,18 +265,19 @@ function ViewSportController($scope, VideoTagData, $stateParams, PlayerData, Sha
         var sport = SharedData.getSportBy('slug', sportSlug);
         SharedData.currentSport = sport;
 
-        if (sport){
+        if (sport) {
             var category = SharedData.getCategoryBy('slug', categorySlug);
             SharedData.setCurrentCategory(category);
-            if (category) category.sport = sport;
+            if (category)
+                category.sport = sport;
             VideoTagData.addPermanentFilter(category ? TopSearchMapper('category', category) : TopSearchMapper('sport', sport));
         }
-        
+
         VideoTagData
                 .getLoader()
                 .setOrder($stateParams.order)
                 .startLoading()
-                .finally(function(){
+                .finally(function () {
                     SharedData.pageLoader(false);
                 });
     });
@@ -271,7 +286,7 @@ function ViewSportController($scope, VideoTagData, $stateParams, PlayerData, Sha
 
 ViewRiderController.$inject = ['$scope', '$state', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'RiderEntity', 'TopSearchMapper'];
 function ViewRiderController($scope, $state, VideoTagData, $stateParams, PlayerData, SharedData, RiderEntity, TopSearchMapper) {
-    
+
     loadRider();
 
     function loadRider() {
@@ -284,13 +299,13 @@ function ViewRiderController($scope, $state, VideoTagData, $stateParams, PlayerD
                     SharedData.populateCategory(rider.popular_tags);
                     $scope.rider = rider;
                     VideoTagData.addPermanentFilter(TopSearchMapper('rider', rider), true);
-                    
-                    
+
+
                 })
                 .catch(function () {
                     $state.go('nofound');
                 })
-                .finally(function(){
+                .finally(function () {
                     SharedData.pageLoader(false);
                 });
     }
@@ -300,7 +315,7 @@ function ViewRiderController($scope, $state, VideoTagData, $stateParams, PlayerD
 
 ViewPlaylistController.$inject = ['$scope', 'VideoTagData', '$stateParams', 'PlayerData', 'SharedData', 'PlaylistEntity', 'TopSearchMapper', '$state'];
 function ViewPlaylistController($scope, VideoTagData, $stateParams, PlayerData, SharedData, PlaylistEntity, TopSearchMapper, $state) {
-    
+
     $scope.playlist = false;
 
     PlaylistEntity
@@ -324,7 +339,7 @@ function PlaylistPlayerController($scope, VideoTagData, PlayerData, SharedData, 
 
 //    VideoTagData.update();
     // TODO change
-    
+
     var loader = VideoTagData.getLoader();
     loader.setResource(PlaylistItemEntity.playlist)
             .setFilter('id', $stateParams.playlistId)
@@ -385,7 +400,7 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
         });
         $scope.videoDuration = video.duration;
         $scope.videoTags = response.items;
-
+        $scope.video = video;
 
         var providerFactory = ProviderVideoInfo.get(video.provider_id);
 
@@ -396,7 +411,8 @@ function ViewVideoController($scope, VideoTagData, PlayerData, $stateParams, Sha
                 .load()
                 .then(function (results) {
                     var item = providerFactory.createItem(results);
-                    console.log(item);
+//                    console.log(item);
+                    $scope.video.title = item.title();
                     VideoTagData.addPermanentFilter(TopSearchMapper('video', {title: item.title()}));
                 });
     }
@@ -426,6 +442,8 @@ function ViewValidationController($scope, VideoTagData, PlayerData, SharedData, 
     $scope.rateAccurate = rateAccurate;
     $scope.rateFake = rateFake;
     $scope.skip = skip;
+    $scope.sport = sport;
+
 
     PlayerData.showTricksMenu(false);
 

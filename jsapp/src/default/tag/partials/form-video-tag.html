@@ -231,7 +231,7 @@
                                     on-remove="onRemoveRider($item, $model)"
                                     >
                                     <ui-select-match placeholder="Rider..." class="text-capitalize" allow-clear="true">
-                                        <img ng-src="{{$select.selected.picture_round_xs}}" alt=""/>  
+                                        <img ng-src="{{$select.selected.picture_round_xs}}" alt="Rider picture"/>  
                                         <span class="text-bold">{{$select.selected.display_name}} </span> 
                                         <span class="text-muted" ng-if="$select.selected.nationality">({{$select.selected.nationality}})</span> 
                                     </ui-select-match>
@@ -240,7 +240,7 @@
                                         refresh="refreshSuggestedRiders($select.search)"
                                         refresh-delay="500">
                                         <div class="clearfix" style="text-transform: capitalize;">
-                                            <img ng-src="{{rider.picture_round_xs}}" alt=""/>  
+                                            <img ng-src="{{rider.picture_round_xs}}" alt="rider picture"/>  
                                             <span class="text-bold">{{rider.display_name}}</span>  
                                             <span ng-if="rider.id" class="">({{rider.nationality}})</span> 
                                             <span ng-if="!rider.id" class=""> New !</span> 

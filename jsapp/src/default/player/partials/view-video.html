@@ -1,5 +1,9 @@
 <view-title>Video {{video.title}}</view-title>
 
+<meta view-head 
+      property="og:description" 
+      content="Video {{video.title}}: {{videoTags | videoTagsString}}"/>
+
 <div player-bar notify-on-load video-tags="videoTags" duration="videoDuration" class="player-offset">
     
 </div> 

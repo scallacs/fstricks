@@ -1,3 +1,4 @@
+<meta view-head property="og:description" content="Review tricks added by other members. Tell us if there are valid or not."/>
 
 <div class="container bg-primary margin-top border-radius padding-sm text-center">
     <h2 class="page-title" data-view-title>Start reviewing tricks</h2>
@@ -14,7 +15,7 @@
             <div class="card-item" 
                  ui-sref="videoplayer.validation({sportSlug:sport.slug})">
                 <div class="card-image">
-                    <img ng-src="{{sport.slug| sportImageUrl}}"/>
+                    <img ng-src="{{sport.slug| sportImageUrl}}" alt="{{sport.name}}"/>
                     <h2 class="card-title text-capitalize">
                         <a ui-sref="videoplayer.validation({sportSlug:sport.slug})"> {{sport.name}} </a>
                     </h2>
