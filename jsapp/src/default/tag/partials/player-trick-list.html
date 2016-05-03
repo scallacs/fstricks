@@ -59,14 +59,10 @@
         </div>
 
 
-        <div ng-repeat="videoTag in videoTagData.getItems()" ng-if="$index % 2 == 0" class="row clearfix">
-            <div class="col-sm-6 nopadding">
+        <div  class="row ">
+            <div ng-repeat="videoTag in videoTagData.getItems()" class="col-sm-6 col-md-4 col-lg-3">
                 <div video-tag-item video-tag="videoTag"></div>
             </div>
-            <div class="col-sm-6 nopadding" ng-if="videoTagData.getItems().length > $index + 1">
-                <div video-tag-item video-tag="videoTagData.getItems()[$index+1]"></div>
-            </div>
-            <div style='clear: both;'></div>
         </div>
 
         <div class="text-center padding-sm" ng-if="videoTagData.getLoader().hasNextPage()">
