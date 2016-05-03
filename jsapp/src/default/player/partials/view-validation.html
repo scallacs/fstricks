@@ -1,4 +1,7 @@
-<view-title>Reviewing trick</view-title>
+<view-title>Reviewing trick in {{sport.name}}</view-title>
+<meta view-head 
+      property="og:description" 
+      content="Review tricks added by other members in {{sport.name}}. Tell us if there are valid or not."/>
 
 
 <div ng-if="!playerData.hasVideo() && !videoTagData.getLoader().hasData()" 
