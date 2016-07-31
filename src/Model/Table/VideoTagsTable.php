@@ -440,5 +440,10 @@ class VideoTagsTable extends Table {
         $entity->generateSlug($entity->rider, $entity->tag);
         return $this->save($entity);
     }
+    
+    public function findForSitemap(){
+        return $this->findAndJoin()
+                ->select(['id', 'slug']);
+    }
 
 }

@@ -246,4 +246,10 @@ class VideoTagsTableTest extends \App\Test\Util\TableTestCase {
         ]);
     }
 
+    public function testFindForSitemap(){
+        $data = $this->VideoTags->findForSitemap()->all();
+        $this->assertGreaterThan(1, count($data));
+        $this->assertArrayHasKey('slug', $data['slug']);
+        $this->assertNotEmpty($data['slug']);
+    }
 }

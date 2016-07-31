@@ -51,6 +51,7 @@ class SitemapShell extends Shell {
         $this->loadModel('Sports');
         $this->loadModel('Riders');
         $this->loadModel('Tags');
+        $this->loadModel('VideoTags');
     }
 
 //    private function _initStaticUrls(){
@@ -78,6 +79,11 @@ class SitemapShell extends Shell {
         foreach ($tags as $tag) {
             $this->_addTrickLink($tag);
         }
+        
+        $tags = $this->VideoTags->findForSitemap();
+        foreach ($tags as $tag) {
+            $this->_addPerformanceLink($tag);
+        }
     }
 
     private function _addSportLink($sport) {
@@ -97,7 +103,11 @@ class SitemapShell extends Shell {
     }
 
     private function _addTrickLink($trick) {
-        $this->addUrl('tricks', '/player/trick/' . $trick['slug'], date('c'), 'daily', '0.5');
+        $this->addUrl('tricks', '/player/trick/' . $trick['slug'], date('c'), 'daily', '1');
+    }
+
+    private function _addPerformanceLink($videoTag) {
+        $this->addUrl('tricks', '/player/performance/' . $videoTag['slug'], date('c'), 'daily', '0.5');
     }
 
     private function addUrl($name, $url, $date, $freq, $prio) {
