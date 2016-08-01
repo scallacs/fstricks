@@ -114,13 +114,12 @@ h3, h2, h1{
     top:0px;
     /* opacity: 0.96; */
     width: 100%;
-    background: #111;
     padding: 0px 0px 0px 0px;
     z-index: 999;
     bottom: 0px;
 }
 .list-tricks .container-fluid{
-    /* background: #A92F41; */
+    background: rgb(18,18,18);/*#A92F41;*/
 }
 
 .btn-add-filters > .glyphicon-remove{
@@ -161,7 +160,7 @@ h3, h2, h1{
     position: relative;
 }
 .search-card.active, .search-card:hover{
-    background: #44B0CA;
+    background: #222;
 }
 .search-card:hover{
     cursor: pointer;
@@ -479,6 +478,7 @@ header .navbar-nav > li > a{
 .about-fstricks{
     text-align: center;
     padding: 0px;
+    background: #A92F41;
 }
 .about-fstricks .website-name{
     font-size: 4.5em;
@@ -486,7 +486,7 @@ header .navbar-nav > li > a{
 .about-fstricks .moto{
     font-size: 1.5em;
     font-weight: bold;
-    color: #a94442;
+    /* color: #a94442; */
 }
 .about-fstricks .description{
     font-size: 1.3em;
@@ -634,7 +634,7 @@ ul[dnd-list] li.selected {
     margin-top: -1px;
 } 
 .player-bar-tag-validated{
-    background: #44B0CA;
+    background: #6ABED8;
 }
 
 .player-bar-tag:hover{
@@ -710,7 +710,7 @@ ul[dnd-list] li.selected {
     border: none;
 }
 .item .btn-primary.active{
-    color: #44B0CA;
+    color: #6ABED8;
 }
 .item-sport span{
     border-radius: 40px;
@@ -762,7 +762,7 @@ ul[dnd-list] li.selected {
     }
 }
 .bg-secondary{
-    background: #44B0CA;
+    background: #6ABED8;/*#44B0CA*/
     border-color: #055B70;
     color: white;
 }
@@ -910,7 +910,7 @@ ul[dnd-list] li.selected {
 /******************************/
 /* Search context */
 .search-context{
-    /* background: #A92F41; */
+    background: #A92F41;
     margin: 0px -15px 10px -15px;
     padding: 5px 5px;
 }
