@@ -53,7 +53,7 @@ class PlaylistsController extends AppController {
     /**
      * @queryType GET
      * 
-     * Return a list of the most famous tag begining by the search term $term
+     * Return a list of the most famous playlists begining by the search term $term
      * @param string $term
      */
     public function search() {

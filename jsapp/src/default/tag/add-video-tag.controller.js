@@ -31,8 +31,10 @@ function AddVideoTagController($scope, $state, $stateParams, VideoTagData, Video
         PlayerData.showEditionMode();
         PlayerData.showTricksMenu(false);
         VideoTagData.getLoader()
-                .setFilter('status', 'validated,pending')
-                .setFilter('video_id', $stateParams.videoId);
+                .setFilters({
+                    status: 'validated,pending',            // TODO: use constant
+                    video_id: $stateParams.videoId
+                });
         VideoEntity.view({id: $stateParams.videoId}, function (video) {
             $scope.video = video;
             $scope.editionTag.setVideo($scope.video);
@@ -40,7 +42,8 @@ function AddVideoTagController($scope, $state, $stateParams, VideoTagData, Video
             PlayerData.data.provider = video.provider_id;
             PlayerData.data.duration = video.duration;
             // When data are loaded we set in the editor the tag id to edit
-            var loader = VideoTagData.getLoader();
+            var loader = VideoTagData
+                    .getLoader();
             loader.setMode('append')
                     .loadAll()
                     .then(function () {
@@ -63,6 +66,9 @@ function AddVideoTagController($scope, $state, $stateParams, VideoTagData, Video
 
                         VideoTagData.setCurrentTag($scope.editionTag._video_tag);
                         playVideo(video);
+                    })
+                    .catch(function(){
+                        console.log("Cannot load all tags present in this video...");
                     });
         }, onError);
     }
