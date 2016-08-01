@@ -342,7 +342,7 @@ function PlaylistPlayerController($scope, VideoTagData, PlayerData, SharedData, 
 
     var loader = VideoTagData.getLoader();
     loader.setResource(PlaylistItemEntity.playlist)
-            .setFilter('id', $stateParams.playlistId)
+            .setFilters({id: $stateParams.playlistId})
             .setMapper(function (input) {
                 return input.video_tag;
             })
