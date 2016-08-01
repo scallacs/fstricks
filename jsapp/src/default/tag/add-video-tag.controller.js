@@ -69,6 +69,7 @@ function AddVideoTagController($scope, $state, $stateParams, VideoTagData, Video
                     })
                     .catch(function(){
                         console.log("Cannot load all tags present in this video...");
+                        $state.go('notfound');
                     });
         }, onError);
     }
