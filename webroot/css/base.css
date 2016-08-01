@@ -74,6 +74,15 @@ h3, h2, h1{
     padding-top: 10px;
     padding-bottom: 10px;
 }
+.table-current-trick .toggle-list-tricks{
+    background: #A92F41;
+}
+.table-current-trick .btn-player-nav:hover a{
+    color: #ccc;
+}
+.table-current-trick .toggle-list-tricks a{
+    color: white;
+}
 .table-current-trick .item-video-tag{
     border: none;
 }
@@ -95,7 +104,7 @@ h3, h2, h1{
 }
 .toggle-list-tricks:hover{
     cursor: pointer;
-    background: #222;
+    background: darker;
 }
 .full-player{
     position: relative;
@@ -103,7 +112,7 @@ h3, h2, h1{
 .list-tricks{
     position: absolute;
     top:0px;
-    opacity: 0.96;
+    /* opacity: 0.96; */
     width: 100%;
     background: #111;
     padding: 0px 0px 0px 0px;
@@ -111,7 +120,7 @@ h3, h2, h1{
     bottom: 0px;
 }
 .list-tricks .container-fluid{
-    background: #111;
+    /* background: #A92F41; */
 }
 
 .btn-add-filters > .glyphicon-remove{
@@ -143,7 +152,7 @@ h3, h2, h1{
 }
 .search-card{
     padding: 5px 30px;
-    background: #000;
+    /* background: #000; */
     color: #EEE;
     text-transform: capitalize;
     border-radius: 5px;
@@ -705,6 +714,9 @@ ul[dnd-list] li.selected {
 }
 .item-sport span{
     border-radius: 40px;
+    color: white;
+    text-transform: capitalize;
+    font-weight: bold;
 }
 .item-category{
     text-transform: capitalize;
@@ -895,7 +907,16 @@ ul[dnd-list] li.selected {
     /* width: 100%; */
     max-height: 100px;
 }
-
+/******************************/
+/* Search context */
+.search-context{
+    /* background: #A92F41; */
+    margin: 0px -15px 10px -15px;
+    padding: 5px 5px;
+}
+.search-context .list-inline{
+    margin: 0px;
+}
 /******************************/
 /* CARD VIDEO TAG */
 
@@ -905,11 +926,12 @@ ul[dnd-list] li.selected {
 }
 .card-item .item-title a{
   color: white;
-  font-size: 1.2em;
+  font-size: 1.1em;
 }
 
 .card-item .item-user-name{
     font-weight: bold;
+    /* color: #ccc; */
 }
 .card-item .btn{
     background: #000;
@@ -917,7 +939,7 @@ ul[dnd-list] li.selected {
 }
 
 .card-item:hover .card-info{
-  background: #000;
+  background: #222;
 }
 .card-item:hover .card-thumbnail{
   opacity: 0.95;
@@ -963,7 +985,7 @@ ul[dnd-list] li.selected {
   	opacity: .7;
 }
 .card-item .card-info{
-  background: rgb(10,10,10);
+  background: #000;
   padding: 10px;
   margin: 0px;
   border-radius: 0px 0px 5px 5px;
