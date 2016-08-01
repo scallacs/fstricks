@@ -1,0 +1,123 @@
+<div itemscope
+     itemtype="http://schema.org/CreativeWork"
+     class="card-item bg-primary" 
+     ng-class="{ 'active': videoTagData.currentTag.id === videoTag.id}" >
+    
+    <div class="item-sport" itemprop="category">
+        <span ng-if="videoTag.tag.category.sport">
+            <img ng-src="{{videoTag.tag.category.sport.slug | sportIconUrl}}" 
+                 title="{{videoTag.tag.category.sport.name}}"
+                 alt="{{videoTag.tag.category.sport.name}}"/>
+        </span>
+    </div>
+    <div class="card-top">
+        <div class="dropdown item-video-tag-sharing col-xs-6" ng-if="videoTag.mode !== 'edition'">
+            <button class="btn btn-primary" title="Share" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-share"></span> 
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li class="text-bold">
+                    <a copy-this-link base-url="{{baseUrl}}" ui-sref="videoplayer.realization({videoTagId:videoTag.slug})"> Copy this link </a>
+                </li>
+                <li class="text-bold">
+                    <a href=""> Social sharing coming soon ...</a>
+                </li>
+                <!--
+                <li>
+                    <div facebook 
+                         class="btn-facebook-share" 
+                         data-title='Share this trick'
+                         data-picture-url='http://i.imgur.com/WACv9Cl.jpg' 
+                         ng-url="{{__PathConfig__.webroot}}/view/{{videoTag.id}}"
+                         data-shares='shares'>{{ shares}}
+                    </div>
+                </li>
+                <li>
+                    <a twitter 
+                       data-count='horizontal' 
+                       data-url='{{url}}'  
+                       data-size="medium" 
+                       data-text='{{text}}' >Twitter</a>
+                </li>
+                -->
+            </ul>
+        </div>
+        <div class="dropdown item-video-tag-options col-xs-6"  ng-show="videoTag.mode !==  'edition'">
+            <button class="btn btn-primary" data-toggle="dropdown">
+                <b class="caret"></b>
+            </button>
+            <ul class="dropdown-menu nav-stacked nav-pills dropdown-menu-right">
+                <li>
+                    <a ui-sref="videoplayer.video({videoId:videoTag.video.id})">
+                        <span class="glyphicon glyphicon-play-circle"></span>  
+                        View full video
+                    </a>
+                </li>           
+                <li>
+                    <a  ui-sref="videoplayer.tag({tagSlug:videoTag.tag.slug})">
+                        <span class="glyphicon glyphicon-eye-open"></span>  
+                        View all videos for this trick
+                    </a>
+                </li>           
+                <li>
+                    <a href="" 
+                       ng-if="videoTag.status === 'validated'"
+                       ng-click="openReportErrorModal(videoTag)">
+                        <span class="glyphicon glyphicon-warning-sign"></span>  
+                        Report an error
+                    </a>
+                </li>      
+                <li>
+                    <a href="" 
+                       ng-click="addToPlaylist(videoTag)">
+                        <span class="glyphicon glyphicon-plus-sign"></span> 
+                        Add to playlist...
+                    </a>
+                </li>
+                <li ng-if="(videoTag.status === 'pending' || videoTag.status === 'rejected') &&
+                    videoTag.user_id === authData.user.id">
+                    <a ui-sref="addtag({videoId:videoTag.video.id, tagId:videoTag.id})">
+                        <span class="glyphicon glyphicon-edit"></span> 
+                        Edit
+                    </a>
+                </li>
+                <li ng-show="(videoTag.status === 'pending' || videoTag.status === 'rejected') &&
+                    videoTag.user_id === authData.user.id">
+                    <a href="#" class="btn-remove-item text-danger">
+                        <span class="glyphicon glyphicon-trash"></span> 
+                        Remove
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="card-thumbnail" ng-click="view(videoTag)">
+        <img class="thumbnail" itemprop="image" ng-src="{{videoTag.thumbnail}}"/>
+    </div>
+    <div class="card-info">
+        <h3 itemprop="name" ng-click="view(videoTag)" class="card-info-section item-title text-capitalize" ng-if="videoTag.tag.name">
+            <a ui-sref="videoplayer.realization({videoTagId: videoTag.slug})" ng-click="$event.preventDefault();">
+            {{videoTag.tag.name}} ({{videoTag.tag.category.name}})
+            </a>
+        </h3>
+        <p    itemprop="author"
+                class="card-info-section item-user-xs" >
+            <span ng-if="!videoTag.rider.id" 
+                  class="item-user-name text-muted" >
+                Unknown performer
+            </span>
+            <a  ng-if="videoTag.rider.id" 
+                ui-sref="videoplayer.rider({riderId: videoTag.rider.slug})"
+                class="item-user-name text-info text-capitalize">
+                {{videoTag.rider.display_name}}
+            </a>
+        </p>
+        <div class="card-info-section"
+             up-down-points
+             data="videoTag"
+             controller="VideoTagPoints"
+             allowed-to-vote="videoTagData.currentTag.id === videoTag.id"
+            >
+        </div>
+    </div>
+</div>

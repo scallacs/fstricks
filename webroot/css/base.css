@@ -170,12 +170,12 @@ h3, h2, h1{
     color: whitesmoke;
 }
 .list-tricks .close-search{
-    right: 0px;
-    top: 3px;
+    right: 6px;
+    top: 5px;
     position: absolute;
     z-index: 2;
-    background: #333;
-    border-radius: 30px;
+    background: #222;
+    border-radius: 5px;
     padding: 2px;
     line-height: 16px;
 }
@@ -323,7 +323,7 @@ h3, h2, h1{
 body{
     background: #000;
     width: 100%;
-    height: 100%; 
+    height: 100%;
 }
 .section-separator{
     text-align: center;
@@ -845,6 +845,9 @@ ul[dnd-list] li.selected {
 .item-user-name{
     padding-left: 4px;
 }
+/******************************/
+/* ITEM VIDEO TAG */
+
 .item-video-tag{
     text-align: center;
     padding: 5px 0px;
@@ -886,25 +889,112 @@ ul[dnd-list] li.selected {
     /* margin-bottom: -5px; */
     /* max-height: 100px; */
     overflow: hidden;
-    text-align: left;
+    text-align: center;
 }
 .item-video-tag .item-thumbnail img{
     /* width: 100%; */
     max-height: 100px;
 }
-/******************************/
-/* CARDS */
 
+/******************************/
+/* CARD VIDEO TAG */
+
+.card-item .info-container p{
+  padding: 0px;
+  margin: 0px;
+}
+.card-item .item-title a{
+  color: white;
+  font-size: 1.2em;
+}
+
+.card-item .item-user-name{
+    font-weight: bold;
+}
+.card-item .btn{
+    background: #000;
+    border:none;
+}
+
+.card-item:hover .card-info{
+  background: #000;
+}
+.card-item:hover .card-thumbnail{
+  opacity: 0.95;
+  cursor: pointer;
+}
+.card-item .rider-name{
+  font-size: 1.1em;
+  font-weight: bold;
+}
 .card-item{
+  position: relative;
+  padding: 0px;
+  	text-align: center;
+    margin-bottom: 10px;
+}
+.card-item .card-thumbnail{
+  margin: 0px;
+  overflow: hidden;
+  max-height:200px;
+}
+.card-item .card-thumbnail .thumbnail{
+    width: 100%;
+}
+.card-item .card-info-section{
+  padding: 3px 0px 3px 0px;
+  margin: 0px;
+}
+
+.card-item .thumbnail{
+  border: none;
+  margin: 0px;
+  padding: 0px;
+  border-radius: 5px 5px 0px 0px;
+}
+.card-item .card-top{
+  	position: absolute;
+  	top: 5px;
+  	right: 5px;
+  	z-index: 2;
+  	/* background: #111; */
+  	border-radius: 5px;
+  	/* padding: 5px; */
+  	opacity: .7;
+}
+.card-item .card-info{
+  background: rgb(10,10,10);
+  padding: 10px;
+  margin: 0px;
+  border-radius: 0px 0px 5px 5px;
+}
+.item-points {
+	font-size: 1.5em;
+	font-weight: 700;
+	padding: 10px;
+	color: white;
+}
+.card-item .item-sport{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: #222;
+    border-radius: 5px;
+    padding: 5px;
+    opacity: 0.7;
+}
+/******************************/
+/* HOME CARDS */
+.home-card-item{
     /* background: #222; */
     margin: 10px;
     padding: 34%;
 }
-.card-item:hover .card-title{
+.home-card-item:hover .home-card-title{
     cursor: pointer;
     opacity: 0;
 }
-.card-image{
+.home-card-image{
     position: absolute;
     text-align: center;
     z-index: 1;
@@ -914,12 +1004,12 @@ ul[dnd-list] li.selected {
     right: 5px;
     overflow: hidden;
 }
-.card-image img{
+.home-card-image img{
     height: 100%;
     width: 100%;
     z-index: 1;
 }
-.card-title{
+.home-card-title{
     text-align: center;
     background: #222;
     z-index: 2;
@@ -930,7 +1020,7 @@ ul[dnd-list] li.selected {
     position: absolute;
     opacity: 0.4;
 }
-.card-title a{
+.home-card-title a{
     color: white;
     top: 43%;
     position: absolute;
