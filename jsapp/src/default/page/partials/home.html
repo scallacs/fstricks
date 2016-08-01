@@ -11,13 +11,13 @@
     </p>
 </div>
 <div class="section clearfix">
-    <div class="card-list">
+    <div class="home-card-list">
         <div ng-repeat="sport in sports" class="col-xs-6 col-sm-4 col-md-3">
-            <div class="card-item" 
+            <div class="home-card-item" 
                  ui-sref="videoplayer.sport({sportSlug: sport.slug})">
-                <div class="card-image">
+                <div class="home-card-image">
                     <img ng-src="{{sport.slug| sportImageUrl}}" alt="{{sport.name}}"/>
-                    <h2 class="card-title text-capitalize">
+                    <h2 class="home-card-title text-capitalize">
                         <a ui-sref="videoplayer.sport({sportSlug: sport.slug})"> {{sport.name}} </a>
                     </h2>
                 </div>
@@ -37,7 +37,7 @@
     </div>
 </div>
 -->
-
+<!--
 <div class="margin-top">
     <div class="col-sm-6">
         <div class="padding-sm margin-left bg-primary">
@@ -49,11 +49,11 @@
     <div class="col-sm-6">
         <div class="padding-sm margin-left bg-primary">
             <h3 class="page-title">Trending performances</h3>
-            <div ng-repeat="videoTag in videoTags" video-tag-item video-tag="videoTag"></div>
+            <div ng-repeat="videoTag in videoTags" video-tag-item mode="card" video-tag="videoTag"></div>
 
             <p class="padding-sm text-center">
                 <a ui-sref="videoplayer.sport" ng-click="SharedData.setCurrentSport(null)">view more</a>
             </p>
         </div>
     </div>
-</div>
+</div>-->

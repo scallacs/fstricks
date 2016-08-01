@@ -47,7 +47,7 @@ describe('Navigation', function() {
         beforeEach(function() {
             app.getState('videoplayer.sport');
             browser.waitForAngular();
-            videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(0));
+            videoTagItem = new VideoTagItem(element.all(by.css('.card-video-tag')).get(0));
         });
 
         it(' should be possible to view trick', function() {
@@ -108,7 +108,7 @@ describe('Navigation', function() {
         beforeAll(function() {
             app.getState('videoplayer.sport');
             browser.waitForAngular();
-            videoTagItem = new VideoTagItem(element.all(by.css('.item-video-tag')).get(0));
+            videoTagItem = new VideoTagItem(element.all(by.css('.card-video-tag')).get(0));
             videoTagItem.watch().then(function() {
                 playerContainer = new PlayerContainer(element(by.css('.player-container')));
             });

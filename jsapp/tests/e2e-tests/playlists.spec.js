@@ -63,7 +63,7 @@ describe('Playlists: ', function() {
 
         beforeAll(function() {
             nav.changeSport('snowboard');
-            var container = element.all(by.css('.item-video-tag')).get(0);
+            var container = element.all(by.css('.card-video-tag')).get(0);
             var videoTagItem = new VideoTagItem(container);
             videoTagItem.openOptionLinkByCss('[ng-click^="addToPlaylist"]').then(function() {
                 element(by.id('ButtonNewPlaylist')).click().then(function() {

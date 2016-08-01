@@ -4,7 +4,7 @@ angular.module('app.tag')
 function videoTagItem() {
     return {
         restrict: 'EA',
-        templateUrl: __PathConfig__.template + '/tag/partials/video-tag-item.html',
+        template: '<div ng-include="getContentUrl()"></div>',
         scope: {
             videoTag: '=',
             options: '='
@@ -53,13 +53,17 @@ function videoTagItem() {
 
         }],
         link: function($scope, element, attr) {
+            if (!attr.mode) attr.mode = 'item';
+            if (!attr.thumbnailSize) attr.thumbnailSize = '';
             if ($scope.videoTag.video.provider_id === 'youtube'){
-                $scope.videoTag.thumbnail = 'https://i.ytimg.com/vi/'+$scope.videoTag.video.video_url+'/default.jpg';
+                $scope.videoTag.thumbnail = 'https://i.ytimg.com/vi/'+$scope.videoTag.video.video_url+'/'+attr.thumbnailSize+'default.jpg';
             }
             else if ($scope.videoTag.video.provider_id === 'vimeo'){
                 $scope.videoTag.thumbnail = "https://i.vimeocdn.com/video/"+$scope.videoTag.video.video_url+".jpg";
             }
-            
+            $scope.getContentUrl = function() {
+                 return __PathConfig__.template + '/tag/partials/video-tag-'+attr.mode+'.html';
+            };
         }
     };
 }

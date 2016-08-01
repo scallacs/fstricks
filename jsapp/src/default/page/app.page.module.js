@@ -66,7 +66,7 @@ function PagesController() {}
 HomeController.$inject = ['$scope', 'SharedData', 'VideoTagEntity', 'PlaylistEntity', '$state'];
 function HomeController($scope, SharedData, VideoTagEntity, PlaylistEntity, $state) {
     SharedData.pageLoader(false);
-    
+    /*
     VideoTagEntity.trending({}, function(results){
         $scope.videoTags = results;
     });
@@ -74,7 +74,7 @@ function HomeController($scope, SharedData, VideoTagEntity, PlaylistEntity, $sta
     PlaylistEntity.trending({}, function(results){
         $scope.playlists = results;
     });
-    
+    */
     $scope.$on('view-video-tag', function(event, data){
         $state.go('videoplayer.realization', {
             videoTagId: data.slug

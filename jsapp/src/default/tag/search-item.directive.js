@@ -1,7 +1,7 @@
 angular.module('app.tag')
-        .directive('searchItem', tagItem);
+        .directive('searchItem', searchItem);
 
-function tagItem() {
+function searchItem() {
     return {
         restrict: 'EA',
         templateUrl: __PathConfig__.template + '/tag/partials/search-item.html',
