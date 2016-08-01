@@ -60,8 +60,11 @@
 
 
         <div  class="row ">
-            <div ng-repeat="videoTag in videoTagData.getItems()" class="col-sm-6 col-md-4 col-lg-3">
-                <div video-tag-item video-tag="videoTag"></div>
+            <div ng-repeat="videoTag in videoTagData.getItems()">
+                <div video-tag-card video-tag="videoTag" class="col-sm-6 col-md-4 col-lg-3"></div>
+                <div class="clearfix visible-sm" ng-if="$index % 2 == 1"></div>
+                <div class="clearfix visible-md" ng-if="$index % 3 == 2"></div>
+                <div class="clearfix visible-lg" ng-if="$index % 4 == 3"></div>
             </div>
         </div>
 

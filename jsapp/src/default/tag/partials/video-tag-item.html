@@ -10,12 +10,12 @@
                  alt="{{videoTag.tag.category.sport.name}}"/>
         </span>
     </div>
-    <div class="item-thumbnail hide-no-room" ng-class="{'col-xs-3': viewMode === 'long'}">
-        <img itemprop="image" ng-src="{{videoTag.thumbnail}}"/>
+    <div class="col-xs-3 item-thumbnail hide-no-room">
+        <img itemprop="image" ng-src="{{videoTag.thumbnail}}" alt="Video thumbnail"/>
     </div>
-    <div class="item-content" ng-class="{'col-xs-9': viewMode === 'long'}">
+    <div class="col-xs-9 item-content">
         <div class="">
-            <div class="clickable"  ng-click="view(videoTag)" ng-class="{'col-xs-10': viewMode === 'long'}" >
+            <div class="col-xs-10 clickable"  ng-click="view(videoTag)" >
                 <p itemprop="name" class="item-title text-capitalize" ng-if="videoTag.tag.name">
                     <a ui-sref="videoplayer.realization({videoTagId: videoTag.slug})" ng-click="$event.preventDefault();">
                     {{videoTag.tag.name}} ({{videoTag.tag.category.name}})
@@ -38,7 +38,7 @@
                     </a>
                 </div>
             </div>
-            <div class="" ng-class="{'col-xs-2': viewMode === 'long'}">
+            <div class="col-xs-2">
                 <div class="dropdown item-video-tag-sharing" ng-if="videoTag.mode !== 'edition'">
                     <button class="btn btn-primary" title="Share" data-toggle="dropdown">
                         <span class="glyphicon glyphicon-share"></span> 
@@ -73,7 +73,7 @@
             </div>
         </div>
         <div class="hide-no-room">
-            <div class="" ng-class="{'col-xs-10': viewMode === 'long'}">
+            <div class="col-xs-10">
                 <div class="padding-sm" 
                      ng-if="!playerData.isMode('view')" >
                     {{videoTag.begin | secondsToHours}} to {{videoTag.end | secondsToHours}}
@@ -95,7 +95,7 @@
                     </div>
                 </div>
             </div>
-            <div class="" ng-class="{'col-xs-2': viewMode === 'long'}">
+            <div class="col-xs-2">
                 <div class="dropdown item-video-tag-options"  ng-show="videoTag.mode !==  'edition'">
                     <button class="btn btn-primary" data-toggle="dropdown">
                         <b class="caret"></b>

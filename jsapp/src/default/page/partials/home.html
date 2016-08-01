@@ -8,13 +8,13 @@
     </p>
 </div>
 <div class="section clearfix">
-    <div class="card-list">
+    <div class="home-card-list">
         <div ng-repeat="sport in sports" class="col-xs-6 col-sm-4 col-md-3">
-            <div class="card-item" 
+            <div class="home-card-item" 
                  ui-sref="videoplayer.sport({sportSlug: sport.slug})">
-                <div class="card-image">
+                <div class="home-card-image">
                     <img ng-src="{{sport.slug| sportImageUrl}}"/>
-                    <h2 class="card-title text-capitalize">
+                    <h2 class="home-card-title text-capitalize">
                         <a ui-sref="videoplayer.sport({sportSlug: sport.slug})"> {{sport.name}} </a>
                     </h2>
                 </div>
@@ -34,7 +34,7 @@
     </div>
 </div>
 -->
-
+<!--
 <div class="margin-top">
     <div class="col-sm-6">
         <div class="padding-sm margin-left bg-primary">
@@ -53,4 +53,4 @@
             </p>
         </div>
     </div>
-</div>
+</div>-->
