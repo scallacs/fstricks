@@ -32,7 +32,7 @@ class SitemapShell extends Shell {
     }
 
     private function _initSitemap($name) {
-        $this->siteUrl = !empty($this->args[0]) ? $this->args[0] : Router::url('/Tricker/', true);
+        $this->siteUrl = !empty($this->args[0]) ? $this->args[0] : Router::url('/', true);
         $this->out("Generating sitemap '".$name."' for website: " . $this->siteUrl);
         $this->out("Output will be saved to: " . WWW_ROOT);
         $this->sitemap[$name] = new SitemapGenerator($this->siteUrl, WWW_ROOT);

@@ -20,7 +20,7 @@ class AngularConfigShell extends Shell {
     }
     
     private function url($url = '', $fullbase = true){
-        return ($fullbase ? $this->baseUrl . '/' : '') . ($this->urlSuffix ? $this->urlSuffix . '/' : '') . $url;
+        return ($fullbase ? $this->baseUrl .'/' : '') . (!empty($this->urlSuffix)? $this->urlSuffix . '/' : '') . $url;
     }
 
     private function _default() {
