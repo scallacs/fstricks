@@ -7,7 +7,7 @@ use App\Controller\VideoTagAccuracyRatesController;
 /**
  * App\Controller\VideoTagAccuracyRatesController Test Case
  */
-class VideoTagAccuracyRatesControllerTest extends MyIntegrationTestCase {
+class VideoTagAccuracyRatesControllerTest extends \App\Test\Util\MyIntegrationTestCase {
 
     /**
      * Fixtures

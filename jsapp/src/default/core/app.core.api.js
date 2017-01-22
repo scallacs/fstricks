@@ -11,6 +11,7 @@ function ApiResourceFactory($resource) {
                 'get': {method: 'GET', _id: null},
                 'save': {method: 'POST'},
                 'query': {method: 'GET', isArray: true, _id: null},
+                'paginate': {method: 'GET', isArray: false, _id: null},
                 'remove': {method: 'DELETE'}
             });
         }

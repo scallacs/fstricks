@@ -16,9 +16,9 @@
             <div class="home-card-item" 
                  ui-sref="videoplayer.sport({sportSlug: sport.slug})">
                 <div class="home-card-image">
-                    <img ng-src="{{sport.slug| sportImageUrl}}" alt="{{sport.name}}"/>
+                    <img ng-src="{{sport.slug| sportImageUrl:'card'}}" alt="{{sport.name}}"/>
                     <h2 class="home-card-title text-capitalize">
-                        <a ui-sref="videoplayer.sport({sportSlug: sport.slug})"> {{sport.name}} </a>
+                        <fstricks-sport-link sport="sport" options="{icon: false}"></fstricks-sport-link>
                     </h2>
                 </div>
             </div>

@@ -98,7 +98,9 @@ class AppController extends Controller {
 
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        
+//        debug(Configure::read('Headers'));
+        $this->response->header('Access-Control-Allow-Origin', Configure::read('Headers.Access-Control-Allow-Origin'));
+
 //        if (Configure::read('onlyLoggedUser') && !$this->Auth->user('id')){
 //            throw new \Cake\Network\Exception\UnauthorizedException();
 ////            return $this->redirect(['controller' => 'Users', 'action' => 'beta_login', 'prefix' => null]);

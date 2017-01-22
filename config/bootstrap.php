@@ -277,3 +277,13 @@ Plugin::load('Burzum/UserTools');
 
 
 Plugin::load('Search');
+
+
+// TMP FIX
+header('Cache-Control: no-cache');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Credentials: true');
+//header('Access-Control-Expose-Headers: X-Requested-With, Content-Type, Origin, Accept, Authorization, Bearer, Accept-Encoding, Accept-Language');
+header('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Origin, Accept, Authorization, Bearer, Accept-Encoding, Accept-Language');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Max-Age: 1728000');

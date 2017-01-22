@@ -7,7 +7,7 @@ use App\Test\Fixture\VideoTagsFixture;
 /**
  * App\Controller\VideoTagsController Test Case
  */
-class VideoTagsControllerTest extends \App\Test\TestCase\Controller\MyIntegrationTestCase {
+class VideoTagsControllerTest extends \App\Test\Util\MyIntegrationTestCase {
 
     /**
      * Fixtures

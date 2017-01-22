@@ -23,6 +23,7 @@ class UsersFixture extends TestFixture {
         'id' => 4,
         'email' => 'testmailtesttest@mail.com',
         'username' => 'usertestpassword',
+        'status' => \App\Model\Entity\User::STATUS_ACTIVATED
     ];
 
     public function init() {
@@ -31,16 +32,19 @@ class UsersFixture extends TestFixture {
                 'id' => 1,
                 'email' => 'sca.leonard@gmail.com',
                 'username' => 'scallacs',
+                'status' => \App\Model\Entity\User::STATUS_ACTIVATED
             ],
             [
                 'id' => 2,
                 'email' => 'sca.leonard2@gmail.com',
-                'username' => 'scallacs2'
+                'username' => 'scallacs2',
+                'status' => \App\Model\Entity\User::STATUS_ACTIVATED
             ],
             [
                 'id' => 3,
                 'email' => 'sca.leonard3@gmail.com',
-                'username' => 'scallacs3'
+                'username' => 'scallacs3',
+                'status' => \App\Model\Entity\User::STATUS_ACTIVATED
             ],
             self::$RECORD_RESET_PASSWORD
         ];

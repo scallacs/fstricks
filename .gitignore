@@ -20,6 +20,8 @@ CakePHP 3
 /webroot/css/style.min.css
 /webroot/snapshots
 /webroot/sitemap.xml
+/webroot/sitemap*.xml
+
 
 CakePHP 2
 
@@ -36,3 +38,4 @@ Netbeans
 /jsapp/build/
 /resources/*.pem
 
+/nbproject/private/

@@ -30,7 +30,8 @@ class RidersFixture extends TestFixture
             'picture' => null,
             'user_id' => 1,
             'level' => 1,
-            'slug' => 'stephane-leonard'
+            'slug' => 'stephane-leonard',
+            'nationality' => 'fr'
         ],
         [
             'id' => 2,
@@ -39,7 +40,8 @@ class RidersFixture extends TestFixture
             'picture' => 1,
             'user_id' => 2,
             'level' => false,
-            'slug' =>'test-test2'
+            'slug' =>'test-test2',
+            'nationality' => 'fr'
         ],
         [
             'id' => 3,
@@ -48,7 +50,8 @@ class RidersFixture extends TestFixture
             'picture' => null,
             'user_id' => null,
             'level' => 1,
-            'slug' =>'xavier-de-le-rue-fr'
+            'slug' =>'xavier-de-le-rue-fr',
+            'nationality' => 'fr'
         ],
     ];
 }

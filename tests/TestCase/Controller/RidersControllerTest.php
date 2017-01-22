@@ -7,7 +7,7 @@ use App\Controller\RidersController;
 /**
  * App\Controller\RidersController Test Case
  */
-class RidersControllerTest extends MyIntegrationTestCase {
+class RidersControllerTest extends \App\Test\Util\MyIntegrationTestCase {
 
     /**
      * Fixtures

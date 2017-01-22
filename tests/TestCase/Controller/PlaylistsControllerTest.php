@@ -3,12 +3,11 @@
 namespace App\Test\TestCase\Controller;
 
 use App\Controller\PlaylistsController;
-use Cake\TestSuite\IntegrationTestCase;
 
 /**
  * App\Controller\PlaylistsController Test Case
  */
-class PlaylistsControllerTest extends MyIntegrationTestCase {
+class PlaylistsControllerTest extends \App\Test\Util\MyIntegrationTestCase {
 
     /**
      * Fixtures

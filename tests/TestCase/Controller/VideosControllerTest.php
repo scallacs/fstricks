@@ -8,8 +8,15 @@ use Cake\TestSuite\IntegrationTestCase;
 /**
  * App\Controller\VideosController Test Case
  */
-class VideosControllerTest extends MyIntegrationTestCase {
+class VideosControllerTest extends \App\Test\Util\MyIntegrationTestCase {
 
+    /**
+     *
+     * @var \App\Test\Util\RestApiTester 
+     */
+    public $apiTester;
+    
+    
     /**
      * Fixtures
      *
@@ -38,8 +45,15 @@ class VideosControllerTest extends MyIntegrationTestCase {
         //$this->providers = \Cake\Core\Configure::read('videoProviders');
         $this->providers = ['youtube'];
         $this->assertTrue(count($this->providers) > 0);
+        $this->apiTester = new \App\Test\Util\RestApiTester($this, '/api/videos/');
     }
 
+    public function testIndex(){
+        $this->apiTester->paginate([
+            'id', 'status', 'duration', 'provider_id', 'video_url'
+        ]);
+    }
+    
     /**
      * Test add method for each provider
      *

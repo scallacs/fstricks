@@ -7,7 +7,7 @@ use Cake\TestSuite\IntegrationTestCase;
 /**
  * App\Controller\PlaylistVideoTagsController Test Case
  */
-class PlaylistVideoTagsControllerTest extends MyIntegrationTestCase
+class PlaylistVideoTagsControllerTest extends \App\Test\Util\MyIntegrationTestCase
 {
 
     /**

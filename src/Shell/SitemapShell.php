@@ -6,6 +6,9 @@ use Cake\Console\Shell;
 use App\Lib\SitemapGenerator;
 use Cake\Routing\Router;
 
+/**
+ * Generate the sitemp 
+ */
 class SitemapShell extends Shell {
 
     const SITEMAP_INDEX = "sitemap-index.xml";

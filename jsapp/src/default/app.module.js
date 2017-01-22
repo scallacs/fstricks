@@ -9,6 +9,7 @@ angular.module('app', [
     'app.config.api',
     'app.rider',
     'app.tag',
+    'app.videos',
     'app.page',
     'app.routes',
     'toaster',

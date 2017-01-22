@@ -1,7 +1,0 @@
-BMX: https://pixabay.com/fr/bmx-ombre-v%C3%A9lo-saut-freestyle-1206367/
-Wakeboard: https://pixabay.com/fr/mexique-lac-l-homme-wakeboard-88768/
-FMX: https://pixabay.com/fr/motocross-fmx-italie-moto-493457/
-Surf: https://pixabay.com/fr/surf-surfeur-planche-de-surf-1208255/
-snowboard: https://pixabay.com/fr/neige-montagnes-ensoleill%C3%A9-hiver-1283525/
-ski: https://pixabay.com/fr/freerider-ski-sports-alpin-neige-498473/
-parkour: https://pixabay.com/fr/backflip-parkour-parkouring-345027/

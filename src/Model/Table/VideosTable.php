@@ -168,4 +168,13 @@ class VideosTable extends Table {
     public function getPublic($id){
         return $this->get($id);
     }
+    
+    public function findPublic(Query $query, array $options){
+        return $query
+                ->where([
+                    'Videos.status' => Video::STATUS_PUBLIC,
+                    'Videos.count_tags >=' => 1,
+                ])
+                ->order(['Videos.created DESC']);
+    }
 }

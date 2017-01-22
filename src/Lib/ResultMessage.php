@@ -87,6 +87,9 @@ class ResultMessage {
         self::$data['items'] = $results;
     }
     public static function paginate($query, $context) {
+        if (!isset($context->Paginator)){
+            $context->loadComponent('Paginator');
+        }
         self::setPaginateData($context->Paginator->paginate($query), 
                 current($context->request->params['paging']));
     }

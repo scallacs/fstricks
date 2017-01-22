@@ -8,7 +8,7 @@ use App\Test\TestCase\Controller\MyIntegrationTestCase;
 /**
  * App\Controller\PlacesController Test Case
  */
-class UsersControllerTest extends MyIntegrationTestCase {
+class UsersControllerTest extends \App\Test\Util\MyIntegrationTestCase {
 
     /**
      * Fixtures

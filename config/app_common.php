@@ -7,6 +7,9 @@ return [
     'user_feedback' => true,
     'concat_js' => true,
     'concat_css' => true,
+    'Headers' => [
+        'Access-Control-Allow-Origin' => 'http://localhost:3000'
+    ],
     /**
      * Configure basic information about the application.
      *

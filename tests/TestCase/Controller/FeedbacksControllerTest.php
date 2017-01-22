@@ -7,7 +7,7 @@ use Cake\TestSuite\IntegrationTestCase;
 /**
  * App\Controller\FeedbacksController Test Case
  */
-class FeedbacksControllerTest extends IntegrationTestCase
+class FeedbacksControllerTest extends \App\Test\Util\MyIntegrationTestCase
 {
 
     /**

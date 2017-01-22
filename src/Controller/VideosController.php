@@ -14,9 +14,14 @@ class VideosController extends AppController {
 
     public function beforeFilter(\Cake\Event\Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['view', 'search', 'report_dead_link']);
+        $this->Auth->allow(['view', 'search', 'report_dead_link', 'index']);
     }
 
+    public function index(){
+        $query = $this->Videos->find('public');
+        ResultMessage::paginate($query, $this);
+    }
+    
     /**
      * View method
      *
@@ -57,6 +62,10 @@ class VideosController extends AppController {
         ResultMessage::overwriteData($video);
     }
 
+    /**
+     * 
+     * @return type
+     */
     public function search() {
         ResultMessage::setWrapper(false);
         if ($this->request->is('get')) {

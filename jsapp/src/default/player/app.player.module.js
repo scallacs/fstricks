@@ -602,7 +602,7 @@ function ModalPlaylistController($scope, $uibModalInstance, PlaylistEntity, Play
     $scope.addToPlaylist = addToPlaylist;
     $scope.loader = PaginateDataLoader.instance('playlist', PlaylistEntity.user)
             .setMode('replace')
-            .setLimit(12);
+            .setLimit(12); // TODO parameter
 
 
     $scope.$on('on-playlist-saved', function (event, playlist) {

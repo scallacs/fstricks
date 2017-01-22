@@ -8,7 +8,7 @@ use Cake\TestSuite\IntegrationTestCase;
  * 
  * TODO FIND A WAY TO LOAD THE VIEW FOR THE TEST
  */
-class SearchsControllerTest extends MyIntegrationTestCase {
+class SearchsControllerTest extends \App\Test\Util\MyIntegrationTestCase {
 
     /**
      * Fixtures

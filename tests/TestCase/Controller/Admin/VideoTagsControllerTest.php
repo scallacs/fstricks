@@ -2,12 +2,11 @@
 
 namespace App\Test\TestCase\Controller\Admin;
 use App\Test\Fixture\VideoTagsFixture;
-use App\Test\TestCase\Controller\MyIntegrationTestCase;
 
 /**
  * App\Controller\VideoTagsController Test Case
  */
-class VideoTagsControllerTest extends MyIntegrationTestCase {
+class VideoTagsControllerTest extends \App\Test\Util\MyIntegrationTestCase {
 
     /**
      * Fixtures
