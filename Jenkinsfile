@@ -1,7 +1,5 @@
 node { 
-    echo env.GIT_COMMIT
-    echo env.GIT_BRANCH
-    echo env.GIT_REVISION
+    echo build.buildVariableResolver.resolve("WEBROOT_DIR")
     // ${GIT_BRANCH#*/}
     sh 'cd "/var/www/fstricks-develop"'
 
