@@ -17,6 +17,9 @@ node {
     }
 
     stage('Deploy') {
+        if (currentBuild.result == 'SUCCESS') { // <1>
+            sh 'echo "DEPLOYING"'
+        }
         sh 'echo "DEPLOYING"'
     }
 }

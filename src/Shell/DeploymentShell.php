@@ -58,7 +58,7 @@ class DeploymentShell extends Shell {
     public function setOwnerships(){
         $envFolder = new Folder(ROOT);
         $envFolder->cd('bin');
-        $envFolder->chmod('cake', 0775, false);
+        $envFolder->chmod('*', 0775, false);
     }
     
     // -------------------------------------------------------------------------
