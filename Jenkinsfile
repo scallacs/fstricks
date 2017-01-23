@@ -1,6 +1,7 @@
 node { 
-    echo 'GIT BRANCH: ${GIT_BRANCH}'
-    echo 'GIT BRANCH: ${GIT_BRANCH#*/}'
+    echo ${GIT_BRANCH}
+    echo "GIT BRANCH: ${GIT_BRANCH}"
+    echo "GIT BRANCH: ${GIT_BRANCH#*/}"
     sh 'cd /var/www/fstricks-${GIT_BRANCH#*/}'
 
     stage('Pre-Build') { 
