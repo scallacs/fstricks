@@ -6,6 +6,10 @@ use Cake\Console\Shell;
 use App\Lib\SitemapGenerator;
 use Cake\Routing\Router;
 
+/**
+ * @warning Must have permission on folders: webroot/sitemap*, logs, tmp...
+ * 
+ */
 class SitemapShell extends Shell {
 
     const SITEMAP_INDEX = "sitemap-index.xml";
@@ -131,25 +135,21 @@ class SitemapShell extends Shell {
     private function _build() {
         $time = explode(" ", microtime());
         $time = $time[1];
-        try {
-            // create sitemap
-            $this->out("Creating sitemap...");
-            foreach ($this->sitemap as $sitemap) {
-                $sitemap->createSitemap();
-                $this->out("Writing sitemap in file...");
-                $sitemap->writeSitemap();
-            }
-            // update robots.txt file
+        // create sitemap
+        $this->out("Creating sitemap...");
+        foreach ($this->sitemap as $sitemap) {
+            $sitemap->createSitemap();
+            $this->out("Writing sitemap in file...");
+            $sitemap->writeSitemap();
+        }
+        // update robots.txt file
 //            $this->out("Updating robots...");
 //            $this->sitemap[$name]->updateRobots();
 //            debug($this->sitemap->toArray());
-            // submit sitemaps to search engines
-            //$result = $this->sitemap->submitSitemap("yahooAppId");
-            // shows each search engine submitting status
-            //$this->out($result);
-        } catch (Exception $exc) {
-            echo $exc->getTraceAsString();
-        }
+        // submit sitemaps to search engines
+        //$result = $this->sitemap->submitSitemap("yahooAppId");
+        // shows each search engine submitting status
+        //$this->out($result);
         $this->out("Memory peak usage: " . number_format(memory_get_peak_usage() / (1024 * 1024), 2) . "MB");
         $time2 = explode(" ", microtime());
         $time2 = $time2[1];
