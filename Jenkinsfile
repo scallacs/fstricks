@@ -1,8 +1,8 @@
 node { 
-    echo ${GIT_BRANCH}
-    echo "GIT BRANCH: ${GIT_BRANCH}"
-    echo "GIT BRANCH: ${GIT_BRANCH#*/}"
-    sh 'cd /var/www/fstricks-${GIT_BRANCH#*/}'
+    echo env.GIT_COMMIT
+    echo env.GIT_BRANCH
+    echo env.GIT_REVISION
+    sh 'cd "/var/www/fstricks-${GIT_BRANCH#*/}"'
 
     stage('Pre-Build') { 
 	sh 'git reset --hard origin/${GIT_BRANCH}'
