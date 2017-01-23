@@ -102,7 +102,7 @@ class SitemapShell extends Shell {
     private function _addSportLink($sport) {
         $url = '/player/bestof/' . $sport['slug'];
         $this->addUrl('sports', $url, date('c'), 'daily', '1');
-        $this->out("Adding url: $url");
+        $this->out("Generating sport bestof: $url");
         if (!empty($sport['categories'])) {
             foreach ($sport['categories'] as $category) {
                 $url = '/player/bestof/' . $sport['slug'] . '?category=' . $category['slug'];
