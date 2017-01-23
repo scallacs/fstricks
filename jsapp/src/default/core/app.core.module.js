@@ -127,8 +127,9 @@ function SharedData(SportEntity, $filter) {
     }
     
     function getCategoryBy(field, value){
-        return $filter('getByProperty')(this.categories, value, field);
+        return $filter('getByProperty')(self.currentSport !== null ? self.currentSport.categories : this.categories, value, field);
     }
+    
     function getSportBy(field, value){
         return $filter('getByProperty')(this.sports, value, field);
     }

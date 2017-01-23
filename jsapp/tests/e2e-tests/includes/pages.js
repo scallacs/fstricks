@@ -21,7 +21,7 @@
             'editplaylist': '/playlist/edit',
         };
 
-        app.webroot = 'http://localhost:8082/Tricker/';
+        app.webroot = 'http://dev.fstricks.localhost/'; //__PathConfig__.webroot
 
         app.credential = {email: "stef@fstricks.com", password: "test"};
 

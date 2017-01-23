@@ -20,12 +20,21 @@ PROTRACTOR_BIN = $(NODE_MODULES_PATH)/protractor/bin/protractor
 
 
 ###############################################################
-all: build mv2prod
+# BUILD
+###############################################################
+all: build
     
+build: reset-repo build-backend build-frontend
+	
+.PHONY: build-backend	
+build-backend: 
+	chmod u+x bin/cake
+	composer install --no-interaction
+	chmod 777 -R tmp/*
+	cd jsapp && npm install
+	
 clear-cache: 
 	sudo rm -rf tmp/* 
-	echo "Y" | composer install
-
 # target: reset-repo - reset repo
 reset-repo: 
 	git reset --hard origin/master
@@ -33,42 +42,20 @@ reset-repo:
 
 	
 # target: prod - build the project for production
-prod: clear-cache build config-prod clean-prod
+prod: clear-cache build clean-prod
 
 # target: uat - build the project for production
-uat: build config-uat
-
+uat: build
+	
 # target: dev - build the project for production
-dev: build config-dev
+dev: build
 
-
-# target: dev - build the project for dev
-config-dev: build 
-	cp config/app.dev.php config/app.php
-
-config-prod:
-	cp config/app.prod.php config/app.php
-	
-config-test:
-	cp config/app.test.php config/app.php
-
-config-uat:
-	cp config/app.uat.php config/app.php
-	
 .PHONY: database
 database: $(DB_SOURCE)
 	echo "CREATE DATABASE IF NOT EXISTS $(DB_PROD_NAME)" |  mysql $(DB_PROD_CREDENTIAL)
 	mysql $(DB_PROD_CREDENTIAL) $(DB_PROD_NAME) < $(DB_SOURCE)
 	
-build: reset-repo build-backend build-frontend
 
-.PHONY: build-backend
-build-backend: 
-	chmod u+x bin/cake
-	composer install
-	chmod 777 -R tmp/*
-	cd jsapp && npm install
-	
 # TODO use constants
 .PHONY: build-frontend
 build-frontend:  
@@ -86,11 +73,23 @@ clean-prod:
 ###############################################################
 # TESTS
 
-tests: test-backend test-frontend
+# Test Integration 
+test-all: test-unit test-integration
+	
+.PHONY: test-integration
+test-integration:
+    vendor/bin/phpunit --coverage-html webroot/coverage tests/TestCase/Controller/$(q)ControllerTest.php
 
-test-controller: config-test
-	vendor/bin/phpunit --coverage-html webroot/coverage tests/TestCase/Controller/$(q)ControllerTest.php
+.PHONY: test-unit
+test-unit:
+    vendor/bin/phpunit --coverage-html webroot/coverage tests/TestCase/Controller/$(q)ControllerTest.php
 
+.PHONY: test-backend
+test-backend: config-test
+	vendor/bin/phpunit --coverage-html webroot/coverage tests/TestCase | tee -i logs/test-backend.log
+
+###############################################################
+# UI
 start-webdriver:
 	$(WEBDRIVER_MANAGER_BIN) update --ie 
 	$(WEBDRIVER_MANAGER_BIN) start 
@@ -119,31 +118,7 @@ prepare-db:
 	echo "DROP DATABASE $(DB_DEV_NAME); CREATE DATABASE $(DB_DEV_NAME)" |  mysql $(DB_DEV_CREDENTIAL)
 	mysql $(DB_DEV_CREDENTIAL) $(DB_DEV_NAME) < $(DB_SOURCE) 
 	
-# target : - test-backend run test on backend
-.PHONY: test-backend
-test-backend: config-test
-	vendor/bin/phpunit --coverage-html webroot/coverage tests/TestCase | tee -i logs/test-backend.log
 
 # target: help - Displays help.
 help:
 	@egrep "^# target:" Makefile
-
-
-
-
-# target: mv2prod - Moving to production
-#mv2prod: 
-#	sudo rm -rf /var/www/html/*
-#	cp -r ./* /var/www/html
-#	cp .htaccess /var/www/html
-#	cp webroot/.htaccess /var/www/html/webroot
-#	sudo chmod 777 -R /var/www/html/logs
-#	sudo chmod 777 -R /var/www/html/tmp
-# target: clean-prod - cleaning prod server 
-#.PHONY: clean-prod
-#clean-prod:
-#	rm -rf webroot/coverage
-#	rm -rf webroot/js/lib
-#	find webroot/js/admin -type f ! -name '*.html' -delete
-#	find webroot/js/src -type f ! -name '*.html' -delete
-#	find webroot/css -type f ! -name 'style.css' -delete
