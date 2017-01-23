@@ -3,6 +3,10 @@ node {
     echo 'GIT BRANCH: ${GIT_BRANCH#*/}'
     sh 'cd /var/www/fstricks-${GIT_BRANCH#*/}'
 
+    stage('Pre-Build') { 
+	sh 'git reset --hard origin/${GIT_BRANCH}'
+    }
+
     stage('Build') { 
         sh 'make build'
     }
