@@ -18,8 +18,22 @@ class SitemapShell extends Shell {
     ];
 
     public function main() {
+        $this->siteUrl = !empty($this->params['url']) ? $this->params['url'] : Router::url('/', true);
+        $this->info('Generating sitemapp for website: ' . $this->siteUrl);
         $this->_init();
         $this->_build();
+    }
+
+    public function getOptionParser() {
+        $parser = parent::getOptionParser();
+        $parser->description(
+                        'Generate the sitemapp'
+                )
+                ->addOption('url', [
+                    'default' => Router::url('/', true),
+//                'short' => 'u',
+                ]);
+        return $parser;
     }
 
     private function _init() {
@@ -32,15 +46,14 @@ class SitemapShell extends Shell {
     }
 
     private function _initSitemap($name) {
-        $this->siteUrl = !empty($this->args[0]) ? $this->args[0] : Router::url('/', true);
-        $this->out("Generating sitemap '".$name."' for website: " . $this->siteUrl);
+        $this->out("Generating sitemap '" . $name . "' for website: " . $this->siteUrl);
         $this->out("Output will be saved to: " . WWW_ROOT);
         $this->sitemap[$name] = new SitemapGenerator($this->siteUrl, WWW_ROOT);
         //        $this->sitemap->createGZipFile = true;
         // determine how many urls should be put into one file
         $this->sitemap[$name]->maxURLsPerSitemap = 10000;
         // sitemap file name
-        $this->sitemap[$name]->sitemapFileName = "sitemap-".$name.".xml";
+        $this->sitemap[$name]->sitemapFileName = "sitemap-" . $name . ".xml";
         // sitemap index file name
         $this->sitemap[$name]->sitemapIndexFileName = self::SITEMAP_INDEX;
         // robots file name
@@ -79,7 +92,7 @@ class SitemapShell extends Shell {
         foreach ($tags as $tag) {
             $this->_addTrickLink($tag);
         }
-        
+
         $tags = $this->VideoTags->findForSitemap();
         foreach ($tags as $tag) {
             $this->_addPerformanceLink($tag);
