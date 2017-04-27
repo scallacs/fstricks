@@ -41,7 +41,9 @@ class VideoTagsFixture extends TestFixture {
                 'created' => 1451080432,
                 'count_points' => 1,
                 'count_report_errors' => 0,
-                'status' => VideoTag::STATUS_VALIDATED
+                'status' => VideoTag::STATUS_VALIDATED,
+                'count_fake' => 0,
+                'count_accurate' => 0
             ],
             [
                 'id' => VideoTagsFixture::ID_PENDING,
@@ -53,7 +55,9 @@ class VideoTagsFixture extends TestFixture {
                 'created' => 1451080432,
                 'count_points' => 1,
                 'count_report_errors' => 0,
-                'status' => VideoTag::STATUS_PENDING
+                'status' => VideoTag::STATUS_PENDING,
+                'count_fake' => 0,
+                'count_accurate' => 0
             ],
             [
                 'id' => VideoTagsFixture::ID_REJECTED,
@@ -65,7 +69,9 @@ class VideoTagsFixture extends TestFixture {
                 'created' => 1451080432,
                 'count_points' => 1,
                 'count_report_errors' => 0,
-                'status' => VideoTag::STATUS_REJECTED
+                'status' => VideoTag::STATUS_REJECTED,
+                'count_fake' => 0,
+                'count_accurate' => 0
             ],
             [
                 'id' => VideoTagsFixture::ID_ONE_MORE_TO_REJECT,
@@ -78,7 +84,8 @@ class VideoTagsFixture extends TestFixture {
                 'count_points' => 1,
                 'count_report_errors' => 0,
                 'status' => VideoTag::STATUS_PENDING,
-                'count_fake' => \Cake\Core\Configure::read('VideoTagValidation.min_rate') - 1
+                'count_fake' => \Cake\Core\Configure::read('VideoTagValidation.min_rate') - 1,
+                'count_accurate' => 0
             ],
             [
                 'id' => VideoTagsFixture::ID_ONE_MORE_TO_VALIDATE,
@@ -91,7 +98,8 @@ class VideoTagsFixture extends TestFixture {
                 'count_points' => 1,
                 'count_report_errors' => 0,
                 'status' => VideoTag::STATUS_PENDING,
-                'count_accurate' => \Cake\Core\Configure::read('VideoTagValidation.min_rate') - 1
+                'count_accurate' => \Cake\Core\Configure::read('VideoTagValidation.min_rate') - 1,
+                'count_fake' => 0,
             ],
             [
                 'id' => VideoTagsFixture::ID_TWO_MORE_TO_VALIDATE,
@@ -104,7 +112,8 @@ class VideoTagsFixture extends TestFixture {
                 'count_points' => 1,
                 'count_report_errors' => 0,
                 'status' => VideoTag::STATUS_PENDING,
-                'count_accurate' => \Cake\Core\Configure::read('VideoTagValidation.min_rate') - 2
+                'count_accurate' => \Cake\Core\Configure::read('VideoTagValidation.min_rate') - 2,
+                'count_fake' => 0,
             ]
         ];
         parent::init();

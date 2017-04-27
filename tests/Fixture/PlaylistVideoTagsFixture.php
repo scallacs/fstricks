@@ -18,7 +18,7 @@ class PlaylistVideoTagsFixture extends TestFixture
     public $import = ['table' => 'playlist_video_tags', 'connection' => 'default'];
 
     const ID_FIRST = 1;
-    const ID_MIDDLE = 2;
+    const ID_MIDDLE = 2;    
     const ID_LAST = 3;
     
     /**

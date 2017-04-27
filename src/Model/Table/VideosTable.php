@@ -20,7 +20,7 @@ use App\Lib\JsonConfigHelper;
  * @property \Cake\ORM\Association\HasMany $Videos
  */
 class VideosTable extends Table {
-    
+
     /**
      * Initialize method
      *
@@ -45,15 +45,14 @@ class VideosTable extends Table {
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id'
         ]);
-        
-                
+
+
         $this->hasMany('VideoTags', [
             'foreignKey' => 'video_id'
         ]);
 //        $this->hasMany('Videos', [
 //            'foreignKey' => 'video_id'
 //        ]);
-        
     }
 
     public function initFilters($mode = 'default') {
@@ -78,7 +77,7 @@ class VideosTable extends Table {
                 ->add('max_duration', 'Search.Compare', [
                     'field' => $this->aliasField('duration'),
                     'operator' => '<='
-                ]);
+        ]);
     }
 
     /**
@@ -92,25 +91,25 @@ class VideosTable extends Table {
                 ->add('id', 'valid', ['rule' => 'numeric'])
                 ->allowEmpty('id', 'create');
 
-     
+
         $validator
                 ->requirePresence('provider_id', 'create')
                 ->notEmpty('provider_id')
-                ->add('provider_id', 'valid', ['rule' => function ($value){
-                    $data = JsonConfigHelper::rules("videos", "provider_id", "values");
-                    foreach ($data as $d){
-                        if ($d['code'] == $value){
-                            return true;
+                ->add('provider_id', 'valid', ['rule' => function ($value) {
+                        $data = JsonConfigHelper::rules("videos", "provider_id", "values");
+                        foreach ($data as $d) {
+                            if ($d['code'] == $value) {
+                                return true;
+                            }
                         }
-                    }
-                    return false;
-                }]);
-        
+                        return false;
+                    }]);
+
         $validator
                 ->requirePresence('user_id', 'create')
                 ->notEmpty('user_id');
 
-        
+
         $validator->provider('videoUrlProvider', new \App\Model\Validation\Providers\VideoUrlProvider());
         $validator
                 ->requirePresence('video_url', 'create')
@@ -143,29 +142,51 @@ class VideosTable extends Table {
      * @param \Cake\ORM\Entity $entity
      * @param \App\Model\Table\ArrayObject $options
      */
-    public function beforeSave($event, $entity, $options){
-        if ($entity->isNew() && empty($entity->status)){
+    public function beforeSave($event, $entity, $options) {
+        if ($entity->isNew() && empty($entity->status)) {
             $entity->status = Video::STATUS_PUBLIC;
             $entity->duration = $entity->getProviderDuration();
         }
     }
-    
+
     public function search($videoId, $provider) {
         return $this->find('all')
-                ->where(['video_url' => $videoId, 'provider_id' => $provider])
-                ->limit(1);
+                        ->where(['video_url' => $videoId, 'provider_id' => $provider])
+                        ->limit(1);
     }
 
-    public function updateVideoDuration(){
+    public function updateVideoDuration() {
         $videos = $this->find('all')->where(['Videos.duration' => 0]);
-        foreach ($videos as $video){
+        foreach ($videos as $video) {
             $video->duration = YoutubeRequest::instance()->duration($video->video_url);
             $this->save($video);
         }
         return true;
     }
-    
-    public function getPublic($id){
+
+    public function getPublic($id) {
         return $this->get($id);
     }
+
+    public function findWithVideoTags(Query $query, array $options = null) {
+        return $query->contain([
+                            'VideoTags' => function($q) {
+                                return $q
+                                        ->where(['VideoTags.status' => 'validated'])
+                                        ->order(['VideoTags.begin ASC'])
+                                        ->contain(['Tags' => function($q) {
+                                                return $q
+                                                        // TODO check if usefull or not ???
+                                                        ->select([
+                                                            'category_name' => 'Categories.name',
+                                                            'sport_name' => 'Sports.name',
+                                                            'tag_name' => 'Tags.name',
+                                                        ])
+                                                        ->contain(['Categories' => ['Sports']]);
+                                            }
+                                ]);
+                            }
+        ]);
+    }
+
 }

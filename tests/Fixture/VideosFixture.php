@@ -46,7 +46,8 @@ class VideosFixture extends TestFixture
             'count_tags' => 1,
             'user_id' => 1,
             'created' => 1451060139,
-            'status' => \App\Model\Entity\Video::STATUS_PUBLIC
+            'status' => \App\Model\Entity\Video::STATUS_PUBLIC,
+            'duration' => 100
         ],
         [
             'id' => 3,
@@ -55,7 +56,8 @@ class VideosFixture extends TestFixture
             'count_tags' => 1,
             'user_id' => 1,
             'created' => 1451060139,
-            'status' => \App\Model\Entity\Video::STATUS_PUBLIC
+            'status' => \App\Model\Entity\Video::STATUS_PUBLIC,
+            'duration' => 100
         ],
     ];
 }

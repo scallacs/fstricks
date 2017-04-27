@@ -36,3 +36,4 @@ Netbeans
 /jsapp/build/
 /resources/*.pem
 
+/nbproject/private/

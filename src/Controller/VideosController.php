@@ -31,24 +31,7 @@ class VideosController extends AppController {
                 'conditions' => [
                     'Videos.status' => \App\Model\Entity\Video::STATUS_PUBLIC
                 ],
-                'contain' => [
-                    'VideoTags' => function($q) {
-                return $q
-                                ->where(['VideoTags.status' => 'validated'])
-                                ->order(['VideoTags.begin ASC'])
-                                ->contain(['Tags' => function($q) {
-                                return $q
-                                        // TODO check if usefull or not ???
-                                        ->select([
-                                            'category_name' => 'Categories.name',
-                                            'sport_name' => 'Sports.name',
-                                            'tag_name' => 'Tags.name',
-                                        ])
-                                        ->contain(['Categories' => ['Sports']]);
-                            }
-                ]);
-            }
-                ]
+                'finder' => 'withVideoTags'
             ]);
         } catch (\Cake\Datasource\Exception\RecordNotFoundException $ex) {
             throw new \Cake\Network\Exception\NotFoundException();
