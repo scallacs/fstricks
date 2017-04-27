@@ -13,17 +13,20 @@ class TrickExporterShell extends Shell {
     public function main() {
         $this->loadModel('Videos');
 
-        $videoUrl = '';
+        if (!isset($this->params['youtube'])){
+            $this->abort('Should give an url');
+        }
+        $videoUrl = $this->params['youtube'];
         $query = $this->Videos
                 ->find('withVideoTags')
                 ->where([
-                    'Videos.video_url' => 'hDnGPpHEM6U',
+                    'Videos.video_url' => $videoUrl,
                 ]);
         $data = $query->first();
         
         echo 'Some of the tricks we can find in this video: ' . PHP_EOL. PHP_EOL;
         foreach ($data->video_tags as $videoTag){
-            debug($videoTag);
+//            debug($videoTag);
             echo($this->toYoutubeTime($videoTag->begin) . ' '. $videoTag->tag_name . PHP_EOL);
         }
         
