@@ -37,3 +37,6 @@ Netbeans
 /resources/*.pem
 
 /nbproject/private/
+
+Sitemaps 
+sitemap-*

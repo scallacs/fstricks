@@ -80,6 +80,25 @@ try {
 if (!Configure::read('debug')) {
     Configure::write('Cache._cake_model_.duration', '+1 years');
     Configure::write('Cache._cake_core_.duration', '+1 years');
+
+    $databaseUrl = env('DATABASE_URL') ? env('DATABASE_URL') : env('CLEARDB_DATABASE_URL');
+    if ($databaseUrl !== null){
+        
+        $parsedDBUrl = parse_url($databaseUrl);
+        ConnectionManager::config('default', [
+            'className' => 'Cake\Database\Connection',
+            'driver' => 'Cake\Database\Driver\Mysql',
+            'persistent' => false,
+            'host' => $parsedDBUrl['host'],
+            'username' => $parsedDBUrl['user'],
+            'password' => $parsedDBUrl['pass'],
+            'database' => trim($parsedDBUrl['path'], '/'),
+            'encoding' => 'utf8',
+            'timezone' => 'UTC',
+            'cacheMetadata' => true,
+        ]);
+    }
+
 }
 
 /**
